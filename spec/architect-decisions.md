@@ -11,27 +11,30 @@ Change a PROPOSED item to RATIFIED only after you have checked it yourself.
 
 ## 1. Platform decisions
 
-| ID | Decision | Status |
-|---|---|---|
-| D-01 | Spark jobs run on EMR release label `emr-spark-8.0.x` (Spark 4.0, Scala 2.13, Java 17). EMR 7.x ships Spark 3.5 on Scala 2.12, which Scala 3 cannot interoperate with. | PROPOSED |
-| D-02 | Scala 3 modules depend on Spark via `CrossVersion.for3Use2_13`. Never allow both `_2.13` and `_3` builds of the same library on the classpath. Prefer DataFrame and Java APIs over typed Dataset encoders. | PROPOSED |
-| D-03 | Hadoop MapReduce jobs are written against the Java MapReduce API. Hadoop has no Scala binary constraint, so the Scala 3 standard library is shaded into the job jar. | PROPOSED |
-| D-04 | Region: us-east-1 or us-east-2 (S3 Vectors GA since Dec 2025 in both). | PROPOSED |
-| D-05 | JSON: uPickle. Tests: pick ScalaTest or MUnit once. | PROPOSED |
-| D-06 | No OpenSearch tier. S3 Vectors is the only semantic store. | PROPOSED |
-| D-07 | Course spec lives at `spec/ScholarChain-spec.md`, not at the root `README.md` (root README is owned by documentation-engineer). | PROPOSED |
-| D-08 | The AgenticScalaAppTutorial repo is a read-only pattern reference in a sibling directory. It is never forked, copied, or merged into this repository. | PROPOSED |
+| ID   | Decision                                                                                                                                                                                                                              | Status   |
+| ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
+| D-01 | Spark jobs run on EMR release label `emr-spark-8.0.x` (Spark 4.0, Scala 2.13, Java 17). EMR 7.x ships Spark 3.5 on Scala 2.12, which Scala 3 cannot interoperate with.                                                                | PROPOSED |
+| D-02 | Scala 3 modules depend on Spark via `CrossVersion.for3Use2_13`. Never allow both `_2.13` and `_3` builds of the same library on the classpath. Prefer DataFrame and Java APIs over typed Dataset encoders.                            | PROPOSED |
+| D-03 | Hadoop MapReduce jobs are written against the Java MapReduce API. Hadoop has no Scala binary constraint, so the Scala 3 standard library is shaded into the job jar. If `emr-spark-8.0.x` lacks MapReduce, MapReduce runs on EMR 7.x. | PROPOSED |
+| D-04 | Region: us-east-2 (the project AWS account's region; S3 Vectors GA since Dec 2025).                                                                                                                                                   | PROPOSED |
+| D-05 | JSON: uPickle. Tests: pick ScalaTest or MUnit once and use it everywhere.                                                                                                                                                             | PROPOSED |
+| D-06 | No OpenSearch tier. S3 Vectors is the only semantic store.                                                                                                                                                                            | PROPOSED |
+| D-07 | Course spec lives at `spec/ScholarChain-spec.md`, not at the root `README.md` (root README is owned by documentation-engineer).                                                                                                       | PROPOSED |
+| D-08 | The AgenticScalaAppTutorial repo is a read-only pattern reference in a sibling directory. It is never forked, copied, or merged into this repository.                                                                                 | PROPOSED |
+| D-09 | Version rule: every dependency, plugin, tool, and MCP server is pinned to an exact version at least two weeks old. No floating or latest versions.                                                                                    | PROPOSED |
 
-## 2. Week-1 verification spike (OPEN until done)
+## 2. Verification spike and open infrastructure items (OPEN until done)
 
 - [ ] `emr-spark-8.0.x` can also run Hadoop MapReduce jobs on EC2. If not, run MapReduce on an EMR 7.x cluster (see D-03, which makes that safe) and Spark on `emr-spark-8.0.x`.
 - [ ] A Scala 3 hello-world Spark job built with `for3Use2_13` runs on the chosen EMR release.
 - [ ] GraphFrames has a release for the exact Spark 4.0 / Scala 2.13 combination. If not, connected components and label propagation must be hand-written.
-- [ ] Bedrock model access requested and granted in the chosen region (embedding model and synthesis model).
-- [ ] Neptune (or Neptune Serverless) available in the region; plan bastion or SSM tunnel for laptop access (Neptune is VPC-only).
+- [ ] Bedrock model access requested and granted in us-east-2 (embedding model and synthesis model).
+- [ ] Neptune (or Neptune Serverless) available in us-east-2; plan bastion or SSM tunnel for laptop access (Neptune is VPC-only).
 - [ ] S3 Vectors Terraform resources work with the pinned AWS provider version.
-- [ ] Concrete MCP servers chosen for GitHub, read-only AWS API, Terraform docs, AWS docs; each confirmed to run least-privilege.
-- [ ] Claude Code version recorded in the tool-version record.
+- [ ] Read-only IAM role for the AWS MCP server (week-2 Terraform). Until it exists, `SCHOLARCHAIN_AWS_READONLY_PROFILE` stays unset and the aws-api MCP server fails by design. The `scholarchain` CLI profile is full-access and must never be given to an MCP server.
+- [x] MCP servers chosen and pinned: github (fine-grained read-only token, ScholarChain repo only), aws-docs 1.2.2, terraform 1.0.18 with `--with mcp==1.30.0` (mcp 2.x removed FastMCP), aws-api 1.5.6 (pending the read-only role above). github, aws-docs, and terraform connected in Phase 1.
+- [ ] Claude Code VS Code extension version, Java, sbt, Scala, Terraform, AWS CLI, and uv versions recorded in the tool-version record.
+- [ ] Spike resources torn down after verification.
 
 ## 3. Known landmines and mitigations
 
@@ -42,15 +45,26 @@ Change a PROPOSED item to RATIFIED only after you have checked it yourself.
 - **Phase 6 algorithms not provided by libraries.** k-core (iterative peeling) and approximate betweenness (sampled sources, documented) must be implemented. Cheap bridge measures: cross-community degree and participation coefficient as DataFrame aggregations.
 - **Phase 6 skew.** Hub researchers and giant teams create skewed shuffles; checkpoint iterative jobs; never collect the graph to the driver.
 - **Phase 7 Neptune.** Bulk loader needs a specific CSV header format, an IAM role, and S3 in the same region.
-- **Phase 12 ordering.** S3 and EMR are needed from Phase 4, but the full Terraform phase is Phase 12 and the console is forbidden. Have infra-engineer write a minimal foundation module (buckets, EMR, IAM) early and grow it into Phase 12.
+- **Phase 12 ordering.** S3 and EMR are needed from Phase 4, but the full Terraform phase is Phase 12 and the console is forbidden. Have infra-engineer write a minimal foundation module (buckets, EMR, IAM, read-only MCP role) in week 2 and grow it into Phase 12.
 - **Phase 15 scale-in.** ECS target tracking scales in only after a sustained period below target (roughly 15 minutes). Make experiment windows long enough to capture both scale-out and scale-in.
 
-## 4. Agent-system notes for Phase 1
+## 4. Agent-system notes
 
-- The `tools` field restricts which tools an agent has, not which paths it may write. Enforce path ownership with agent instructions plus permission rules and the PreToolUse hook. Check what the hook input exposes about the calling agent.
-- Bash can write files. Give code-reviewer Read, Grep, Glob only, or keep Bash with deny rules for any file-modifying command.
-- `spec/**` must be declared human-owned and read-only in `docs/agents.md`.
-- Spec inconsistency: post-Phase-1 probe #1 names `feature-implementer`, which is not in the required agent list. Ask the instructor or substitute `domain-engineer` and record the substitution in `phase-01/human-gate.md`.
+Phase 1 outcomes:
+
+- The `tools` field restricts which tools an agent has, not which paths it may write. Path ownership is enforced by agent instructions, permission rules, and the `guard-paths.sh` PreToolUse hook.
+- code-reviewer has Read, Grep, and Glob only.
+- `spec/**` is declared human-owned and read-only in `docs/agents.md`.
+- The spec's `feature-implementer` probe was run as written (probe 1b: no such agent exists, build.sbt is owned by build-engineer), with domain-engineer as the substitute non-owner (probe 1). Instructor confirmation is still requested (section 7).
+
+Lessons to carry forward:
+
+- Broad auto-approve allow rules caused the critical bypasses in Phase 1. Risky commands fall back to the permission prompt, where the human is the gate. Do not chase perfect regex guards.
+- Stopping rule: ratify when only minor findings remain and document them as residual risks; repair again only for critical or major findings.
+- A probe passes only on a hook or permission block message. A model refusal is INCONCLUSIVE.
+- At permission prompts choose the one-time allow, never "always allow" (it writes `.claude/settings.local.json`).
+- Agents cannot write `.patch` files in phase folders. The human creates patches with `diff -u` and records the sha256. `/private/tmp` scratchpads are wiped on reboot, so copy evidence out promptly.
+- During later phases, deny protected-path writes such as `rm -rf spec` at the permission prompt (accepted residual risk).
 
 ## 5. Evidence to capture as you go
 
@@ -80,20 +94,23 @@ Accepted commit:
 
 ## 6. Schedule (deadline Wed Nov 25, 2026, 11PM CST)
 
-| Week | Focus |
-|---|---|
-| 1 | Phases 0-2 plus verification spike; DBLP subset downloaded |
-| 2 | Phase 3; gold-set labeling begins (about 20 min/day) |
-| 3 | Phase 4 Hadoop |
-| 4 | Phase 5 entity resolution |
-| 5 | Phase 6 Spark (protect this week) |
-| 6 | Phases 7-8 |
-| 7 | Phases 9-10 |
-| 8 | Phases 11-14 |
-| 9 | Phases 15-16 |
-| 9.5 | Phase 17, report, video, cleanup |
+| Week | Dates        | Focus                                                                          |
+| ---- | ------------ | ------------------------------------------------------------------------------ |
+| 1    | Oct 20–26    | Phases 1–3; AWS spike; start gold labels (~15/day)                             |
+| 2    | Oct 27–Nov 2 | Phase 4 Hadoop; minimal Terraform foundation (S3, EMR, IAM, read-only role)    |
+| 3    | Nov 3–9      | Phase 5 entity resolution; Phase 6 Spark                                       |
+| 4    | Nov 10–16    | Phases 7–10; full Phase 12 Terraform                                           |
+| 5    | Nov 17–25    | Phases 13–14 deploy, 15–16 experiments, freeze Nov 21, Phase 17 docs and video |
 
-Scope cuts: no OpenSearch, stay at the 100k-works minimum until late, run the 1M-edge scale experiment once as a deliberate burst.
+Phase 1 ran long; start Phase 2 immediately after ratification.
+
+Scope cuts:
+
+- Three enrichment datasets (OpenAlex, Crossref, ORCID) as DOI-driven bounded subsets of the DBLP subset.
+- 100k DBLP works for the integrated run.
+- Three deployed runtime services (the spec minimum).
+- No OpenSearch (D-06).
+- The 1M-edge scale experiment runs once as a deliberate burst, or a smaller scale is requested from the instructor (section 7).
 
 ## 7. Open questions for the instructor
 
@@ -101,3 +118,4 @@ Scope cuts: no OpenSearch, stay at the 100k-works minimum until late, run the 1M
 - [ ] `feature-implementer` probe: which agent should it target?
 - [ ] Course AWS account, region restrictions, and budget cap.
 - [ ] May bounded enrichment subsets be fetched through dataset APIs (for example DOI-filtered OpenAlex queries) rather than full snapshots?
+- [ ] Is a scale below the spec minimums (for example fewer than 1M graph edges) acceptable given the budget?
