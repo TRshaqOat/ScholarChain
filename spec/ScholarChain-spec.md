@@ -1009,6 +1009,7 @@ Required projects:
 
 Required principles:
 - Scala 3 everywhere.
+- sbt 1.x: pin sbt.version=1.13.0 in project/build.properties (matches the locally installed launcher; sbt 2 is out of scope for this project unless a documented compatibility problem requires it).
 - Use Hadoop and Spark Java or DataFrame APIs where that avoids unsupported Scala binary assumptions.
 - Pin every dependency and plugin version in a single version ledger.
 - No floating or latest versions.
