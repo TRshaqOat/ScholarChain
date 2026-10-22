@@ -1,0 +1,1147 @@
+--- /private/tmp/claude-501/-Users-achyutpatel-Developer-Cloud-ScholarChain/26c62c73-1c3b-476d-ac9e-c919e5c528ee/scratchpad/repair-03-pre/.claude/settings.json	2026-10-21 19:06:14
++++ .claude/settings.json	2026-10-21 19:57:36
+@@ -6,23 +6,11 @@
+       "Bash(git status)",
+       "Bash(git status *)",
+       "Bash(git diff)",
+-      "Bash(git diff *)",
+-      "Bash(git log *)",
+-      "Bash(git show *)",
+       "Bash(git ls-files *)",
+       "Bash(git rev-parse *)",
+       "Bash(git stash list)",
+       "Bash(sbt check)",
+-      "Bash(sbt clean check)",
+-      "Bash(sbt fmt)",
+       "Bash(sbt Test/compile)",
+-      "Bash(sbt test)",
+-      "Bash(sbt testOnly *)",
+-      "Bash(sbt packageJobs)",
+-      "Bash(jq *)",
+-      "Bash(python3 -m json.tool *)",
+-      "Bash(bash -n *)",
+-      "Bash(shellcheck *)",
+       "Bash(test -x *)",
+       "Bash(.claude/hooks/validate-agent-files.sh)",
+       "Bash(.claude/hooks/guard-dangerous.sh --self-test)",
+@@ -30,12 +18,6 @@
+       "Bash(.claude/hooks/verify-tests-ran.sh --self-test)",
+       "Bash(terraform fmt *)",
+       "Bash(terraform validate*)",
+-      "Bash(terraform init -backend=false*)",
+-      "Bash(terraform -chdir=* fmt *)",
+-      "Bash(terraform -chdir=* validate*)",
+-      "Bash(terraform -chdir=* init -backend=false*)",
+-      "Bash(./scripts/check.sh*)",
+-      "Bash(aws sts get-caller-identity*)",
+       "mcp__aws-docs__search_documentation",
+       "mcp__aws-docs__read_documentation",
+       "mcp__aws-docs__recommend",
+@@ -249,7 +231,7 @@
+         ]
+       },
+       {
+-        "matcher": "Read|Write|Edit|MultiEdit|NotebookEdit",
++        "matcher": "Read|Grep|Glob|Write|Edit|MultiEdit|NotebookEdit",
+         "hooks": [
+           {
+             "type": "command",
+--- /private/tmp/claude-501/-Users-achyutpatel-Developer-Cloud-ScholarChain/26c62c73-1c3b-476d-ac9e-c919e5c528ee/scratchpad/repair-03-pre/.claude/hooks/guard-dangerous.sh	2026-10-21 19:10:04
++++ .claude/hooks/guard-dangerous.sh	2026-10-21 22:31:20
+@@ -2,19 +2,69 @@
+ # guard-dangerous.sh - ScholarChain deterministic floor (see docs/agents.md).
+ #
+ # PreToolUse hook, matcher "Bash|mcp__.*".
+-#   Bash tools:            scans tool_input.command.
+-#   mcp__aws-api__*:       scans the serialized tool_input (for example call_aws cli_command).
+-#   mcp__terraform__*:     blocks command-execution tools (Execute*); documentation tools pass.
+-#   mcp__github__*:        blocks write-style tool names; read tools pass.
+-#   other MCP servers:     pass (read-only documentation servers).
+ #
+-# Exit 2 blocks the call and shows stderr to the agent. Exit 0 allows it.
+-# Fails closed (exit 2) when jq is missing or the payload cannot be parsed.
+-# Matching is case-insensitive and ignores quotes and backslashes, so a dangerous
+-# command is blocked even when quoted, echoed, or wrapped (echo 'terraform destroy',
+-# bash -c "...", terraform -chdir=... apply). This is a backstop under the permission
+-# rules and the agent instructions, not a complete parser.
++# What it scans:
++#   Bash:              tool_input.command, as one normalized string (lower-case; quotes,
++#                      backslashes, and backticks removed; whitespace squeezed) and as command
++#                      segments split on ; & | ( ) { } backtick and newline.
++#   mcp__aws-api__*:   the serialized tool_input (for example the call_aws cli_command), with the
++#                      same rules as Bash.
++#   mcp__terraform__*: blocks the command-execution tools (Execute*); other tools pass.
++#   mcp__github__*:    blocks tool names that begin with a write-style verb; other tools pass.
++#   any other tool:    passes. The matcher routes only Bash and MCP tools here, so this covers the
++#                      aws-docs server and any MCP server not configured in .mcp.json.
+ #
++# What it blocks (exit 2, with an actionable message on stderr):
++#   - Permission-bypass flags, sudo and doas, piping a download or a base64 decode into a shell.
++#   - Terraform apply, destroy, -auto-approve, destroy plans, TF_CLI_ARGS, and state mutation, in
++#     any position (inside echo, bash -c, -chdir, tofu, terragrunt).
++#   - Force, mirror, delete, and refspec pushes, history rewrite, branch and tag deletion, and
++#     work-tree discard (reset --hard, clean, checkout or switch discards, restore, stash).
++#   - Destructive or mutating AWS CLI and SDK calls (S3, DynamoDB, Neptune, S3 Vectors, ECR, KMS,
++#     EMR, ECS, EC2, IAM, CloudTrail, logs, SQS, SNS, CloudFormation, OpenSearch, Bedrock
++#     provisioned throughput, and any delete-, terminate-, purge-, or deregister- operation).
++#   - Scale changes: the EMR capacity, scaling-policy, cluster-creation, and termination
++#     operations, the autoscaling capacity and scaling-policy operations, and ECS desired counts
++#     outside 1 to 4. It does not read the approved Terraform variables or experiment manifests,
++#     so it cannot check any other bound.
++#   - Reads or prints of secrets named literally: .env files, ~/.aws, private keys, credential
++#     files, Terraform state, environment dumps (env, printenv, export -p, declare -x,
++#     /proc/*/environ, and jq's env built-in and $ENV, blocked in any command that also runs jq),
++#     secret-bearing variable names, secret-reading AWS calls, and keychain reads.
++#   - Destructive database and graph statements, catastrophic filesystem operations, and
++#     execution of scripts/cleanup.sh.
++#   - Writes to protected paths through these recognized forms only:
++#     - > redirection whose target contains spec/, labels/, docs/agent-runs/, docs/agents.md,
++#       CLAUDE.md, .mcp.json, .claude/, or .git/;
++#     - a write verb in command position, sed -i, perl -i, git work-tree subcommands, find
++#       -delete, or a wrapper or interpreter segment (xargs, bash -c, env, timeout, python, awk,
++#       npx, uvx, uv run, make, ...) that contains a write verb, in a command that names spec/,
++#       labels/, or docs/agent-runs/ (with the trailing slash), CLAUDE.md, docs/agents.md,
++#       .mcp.json, .claude/agents, .claude/hooks, .claude/commands, .claude/settings.json,
++#       .claude/settings.local.json, .claude/.last-test-run, ~/.claude, or .git;
++#     - git output-file options (--output and its abbreviations, --output-directory,
++#       format-patch or archive -o, bundle create, git -C <protected dir>) and the output-file
++#       argument of python -m json.tool, whose target is spec, labels, docs/agent-runs, .claude,
++#       or .git (or anything below them), CLAUDE.md, docs/agents.md, or .mcp.json.
++#
++# Fails closed (exit 2) when jq is missing, when the payload is empty, is not valid JSON, is not
++# a single JSON object, or has a non-string tool_name, and when the payload has no tool_name.
++#
++# What it does not cover (residual risk; the permission prompt, the agent instructions, and the
++# human gates remain the primary controls):
++#   - Indirection: variables, command substitution that builds names, generated scripts, SDK or
++#     interpreter programs, aliases, and cd into a protected directory followed by a relative
++#     write.
++#   - File names obscured by shell wildcards (.e*v, .en?) or other expansion. Matching is literal.
++#   - Write forms it does not recognize (for example sort -o), and Bash writes to any path that is
++#     not protected above. For the write-verb forms that includes other files under .claude/
++#     (for example .claude/skills/) and spec, labels, or docs/agent-runs named without a trailing
++#     slash. Ownership of ordinary paths is enforced only for file tools, by guard-paths.sh.
++#   - Its own timeout. Whether Claude Code allows or blocks a call when this hook times out is
++#     unverified. The scan is regex matching plus word loops over the command's segments (run
++#     only when the command names a protected path, or contains json.tool, or git with an output
++#     option); it has no per-character loop. Time grows about linearly with command length.
++#
+ # Compatible with bash 3.2 (macOS default). Requires jq.
+ #
+ # Usage:
+@@ -59,149 +109,140 @@
+ R_POLICY='Permission bypass is disabled for this repository. Work inside the ratified permission policy.'
+ R_MCP_TF='Terraform command execution through MCP is not granted to any agent. Use terraform fmt/validate/plan through Bash (infra-engineer) and the human-approved apply path.'
+ R_MCP_GH='The GitHub MCP server is read-only for ScholarChain. Repository writes (commits, pull requests, issues, merges) are performed by the human architect.'
++R_OUT='Write output only to a temporary path (for example under $TMPDIR). spec/**, labels/**, docs/agent-runs/**, constitutional files, .claude/, and .git/ are never written through a command output-file option.'
+ 
+-# jq field-access exemption for the secret-env-file rule (finding repair-02).
+-#
+-# jq_strip_filters CMD sets JQS to CMD (already lower-cased, quotes intact) re-emitted word by word,
+-# with the jq PROGRAM argument of a jq invocation replaced by the word jq-program, if and only if
+-# every condition below holds:
+-#   1. jq is the command word of its segment. Segments are split on unquoted ; & | ( ) newline and
+-#      backtick. & and | directly after < or > (>&, >|, <&) and & before > (&>) are redirections,
+-#      not separators. Only VAR=value words, the keywords do then else elif if while until !, and
+-#      a directory prefix (/usr/bin/jq) may precede jq. A segment that starts right after a closing
+-#      ) or backtick is not a command position. jq behind any wrapper (bash -c, xargs, env,
+-#      timeout, ...) is not recognized and stays fully checked.
+-#   2. The program is jq's FIRST positional argument. Option values are skipped: --arg, --argjson,
+-#      --slurpfile, --rawfile, and --argfile take two words, and --indent, --library-path, and a
+-#      short-option cluster ending in l (-L) take one. Redirection operators and their targets are
+-#      not positional.
+-#   3. The segment uses no -f or --from-file in any position (then the first positional is a
+-#      program FILE, which jq reads).
+-#   4. The program is one whole single-quoted word, or one whole double-quoted word with no $,
+-#      backtick, or backslash (so no expansion or substitution can occur inside it).
+-#   5. The program contains neither import nor include (jq module and data imports read files).
+-# Every other word is emitted verbatim, so a .env path anywhere else, including a jq input file,
+-# an option value, or a redirection target, still matches the rule.
+-#
+-# Residual risk: an unquoted jq program (jq .env x.json) and jq behind a wrapper are blocked
+-# (conservative false positives). A jq program argument cannot open a file path except through
+-# import or include (excluded), so the exemption admits no read of a .env file. Like every pattern
+-# guard, this one can be evaded by indirection (variables, generated scripts); the Read deny rules
+-# and guard-paths.sh are unchanged and remain the primary .env controls.
+-#
+-# The tokenizer runs only when the normalized command already matches the .env rule and contains
+-# the word jq, so the per-character loop never runs for ordinary commands.
+-JQS=""
+-JQN=0
+-JQW=()
+-JQ_RX_SQ="^'[^']*'\$"
+-JQ_RX_DQ='^"[^"$`\\]*"$'
+-JQ_RX_KW='^(do|then|else|elif|if|while|until|!|[a-z_][a-z0-9_]*=.*)$'
+-JQ_RX_CMD='^([^[:space:]]*/)?jq$'
+-JQ_RX_REDIR_OP='^([0-9]*|&)[<>][<>&|]*$'
+-JQ_RX_REDIR='^([0-9]*|&)[<>]'
+-JQ_RX_IMPORT='(import|include)'
++# Patterns shared by the checks below. All input is already lower-case with quotes removed.
++JQ_WORD='(^|[^a-z0-9_.-])jq([[:space:]]|$)'
++JQ_ENV='(^|[^a-z0-9_.])env([^a-z0-9_]|$)'
++GIT_WORD='(^|[^a-z0-9_-])git([[:space:]]|$)'
++# A protected path as one whole word: spec, labels, docs/agent-runs, .claude, or .git (or
++# anything below them), or CLAUDE.md, docs/agents.md, or .mcp.json, with any directory prefix
++# (./, ../, an absolute path, ~/, $HOME/).
++PW_RX1='^([^[:space:]]*/)?(spec|labels|docs/+agent-runs|[.]claude|[.]git)(/.*)?$'
++PW_RX2='^([^[:space:]]*/)?(docs/+agents[.]md|claude[.]md|[.]mcp[.]json)$'
++# git --output, its abbreviations (--out, --outp, --outpu), and --output-directory (or an
++# abbreviation such as --output-dir); value after = or in the next word.
++GIT_OUT_RX='^--out(p|pu|put)?(-d[a-z-]*)?(=(.*))?$'
++GIT_O_ATT_RX='^-o(.+)$'
++GIT_O_RX='^-[a-z0-9]*o$'
++# python -m json.tool (also -mjson.tool and clusters such as -im json.tool).
++JT_M_RX='^-[a-z]*m$'
++JT_MATT_RX='^-[a-z]*mjson[.]tool$'
++JT_IND_RX='^--in(d(e(n(t)?)?)?)?$'
++REDIR_OP_RX='^[0-9]*[<>]+[&|]?$'
++REDIR_RX='^[0-9]*[<>]'
+ 
+-jq_segment() {
+-  # $1: 1 when the segment starts in command position. Emits JQW[0..JQN-1] into JQS.
+-  local idx=0 j filt=-1 usesf=0 pend=0 dd=0 w out="" k
+-  if [ "$1" = 1 ] && [ "$JQN" -gt 0 ]; then
+-    while [ "$idx" -lt "$JQN" ] && [[ ${JQW[idx]} =~ $JQ_RX_KW ]]; do idx=$((idx + 1)); done
+-    if [ "$idx" -lt "$JQN" ] && [[ ${JQW[idx]} =~ $JQ_RX_CMD ]]; then
+-      j=$((idx + 1))
+-      while [ "$j" -lt "$JQN" ]; do
+-        w=${JQW[j]}
+-        if [ "$pend" -gt 0 ]; then
+-          pend=$((pend - 1))
+-        elif [[ $w =~ $JQ_RX_REDIR_OP ]]; then
+-          pend=1
+-        elif [[ $w =~ $JQ_RX_REDIR ]]; then
+-          :
+-        elif [ "$dd" = 0 ] && [ "$w" = "--" ]; then
+-          dd=1
+-        elif [ "$dd" = 0 ] && [[ $w == --* ]]; then
+-          case "$w" in
+-            --arg|--argjson|--slurpfile|--rawfile|--argfile) pend=2 ;;
+-            --indent|--library-path) pend=1 ;;
+-            --from-file*) usesf=1 ;;
+-          esac
+-        elif [ "$dd" = 0 ] && [[ $w == -[a-z]* ]]; then
+-          case "$w" in *f*) usesf=1 ;; esac
+-          case "$w" in *l) pend=1 ;; esac
+-        elif [ "$filt" -lt 0 ]; then
+-          filt=$j
+-        fi
+-        j=$((j + 1))
+-      done
+-      if [ "$filt" -ge 0 ] && [ "$usesf" = 0 ] &&
+-        { [[ ${JQW[filt]} =~ $JQ_RX_SQ ]] || [[ ${JQW[filt]} =~ $JQ_RX_DQ ]]; } &&
+-        ! [[ ${JQW[filt]} =~ $JQ_RX_IMPORT ]]; then
+-        JQW[filt]="jq-program"
++prot_word() {
++  [[ $1 =~ $PW_RX1 ]] || [[ $1 =~ $PW_RX2 ]]
++}
++
++check_git_output() {
++  # $1: one command segment. Blocks when a git invocation in it writes a file to a protected
++  # path through an output-file option.
++  local -a w
++  local n i t v sub="" cprot=0 hasout=0 bstate=0
++  read -r -a w <<<"$1"
++  n=${#w[@]}
++  i=0
++  while [ "$i" -lt "$n" ]; do
++    case "${w[i]}" in git | */git) break ;; esac
++    i=$((i + 1))
++  done
++  [ "$i" -lt "$n" ] || return 0
++  i=$((i + 1))
++  while [ "$i" -lt "$n" ]; do
++    t=${w[i]}
++    v=""
++    if [[ $t =~ $GIT_OUT_RX ]]; then
++      if [ -n "${BASH_REMATCH[3]}" ]; then
++        v=${BASH_REMATCH[4]}
++      else
++        i=$((i + 1))
++        v=${w[i]:-}
+       fi
++      hasout=1
++    elif [ -z "$sub" ] && [ "$t" = "-c" ]; then
++      # git -C <dir> (lower-cased to -c; a -c key=value config word is never a protected path).
++      i=$((i + 1))
++      if prot_word "${w[i]:-}"; then cprot=1; fi
++    elif [ -z "$sub" ] && [[ $t != -* ]]; then
++      sub=$t
++    elif { [ "$sub" = "format-patch" ] || [ "$sub" = "archive" ]; } && [[ $t =~ $GIT_O_ATT_RX ]]; then
++      v=${BASH_REMATCH[1]}
++      hasout=1
++    elif { [ "$sub" = "format-patch" ] || [ "$sub" = "archive" ]; } && [[ $t =~ $GIT_O_RX ]]; then
++      i=$((i + 1))
++      v=${w[i]:-}
++      hasout=1
++    elif [ "$sub" = "bundle" ] && [ "$bstate" = 0 ] && [ "$t" = "create" ]; then
++      bstate=1
++    elif [ "$bstate" = 1 ] && [[ $t != -* ]]; then
++      v=$t
++      bstate=2
++      hasout=1
+     fi
++    if [ -n "$v" ] && prot_word "$v"; then
++      block "protected-path-output-option" "git writes '$v' through an output-file option" "$R_OUT"
++    fi
++    i=$((i + 1))
++  done
++  if [ "$cprot" = 1 ] && { [ "$hasout" = 1 ] || [ "$sub" = "format-patch" ]; }; then
++    block "protected-path-output-option" "git -C names a protected directory and writes output files there" "$R_OUT"
+   fi
+-  k=0
+-  while [ "$k" -lt "$JQN" ]; do out="$out ${JQW[k]}"; k=$((k + 1)); done
+-  JQS="$JQS$out ;"
+-  JQW=()
+-  JQN=0
+ }
+ 
+-jq_strip_filters() {
+-  local LC_ALL=C
+-  local s="$1" n=${#1} i=0 c p q="" tok="" cmdpos=1 bt=0
+-  JQS=""
+-  JQW=()
+-  JQN=0
++check_json_tool_output() {
++  # $1: one command segment. python -m json.tool [options] [infile [outfile]]: blocks when the
++  # outfile (the second positional argument) is a protected path. The infile is only read.
++  local -a w
++  local n i t pos=0 dd=0 found=0
++  read -r -a w <<<"$1"
++  n=${#w[@]}
++  i=0
+   while [ "$i" -lt "$n" ]; do
+-    c=${s:i:1}
+-    if [ -n "$q" ]; then
+-      tok="$tok$c"
+-      if [ "$c" = "$q" ]; then
+-        q=""
+-      elif [ "$q" = '"' ] && [ "$c" = '\' ]; then
+-        i=$((i + 1))
+-        tok="$tok${s:i:1}"
+-      fi
++    t=${w[i]}
++    if [[ $t =~ $JT_MATT_RX ]]; then
++      i=$((i + 1))
++      found=1
++      break
++    fi
++    if [[ $t =~ $JT_M_RX ]] && [ "${w[i + 1]:-}" = "json.tool" ]; then
++      i=$((i + 2))
++      found=1
++      break
++    fi
++    i=$((i + 1))
++  done
++  [ "$found" = 1 ] || return 0
++  while [ "$i" -lt "$n" ]; do
++    t=${w[i]}
++    if [ "$dd" = 0 ] && [[ $t =~ $REDIR_OP_RX ]]; then
++      i=$((i + 2))
++      continue
++    fi
++    if [ "$dd" = 0 ] && [[ $t =~ $REDIR_RX ]]; then
+       i=$((i + 1))
+       continue
+     fi
+-    case "$c" in
+-      "'" | '"')
+-        q="$c"
+-        tok="$tok$c"
+-        ;;
+-      '\')
+-        i=$((i + 1))
+-        tok="$tok$c${s:i:1}"
+-        ;;
+-      ' ' | $'\t' | $'\r')
+-        if [ -n "$tok" ]; then JQW[JQN]="$tok"; JQN=$((JQN + 1)); tok=""; fi
+-        ;;
+-      ';' | $'\n' | '(' | ')' | '`' | '&' | '|')
+-        p=${tok#"${tok%?}"}
+-        if { [ "$c" = '&' ] || [ "$c" = '|' ]; } && { [ "$p" = '>' ] || [ "$p" = '<' ]; }; then
+-          tok="$tok$c"
+-        elif [ "$c" = '&' ] && [ "${s:i+1:1}" = '>' ]; then
+-          tok="$tok$c"
+-        else
+-          if [ -n "$tok" ]; then JQW[JQN]="$tok"; JQN=$((JQN + 1)); tok=""; fi
+-          jq_segment "$cmdpos"
+-          case "$c" in
+-            ')') cmdpos=0 ;;
+-            '`') if [ "$bt" = 0 ]; then bt=1; cmdpos=1; else bt=0; cmdpos=0; fi ;;
+-            *) cmdpos=1 ;;
+-          esac
+-        fi
+-        ;;
+-      *)
+-        tok="$tok$c"
+-        ;;
+-    esac
++    if [ "$dd" = 0 ] && [ "$t" = "--" ]; then
++      dd=1
++      i=$((i + 1))
++      continue
++    fi
++    if [ "$dd" = 0 ] && [[ $t =~ $JT_IND_RX ]]; then
++      i=$((i + 2))
++      continue
++    fi
++    if [ "$dd" = 0 ] && [ "$t" != "-" ] && [[ $t == -* ]]; then
++      i=$((i + 1))
++      continue
++    fi
++    pos=$((pos + 1))
++    if [ "$pos" -ge 2 ] && prot_word "$t"; then
++      block "protected-path-output-option" "python -m json.tool writes its output file '$t'" "$R_OUT"
++    fi
+     i=$((i + 1))
+   done
+-  if [ -n "$tok" ]; then JQW[JQN]="$tok"; JQN=$((JQN + 1)); fi
+-  jq_segment "$cmdpos"
+ }
+ 
+ run_rules() {
+@@ -259,31 +300,21 @@
+   rule "sdk-destructive" '(boto3|botocore|aws-sdk|awssdk)[^;&]*(delete_bucket|delete_objects|delete_object|delete_table|delete_db_cluster|delete_db_instance|delete_vector_bucket|delete_index|delete_vectors|delete_repository|batch_delete_image|schedule_key_deletion|terminate_job_flows|delete_secret|get_secret_value|delete_graph|purge_queue)' "$R_AWS"
+ 
+   # --- Secrets and credentials (floor 4, Bash side) ---
+-  # .env FILE paths. ENVF matches .env, .env.<suffix>... (and .envrc) as a path token: preceded by
+-  # start or any non-identifier character (whitespace, /, =, <, >, quote, ...), so sys.env,
+-  # process.env, os.environ, .environment, and System.getenv do not match. The only exemption is
+-  # jq field access: when the Bash command contains jq, ENVF is re-checked on a copy in which each
+-  # qualifying jq PROGRAM argument is replaced (jq_strip_filters, below); every other word, every
+-  # other command segment, and every file operand or option value is still checked. Any .env path
+-  # outside a qualifying jq program blocks exactly as before.
+-  local ENVF='(^|[^a-z0-9_])[.]env([.][a-z0-9_-]+)*([^a-z0-9_.-]|$)|[.]envrc'
+-  local JQWORD='(^|[^a-z0-9_.-])jq([[:space:]]|$)'
+-  if [[ $S =~ $ENVF ]]; then
+-    if [ "$TOOL" = "Bash" ] && [[ $S =~ $JQWORD ]]; then
+-      # RAW is guard_main's local (bash dynamic scope): the original command, quotes intact.
+-      jq_strip_filters "$(printf '%s' "$RAW" | tr '[:upper:]' '[:lower:]')"
+-      JQS=$(printf '%s' "$JQS" | tr '\n\r\t' '   ' | tr -d "\"'\\\\\`" | tr -s ' ')
+-      if [[ $JQS =~ $ENVF ]]; then
+-        block "secret-env-file" "$ENVF" "$R_SECRET"
+-      fi
+-    else
+-      block "secret-env-file" "$ENVF" "$R_SECRET"
+-    fi
+-  fi
++  # .env FILE names as a path token (.env, .env.<suffix>, .envrc). sys.env, process.env,
++  # os.environ, .environment, and System.getenv do not match. jq field access that names .env
++  # (jq '.env') also matches and is blocked; that false positive is accepted (repair-03 reverted
++  # the repair-02 jq exemption).
++  rule "secret-env-file" '(^|[^a-z0-9_])[.]env([.][a-z0-9_-]+)*([^a-z0-9_.-]|$)|[.]envrc' "$R_SECRET"
+   rule "secret-aws-dir" '(^|[^a-z0-9_])[.]aws(/|[[:space:]]|$)' "$R_SECRET"
+   rule "secret-keys" '[.]ssh/|id_(rsa|dsa|ecdsa|ed25519)|[a-z0-9_-][.](pem|p12|pfx|jks|keystore|key)([^a-z0-9_]|$)' "$R_SECRET"
+   rule "secret-dirs-and-files" '(^|[[:space:]/=:])[.]?secrets?/|[.]netrc|[.]git-credentials|[.]docker/config[.]json|gh/hosts[.]yml|[.]tfstate|credentials[.]json|[.]npmrc|[.]pypirc|[.]claude/[.]credentials' "$R_SECRET"
+   rule "secret-env-dump" '(^|[;&|(][[:space:]]*)(printenv|env|export[[:space:]]+-p|declare[[:space:]]+-x)[[:space:]]*($|[;&|)])|(^|[^a-z0-9_])printenv([[:space:]]|$)|/proc/[^/[:space:]]+/environ' "$R_SECRET"
++  # jq's env built-in and $ENV print the whole process environment. Blocked in any command that
++  # runs jq. Field access such as .env (blocked above), .foo.env, or .environment is not the
++  # built-in and does not match this rule.
++  if [[ $S =~ $JQ_WORD ]] && [[ $S =~ $JQ_ENV ]]; then
++    block "secret-jq-env" "jq with env or \$ENV: $JQ_ENV" "$R_SECRET"
++  fi
+   rule "secret-variables" 'aws_secret_access_key|aws_session_token|github_personal_access_token|github_token|anthropic_api_key|claude_code_oauth_token' "$R_SECRET"
+   rule "secret-aws-reads" "${A}(secretsmanager[[:space:]]+(get-secret-value|batch-get-secret-value|delete-[a-z0-9-]+|put-secret-value|update-secret[a-z-]*|create-secret|rotate-secret|restore-secret|put-resource-policy)|ssm[[:space:]]+(get-parameters?|get-parameters-by-path)[[:space:]][^;&|]*--with-decryption|ssm[[:space:]]+(delete-[a-z0-9-]+|put-parameter|send-command|start-session)|kms[[:space:]]+(decrypt|re-encrypt|generate-data-key[a-z-]*)|sts[[:space:]]+(assume-role[a-z-]*|get-session-token|get-federation-token)|configure[[:space:]]+(export-credentials|get|set|import)|ecr[[:space:]]+(get-login-password|get-authorization-token))" "$R_SECRET"
+   rule "secret-keychain" 'security[[:space:]]+(find-generic-password|find-internet-password|dump-keychain)' "$R_SECRET"
+@@ -343,6 +374,22 @@
+ $SW
+ SEGMENTS
+   fi
++
++  # --- Output-file options of otherwise read-only commands (repair-03) ---
++  # git's --output, --output-directory, format-patch and archive -o, and bundle create, and the
++  # second positional argument (output file) of python -m json.tool write a file without a write
++  # verb or a > redirection. Each such target is checked against the protected paths, segment by
++  # segment. A target outside the protected paths (for example under $TMPDIR) is allowed.
++  if [[ $S =~ json[.]tool ]] || { [[ $S =~ $GIT_WORD ]] && [[ $S =~ --out|format-patch|archive|bundle ]]; }; then
++    local oseg
++    while IFS= read -r oseg; do
++      [ -n "$oseg" ] || continue
++      check_git_output "$oseg"
++      check_json_tool_output "$oseg"
++    done <<OSEGMENTS
++$SEG
++OSEGMENTS
++  fi
+ }
+ 
+ guard_main() {
+@@ -351,10 +398,23 @@
+   if ! command -v jq >/dev/null 2>&1; then
+     block "guard-unavailable" "jq is not installed" "Install jq (required by .claude/hooks). Until then Bash and MCP tool calls are blocked (fail closed)."
+   fi
+-  if ! TOOL=$(printf '%s' "$payload" | jq -r '.tool_name // ""' 2>/dev/null); then
++  if ! [[ $payload =~ [^[:space:]] ]]; then
++    block "guard-empty-payload" "hook payload is empty" "Retry the tool call; if this persists, report it to factory-engineer. The guard fails closed on an empty payload."
++  fi
++  if ! TOOL=$(printf '%s' "$payload" | jq -r 'if type == "object" and ((.tool_name // "") | type) == "string" then (.tool_name // "") else error("not a hook payload object") end' 2>/dev/null); then
+     TOOL="unknown"
+-    block "guard-unreadable-payload" "hook payload is not valid JSON" "Retry the tool call; if this persists, report it to factory-engineer."
++    block "guard-unreadable-payload" "hook payload is not a valid JSON object" "Retry the tool call; if this persists, report it to factory-engineer."
+   fi
++  case "$TOOL" in
++    *$'\n'*)
++      TOOL="unknown"
++      block "guard-unreadable-payload" "hook payload holds more than one JSON document" "Retry the tool call; if this persists, report it to factory-engineer."
++      ;;
++  esac
++  if [ -z "$TOOL" ]; then
++    TOOL="unknown"
++    block "guard-no-tool-name" "hook payload has no tool_name" "Retry the tool call; if this persists, report it to factory-engineer. The guard fails closed when it cannot tell which tool is being called."
++  fi
+ 
+   local RAW=""
+   case "$TOOL" in
+@@ -395,7 +455,7 @@
+ }
+ 
+ self_test() {
+-  local self="$0" fails=0 total=0 line expect tool input payload got err NL
++  local self="$0" fails=0 total=0 line expect tool input payload got err NL cat_
+   NL=$'\n'
+   if ! command -v jq >/dev/null 2>&1; then
+     echo "SELF-TEST FAIL: jq is not installed" >&2
+@@ -408,7 +468,10 @@
+     tool=${line%%@@*}
+     input=${line#*@@}
+     input=${input//<NL>/$NL}
+-    if [ "$tool" = "Bash" ]; then
++    if [ "$tool" = "RAW" ]; then
++      # The input is the raw hook payload (<EMPTY> = an empty payload).
++      if [ "$input" = "<EMPTY>" ]; then payload=""; else payload=$input; fi
++    elif [ "$tool" = "Bash" ]; then
+       payload=$(jq -cn --arg c "$input" '{hook_event_name:"PreToolUse",tool_name:"Bash",tool_input:{command:$c}}')
+     else
+       payload=$(jq -cn --arg t "$tool" --argjson i "$input" '{hook_event_name:"PreToolUse",tool_name:$t,tool_input:$i}')
+@@ -417,14 +480,16 @@
+     got=$?
+     total=$((total + 1))
+     if [ "$got" = "$expect" ]; then
+-      printf 'PASS expect=%s got=%s  %s  %s\n' "$expect" "$got" "$tool" "$input"
++      # For a blocked vector, show which rule category fired (first stderr line).
++      cat_=$(printf '%s' "$err" | head -1 | sed -n 's/^BLOCKED by [^[]*\(\[[^]]*\]\).*/\1/p')
++      printf 'PASS expect=%s got=%s %s %s  %s\n' "$expect" "$got" "${cat_:-}" "$tool" "$input"
+     else
+       fails=$((fails + 1))
+       printf 'FAIL expect=%s got=%s  %s  %s\n' "$expect" "$got" "$tool" "$input"
+       if [ -n "$err" ]; then printf '     stderr: %s\n' "$(printf '%s' "$err" | head -2 | tr '\n' ' ')"; fi
+     fi
+   done <<'VECTORS'
+-# expected-exit@@tool@@command-or-json-input
++# expected-exit@@tool@@command-or-json-input (tool RAW: the input is the raw payload)
+ 2@@Bash@@terraform destroy
+ 2@@Bash@@echo 'terraform destroy'
+ 2@@Bash@@terraform -chdir=infra/terraform/environments/dev apply -auto-approve
+@@ -601,27 +666,29 @@
+ 2@@Bash@@cat $(echo)jq '.env'
+ 2@@Bash@@cat >| jq '.env'
+ 2@@Bash@@cat >& jq '.env'
+-# repair-02 finding 1: conservative blocks (jq not in command position, or a non-program operand)
+ 2@@Bash@@bash -c "jq '.env // {}' x.json"
+ 2@@Bash@@jq .env x.json
+ 2@@Bash@@jq --arg f .env -n '$f'
+-# repair-02 finding 1: identifiers and jq field access are not .env FILE paths
++# repair-02 finding 1: identifiers are not .env FILE paths (unchanged by repair-03)
+ 0@@Bash@@grep -r "sys.env" modules/
+ 0@@Bash@@grep -rn "process.env" modules/services
+ 0@@Bash@@grep -rn ".environment" modules/core
+ 0@@Bash@@grep -rn "os.environ" scripts/
+ 0@@Bash@@grep -rn "System.getenv" modules/
+-0@@Bash@@jq '.env // {}' file.json
+-0@@Bash@@jq -r '.env.HOME' x.json
+-0@@Bash@@jq '.env.FOO' config/app.json
+-0@@Bash@@jq -r '.env | keys' x.json
+-0@@Bash@@jq ".env.HOME" x.json
+-0@@Bash@@jq --arg k v -r '.env[$k]' x.json
+-0@@Bash@@jq --indent 2 '.env' x.json
+-0@@Bash@@FOO=1 jq -c '.env' x.json
+-0@@Bash@@cat x.json | jq '.env'
+-0@@Bash@@jq '.mcpServers[].env // {}' .mcp.json
+-0@@Bash@@jq -r '.env' x.json 2>/dev/null || echo none
++# repair-03 finding 5: the repair-02 jq exemption is reverted, so jq field access that names .env
++# is blocked again by the plain secret-env-file rule (accepted false positive)
++2@@Bash@@jq '.env // {}' file.json
++2@@Bash@@jq -r '.env.HOME' x.json
++2@@Bash@@jq '.env.FOO' config/app.json
++2@@Bash@@jq -r '.env | keys' x.json
++2@@Bash@@jq ".env.HOME" x.json
++2@@Bash@@jq --arg k v -r '.env[$k]' x.json
++2@@Bash@@jq --indent 2 '.env' x.json
++2@@Bash@@FOO=1 jq -c '.env' x.json
++2@@Bash@@cat x.json | jq '.env'
++2@@Bash@@jq '.mcpServers[].env // {}' .mcp.json
++2@@Bash@@jq -r '.env' x.json 2>/dev/null || echo none
++2@@Bash@@cat() { jq "$@"; }; cat '.env' .mcp.json
+ # repair-02 finding 2: npx, uvx, uv run, and make wrappers writing to protected paths are blocked
+ 2@@Bash@@npx shx rm -rf .claude/hooks
+ 2@@Bash@@npx shx cp /tmp/x CLAUDE.md
+@@ -640,6 +707,111 @@
+ 0@@Bash@@make install PREFIX=/tmp/scholarchain-probe
+ # repair-02 finding 2: sbt is not a wrapper (behavior unchanged from before the repair)
+ 0@@Bash@@sbt "testOnly *Spec -- -z rm" && ls .claude/hooks
++# repair-03 finding 1(a): git output-file options that target a protected path are blocked
++2@@Bash@@git diff --output=CLAUDE.md
++2@@Bash@@git diff --output CLAUDE.md
++2@@Bash@@git diff HEAD --output=.claude/hooks/guard-dangerous.sh
++2@@Bash@@git log -p --output=.claude/settings.local.json
++2@@Bash@@git show HEAD --output=spec/ScholarChain-spec.md
++2@@Bash@@git diff --output=./.claude/.last-test-run
++2@@Bash@@git diff --output=docs/agent-runs/phase-01/human-gate.md
++2@@Bash@@git diff --output="docs/agents.md"
++2@@Bash@@git diff --output='.mcp.json'
++2@@Bash@@git diff --output=/Users/achyutpatel/Developer/Cloud/ScholarChain/.claude/settings.json
++2@@Bash@@git diff --output=labels/gold-entity-matches.csv
++2@@Bash@@git diff --output=~/.claude/settings.json
++2@@Bash@@git diff --output=$HOME/.claude/settings.json
++2@@Bash@@git diff --out=CLAUDE.md
++2@@Bash@@git diff --outp .claude/settings.json
++2@@Bash@@git --no-pager diff --stat --output=docs//agents.md
++2@@Bash@@git -c core.pager=cat log --output=.git/config
++2@@Bash@@git diff --no-index /tmp/a /tmp/b --output=.claude/agents/code-reviewer.md
++2@@Bash@@echo ok && git diff --output=CLAUDE.md
++2@@Bash@@git diff --stat; git diff --output=CLAUDE.md
++2@@Bash@@git format-patch -o .claude/hooks HEAD~1
++2@@Bash@@git format-patch -ospec HEAD~1
++2@@Bash@@git format-patch --output-directory spec HEAD~1
++2@@Bash@@git format-patch --output-dir=docs/agent-runs/phase-01 HEAD~1
++2@@Bash@@git archive -o CLAUDE.md HEAD
++2@@Bash@@git archive --output=.claude/settings.json HEAD
++2@@Bash@@git bundle create .claude/hooks/x.bundle HEAD
++2@@Bash@@git -C spec format-patch -1
++2@@Bash@@git -C .claude diff --output=settings.local.json
++# repair-03 finding 1(a): git output-file options with a temporary target, and plain git reads, are allowed
++0@@Bash@@git diff
++0@@Bash@@git diff --stat
++0@@Bash@@git diff -- spec/ .claude/ CLAUDE.md
++0@@Bash@@git diff --output=/tmp/scholarchain-repair.diff
++0@@Bash@@git diff --output=/private/tmp/claude-501/x/repair-03.diff -- .claude/ docs/agents.md
++0@@Bash@@git log --oneline -5 -- CLAUDE.md
++0@@Bash@@git log --oneline spec/
++0@@Bash@@git show HEAD:CLAUDE.md
++0@@Bash@@git format-patch -o /tmp/scholarchain-patches HEAD~1
++0@@Bash@@git diff --output-indicator-new=+ HEAD -- .claude/
++0@@Bash@@git ls-files -o spec/
++0@@Bash@@git diff --no-index /tmp/a /tmp/b
++# repair-03 finding 1(b): python -m json.tool writing its output file to a protected path is blocked
++2@@Bash@@python3 -m json.tool /tmp/x.json CLAUDE.md
++2@@Bash@@python3 -m json.tool .claude/settings.json .claude/settings.json
++2@@Bash@@python3 -m json.tool --indent 2 /tmp/x.json .mcp.json
++2@@Bash@@python3 -m json.tool --indent=2 /tmp/x.json .mcp.json
++2@@Bash@@python3 -m json.tool --sort-keys - .claude/settings.local.json
++2@@Bash@@python -m json.tool /tmp/x .claude/hooks/guard-paths.sh
++2@@Bash@@python3.12 -m json.tool /tmp/x spec/ScholarChain-spec.md
++2@@Bash@@/usr/bin/python3 -I -m json.tool /tmp/x docs/agents.md
++2@@Bash@@python3 -mjson.tool /tmp/x CLAUDE.md
++2@@Bash@@uv run python3 -m json.tool /tmp/x .claude/.last-test-run
++2@@Bash@@python3 -m json.tool "/tmp/x" "labels/gold.json"
++2@@Bash@@cat /tmp/x | python3 -m json.tool - docs/agent-runs/phase-01/human-gate.md
++2@@Bash@@python3 -m json.tool -- /tmp/x .claude/agents/code-reviewer.md
++# repair-03 finding 1(b): json.tool reading a protected file, or writing to a temporary path, is allowed
++0@@Bash@@python3 -m json.tool .mcp.json
++0@@Bash@@python3 -m json.tool .claude/settings.json
++0@@Bash@@python3 -m json.tool --indent 2 .mcp.json
++0@@Bash@@python3 -m json.tool .claude/settings.json /tmp/settings.pretty.json
++0@@Bash@@python3 -m json.tool --sort-keys .claude/settings.json > /tmp/x.json
++0@@Bash@@cat .mcp.json | python3 -m json.tool
++0@@Bash@@python3 -m json.tool < .mcp.json
++# repair-03 finding 2(a): jq's env built-in and $ENV print the environment and are blocked
++2@@Bash@@jq -n env
++2@@Bash@@jq -n 'env'
++2@@Bash@@jq -n "env"
++2@@Bash@@jq -n '$ENV'
++2@@Bash@@jq -n "\$ENV"
++2@@Bash@@jq -rn 'env.HOME'
++2@@Bash@@jq -n 'env | keys'
++2@@Bash@@jq -n '[env[]]'
++2@@Bash@@jq -n '{e: env}'
++2@@Bash@@jq -n '$ENV | to_entries'
++2@@Bash@@jq -n 'en''v'
++2@@Bash@@jq -n '"\(env)"'
++2@@Bash@@echo '{}' | jq 'env'
++2@@Bash@@/opt/homebrew/bin/jq -n '$ENV.PATH'
++2@@Bash@@cat x.json | jq '. + {x: $ENV.HOME}'
++2@@Bash@@JQ=1 jq -n -r 'ENV'
++# repair-03 finding 2(a): jq programs that do not use env or $ENV are allowed
++0@@Bash@@jq '.permissions.allow | length' .claude/settings.json
++0@@Bash@@jq -r '.environment' x.json
++0@@Bash@@jq '.envelope' x.json
++0@@Bash@@jq '.foo.env' x.json
++0@@Bash@@jq -r '.name' package.json
++0@@Bash@@jq --arg environment x -n '$environment'
++0@@Bash@@jq '.mcpServers | keys' .mcp.json
++0@@Bash@@grep -rn env modules/
++# repair-03 finding 6: fail closed on an empty payload, a missing or empty tool_name, or a non-object
++2@@RAW@@<EMPTY>
++2@@RAW@@<NL>
++2@@RAW@@{}
++2@@RAW@@{"tool_input":{"command":"ls"}}
++2@@RAW@@{"tool_name":"","tool_input":{"command":"ls"}}
++2@@RAW@@{"tool_name":null,"tool_input":{"command":"ls"}}
++2@@RAW@@{"tool_name":7,"tool_input":{"command":"ls"}}
++2@@RAW@@null
++2@@RAW@@[]
++2@@RAW@@not json
++2@@RAW@@{"tool_name":"Bash","tool_input":{"command":"ls"}}<NL>{"tool_name":"Read"}
++0@@RAW@@{"tool_name":"Bash","tool_input":{"command":"ls"}}
++0@@RAW@@{"tool_name":"mcp__aws-docs__search_documentation","tool_input":{"search_phrase":"emr"}}
+ VECTORS
+   echo "guard-dangerous self-test: $((total - fails))/$total passed"
+   [ "$fails" -eq 0 ]
+--- /private/tmp/claude-501/-Users-achyutpatel-Developer-Cloud-ScholarChain/26c62c73-1c3b-476d-ac9e-c919e5c528ee/scratchpad/repair-03-pre/.claude/hooks/guard-paths.sh	2026-10-21 19:10:03
++++ .claude/hooks/guard-paths.sh	2026-10-21 19:59:37
+@@ -1,10 +1,19 @@
+ #!/usr/bin/env bash
+ # guard-paths.sh - ScholarChain deterministic floor (see docs/agents.md).
+ #
+-# PreToolUse hook, matcher "Read|Write|Edit|MultiEdit|NotebookEdit".
++# PreToolUse hook, matcher "Read|Grep|Glob|Write|Edit|MultiEdit|NotebookEdit".
+ #
+ # Read:  blocks secret and credential paths (.env*, secrets/, private keys, ~/.aws/,
+ #        ~/.ssh/, credential files, Terraform state and plan files).
++# Grep/Glob: blocks a search whose path input (Grep and Glob), glob input (Grep), or pattern
++#        input (Glob) targets a secret: a secret file or directory named literally, or a path
++#        component that can match a secret name as a shell pattern (.e*v, .en?, .[e]nv, *.pem,
++#        secret*, **/id_*, {x,.env}). A component made only of * and ? (*, **) targets nothing
++#        in particular and passes, and a generic *.json does not count as targeting
++#        credentials.json. Grep's content regex (its pattern input) is not a path and is not
++#        checked. A recursive search of an ordinary directory with no glob is not blocked;
++#        whether it opens hidden or secret files depends on the search tool and on the Read
++#        deny rules in .claude/settings.json.
+ # Write/Edit/MultiEdit/NotebookEdit:
+ #   1. Always blocked for everyone: secret paths, sensitive home files (~/.claude/, ~/.aws/,
+ #      shell init files, Git credentials), spec/**, labels/**, .git/**,
+@@ -162,14 +171,19 @@
+   printf 'no owner (ambiguous ownership: escalate to the human architect; factory-engineer proposes a ratifiable row)'
+ }
+ 
+-is_secret() {
+-  # $1 lower-case absolute path, $2 lower-case home
+-  local p="$1" h="$2" b
+-  b="${p##*/}"
+-  case "$b" in
++is_secret_name() {
++  # $1 lower-case file or directory name (one path component).
++  case "$1" in
+     .env|.env.*|.envrc|*.pem|*.key|*.p12|*.pfx|*.jks|*.keystore|id_rsa*|id_dsa*|id_ecdsa*|id_ed25519*|.netrc|.git-credentials|credentials|credentials.json|*.tfstate|*.tfstate.backup|*.tfplan|.npmrc|.pypirc)
+       return 0 ;;
+   esac
++  return 1
++}
++
++is_secret() {
++  # $1 lower-case absolute path, $2 lower-case home
++  local p="$1" h="$2"
++  if is_secret_name "${p##*/}"; then return 0; fi
+   case "$p" in
+     */secrets/*|*/secret/*|*/.aws/*|*/.ssh/*|*/terraform.tfstate.d/*|"$h"/.config/gh/hosts.yml|"$h"/.docker/config.json|"$h"/.claude/.credentials.json)
+       return 0 ;;
+@@ -200,6 +214,88 @@
+   return 1
+ }
+ 
++# Grep and Glob (repair-03). Sample secret file and directory names that a search path component
++# must not be able to match. A component targets a secret when it is a secret name itself or
++# when one of these samples matches it as a shell pattern.
++SECRET_SAMPLES=".env .env.local .env.production .envrc x.pem x.key x.p12 x.pfx x.jks x.keystore id_rsa id_dsa id_ecdsa id_ed25519 .netrc .git-credentials credentials credentials.json .credentials.json terraform.tfstate terraform.tfstate.backup x.tfplan .npmrc .pypirc secrets secret .aws .ssh .docker terraform.tfstate.d"
++BRACE_RX='^(.*)[{]([^{}]*)[}](.*)$'
++
++comp_targets_secret() {
++  # $1 one lower-case path component, possibly with glob characters.
++  local c="$1" s
++  [ -n "$c" ] || return 1
++  if is_secret_name "$c"; then return 0; fi
++  case "$c" in
++    *[!*?]*) ;;
++    *) return 1 ;; # only * and ?: matches everything and targets no secret in particular
++  esac
++  for s in $SECRET_SAMPLES; do
++    # shellcheck disable=SC2053
++    if [[ $s == $c ]]; then
++      # A generic *.json pattern does not count as targeting credentials.json.
++      case "$s" in *.json) if [[ zz9q.json == $c ]]; then continue; fi ;; esac
++      return 0
++    fi
++  done
++  return 1
++}
++
++path_targets_secret() {
++  # $1 lower-case path or glob. 0 when any component can name a secret. Brace alternatives are
++  # expanded first; more than 4 brace groups or 16 commas fail closed (treated as a secret target).
++  local p="$1" c pre alts post rest alt nb nc
++  nb=${p//[!\{]/}
++  nc=${p//[!,]/}
++  if [ "${#nb}" -gt 4 ] || [ "${#nc}" -gt 16 ]; then return 0; fi
++  if [[ $p =~ $BRACE_RX ]]; then
++    pre=${BASH_REMATCH[1]}
++    alts=${BASH_REMATCH[2]}
++    post=${BASH_REMATCH[3]}
++    rest="$alts,"
++    while [ -n "$rest" ]; do
++      alt=${rest%%,*}
++      rest=${rest#*,}
++      if path_targets_secret "$pre$alt$post"; then return 0; fi
++    done
++    return 1
++  fi
++  while [ -n "$p" ]; do
++    c=${p%%/*}
++    if [ "$c" = "$p" ]; then p=""; else p=${p#*/}; fi
++    if comp_targets_secret "$c"; then return 0; fi
++  done
++  return 1
++}
++
++guard_search() {
++  # $1 payload. Grep and Glob are read-only: block when the path input, or the Grep glob or Glob
++  # pattern input, targets a secret. Exits.
++  local payload="$1" path glob cwd home lhome abs item
++  path=$(printf '%s' "$payload" | jq -r '.tool_input.path // ""')
++  if [ "$TOOL" = "Grep" ]; then
++    glob=$(printf '%s' "$payload" | jq -r '.tool_input.glob // ""')
++  else
++    glob=$(printf '%s' "$payload" | jq -r '.tool_input.pattern // ""')
++  fi
++  cwd=$(printf '%s' "$payload" | jq -r '.cwd // ""')
++  SHOWN_PATH="path=${path:-<default>} glob/pattern=${glob:-<none>}"
++  home=$(cd "$HOME" 2>/dev/null && pwd -P) || home="$HOME"
++  lhome=$(lower "$home")
++  for item in "$path" "$glob"; do
++    [ -n "$item" ] || continue
++    if path_targets_secret "$(lower "$item")"; then
++      block "secret-search" "the search path, glob, or pattern can reach a secret or credential file" "Secrets are never read by agents (CLAUDE.md, Security invariants). Narrow the search to non-secret paths and globs. Owner: human architect."
++    fi
++  done
++  if [ -n "$path" ]; then
++    abs=$(resolve_path "$path" "${cwd:-$(pwd -P)}")
++    if is_secret "$(lower "$abs")" "$lhome" || path_targets_secret "$(lower "$abs")"; then
++      block "secret-search" "the search path resolves to a secret or credential location" "Secrets are never read by agents (CLAUDE.md, Security invariants). Narrow the search to non-secret paths. Owner: human architect."
++    fi
++  fi
++  exit 0
++}
++
+ guard_main() {
+   local payload
+   payload=$(cat)
+@@ -211,6 +307,7 @@
+     block "guard-unreadable-payload" "hook payload is not valid JSON" "Retry; if this persists, report it to factory-engineer."
+   fi
+   case "$TOOL" in
++    Grep|Glob) guard_search "$payload" ;;
+     Read|Write|Edit|MultiEdit|NotebookEdit) ;;
+     *) exit 0 ;;
+   esac
+@@ -317,7 +414,7 @@
+ }
+ 
+ self_test() {
+-  local self="$0" root fails=0 total=0 line expect tool agent path payload got err
++  local self="$0" root fails=0 total=0 line expect tool agent path payload got err ti
+   if ! command -v jq >/dev/null 2>&1; then
+     echo "SELF-TEST FAIL: jq is not installed" >&2
+     return 1
+@@ -328,17 +425,23 @@
+     expect=${line%%@@*}; line=${line#*@@}
+     tool=${line%%@@*}; line=${line#*@@}
+     agent=${line%%@@*}; path=${line#*@@}
++    if [ "$tool" = "Grep" ] || [ "$tool" = "Glob" ]; then
++      # Search tools: the last column is the tool_input JSON object itself.
++      ti=$path
++    else
++      ti=$(jq -cn --arg p "$path" '{file_path:$p}')
++    fi
+     if [ "$agent" = "-" ]; then
+       # No agent_id and no agent_type (main thread, or a subagent whose identity is missing).
+-      payload=$(jq -cn --arg t "$tool" --arg p "$path" --arg c "$root" '{hook_event_name:"PreToolUse",tool_name:$t,cwd:$c,tool_input:{file_path:$p}}')
++      payload=$(jq -cn --arg t "$tool" --argjson ti "$ti" --arg c "$root" '{hook_event_name:"PreToolUse",tool_name:$t,cwd:$c,tool_input:$ti}')
+     elif [ "$agent" = "?" ]; then
+       # agent_id present, agent_type missing.
+-      payload=$(jq -cn --arg t "$tool" --arg p "$path" --arg c "$root" '{hook_event_name:"PreToolUse",tool_name:$t,cwd:$c,agent_id:"self-test-agent",tool_input:{file_path:$p}}')
++      payload=$(jq -cn --arg t "$tool" --argjson ti "$ti" --arg c "$root" '{hook_event_name:"PreToolUse",tool_name:$t,cwd:$c,agent_id:"self-test-agent",tool_input:$ti}')
+     elif [ "${agent#+}" != "$agent" ]; then
+       # agent_type present, agent_id missing.
+-      payload=$(jq -cn --arg t "$tool" --arg p "$path" --arg c "$root" --arg a "${agent#+}" '{hook_event_name:"PreToolUse",tool_name:$t,cwd:$c,agent_type:$a,tool_input:{file_path:$p}}')
++      payload=$(jq -cn --arg t "$tool" --argjson ti "$ti" --arg c "$root" --arg a "${agent#+}" '{hook_event_name:"PreToolUse",tool_name:$t,cwd:$c,agent_type:$a,tool_input:$ti}')
+     else
+-      payload=$(jq -cn --arg t "$tool" --arg p "$path" --arg c "$root" --arg a "$agent" '{hook_event_name:"PreToolUse",tool_name:$t,cwd:$c,agent_id:"self-test-agent",agent_type:$a,tool_input:{file_path:$p}}')
++      payload=$(jq -cn --arg t "$tool" --argjson ti "$ti" --arg c "$root" --arg a "$agent" '{hook_event_name:"PreToolUse",tool_name:$t,cwd:$c,agent_id:"self-test-agent",agent_type:$a,tool_input:$ti}')
+     fi
+     err=$(printf '%s' "$payload" | CLAUDE_PROJECT_DIR="$root" bash "$self" 2>&1 >/dev/null)
+     got=$?
+@@ -436,6 +539,54 @@
+ 2@@Write@@+domain-engineer@@build.sbt
+ 0@@Write@@+domain-engineer@@modules/core/src/main/scala/WorkRecord.scala
+ 2@@Write@@+domain-engineer@@docs/agent-runs/phase-99/agent-report.md
++# repair-03 finding 4: Grep and Glob. The last column is the tool_input JSON object.
++# Searches whose path, glob, or pattern targets a secret are blocked.
++2@@Grep@@-@@{"pattern":"KEY","path":".env"}
++2@@Grep@@code-reviewer@@{"pattern":"KEY","path":"config/.env.local","output_mode":"content"}
++2@@Grep@@-@@{"pattern":"token","path":"~/.aws"}
++2@@Grep@@-@@{"pattern":"aws_secret","path":"~/.aws/credentials"}
++2@@Grep@@-@@{"pattern":"x","path":"secrets"}
++2@@Grep@@-@@{"pattern":"x","path":"secrets/neptune.json"}
++2@@Grep@@-@@{"pattern":"x","path":"~/.ssh"}
++2@@Grep@@-@@{"pattern":"x","path":"infra/terraform/environments/dev/terraform.tfstate"}
++2@@Grep@@-@@{"pattern":"KEY","path":".","glob":".env*"}
++2@@Grep@@-@@{"pattern":"KEY","glob":"**/.env"}
++2@@Grep@@-@@{"pattern":"KEY","glob":".e*v"}
++2@@Grep@@-@@{"pattern":"KEY","glob":".en?"}
++2@@Grep@@-@@{"pattern":"KEY","glob":".[e]nv"}
++2@@Grep@@-@@{"pattern":"KEY","glob":"{.env,x.json}"}
++2@@Grep@@-@@{"pattern":"KEY","glob":"*.{pem,txt}"}
++2@@Grep@@-@@{"pattern":"BEGIN","glob":"*.pem"}
++2@@Grep@@-@@{"pattern":"x","glob":"**/*.tfstate"}
++2@@Grep@@-@@{"pattern":"x","glob":"**/secret*/**"}
++2@@Grep@@-@@{"pattern":"x","glob":"*credentials*"}
++2@@Grep@@-@@{"pattern":"x","glob":"{a,b}{c,d}{e,f}{g,h}{i,j}"}
++2@@Glob@@-@@{"pattern":"**/.env*"}
++2@@Glob@@-@@{"pattern":".e*"}
++2@@Glob@@-@@{"pattern":"~/.aws/**"}
++2@@Glob@@-@@{"pattern":"**/secrets/**"}
++2@@Glob@@-@@{"pattern":"**/id_*"}
++2@@Glob@@-@@{"pattern":"*","path":"~/.aws"}
++2@@Glob@@-@@{"pattern":"**/*.key"}
++2@@Glob@@domain-engineer@@{"pattern":"**/.ENV.local"}
++2@@Glob@@-@@{"pattern":"**/{x,.e*}"}
++2@@Glob@@-@@{"pattern":"**/.docker/*"}
++# repair-03 finding 4: ordinary Grep and Glob searches are allowed.
++0@@Grep@@-@@{"pattern":"sys.env","path":"modules"}
++0@@Grep@@-@@{"pattern":"TODO","path":".","glob":"*.scala"}
++0@@Grep@@code-reviewer@@{"pattern":"tools:","path":".claude/agents","glob":"*.md"}
++0@@Grep@@-@@{"pattern":"guard","path":".claude/hooks","glob":"*.sh"}
++0@@Grep@@-@@{"pattern":"RATIFIED","path":"spec/ScholarChain-spec.md"}
++0@@Grep@@-@@{"pattern":"version","glob":"**/*.json"}
++0@@Grep@@-@@{"pattern":"x","glob":"*.{json,yaml}"}
++0@@Grep@@-@@{"pattern":".env"}
++0@@Glob@@-@@{"pattern":"**/*.scala"}
++0@@Glob@@-@@{"pattern":".claude/agents/*.md"}
++0@@Glob@@-@@{"pattern":"**/*"}
++0@@Glob@@-@@{"pattern":"*"}
++0@@Glob@@-@@{"pattern":"**/*.tf","path":"infra"}
++0@@Glob@@-@@{"pattern":"docs/**/*.md"}
++0@@Glob@@-@@{"pattern":"**/*.{scala,sbt}"}
+ VECTORS
+   echo "guard-paths self-test: $((total - fails))/$total passed"
+   [ "$fails" -eq 0 ]
+--- /private/tmp/claude-501/-Users-achyutpatel-Developer-Cloud-ScholarChain/26c62c73-1c3b-476d-ac9e-c919e5c528ee/scratchpad/repair-03-pre/.claude/hooks/validate-agent-files.sh	2026-10-21 19:06:16
++++ .claude/hooks/validate-agent-files.sh	2026-10-21 22:33:23
+@@ -7,8 +7,14 @@
+ #             spoke), reviewer fence (code-reviewer: Read, Grep, Glob only), refusal boundary
+ #             and report contract sections, every agent listed in docs/agents.md
+ #   hooks     every hook executable and passing bash -n; every hook referenced by
+-#             .claude/settings.json exists; every hook file is referenced
++#             .claude/settings.json exists; every hook file is referenced; every hook that has a
++#             --self-test mode passes it (guard-dangerous.sh, guard-paths.sh, and
++#             verify-tests-ran.sh must have one)
+ #   json      .claude/settings.json and .mcp.json parse; floor rules present in settings;
++#             no auto-approved Bash rule of the write-or-execute class (bare Bash, Bash(*), git
++#             wildcards, jq, python, bash, shellcheck, git diff/log/show with arguments, sbt
++#             other than check and Test/compile; "cmd *" and legacy "cmd:*" spellings);
++#             guard-paths.sh registered for Read, Grep, Glob, and the write tools;
+ #             no secret-looking literals in .mcp.json; no .claude/settings.local.json
+ #   commands  every command names at least one existing agent (**agent-name**) and has a
+ #             "## Gates" section
+@@ -18,13 +24,17 @@
+ #   validate-agent-files.sh --hook   PostToolUse hook mode: validates only after a write to a
+ #                                    constitutional path; exit 2 (stderr to the agent) on failure
+ #
+-# Compatible with bash 3.2. Requires jq. Reads files only; never writes.
++# Compatible with bash 3.2. Requires jq. Never writes inside the repository. The hook self-tests
++# it runs execute nothing they describe; verify-tests-ran.sh --self-test creates and removes a
++# throwaway Git fixture under $TMPDIR.
+ 
+ set -u
+ 
+ REQUIRED_AGENTS="factory-engineer build-engineer domain-engineer dataset-engineer hadoop-engineer entity-resolution-engineer spark-engineer storage-engineer rag-engineer service-engineer test-engineer code-reviewer infra-engineer deploy-engineer experiment-engineer documentation-engineer incident-responder dependency-updater"
+ FORBIDDEN_AGENTS="feature-implementer db-migrator"
+ REVIEWER_ALLOWED_TOOLS="Read Grep Glob"
++SELFTEST_REQUIRED="guard-dangerous.sh guard-paths.sh verify-tests-ran.sh"
++GUARD_PATHS_TOOLS="Read Grep Glob Write Edit MultiEdit NotebookEdit"
+ 
+ FAILS=0
+ CHECKS=0
+@@ -115,9 +125,22 @@
+   if [ -f "$s" ] && jq empty "$s" >/dev/null 2>&1; then
+     if [ "$(jq -r '.permissions.disableBypassPermissionsMode // ""' "$s")" = "disable" ]; then pass "bypass permissions mode is disabled"; else fail "bypass permissions mode is disabled"; fi
+     local rule
+-    for rule in 'Bash(terraform apply *)' 'Bash(terraform destroy *)' 'Bash(git push --force *)' 'Bash(git push -f *)' 'Bash(git push --force-with-lease *)' 'Read(**/.env)' 'Read(**/.env.*)' 'Read(~/.aws/**)' 'Edit(spec/**)' 'Bash(aws s3 rb *)' 'Bash(aws dynamodb delete-table *)' 'Bash(aws s3vectors delete-index *)' 'Bash(aws kms schedule-key-deletion *)' 'Bash(aws emr terminate-clusters *)' 'Bash(aws ecr delete-repository *)'; do
++    for rule in 'Bash(terraform apply *)' 'Bash(terraform destroy *)' 'Bash(git push --force *)' 'Bash(git push -f *)' 'Bash(git push --force-with-lease *)' 'Read(**/.env)' 'Read(**/.env.*)' 'Read(~/.aws/**)' 'Edit(spec/**)' 'Bash(aws s3 rb *)' 'Bash(aws s3 rm *)' 'Bash(aws dynamodb delete-table *)' 'Bash(aws neptune delete-*)' 'Bash(aws neptune-graph delete-*)' 'Bash(aws s3vectors delete-index *)' 'Bash(aws kms schedule-key-deletion *)' 'Bash(aws emr terminate-clusters *)' 'Bash(aws ecr delete-repository *)'; do
+       if jq -e --arg r "$rule" '.permissions.deny | index($r)' "$s" >/dev/null 2>&1; then pass "deny rule present: $rule"; else fail "deny rule present: $rule"; fi
+     done
++    # Auto-approved Bash rules must not be able to write files or run code through their
++    # arguments (repair-03): no bare Bash, Bash(*), or git wildcard rule, no jq, python, bash,
++    # sh, or shellcheck rule, no git diff/log/show rule that takes arguments, and no sbt rule
++    # other than exactly sbt check and sbt Test/compile. Both the "cmd *" and the legacy
++    # "cmd:*" rule spellings are checked.
++    local broad
++    broad=$(jq -r '.permissions.allow[]? | select((. == "Bash") or test("^Bash\\((\\*|git( |:)?\\*)") or (test("^Bash\\(((jq|python[0-9.]*|bash|sh|zsh|shellcheck)( |:|\\*|\\))|git (diff|log|show)( |:)|sbt( |:))") and . != "Bash(sbt check)" and . != "Bash(sbt Test/compile)"))' "$s" 2>/dev/null | tr '\n' ' ')
++    if [ -z "$broad" ]; then pass "no auto-approved Bash rule of the write-or-execute class"; else fail "no auto-approved Bash rule of the write-or-execute class: $broad"; fi
++    local gpm gt
++    gpm=$(jq -r '[.hooks.PreToolUse[]? | select([.hooks[]?.command] | any(test("guard-paths[.]sh"))) | .matcher] | join("|")' "$s" 2>/dev/null)
++    for gt in $GUARD_PATHS_TOOLS; do
++      if printf '%s\n' "$gpm" | tr '|' '\n' | grep -qx "$gt"; then pass "guard-paths.sh is registered for $gt"; else fail "guard-paths.sh is registered for $gt (matcher: $gpm)"; fi
++    done
+     local refs ref
+     refs=$(jq -r '[.hooks[]?[]?.hooks[]?.command] | .[]' "$s" 2>/dev/null | sed -n 's#.*\.claude/hooks/\([A-Za-z0-9_.-]*\.sh\).*#\1#p' | sort -u)
+     for ref in $refs; do
+@@ -147,6 +170,27 @@
+     if bash -n "$f" 2>/dev/null; then pass "$f passes bash -n"; else fail "$f passes bash -n"; fi
+   done
+ 
++  # ---------- hook self-tests ----------
++  local hb st_out st_code
++  for f in .claude/hooks/*.sh; do
++    [ -f "$f" ] || continue
++    hb=$(basename "$f")
++    [ "$hb" = "validate-agent-files.sh" ] && continue
++    if grep -q -- '"--self-test"' "$f"; then
++      st_out=$(bash "$f" --self-test </dev/null 2>&1)
++      st_code=$?
++      if [ "$st_code" = 0 ]; then
++        pass "$f --self-test passes ($(printf '%s\n' "$st_out" | tail -n 1))"
++      else
++        fail "$f --self-test passes (exit $st_code; $(printf '%s\n' "$st_out" | grep -c '^FAIL') failing vectors; $(printf '%s\n' "$st_out" | tail -n 1))"
++      fi
++    elif contains_word "$SELFTEST_REQUIRED" "$hb"; then
++      fail "$f has a --self-test mode (required)"
++    else
++      pass "$f has no --self-test mode (not required)"
++    fi
++  done
++
+   # ---------- commands ----------
+   local refs_a a any
+   for f in .claude/commands/*.md; do
+--- /private/tmp/claude-501/-Users-achyutpatel-Developer-Cloud-ScholarChain/26c62c73-1c3b-476d-ac9e-c919e5c528ee/scratchpad/repair-03-pre/.claude/hooks/verify-tests-ran.sh	2026-10-21 19:06:15
++++ .claude/hooks/verify-tests-ran.sh	2026-10-21 20:00:06
+@@ -7,10 +7,13 @@
+ # The marker is written only by the sbt markTestRun task after tests pass (sbt check).
+ #
+ # Exit 0  no Scala or sbt source changed, or tests ran after the latest change.
+-# Exit 2  block with an actionable message (stderr is shown to the agent).
++# Exit 2  block with an actionable message (stderr is shown to the agent). This includes failing
++#         closed when the hook cannot change to the project root, because then it cannot tell
++#         whether tests are current.
+ # When Claude Code sets stop_hook_active (the agent was already blocked once in this stop
+ # sequence), the hook allows the stop to avoid an infinite loop; the agent's report must then
+-# say that tests were not run. This works before the sbt build exists.
++# say that tests were not run (or, for an unreachable project root, not verified). This works
++# before the sbt build exists.
+ #
+ # Compatible with bash 3.2. Uses jq when available (falls back to a text match).
+ #
+@@ -40,7 +43,18 @@
+   if [ -z "$root" ]; then
+     root=$(git rev-parse --show-toplevel 2>/dev/null) || root=$(pwd)
+   fi
+-  cd "$root" 2>/dev/null || exit 0
++  if ! cd "$root" 2>/dev/null; then
++    # Fail closed: without the project root the hook cannot tell whether tests are current.
++    if [ "$active" = "true" ]; then
++      # Already blocked once in this stop sequence: allow the stop to avoid an infinite loop.
++      exit 0
++    fi
++    {
++      printf 'Stop blocked by .claude/hooks/verify-tests-ran.sh: cannot reach the project root (%s), so it cannot verify that tests ran after the latest Scala or sbt change (fail closed).\n' "$root"
++      printf '  What to do: start Claude Code from the repository root (or fix CLAUDE_PROJECT_DIR), run `sbt check`, and report the exact test counts you observed. If you cannot, finish with STATUS: BLOCKED-ON human architect and state in TEST RESULTS that test currency was not verified, quoting this message.\n'
++    } >&2
++    exit 2
++  fi
+   marker="$MARKER_REL"
+ 
+   stale=""
+@@ -120,8 +134,9 @@
+   trap "rm -rf '$tmp'" EXIT
+ 
+   check() {
+-    # $1 expected exit, $2 description, $3 stop_hook_active (true/false), $4 optional stderr substring
+-    out=$(printf '{"hook_event_name":"Stop","stop_hook_active":%s}' "$3" | CLAUDE_PROJECT_DIR="$tmp" bash "$self" 2>&1 >/dev/null)
++    # $1 expected exit, $2 description, $3 stop_hook_active (true/false), $4 optional stderr
++    # substring, $5 optional project root (default: the fixture)
++    out=$(printf '{"hook_event_name":"Stop","stop_hook_active":%s}' "$3" | CLAUDE_PROJECT_DIR="${5:-$tmp}" bash "$self" 2>&1 >/dev/null)
+     code=$?
+     total=$((total + 1))
+     if [ "$code" = "$1" ] && { [ -z "${4:-}" ] || printf '%s' "$out" | grep -q -- "$4"; }; then
+@@ -136,6 +151,8 @@
+   ( cd "$tmp" && git init -q . ) || { echo "SELF-TEST FAIL: git init" >&2; return 1; }
+   mkdir -p "$tmp/.claude" "$tmp/modules/core/src/main/scala"
+   printf 'readme\n' > "$tmp/README.md"
++  check 2 "project root unreachable (fail closed)" false "cannot reach the project root" "$tmp/no-such-project-root"
++  check 0 "project root unreachable with stop_hook_active=true (loop breaker)" true "" "$tmp/no-such-project-root"
+   check 0 "no Scala source changed (README only)" false
+ 
+   printf 'class Notes\n' > "$tmp/Notes.java"
+--- /private/tmp/claude-501/-Users-achyutpatel-Developer-Cloud-ScholarChain/26c62c73-1c3b-476d-ac9e-c919e5c528ee/scratchpad/repair-03-pre/docs/agents.md	2026-10-21 19:06:17
++++ docs/agents.md	2026-10-21 22:40:52
+@@ -62,8 +62,16 @@
+ 
+ ## Tool fences
+ 
+-The `tools` field restricts which tools an agent has, not which paths it writes. Path ownership is enforced in three layers: agent instructions, permission rules in `.claude/settings.json`, and the PreToolUse hook `.claude/hooks/guard-paths.sh`. The hook applies the ownership map above to every Write and Edit tool call that carries a subagent identity, and it blocks Write and Edit tool calls from the main thread outside the current phase's agent-runs folder.
++The `tools` field restricts which tools an agent has, not which paths it writes. Path ownership is enforced in three layers: agent instructions, permission rules in `.claude/settings.json`, and the PreToolUse hook `.claude/hooks/guard-paths.sh`. The hook applies the ownership map above to every Write, Edit, MultiEdit, and NotebookEdit tool call that carries a subagent identity, and it blocks Write and Edit tool calls from the main thread outside the current phase's agent-runs folder.
+ 
++What the hooks do not enforce, stated plainly:
++
++- `guard-paths.sh` sees only the file tools (and Read, Grep, and Glob, for secret paths). It never sees Bash.
++- A Bash command that writes a file is checked only by `guard-dangerous.sh`. That guard blocks the write only when it takes one of the recognized forms listed under Hook limitations below and names a protected path in the way that form requires. The protected paths are `spec/`, `labels/`, `docs/agent-runs/`, the constitutional files, `.claude/`, and `.git/`, and each form covers a different part of them (see Hook limitations).
++- A Bash write to any other path, including another agent's module, is stopped only by the agent instructions and the permission prompt.
++- No `allow` rule auto-approves a Bash command whose arguments can send a write to an arbitrary file or run arbitrary code, so every such Bash write reaches the prompt. The remaining Bash `allow` rules are `git status`, `git diff` with no arguments, `git ls-files`, `git rev-parse`, `git stash list`, `test -x`, the validator and the hook self-tests, `terraform validate`, `terraform fmt` (which rewrites only Terraform-format files), and exactly `sbt check` and `sbt Test/compile` (which run the reviewed build definition).
++- Write-only and append-only rules for operational records, and the "only" limits in the table below, hold for file tools through `guard-paths.sh`. For Bash they hold only through the instructions and the prompt.
++
+ | Agent | Tools | Write-capable | MCP |
+ |---|---|---|---|
+ | `factory-engineer` | Read, Grep, Glob, Write, Edit, Bash | yes (constitutional paths) | none |
+@@ -77,13 +85,13 @@
+ | `storage-engineer` | Read, Grep, Glob, Write, Edit, Bash | yes | `aws-docs` (read) |
+ | `rag-engineer` | Read, Grep, Glob, Write, Edit, Bash | yes | `aws-docs` (read) |
+ | `service-engineer` | Read, Grep, Glob, Write, Edit, Bash | yes | none |
+-| `test-engineer` | Read, Grep, Glob, Write, Edit, Bash | yes, `tests/**` only | none |
++| `test-engineer` | Read, Grep, Glob, Write, Edit, Bash | yes, `tests/**` only (file tools: `guard-paths.sh`; Bash: instructions and prompt) | none |
+ | `code-reviewer` | Read, Grep, Glob | **no** (no Write, Edit, NotebookEdit, or Bash) | none |
+ | `infra-engineer` | Read, Grep, Glob, Write, Edit, Bash | yes | `aws-api` (read-only), `terraform` (docs search and Checkov scan only), `aws-docs` (read) |
+-| `deploy-engineer` | Read, Grep, Glob, Write, Bash | Write only (new records, no Edit) | `aws-api` (read-only) |
++| `deploy-engineer` | Read, Grep, Glob, Write, Bash | Write only, no Edit tool. Records are meant to be new files, but Write can overwrite an existing record: append-only is an instruction and review rule, not hook-enforced | `aws-api` (read-only) |
+ | `experiment-engineer` | Read, Grep, Glob, Write, Edit, Bash | yes | `aws-api` (read-only) |
+ | `documentation-engineer` | Read, Grep, Glob, Write, Edit, Bash | yes | `aws-docs` (read) |
+-| `incident-responder` | Read, Grep, Glob, Write, Edit, Bash | yes, `docs/incidents/**` only | `aws-api` (read-only), `aws-docs` (read) |
++| `incident-responder` | Read, Grep, Glob, Write, Edit, Bash | yes, `docs/incidents/**` only (file tools: `guard-paths.sh`; Bash: instructions and prompt) | `aws-api` (read-only), `aws-docs` (read) |
+ 
+ **Reviewer fence.** The `code-reviewer` holds no Write, Edit, NotebookEdit, or Bash, because Bash can write files and the matrix grants the reviewer no write path. The orchestrator pastes `git status --porcelain --untracked-files=all`, `git diff`, and the relevant test output into the reviewer's work order. The reviewer reports defects and never fixes them.
+ 
+@@ -137,19 +145,29 @@
+ | Destructive AWS, Terraform, Git, database, S3, Neptune, DynamoDB, S3 Vectors, ECR, KMS, EMR, and scale-out commands | All agents | `deny` for direct CLI forms | `guard-dangerous.sh` (PreToolUse on Bash and on MCP tools), exit 2 with an actionable message |
+ | `terraform apply` and `terraform destroy` | All agents | `deny` | `guard-dangerous.sh` (any position, including inside `echo`, `bash -c`, `-chdir`, `tofu`, `terragrunt`, `-auto-approve`) |
+ | Force push and history rewrite | All agents | `deny` | `guard-dangerous.sh` |
+-| Secret reads (`.env*`, `secrets/`, keys, `~/.aws/`, credential files, Terraform state) | All agents | `Read` `deny` | `guard-paths.sh` (Read) and `guard-dangerous.sh` (Bash) |
+-| `spec/**`, `labels/**`, human records in `docs/agent-runs/**` read-only | All agents | `Edit` `deny` | `guard-paths.sh`, plus `guard-dangerous.sh` for Bash writes |
+-| Non-factory agents never modify constitutional files | All agents | `Edit` `ask` (human confirms every constitutional write) | `guard-paths.sh` ownership check for subagent calls; Bash writes to constitutional paths blocked by `guard-dangerous.sh` |
++| Secret reads (`.env*`, `secrets/`, keys, `~/.aws/`, credential files, Terraform state) | All agents | `Read` `deny` (Claude Code also applies Read rules to Grep and Glob, best effort); no `allow` rule auto-approves a Bash command that prints arbitrary files | `guard-paths.sh` (Read, Grep, Glob) and `guard-dangerous.sh` (Bash: secret names written literally, environment dumps including jq `env` and `$ENV`) |
++| `spec/**`, `labels/**`, human records in `docs/agent-runs/**` read-only | All agents | `Edit` `deny` | `guard-paths.sh` (file tools), plus `guard-dangerous.sh` for the recognized Bash write forms |
++| Non-factory agents never modify constitutional files | All agents | `Edit` `ask` (human confirms every constitutional write); no `allow` rule auto-approves a Bash command that can write through its arguments | `guard-paths.sh` ownership check for subagent file-tool calls; the recognized Bash write forms to constitutional paths are blocked by `guard-dangerous.sh`; any other Bash write reaches the permission prompt |
+ | Tests current before completion | All implementing agents | none | `verify-tests-ran.sh` on Stop and SubagentStop |
+ | Scala formatted after writes | All implementing agents | none | `format-scala.sh` on PostToolUse |
+-| Agent constitution well-formed | `factory-engineer` | none | `validate-agent-files.sh` on PostToolUse for constitutional paths, and standalone |
++| Agent constitution well-formed | `factory-engineer` | none | `validate-agent-files.sh` on PostToolUse for constitutional paths, and standalone; both runs execute every hook's `--self-test` and fail if any self-test fails |
+ | Bypass mode disabled | n/a | `disableBypassPermissionsMode: "disable"` | n/a |
+ 
+ Hook limitations, stated honestly:
+ 
+-- Pattern guards are a backstop. Indirection through variables, generated scripts, or SDK programs can evade a string match. Instructions and human gates remain the primary control.
++- Pattern guards are a backstop. Indirection through variables, generated scripts, or SDK programs can evade a string match. So can changing into a protected directory and then writing to a relative path. Instructions and human gates remain the primary control.
++- `guard-dangerous.sh` recognizes these Bash write forms against a protected path:
++  - `>` redirection whose target contains `spec/`, `labels/`, `docs/agent-runs/`, `docs/agents.md`, `CLAUDE.md`, `.mcp.json`, `.claude/`, or `.git/`;
++  - a write verb in command position, `sed -i`, `perl -i`, git work-tree subcommands, `find -delete`, or a wrapper or interpreter segment that contains a write verb (including `npx`, `uvx`, `uv run`, and `make`). These are blocked when the command names `spec/`, `labels/`, or `docs/agent-runs/` (with the trailing slash), `CLAUDE.md`, `docs/agents.md`, `.mcp.json`, `.claude/agents`, `.claude/hooks`, `.claude/commands`, `.claude/settings.json`, `.claude/settings.local.json`, `.claude/.last-test-run`, `~/.claude`, or `.git`;
++  - git output-file options (`--output` and its abbreviations, `--output-directory`, `format-patch` or `archive` `-o`, `bundle create`, and `git -C` with a protected directory) and the output-file argument of `python -m json.tool`. These are blocked when the target is `spec`, `labels`, `docs/agent-runs`, `.claude`, or `.git` (or anything below them), `CLAUDE.md`, `docs/agents.md`, or `.mcp.json`.
++
++  The write-verb forms do not cover other files under `.claude/` (for example `.claude/skills/`), or `spec`, `labels`, or `docs/agent-runs` named without a trailing slash. Other commands with output-file options (for example `sort -o`) are not recognized. None of these is auto-approved, so they reach the permission prompt.
++- Secret file names obscured by shell wildcards (for example `.e*v` or `.en?`), or built at run time, are a residual risk for Bash. `guard-dangerous.sh` matches secret names literally. No `allow` rule auto-approves a Bash command that prints arbitrary files, so such a command reaches the permission prompt, and the human must read the command before approving it. The same wildcard forms are blocked for the Grep and Glob tools by `guard-paths.sh`.
++- `guard-dangerous.sh` blocks jq field access that names `.env` (for example `jq '.env'`), because it cannot tell that from a `.env` file name. This false positive is accepted. Because it cannot tell which word jq evaluates, it also blocks any command that runs jq and contains the word `env` anywhere, for example `/usr/bin/env` in a heredoc or `grep env` earlier in a pipeline. That false positive is also accepted; write such content with the file tools.
++- `guard-paths.sh` checks the path and glob inputs of Grep and the path and pattern inputs of Glob, including wildcard and brace forms. Grep's content regex is not a path and is not checked. A recursive Grep over an ordinary directory with no glob is not blocked; whether it opens hidden or secret files depends on the search tool and on the Read deny rules.
++- `guard-dangerous.sh` fails closed (exit 2) when jq is missing, when the payload is empty or not a valid JSON object, and when it has no `tool_name`. Whether Claude Code allows or blocks a tool call when a PreToolUse hook exceeds its timeout is unverified. The guard has no per-character loop. Its scan time grows about linearly with command length: a worst-case 195 KB command took about 5 seconds and a 390 KB command about 8 seconds, against a 10-second timeout. A long enough command can therefore reach the timeout.
+ - `guard-paths.sh` relies on the optional `agent_id` and `agent_type` hook-input fields that the installed Claude Code client documents for subagent calls. The post-ratification probes confirm them. When both are absent, the hook cannot tell the main thread from a subagent, so it applies the most restrictive posture to both. It allows only `agent-report.md`, `review-report.md`, `test-report.md`, or `repair-NN.md` directly inside an open `docs/agent-runs/phase-NN/` folder, plus temporary directories outside the repository. When only `agent_id` is present, every repository write is denied. When only `agent_type` is present, that agent's ownership rows apply. Residual risk: a subagent that has lost both fields could still write one of those report files into an open phase folder.
+-- `verify-tests-ran.sh` blocks once per stop attempt. When Claude Code reports `stop_hook_active` (the agent was already told once), the hook lets it stop, to avoid an infinite loop. The agent's report must then state that tests were not run.
++- `verify-tests-ran.sh` blocks once per stop attempt. When Claude Code reports `stop_hook_active` (the agent was already told once), the hook lets it stop, to avoid an infinite loop. The agent's report must then state that tests were not run. The hook also blocks (fails closed) when it cannot reach the project root, with the same loop breaker.
+ 
+ ## MCP servers and trust boundaries
+ 
