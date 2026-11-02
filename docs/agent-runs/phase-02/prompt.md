@@ -1,6 +1,8 @@
 Use the build-engineer agent to create the ScholarChain sbt multi-project build and repository skeleton from scratch.
 
-Inputs to read first: CLAUDE.md, docs/agents.md, spec/ScholarChain-spec.md (Phase 2), spec/architect-decisions.md (D-01 to D-05, D-09, D-10).
+Inputs to read first: CLAUDE.md, docs/agents.md, spec/ScholarChain-spec.md (Phase 2), spec/architect-decisions.md (D-01 to D-05, D-09, D-10, D-11).
+
+Scope rule: every item in this work order is required. Minimal implementations are welcome, but no listed item may be skipped or deferred without reporting it under RISKS.
 
 Required projects:
 - core
@@ -28,8 +30,8 @@ Required principles:
 - Use scalafmt with the Scala 3 dialect, and confirm it works with .claude/hooks/format-scala.sh as written. If the hook needs a change, report BLOCKED-ON factory-engineer instead of editing it.
 - Create a markTestRun task that updates .claude/.last-test-run only after tests pass, compatible with .claude/hooks/verify-tests-ran.sh.
 - Define aliases: fmt, check, packageJobs, and dockerLocal.
-- check must run format checking, compilation, tests, contract tests that do not need AWS, and markTestRun.
-- Container images must use a pinned Java 17 runtime, a non-root user, and percentage-based memory limits.
+- check must run format checking, compilation, tests, contract tests that do not need AWS, and markTestRun. check must not require Docker; Docker is not installed on the development machine, and only dockerLocal may depend on it.
+- Container images must use a pinned Java 17 runtime image that supports linux/arm64 (the development machine is Apple Silicon and ECS Fargate will use the ARM64 runtime platform, D-11), a non-root user, and percentage-based memory limits.
 - Build behavior may depend only on explicitly documented environment variables.
 - No secrets, cloud endpoints, or deployment procedures in the build definition.
 
