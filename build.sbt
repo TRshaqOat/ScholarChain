@@ -1,0 +1,130 @@
+// ScholarChain sbt build. Owner: build-engineer. Versions live only in project/Dependencies.scala.
+//
+// Environment inputs (the only ones this build reads):
+//   SCHOLARCHAIN_IMAGE_TAG  immutable image tag (Git SHA) for dockerLocal; required by dockerLocal only.
+//
+// Aliases: fmt, check (the definition of done), packageJobs, dockerLocal. check never needs Docker or AWS.
+
+ThisBuild / organization := "scholarchain"
+ThisBuild / version := "0.1.0"
+ThisBuild / scalaVersion := Versions.scala
+
+val ImageTagEnv = "SCHOLARCHAIN_IMAGE_TAG"
+
+lazy val markTestRun =
+  taskKey[Unit]("Runs every project's tests, then writes .claude/.last-test-run")
+lazy val requireImageTag = taskKey[Unit](s"Fails unless $ImageTagEnv is set")
+
+lazy val commonSettings = Seq(
+  // Fail resolution when one library resolves with two suffixes, e.g. both _2.13 and _3 (D-02).
+  conflictWarning := ConflictWarning("cross-version", Level.Error, failOnConflict = true),
+  libraryDependencies += Dependencies.scalaTest,
+  scalacOptions ++= Seq("-deprecation", "-feature", "-release", Versions.javaRelease),
+  javacOptions ++= Seq("--release", Versions.javaRelease),
+  // check stays AWS-free and Docker-free: tests tagged with these names run only outside check.
+  Test / testOptions += Tests.Argument(
+    TestFrameworks.ScalaTest,
+    "-l",
+    "scholarchain.tags.RequiresAws",
+    "-l",
+    "scholarchain.tags.RequiresDocker"
+  )
+)
+
+def module(id: String, dir: String): Project =
+  Project(id, file(s"modules/$dir")).settings(commonSettings, name := id)
+
+lazy val core = module("core", "core")
+  .settings(libraryDependencies += Dependencies.upickle)
+
+lazy val entityResolution = module("entityResolution", "entity-resolution")
+  .dependsOn(core)
+
+lazy val hadoop = module("hadoop", "hadoop")
+  .dependsOn(core, entityResolution)
+  .settings(
+    libraryDependencies ++= Dependencies.hadoop,
+    // The cluster has no Scala 3 stdlib (and EMR 7.x may expose 2.12), so relocate ours (D-03).
+    assembly / assemblyShadeRules := Seq(
+      ShadeRule.rename("scala.**" -> "scholarchain.shaded.scala.@1").inAll
+    )
+  )
+
+lazy val sparkAnalytics = module("sparkAnalytics", "spark")
+  .dependsOn(core)
+  .settings(
+    libraryDependencies += Dependencies.sparkSql,
+    // ScalaTest brings scala-xml_3 and Spark brings scala-xml_2.13; keep the runtime's 2.13 build.
+    excludeDependencies += ExclusionRule("org.scala-lang.modules", "scala-xml_3"),
+    // Spark supplies scala-library 2.13 at runtime; the job jar carries only scala3-library_3.
+    assembly / assemblyExcludedJars := (assembly / fullClasspath).value.filter(
+      _.data.getName.startsWith("scala-library-")
+    )
+  )
+
+lazy val storage = module("storage", "storage")
+  .dependsOn(core)
+
+lazy val rag = module("rag", "rag")
+  .dependsOn(core, storage)
+
+lazy val services = module("services", "services")
+  .dependsOn(core, rag, storage)
+  .enablePlugins(JavaAppPackaging, DockerPlugin)
+  .settings(
+    libraryDependencies += Dependencies.logback,
+    dockerBaseImage := Versions.javaRuntimeImage,
+    Docker / packageName := "scholarchain-services",
+    Docker / version := sys.env.getOrElse(ImageTagEnv, "unset"),
+    dockerUpdateLatest := false,
+    Docker / daemonUser := "scholarchain",
+    Docker / daemonUserUid := Some("10001"),
+    dockerBuildOptions += "--platform=linux/arm64",
+    Universal / javaOptions ++= Seq(
+      "-J-XX:InitialRAMPercentage=50.0",
+      "-J-XX:MaxRAMPercentage=75.0"
+    )
+  )
+
+// Cross-module, integration, end-to-end, and adversarial tests (test-engineer). Test scope only.
+lazy val tests = Project("tests", file("tests"))
+  .dependsOn(
+    Seq(core, entityResolution, hadoop, sparkAnalytics, storage, rag, services)
+      .map(p => p % Test: ClasspathDep[ProjectReference]): _*
+  )
+  .settings(
+    commonSettings,
+    publish / skip := true,
+    Test / unmanagedSourceDirectories := Seq(
+      "contracts",
+      "integration",
+      "end-to-end",
+      "adversarial"
+    )
+      .map(baseDirectory.value / _),
+    Test / unmanagedResourceDirectories := Seq(baseDirectory.value / "fixtures")
+  )
+
+lazy val root = Project("scholarchain", file("."))
+  .aggregate(core, entityResolution, hadoop, sparkAnalytics, storage, rag, services, tests)
+  .settings(
+    publish / skip := true,
+    markTestRun := {
+      val _ = test
+        .all(ScopeFilter(inAggregates(ThisProject, includeRoot = false), inConfigurations(Test)))
+        .value
+      // Reached only when every aggregated project's tests passed.
+      val marker = (ThisBuild / baseDirectory).value / ".claude" / ".last-test-run"
+      IO.write(marker, java.time.Instant.now().toString + "\n")
+      streams.value.log.info(s"markTestRun: tests passed, wrote $marker")
+    },
+    requireImageTag := {
+      if (sys.env.get(ImageTagEnv).forall(_.trim.isEmpty))
+        sys.error(s"dockerLocal needs $ImageTagEnv set to an immutable tag (Git SHA)")
+    }
+  )
+
+addCommandAlias("fmt", "; scalafmtSbt; scalafmtAll")
+addCommandAlias("check", "; scalafmtSbtCheck; scalafmtCheckAll; Test/compile; markTestRun")
+addCommandAlias("packageJobs", "; hadoop/assembly; sparkAnalytics/assembly")
+addCommandAlias("dockerLocal", "; requireImageTag; services/Docker/publishLocal")

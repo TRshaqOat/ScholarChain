@@ -11,3 +11,7 @@ Running log for the Phase 16 agentic-factory evaluation. One row per agent invoc
 | ? | 01 | code-reviewer | REQUEST_CHANGES | - | 0/?/? | - | none | ? | re-review 2 (evidence and .gitignore majors) |
 | ? | 01 | factory-engineer | COMPLETE | - | - | 5 | human-built repair-05.patch | ? | repair-05 |
 | ? | 01 | code-reviewer | ? | - | ?/?/? | - | none | ? | final review 3 |
+| 2026-11-02 | 02 | build-engineer | COMPLETE | n | - | 0 | none | none | build files done; stopped and asked before writing into 13 other agents' paths (ownership respected); human deferred those items |
+| 2026-11-02 | 02 | build-engineer | BLOCKED-ON | - | - | 1 | none | none | repair-01: comments done; version values BLOCKED-ON dependency-updater (exception 1) |
+| 2026-11-02 | 02 | dependency-updater | COMPLETE | y | - | 2 | none | none | repair-02: Scala 3.3.7, Spark 4.0.2, Hadoop 3.4.2 to match EMR; ruling B |
+| 2026-11-02 | 02 | code-reviewer | APPROVE | y | 0/0/0 | - | none | none | non-blocking risks only; flagged Ponytail injected despite matcher |
