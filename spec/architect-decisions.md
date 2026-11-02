@@ -184,3 +184,4 @@ Deferred backlog, in priority order: approximate betweenness; experiment B; expe
 - Status: D-01, D-02, D-03 RATIFIED (2026-11-02) on documentation evidence; live check pending.
 
 - 2026-11-02 (Phase 2 review): Ponytail was injected into the code-reviewer despite PONYTAIL_SUBAGENT_MATCHER. Fallback until fixed: send /ponytail off before reviewer and test-engineer prompts, and /ponytail full afterwards.
+- 2026-11-02 (after Phase 2): Ponytail matcher fixed by setting both variables in the env block of ~/.claude/settings.json. Verified that code-reviewer receives no Ponytail ruleset and build-engineer does. The /ponytail off fallback is no longer needed.

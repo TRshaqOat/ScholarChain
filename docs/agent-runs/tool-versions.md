@@ -36,3 +36,10 @@ PONYTAIL_DEFAULT_MODE=full
 PONYTAIL_SUBAGENT_MATCHER=^(build-engineer|domain-engineer|dataset-engineer|hadoop-engineer|entity-resolution-engineer|spark-engineer|storage-engineer|rag-engineer|service-engineer|infra-engineer|experiment-engineer|documentation-engineer|dependency-updater)$
 guard probe after ponytail install: echo 'terraform destroy' -> BLOCKED by guard-dangerous.sh [terraform-apply-destroy]
 ```
+
+## Update 2026-11-02: Ponytail matcher fix
+
+```text
+PONYTAIL_DEFAULT_MODE and PONYTAIL_SUBAGENT_MATCHER moved into the env block of ~/.claude/settings.json (user scope), because ~/.zshrc exports did not reach the running VS Code session.
+Verified: Bash tool sees both variables; code-reviewer reports no Ponytail ruleset; build-engineer reports 'PONYTAIL MODE ACTIVE — level: full'.
+```
