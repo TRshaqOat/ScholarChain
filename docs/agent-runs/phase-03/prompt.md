@@ -36,3 +36,37 @@ Verify: run the validation script, run every fetcher in SAMPLE mode, and run eac
 Report, in the standard report contract: the subset rule and venue list; the estimated work count and request counts for the full run; each dataset's verified license and access rules with source URLs; sample record counts and cross-dataset DOI overlap in the samples; the exact commands the human must run for the full subset; and unresolved dataset questions.
 
 After the agent returns, save its report verbatim to docs/agent-runs/phase-03/agent-report-dataset.md, wrapped in a ````text fence. Do not invoke any other agent.
+
+## Work order 2 of 3: build-engineer
+
+Use the build-engineer agent to make two small build changes for Phase 3.
+
+Inputs to read first: CLAUDE.md, docs/agents.md, project/Dependencies.scala, build.sbt, docs/agent-runs/phase-02/review-report.md (RISKS), spec/architect-decisions.md (D-02, D-05, D-09).
+
+1. Add Typesafe Config (com.typesafe:config) to the core module in Compile scope, so the domain-engineer can load versioned HOCON configuration. Pin an exact version at least 14 days old (D-09) in project/Dependencies.scala, with its publication date in a comment.
+2. Close the Phase 2 review risk: pin scala-library to 2.13.16 with dependencyOverrides in every module, so no future dependency can silently upgrade it past the version EMR emr-spark-8.0.0 ships.
+
+Do not create sources under modules/ or tests/. Run sbt check twice. Return a standard report.
+
+After the agent returns, save its report verbatim to docs/agent-runs/phase-03/agent-report-build.md, wrapped in a ````text fence. Do not invoke any other agent.
+
+## Work order 3 of 3: domain-engineer
+
+Use the domain-engineer agent to create the ScholarChain shared domain contracts in the core module.
+
+Inputs to read first: CLAUDE.md, docs/agents.md, spec/ScholarChain-spec.md (sections "Core data model", "Research graph model", "Entity linkage policy", "Configuration", Phase 3 domain-engineer work and "Required stable ID principles"), spec/architect-decisions.md (D-02, D-05, D-10), datasets/schemas/, datasets/samples/, project/Dependencies.scala.
+
+Scope rule: every item below is required. Minimal implementations are fine; anything skipped must be reported under RISKS.
+
+Create, under modules/core/ only (you create its source tree in this phase):
+1. Immutable Scala 3 records, each with a schema version and a uPickle ReadWriter: WorkRecord, AuthorMention, CanonicalResearcher, AuthorshipRecord, PublicationTeam, CoauthorPairCandidate, CoauthorEdge, ResearcherMetrics, Venue, Institution, Topic, Provenance, MatchCandidate, MatchDecision, GraphNode, GraphEdge, EvidenceItem, EvidenceBundle, QueryPlan, AnswerClaim, AnswerResponse. Field meanings must agree with datasets/schemas/ and the spec's core data model. Keep core free of Spark and Hadoop dependencies.
+2. Enums: source type, match outcome (ACCEPTED, REJECTED, UNRESOLVED, CONFLICT), evidence type, collaboration metric, query operation, verification status (VERIFIED, PARTIALLY_SUPPORTED, UNSUPPORTED, CONFLICTING).
+3. Stable ID functions for work, researcher, coauthor edge, graph edge, chunk or profile, evidence, and run IDs, following the spec's "Required stable ID principles". Document each formula in a code comment.
+4. Undirected pair canonicalization: one canonical ordering rule for researcher pairs, used by CoauthorPairCandidate and CoauthorEdge.
+5. Validation that rejects: missing provenance, confidence outside [0, 1], unsupported schema versions, malformed stable IDs, non-canonical pair ordering, and time windows where the start year exceeds the end year.
+6. A configuration loader using Typesafe Config: a versioned HOCON reference file plus environment-variable overrides, with documented precedence. Nothing is hardcoded: bucket names, endpoints, thresholds, model IDs, AWS account IDs, graph windows, and bridge-algorithm parameters all come from configuration. Default graph windows are the three D-10 windows (all years, 2000-2014, 2015-2026).
+7. Tests under modules/core/src/test/ only (not tests/, which belongs to the test-engineer): serialization round trips, schema-version checks, frozen JSON wire examples as contract tests, stable-ID determinism, pair canonicalization, every validation rule above, and configuration precedence.
+
+Run sbt check twice. Report, in the standard report contract: sample serialized records, stable ID formulas, the pair canonicalization rule, configuration precedence, schema versions, exact test counts, and known unresolved dataset questions.
+
+After the agent returns, save its report verbatim to docs/agent-runs/phase-03/agent-report-domain.md, wrapped in a ````text fence. Do not invoke any other agent.
