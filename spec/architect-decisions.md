@@ -153,3 +153,10 @@ Deferred backlog, in priority order: approximate betweenness; experiment B; expe
 - Ponytail is not part of the repository and changes no constitutional file. It is optional for workflow replay and is recorded in docs/agent-runs/tool-versions.md.
 - Verified 2026-11-02: guard-dangerous.sh still blocks with Ponytail active (probe: echo 'terraform destroy' -> BLOCKED [terraform-apply-destroy]).
 - Correction: the development machine is Apple Silicon (arm64), not Intel. Local JDK is the Temurin aarch64 build. Container images target linux/arm64, and ECS Fargate will use the ARM64 runtime platform (applied in Phase 12).
+
+## AWS capability check (2026-11-02, read-only CLI and AWS release documentation)
+
+- Account plan: AWS Free plan, $100 credits, free period ends 2027-04-20. EMR and EMR Serverless are denied by an AWS service control policy on this plan. Bedrock, Neptune, S3 Vectors, DynamoDB, ECS, ECR, SQS, EC2, Secrets Manager, and S3 API calls succeed.
+- AWS release documentation: emr-spark-8.0.0 (released 2026-05-21) ships Spark 4.0.2-amzn-0, Scala 2.13.16, Amazon Corretto 17 by default, and Hadoop 3.4.2-amzn-1 including hadoop-mapred and YARN, on EC2, EKS, and Serverless. EMRFS and AWS SDK for Java v1 are removed, so jobs use s3a:// paths and SDK v2 only.
+- Decision: upgrade to the Paid plan before the first EMR cluster (no later than 2026-11-12, before Phase 14), after creating AWS Budgets alerts. Live verification of D-01 to D-03 happens on the first cluster run.
+- Status: D-01, D-02, D-03 RATIFIED (2026-11-02) on documentation evidence; live check pending.
