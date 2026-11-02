@@ -119,3 +119,28 @@ Scope cuts:
 - [ ] Course AWS account, region restrictions, and budget cap.
 - [ ] May bounded enrichment subsets be fetched through dataset APIs (for example DOI-filtered OpenAlex queries) rather than full snapshots?
 - [ ] Is a scale below the spec minimums (for example fewer than 1M graph edges) acceptable given the budget?
+
+## Decision status (human ratification log)
+
+- 2026-11-02: D-04 to D-09 RATIFIED by the human architect. D-05 test framework selected: ScalaTest.
+- 2026-11-02: D-01 to D-03 remain PROPOSED until the AWS capability check confirms an EMR release label with Hadoop MapReduce and Spark 4.x.
+
+## D-10 Schedule-driven scope (RATIFIED 2026-11-02)
+
+Context: 23 days remain before the 2026-11-25 23:00 CST deadline, and Phase 2 was not yet complete. Scope is cut to protect every item in the spec's "Minimum acceptance criteria". Deferred items return only if time remains.
+
+Cuts and substitutions:
+1. Datasets: DBLP + OpenAlex + Crossref + ORCID only, as DOI-driven bounded subsets of a ~100k-work DBLP subset.
+2. Merged phases: 7+8 (storage and embeddings), 12+13 (Terraform and scripts), 15+16 (experiments and evaluation). The test-engineer runs once, in Phase 11.
+3. Spark graph algorithms use DataFrame iteration; no GraphFrames dependency.
+4. Bridge measures: cross-community degree, communities-connected count, participation coefficient. Approximate betweenness deferred.
+5. Temporal analysis: three fixed windows (all years, 2000-2014, 2015-2026). Effective-diameter estimation deferred.
+6. Async work: SQS plus a worker service; no Step Functions.
+7. Three runtime services: query-api, graph-evidence-api, worker.
+8. Network and security: two-AZ VPC; ECS tasks and EMR in public subnets behind security groups; Neptune in private subnets; no NAT gateway; AWS-managed encryption; local Terraform state (gitignored, backed up outside the repo), remote-state design documented only.
+9. API authentication: one API key stored in Secrets Manager.
+10. Experiments: A (EMR baseline), D (query load with ECS scale-out and scale-in), E (retrieval modes), F (task-kill recovery). B and C deferred.
+11. No OpenSearch (D-06), no GitHub Actions, no security scanner beyond terraform validate.
+12. Phase evidence: prompt, agent report, review report, repair report when needed, short human gate, commit hash, factory-metrics row.
+
+Deferred backlog, in priority order: approximate betweenness; experiment B; experiment C; effective diameter; checkov scan; Step Functions.
