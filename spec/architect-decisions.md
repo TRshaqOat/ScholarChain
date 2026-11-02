@@ -144,3 +144,12 @@ Cuts and substitutions:
 12. Phase evidence: prompt, agent report, review report, repair report when needed, short human gate, commit hash, factory-metrics row.
 
 Deferred backlog, in priority order: approximate betweenness; experiment B; experiment C; effective diameter; checkov scan; Step Functions.
+
+## D-11 Ponytail plugin and Apple Silicon toolchain (RATIFIED 2026-11-02)
+
+- Ponytail v5.3.2 (commit 16352ac229eb08a9598dcae48fe9f2b342567d86, released 2026-10-16) is installed as a user-scope Claude Code plugin from a local clone at ~/Developer/tools/ponytail-v5.3.2, so it never auto-updates from main (D-09).
+- PONYTAIL_DEFAULT_MODE=full. PONYTAIL_SUBAGENT_MATCHER limits injection to implementation agents. code-reviewer, test-engineer, factory-engineer, deploy-engineer, and incident-responder run without it, to keep review and test independence.
+- /ponytail-review never replaces the code-reviewer agent gate.
+- Ponytail is not part of the repository and changes no constitutional file. It is optional for workflow replay and is recorded in docs/agent-runs/tool-versions.md.
+- Verified 2026-11-02: guard-dangerous.sh still blocks with Ponytail active (probe: echo 'terraform destroy' -> BLOCKED [terraform-apply-destroy]).
+- Correction: the development machine is Apple Silicon (arm64), not Intel. Local JDK is the Temurin aarch64 build. Container images target linux/arm64, and ECS Fargate will use the ARM64 runtime platform (applied in Phase 12).

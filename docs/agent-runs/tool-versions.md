@@ -20,3 +20,19 @@ VS Code Claude extension: anthropic.claude-code@2.1.314
 terraform: not yet installed
 aws-cli/2.38.3 Python/3.14.6 Darwin/27.0.0 script-exe/arm64
 ```
+
+## Update 2026-11-02: Apple Silicon correction and Ponytail
+
+```text
+uname -m: arm64  (Apple Silicon; earlier handoff note saying Intel was wrong)
+    java.version = 17.0.21
+    os.arch = aarch64
+java install: Temurin jdk-17.0.21+9 aarch64 .pkg from api.adoptium.net
+node: v26.3.0 (arm64), released 2026-06-01
+claude CLI: 2.1.178 (Claude Code)
+VS Code Claude extension: 2.1.314 (darwin-arm64)
+ponytail: v5.3.2, commit 16352ac229eb08a9598dcae48fe9f2b342567d86, released 2026-10-16, user scope, local marketplace ~/Developer/tools/ponytail-v5.3.2
+PONYTAIL_DEFAULT_MODE=full
+PONYTAIL_SUBAGENT_MATCHER=^(build-engineer|domain-engineer|dataset-engineer|hadoop-engineer|entity-resolution-engineer|spark-engineer|storage-engineer|rag-engineer|service-engineer|infra-engineer|experiment-engineer|documentation-engineer|dependency-updater)$
+guard probe after ponytail install: echo 'terraform destroy' -> BLOCKED by guard-dangerous.sh [terraform-apply-destroy]
+```
