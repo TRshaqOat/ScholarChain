@@ -34,3 +34,40 @@ Run sbt check twice. Then run the full local job chain on datasets/samples/, wri
 Report, in the standard report contract: the job graph, mapper and reducer key-value contracts, partition counts, all counters for each run, rejected records, output paths, maximum observed team size, largest pair expansion, the largest blocking group, and exact test counts.
 
 After the agent returns, save its report verbatim to docs/agent-runs/phase-04/agent-report.md, wrapped in a ````text fence. Do not invoke any other agent.
+
+## Human rulings after work order 1 (BLOCKED-ON entity-resolution-engineer and domain-engineer)
+
+- ORCID profiles output as GraphNode plus Institution records with AFFILIATED_WITH edges: accepted; no new core record type.
+- Affiliation IDs without an external identifier move into core StableIds (domain-engineer), replacing the hadoop-defined scheme.
+- Oversize teams keep writing all pairs (required for correct team-size metrics); the counter stays.
+- J03+J04 conflict output gets a configurable cap and counter.
+- Run attempt may be passed explicitly by run scripts; auto-claim stays the default for local runs.
+- Reports for work orders 2-4 are appended to agent-report.md, one section each.
+
+## Work order 2 of 4: domain-engineer
+
+Use the domain-engineer agent to make two small core changes for Phase 4:
+1. Add configuration keys entity-resolution.max-block-size and entity-resolution.max-conflict-group-size, with SCHOLARCHAIN_* environment overrides, PROVISIONAL defaults, and validation that both are positive.
+2. Add a documented, tested stable ID function for affiliations that have no external identifier, based on a canonical form of the affiliation name, to replace the hadoop module's affiliation-name:<hash> scheme.
+Change frozen wire examples only if a record changes. Run sbt check twice. Return a standard report.
+
+## Work order 3 of 4: entity-resolution-engineer
+
+Use the entity-resolution-engineer agent to create, in modules/entity-resolution (you create its source tree in this phase), the pure functions that Hadoop jobs J05 and J06 need. No Hadoop or Spark dependencies; use the core contracts, StableIds.normalizeDoi, and StableIds.normalizeOrcid; add no new dependency.
+1. Normalization: Unicode (decomposition and diacritic folding), punctuation, whitespace, title markup, initials, name order including "Family, Given", and DBLP homonym suffixes such as "Wei Wang 0001" (stripped from the comparable name but kept as separate evidence).
+2. Blocking keys: a primary researcher key and at least one fallback key, and a primary work key and at least one fallback key. Deterministic and documented.
+3. Oversize policy: given entity-resolution.max-block-size, a deterministic rule that re-keys oversize blocks with fallback keys, and reports blocks that remain oversize.
+4. Match-feature functions, each returning a value in [0, 1] deterministically: name similarity, initials compatibility, author-order agreement, coauthor overlap, affiliation compatibility, ORCID agreement, title similarity, year distance, and venue compatibility.
+No thresholds, scores, or match decisions; those are Phase 5. Tests under modules/entity-resolution/src/test/ only: every normalizer, every blocking key, the oversize policy, and every feature on hand-checkable pairs. Run sbt check twice. Return a standard report.
+
+## Work order 4 of 4: hadoop-engineer
+
+Use the hadoop-engineer agent to finish Phase 4 in modules/hadoop:
+1. Implement J05 BlockingKeyJob and J06 CandidateJoinJob with the entity-resolution functions and entity-resolution.max-block-size.
+2. Replace the name and title placeholders with the entity-resolution normalization.
+3. Use core's affiliation ID function instead of the hadoop-defined scheme.
+4. Cap J03+J04 conflict output with entity-resolution.max-conflict-group-size, plus an oversize-conflict counter.
+5. Accept the run attempt as an explicit argument; keep auto-claim as the default for local runs.
+6. Keep writing all pairs for oversize teams, and keep the oversize-team counter.
+7. Run sbt packageJobs and confirm that the hadoop job jar has no top-level scala/ entries and contains no Hadoop classes.
+Update modules/hadoop/JOBS.md. Run sbt check twice, then the job chain on datasets/samples/ twice to show determinism. If the full DBLP subset extract exists under scratch/datasets/, also run the chain locally on it, with whatever enrichment data exists, and report the counters. Report, in the standard report contract: the updated job graph, the J05 and J06 contracts, all counters for each run, maximum observed team size, largest pair expansion, the largest blocking group, jar inspection results, and exact test counts.
