@@ -205,3 +205,4 @@ Decisions:
 - Short cloud windows instead of a week-long deployment: (1) ephemeral EMR clusters for the pipeline and the size-scaling runs, each terminated after its run; (2) one runtime window of at most about 48 hours for Neptune, ECS, and the stores: load, smoke tests, experiments D/E/F, and demo video recording, then destroy.
 - Deferred experiment B is replaced by a data-size scaling experiment: the Hadoop and Spark pipeline on EMR at about 25%, 50%, and 100% of the subset, with run times, counts, and cost per run.
 - The final report explicitly covers selection criteria, integration, matching rules, coverage, handling of missing and inconsistent data, and the limitations of the smaller dataset.
+- 2026-11-03 addendum to the AWS capability check: the emr-spark-8.0.0 release documentation lists Amazon SDK for Java 2.41.32 among its application versions. ScholarChain pins bedrockruntime 2.41.32 to match (Phase 5, work order 3).
