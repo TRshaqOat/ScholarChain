@@ -22,3 +22,15 @@ Run the validation script, and run the ORCID fetcher in SAMPLE mode twice. Run -
 Report, in the standard report contract: the --plan output, the exact full-run command, and any risk to a one-night unattended run.
 
 After the agent returns, save its report verbatim to docs/agent-runs/phase-05/agent-report.md under the heading "## Work order 1: dataset-engineer", wrapped in a ````text fence. Do not invoke any other agent.
+
+## Human ruling after work order 1
+
+- ORCID priority order: class b first, then class a ranked by distinct subset works (highest first), then c, then d; cap 23,000 (repair-01). Full run completed 2026-11-03: 23,000 selected, 22,975 records, 25 unavailable.
+
+## Work order 2: dataset-engineer (record the completed full runs)
+
+Use the dataset-engineer agent to record the completed full dataset runs in datasets/dataset-manifest.yaml. For DBLP, OpenAlex, Crossref, and ORCID, fill the observed sizes, record counts, missing counts, retrieval or snapshot dates, checksum file locations, and the ORCID coverage fields, using the run-info files and logs under scratch/datasets/ (including scratch/datasets/logs/). Do not run any fetch. Run the validation script. Return a standard report.
+
+## Work order 3: build-engineer (Bedrock client dependency)
+
+Use the build-engineer agent to add the AWS SDK for Java v2 Bedrock Runtime client (software.amazon.awssdk:bedrockruntime) to the entityResolution module in Compile scope, so it can call Bedrock for bounded LLM adjudication. Pin it to 2.41.32, the AWS SDK v2 version emr-spark-8.0.0 ships (see the AWS capability check in spec/architect-decisions.md), or explain why another version at least 14 days old is needed. The hadoop job jar must not bundle the AWS SDK, because EMR supplies it: report the hadoop assembly size and its software/amazon/awssdk entry count before and after. Run sbt check twice. Return a standard report.
