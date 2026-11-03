@@ -23,7 +23,9 @@ final case class EntityResolutionConfig(
     acceptThreshold: Double,
     rejectThreshold: Double,
     llmBandMin: Double,
-    llmBandMax: Double
+    llmBandMax: Double,
+    maxBlockSize: Int,
+    maxConflictGroupSize: Int
 )
 final case class GraphConfig(
     policyVersion: String,
@@ -99,6 +101,8 @@ object ConfigLoader:
     "SCHOLARCHAIN_NEPTUNE_QUERY_TIMEOUT_MS" -> "neptune.query-timeout-ms",
     "SCHOLARCHAIN_VECTOR_BUCKET" -> "s3-vectors.vector-bucket",
     "SCHOLARCHAIN_ER_POLICY_VERSION" -> "entity-resolution.policy-version",
+    "SCHOLARCHAIN_ER_MAX_BLOCK_SIZE" -> "entity-resolution.max-block-size",
+    "SCHOLARCHAIN_ER_MAX_CONFLICT_GROUP_SIZE" -> "entity-resolution.max-conflict-group-size",
     "SCHOLARCHAIN_GRAPH_POLICY_VERSION" -> "graph.policy-version",
     "SCHOLARCHAIN_EMBEDDING_MODEL_ID" -> "models.embedding-model",
     "SCHOLARCHAIN_SYNTHESIS_MODEL_ID" -> "models.synthesis-model",
@@ -165,7 +169,9 @@ object ConfigLoader:
         dbl("entity-resolution.accept-threshold"),
         dbl("entity-resolution.reject-threshold"),
         dbl("entity-resolution.llm-band-min"),
-        dbl("entity-resolution.llm-band-max")
+        dbl("entity-resolution.llm-band-max"),
+        int("entity-resolution.max-block-size"),
+        int("entity-resolution.max-conflict-group-size")
       ),
       graph = GraphConfig(
         str("graph.policy-version"),
@@ -230,6 +236,10 @@ object ConfigLoader:
         0 <= er.rejectThreshold && er.rejectThreshold <= er.llmBandMin && er.llmBandMin <= er.llmBandMax &&
           er.llmBandMax <= er.acceptThreshold && er.acceptThreshold <= 1,
         "entity-resolution thresholds must satisfy 0 <= reject <= llm-band-min <= llm-band-max <= accept <= 1"
+      ) ++
+      check(
+        er.maxBlockSize >= 1 && er.maxConflictGroupSize >= 1,
+        "entity-resolution.max-block-size and entity-resolution.max-conflict-group-size must be positive"
       ) ++
       check(c.graph.windows.nonEmpty, "graph.windows must not be empty") ++
       c.graph.windows.toList.flatMap(w =>

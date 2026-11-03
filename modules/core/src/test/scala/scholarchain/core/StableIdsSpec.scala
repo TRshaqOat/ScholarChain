@@ -94,6 +94,24 @@ class StableIdsSpec extends AnyFunSuite:
     assert(chunkId("e", "v1", "abstract", Some(1), "sha256:y") != base)
   }
 
+  test("affiliation-name ID: frozen value, canonical form, version, and empty names") {
+    val name = "Universitat Politècnica de Catalunya, Dept. EE"
+    assert(canonicalAffiliationName(name) == "universitat politecnica de catalunya dept ee")
+    assert(affiliationNameId(name) == Right("sci:affn-v1:981e0a59669da94037cd74352e4b6112"))
+    assert(
+      affiliationNameId("  UNIVERSITAT politecnica de  Catalunya -- dept ee ") == affiliationNameId(
+        name
+      )
+    )
+    assert(affiliationNameId("清华大学") == Right("sci:affn-v1:ed625fa53e12cc4c68183d214dca8dcc"))
+    assert(affiliationNameId("Universitat Politecnica de Valencia") != affiliationNameId(name))
+    assert(affiliationNameId(" -- , ").isLeft)
+    assert(affiliationNameId("a\u001fb") == affiliationNameId("a b")) // separator is not a letter
+    val id = affiliationNameId(name).toOption.get
+    assert(IdFormat.isAffiliationNameId(id) && IdFormat.isNamespacedId(id))
+    assert(!IdFormat.isAffiliationNameId("affiliation-name:981e0a59669da94037cd74352e4b6112"))
+  }
+
   test("ID parts containing the separator are refused") {
     assertThrows[IllegalArgumentException](hash("a\u001fb"))
   }

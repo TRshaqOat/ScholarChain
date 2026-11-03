@@ -101,6 +101,41 @@ object StableIds:
         require(anchorKey.trim.nonEmpty, "anchorKey must not be blank")
         s"scr:$policyVersion:${hash("researcher", policyVersion, anchorKey)}"
 
+  // ---- Institution IDs without an external identifier -----------------------------------------
+  // Institutions with an external ID use it ("ror:<id>", else "openalex:I..."); see Institution.
+
+  /** Version of the affiliation-name canonical form below. Bump it when the rule changes; every
+    * affiliationNameId changes with it.
+    */
+  val AffiliationNameRuleVersion = "affn-v1"
+
+  /** Canonical affiliation name (rule affn-v1): Unicode NFKD, combining marks removed, lower-cased
+    * with Locale.ROOT, every run of characters that are not letters or digits replaced by one
+    * space, then trimmed. "Universitat Politècnica de Catalunya, Dept. EE" and "universitat
+    * politecnica de catalunya dept ee" are the same. Non-Latin letters are kept. This is only an ID
+    * key: it does not decide that two differently spelled names are one institution.
+    */
+  def canonicalAffiliationName(name: String): String =
+    java.text.Normalizer
+      .normalize(name, java.text.Normalizer.Form.NFKD)
+      .replaceAll("\\p{M}+", "")
+      .toLowerCase(java.util.Locale.ROOT)
+      .replaceAll("[^\\p{L}\\p{N}]+", " ")
+      .trim
+
+  /** Institution ID for an affiliation known only by its name: "sci:affn-v1:" +
+    * H("affiliation-name", AffiliationNameRuleVersion, canonicalAffiliationName(name)). Left when
+    * the canonical name is empty (no letters or digits).
+    */
+  def affiliationNameId(name: String): Either[String, String] =
+    val canonical = canonicalAffiliationName(name)
+    if canonical.isEmpty then Left(s"affiliation name has no letters or digits: '$name'")
+    else
+      Right(
+        s"sci:$AffiliationNameRuleVersion:" +
+          hash("affiliation-name", AffiliationNameRuleVersion, canonical)
+      )
+
   // ---- Hash-based IDs -------------------------------------------------------------------------
 
   /** "cae-" + H("coauthor-edge", A, B, windowStartYear, windowEndYear, policyVersion), with (A, B)
@@ -193,6 +228,7 @@ object IdFormat:
     s"(dblp:$KeyPart(/$KeyPart)+|doi:10\\.\\d{4,9}/[\\x21-\\x7E&&[^A-Z]]+|openalex:W\\d+)".r
   private val Position = "[1-9]\\d*".r
   private val ScResearcher = s"scr:[A-Za-z0-9][A-Za-z0-9._-]*:$Hex32".r
+  private val AffiliationName = s"sci:[A-Za-z0-9][A-Za-z0-9._-]*:$Hex32".r
   private val Namespaced = s"[a-z][a-z0-9-]*:$Ascii+".r
   private val CoauthorEdge = s"cae-$Hex32".r
   private val GraphEdge = s"ge-$Hex32".r
@@ -208,6 +244,7 @@ object IdFormat:
     val i = s.lastIndexOf('#')
     i > 0 && isWorkId(s.take(i)) && Position.matches(s.drop(i + 1))
   def isNamespacedId(s: String): Boolean = Namespaced.matches(s)
+  def isAffiliationNameId(s: String): Boolean = AffiliationName.matches(s)
   def isCoauthorEdgeId(s: String): Boolean = CoauthorEdge.matches(s)
   def isGraphEdgeId(s: String): Boolean = GraphEdge.matches(s)
   def isChunkId(s: String): Boolean = Chunk.matches(s)

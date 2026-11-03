@@ -1,0 +1,210 @@
+package scholarchain.hadoop
+
+import org.scalatest.funsuite.AnyFunSuite
+import scholarchain.core.*
+
+class LogicSpec extends AnyFunSuite:
+  import TestSupport.*
+
+  private def dblpWork(key: String, n: Int, year: Option[Int] = Some(2020)): WorkRecord =
+    val id = StableIds.dblpWorkId(key)
+    val prov = ctx.provenance(SourceType.DBLP, key)
+    WorkRecord(
+      SchemaVersions.WorkRecord,
+      id,
+      SourceType.DBLP,
+      key,
+      None,
+      None,
+      year,
+      None,
+      None,
+      None,
+      None,
+      Map.empty,
+      (1 to n).toVector.map(i =>
+        AuthorMention(
+          SchemaVersions.AuthorMention,
+          s"$id#$i",
+          id,
+          i,
+          s"A$i",
+          s"A$i",
+          None,
+          None,
+          Vector.empty,
+          prov
+        )
+      ),
+      None,
+      prov
+    )
+
+  private def pairs(n: Int) =
+    Teams.pairs(dblpWork("conf/x/P", n)).map(p => (p.authorA.drop(13), p.authorB.drop(13))).toVector
+
+  test("pair expansion: 0 and 1 authors give no pairs") {
+    assert(pairs(0).isEmpty && pairs(1).isEmpty)
+  }
+
+  test("pair expansion: 2 authors give exactly the pair (#1, #2)") {
+    assert(pairs(2) == Vector(("#1", "#2")))
+  }
+
+  test("pair expansion: 3 authors give (#1,#2), (#1,#3), (#2,#3)") {
+    assert(pairs(3) == Vector(("#1", "#2"), ("#1", "#3"), ("#2", "#3")))
+  }
+
+  test("pair expansion: 12 authors give 66 distinct canonical pairs; #10 sorts before #2") {
+    val ps = pairs(12)
+    assert(ps.size == 66 && ps.distinct.size == 66 && Teams.pairCount(12) == 66)
+    assert(ps.contains(("#10", "#2")) && !ps.contains(("#2", "#10"))) // String order, CanonicalPair
+    assert(ps.forall((a, b) => a < b))
+  }
+
+  test("pair records carry work ID, year, positions, source provenance, and validate") {
+    val w = dblpWork("conf/x/P", 4, Some(2011))
+    val ps = Teams.pairs(w).toVector
+    assert(
+      ps.size == 6 && ps.forall(p =>
+        p.workId == w.workId && p.year.contains(2011) && p.provenance == w.provenance
+      )
+    )
+    assert(ps.forall(p => Validation.validate(p).isRight))
+    assert(
+      ps.flatMap(p => Seq(p.authorA, p.authorB))
+        .map(_.split('#').last.toInt)
+        .toSet == (1 to 4).toSet
+    )
+    assert(Teams.pairCount(1000) == 499500L)
+  }
+
+  test("a team lists mention IDs in author order and validates") {
+    val t = Teams.team(dblpWork("conf/x/T", 3))
+    assert(t.mentionIds == Vector(1, 2, 3).map(i => s"dblp:conf/x/T#$i") && t.teamSize == 3)
+    assert(Validation.validate(t).isRight)
+  }
+
+  test("team-size buckets") {
+    assert(
+      Seq(0, 1, 10, 11, 20, 21, 50, 51, 100, 101).map(Teams.bucket) ==
+        Seq("0", "1", "10", "11-20", "11-20", "21-50", "21-50", "51-100", "51-100", "101+")
+    )
+  }
+
+  test("exact keys use core DOI and ORCID normalization") {
+    val w = dblpWork("conf/x/K", 0).copy(doi = Some("10.1/abc"), arxivId = Some("2101.1"))
+    assert(ExactIdentifiers.workKeys(w) == Vector("doi:10.1/abc", "arxiv:2101.1"))
+    val m = w.authors.headOption.getOrElse(dblpWork("conf/x/K", 1).authors.head)
+    assert(
+      ExactIdentifiers.mentionKeys(
+        m.copy(orcid = Some("0000-0002-1825-0097"), sourceAuthorId = Some("openalex:A1"))
+      ) ==
+        Vector("orcid:0000-0002-1825-0097", "openalex:A1")
+    )
+    assert(
+      ExactIdentifiers.mentionKeys(m.copy(orcid = Some("0000-0002-1825-0098"))).isEmpty
+    ) // bad checksum
+    assert(ExactIdentifiers.workKeys(dblpWork("conf/x/K", 0)).isEmpty)
+  }
+
+  private def e(id: String, src: SourceType, workId: String = "") =
+    IndexEntry("work", id, src, if workId.isEmpty then id else workId)
+
+  test("exact DOI join: non-DBLP works match the single DBLP work; repeats count as duplicates") {
+    val o = ExactIdentifiers.resolve(
+      "doi:10.1/a",
+      Seq(
+        e("dblp:conf/x/A", SourceType.DBLP),
+        e("openalex:W1", SourceType.OPENALEX),
+        e("doi:10.1/a", SourceType.CROSSREF),
+        e("openalex:W1", SourceType.OPENALEX)
+      ),
+      ctx,
+      100
+    )
+    assert(
+      o.matches.map(c => (c.sourceId, c.targetId)) == Vector(
+        ("doi:10.1/a", "dblp:conf/x/A"),
+        ("openalex:W1", "dblp:conf/x/A")
+      )
+    )
+    assert(
+      o.matches.forall(c =>
+        c.entityType == MatchEntityType.WORK && c.blockingKey == "doi:10.1/a" && c.features.isEmpty
+      )
+    )
+    assert(o.matches.forall(c => Validation.validate(c).isRight))
+    assert(o.duplicates == 1 && o.conflicts.isEmpty && o.groupSize == 3)
+  }
+
+  test("exact DOI join: two DBLP works with one DOI are a conflict and nothing merges") {
+    val o = ExactIdentifiers.resolve(
+      "doi:10.1/a",
+      Seq(
+        e("dblp:conf/x/B", SourceType.DBLP),
+        e("dblp:conf/x/A", SourceType.DBLP),
+        e("openalex:W1", SourceType.OPENALEX)
+      ),
+      ctx,
+      100
+    )
+    assert(o.matches.isEmpty)
+    assert(
+      o.conflicts.map(c => (c.sourceId, c.targetId)) == Vector(("dblp:conf/x/A", "dblp:conf/x/B"))
+    )
+  }
+
+  test("conflict cap: a conflicting group above max-conflict-group-size emits no pairs") {
+    val three = Seq("A", "B", "C").map(k => e(s"dblp:conf/x/$k", SourceType.DBLP))
+    val capped = ExactIdentifiers.resolve("doi:10.1/a", three, ctx, 2)
+    assert(capped.conflicts.isEmpty && capped.matches.isEmpty && capped.conflicted)
+    assert(
+      capped.oversizeConflicts == Vector(ExactIdentifiers.OversizeConflict(MatchEntityType.WORK, 3))
+    )
+    assert(!capped.unmatched)
+    val open = ExactIdentifiers.resolve("doi:10.1/a", three, ctx, 3)
+    assert(open.conflicts.size == 3 && open.oversizeConflicts.isEmpty)
+    val slots = (1 to 3).map(i =>
+      IndexEntry("mention", s"dblp:conf/x/B#$i", SourceType.DBLP, "dblp:conf/x/B")
+    )
+    val r = ExactIdentifiers.resolve("orcid:0000-0002-1825-0097", slots, ctx, 2)
+    assert(
+      r.conflicts.isEmpty && r.oversizeConflicts == Vector(
+        ExactIdentifiers.OversizeConflict(MatchEntityType.RESEARCHER, 3)
+      )
+    )
+  }
+
+  test("exact DOI join: no DBLP work means unmatched") {
+    assert(
+      ExactIdentifiers
+        .resolve("doi:10.1/a", Seq(e("openalex:W1", SourceType.OPENALEX)), ctx, 100)
+        .unmatched
+    )
+  }
+
+  test("exact ORCID join: each mention matches the iD; two slots on one work are a conflict") {
+    val o = ExactIdentifiers.resolve(
+      "orcid:0000-0002-1825-0097",
+      Seq(
+        IndexEntry("mention", "dblp:conf/x/A#1", SourceType.DBLP, "dblp:conf/x/A"),
+        IndexEntry("mention", "openalex:W1#2", SourceType.OPENALEX, "openalex:W1"),
+        IndexEntry("mention", "dblp:conf/x/B#1", SourceType.DBLP, "dblp:conf/x/B"),
+        IndexEntry("mention", "dblp:conf/x/B#3", SourceType.DBLP, "dblp:conf/x/B")
+      ),
+      ctx,
+      100
+    )
+    assert(o.matches.map(_.sourceId) == Vector("dblp:conf/x/A#1", "openalex:W1#2"))
+    assert(
+      o.matches.forall(c =>
+        c.targetId == "orcid:0000-0002-1825-0097" && c.entityType == MatchEntityType.RESEARCHER
+      )
+    )
+    assert(
+      o.conflicts.map(c => (c.sourceId, c.targetId)) == Vector(
+        ("dblp:conf/x/B#1", "dblp:conf/x/B#3")
+      )
+    )
+  }

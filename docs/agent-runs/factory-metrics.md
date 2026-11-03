@@ -21,3 +21,8 @@ Running log for the Phase 16 agentic-factory evaluation. One row per agent invoc
 | 2026-11-02 | 03 | domain-engineer | COMPLETE | y | - | 0 | none | none | WO3: 21 records, IDs, validation, config loader; 148 tests |
 | 2026-11-02 | 03 | dataset-engineer | COMPLETE | y | - | 2 | none | none | repair-02: raw-bucket config reference in manifest |
 | 2026-11-02 | 03 | code-reviewer | APPROVE | y | 0/0/5 | - | none | none | 5 minor risks accepted as residual |
+| 2026-11-03 | 04 | hadoop-engineer | BLOCKED-ON | n | - | 0 | none | none | WO1: J01-J04, J07-J09 done; J05/J06 blocked on entity-resolution-engineer and domain-engineer |
+| 2026-11-03 | 04 | domain-engineer | COMPLETE | y | - | 0 | none | none | WO2: max-block and conflict-cap keys; affiliationNameId |
+| 2026-11-03 | 04 | entity-resolution-engineer | COMPLETE | y | - | 0 | none | none | WO3: normalization, blocking keys, oversize policy, 10 features; 30 tests |
+| 2026-11-03 | 04 | hadoop-engineer | COMPLETE | y | - | 1 | none | guard-dangerous false positive on Scala text "b.key" (used file tools instead) | WO4: J05/J06, jar shaded; full 110,867-work local run |
+| 2026-11-03 | 04 | code-reviewer | APPROVE | y | 0/0/3 | - | none | none | 3 minor accepted as residual |

@@ -93,6 +93,8 @@ class ConfigLoaderSpec extends AnyFunSuite:
       "SCHOLARCHAIN_AWS_ACCOUNT_ID" -> "111111111111",
       "SCHOLARCHAIN_NEPTUNE_PORT" -> "8182",
       "SCHOLARCHAIN_NEPTUNE_QUERY_TIMEOUT_MS" -> "5000",
+      "SCHOLARCHAIN_ER_MAX_BLOCK_SIZE" -> "1000",
+      "SCHOLARCHAIN_ER_MAX_CONFLICT_GROUP_SIZE" -> "100",
       "SCHOLARCHAIN_ER_POLICY_VERSION" -> "er-v1",
       "SCHOLARCHAIN_GRAPH_POLICY_VERSION" -> "graph-v1"
     )
@@ -103,6 +105,25 @@ class ConfigLoaderSpec extends AnyFunSuite:
     val f = file("scholarchain.entity-resolution.reject-threshold = 0.8")
     val result = ConfigLoader.load(Map(ConfigLoader.ConfigFileEnv -> f.toString))
     assert(result.left.toOption.get.exists(_.contains("entity-resolution thresholds")))
+  }
+
+  test("entity-resolution block and conflict-group limits: defaults, env overrides, positive") {
+    val er = load().entityResolution
+    assert(er.maxBlockSize == 1000 && er.maxConflictGroupSize == 100)
+    val f = file("scholarchain.entity-resolution.max-block-size = 7")
+    val c = load(
+      ConfigLoader.ConfigFileEnv -> f.toString,
+      "SCHOLARCHAIN_ER_MAX_CONFLICT_GROUP_SIZE" -> "9"
+    ).entityResolution
+    assert(c.maxBlockSize == 7 && c.maxConflictGroupSize == 9)
+    assert(load("SCHOLARCHAIN_ER_MAX_BLOCK_SIZE" -> "11").entityResolution.maxBlockSize == 11)
+    for (k, v) <- Seq(
+        "SCHOLARCHAIN_ER_MAX_BLOCK_SIZE" -> "0",
+        "SCHOLARCHAIN_ER_MAX_CONFLICT_GROUP_SIZE" -> "-1"
+      )
+    do
+      val errors = ConfigLoader.load(Map(k -> v)).left.toOption.get
+      assert(errors.exists(_.contains("max-conflict-group-size must be positive")), s"$k=$v")
   }
 
   test("a window whose start year exceeds its end year is rejected") {
