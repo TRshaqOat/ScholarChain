@@ -34,3 +34,5 @@ Use the dataset-engineer agent to record the completed full dataset runs in data
 ## Work order 3: build-engineer (Bedrock client dependency)
 
 Use the build-engineer agent to add the AWS SDK for Java v2 Bedrock Runtime client (software.amazon.awssdk:bedrockruntime) to the entityResolution module in Compile scope, so it can call Bedrock for bounded LLM adjudication. Pin it to 2.41.32, the AWS SDK v2 version emr-spark-8.0.0 ships (see the AWS capability check in spec/architect-decisions.md), or explain why another version at least 14 days old is needed. The hadoop job jar must not bundle the AWS SDK, because EMR supplies it: report the hadoop assembly size and its software/amazon/awssdk entry count before and after. Run sbt check twice. Return a standard report.
+
+Note: Phase 5 continues in a second orchestrator session from work order 2 onward, started 2026-11-03 to limit context size. All state is carried by this file and the reports in this folder.
