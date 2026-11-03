@@ -1,0 +1,131 @@
+package scholarchain.core
+
+import org.scalatest.funsuite.AnyFunSuite
+
+/** Stable-ID formulas. Expected literals were computed independently with Python hashlib over the
+  * documented formula (SHA-256 over parts joined by U+001F, first 32 hex digits).
+  */
+class StableIdsSpec extends AnyFunSuite:
+  import Fixtures.*
+  import StableIds.*
+
+  test("frozen formula values match an independent implementation") {
+    assert(fixtureRunId == "run-78764f1e9c70e21f34ef30d82b71089b")
+    assert(researcherA == "orcid:0000-0002-1825-0097")
+    assert(researcherB == "scr:er-v1:7a47f03bb657358ae076e68ca43dab88")
+    assert(edgeIdAB == "cae-adc27e574aecdb4fd1cb8915fa5a31fe")
+    assert(graphEdgeIdAB == "ge-59d2e3ea0c2185ed5ae9f8280026bfed")
+    assert(
+      textHash(profileText) ==
+        "sha256:8a34b13ec97c06b38d67d0bde45513216ff58e40d671c4d37109c9e9e2d1880d"
+    )
+    assert(profileChunkId == "chunk-45c7bab4d9adaa0d45c8d8321de4b12c")
+    assert(metricEvidence.evidenceId == "ev-53344ff0d3e40fb09029d37bdf4fb9b8")
+  }
+
+  test("IDs are deterministic across calls") {
+    assert(researcherId(None, "er-v1", "k") == researcherId(None, "er-v1", "k"))
+    assert(runId("s", "c", "v", Seq("a", "b"), 1) == runId("s", "c", "v", Seq("b", "a", "a"), 1))
+  }
+
+  test("run IDs ignore input order but change with attempt, code, config, and inputs") {
+    val base = runId("s", "c", "v", Seq("a"), 1)
+    assert(runId("s", "c", "v", Seq("a"), 2) != base)
+    assert(runId("s", "c2", "v", Seq("a"), 1) != base)
+    assert(runId("s", "c", "v2", Seq("a"), 1) != base)
+    assert(runId("s", "c", "v", Seq("a", "b"), 1) != base)
+    assertThrows[IllegalArgumentException](runId("s", "c", "v", Seq("a"), 0))
+  }
+
+  test("work IDs are namespace plus authoritative source ID") {
+    assert(dblpWorkId("conf/ics/LiaoHNZCT09") == "dblp:conf/ics/LiaoHNZCT09")
+    assert(doiWorkId("https://doi.org/10.1145/1542275.1542359") == "doi:10.1145/1542275.1542359")
+    assert(doiWorkId("DOI:10.1145/ABC") == "doi:10.1145/abc")
+    assert(openAlexId("https://openalex.org/W2071130955") == "openalex:W2071130955")
+    assert(mentionId(workId, 3) == "dblp:conf/ics/LiaoHNZCT09#3")
+  }
+
+  test("researcher ID uses a validated ORCID, else a versioned ScholarChain identity ID") {
+    assert(researcherId(Some("https://orcid.org/0000-0002-1825-0097"), "er-v1", "x") == researcherA)
+    assert(researcherId(None, "er-v2", "orcid-record:synthetic:orcid-a") != researcherB)
+    assert(researcherId(None, "er-v1", "other-anchor") != researcherB)
+  }
+
+  test("ORCID checksum is enforced and synthetic fixture IDs are never ORCID iDs") {
+    assert(normalizeOrcid("0000-0002-1825-0097").contains("0000-0002-1825-0097"))
+    assert(normalizeOrcid("0000-0002-1825-0098").isEmpty) // wrong check digit
+    assert(
+      normalizeOrcid("0000-0002-1694-233X").contains("0000-0002-1694-233X")
+    ) // X check digit (ORCID documentation example)
+    assert(normalizeOrcid("synthetic:orcid-a").isEmpty)
+    assertThrows[IllegalArgumentException](researcherId(Some("synthetic:orcid-a"), "er-v1", "x"))
+  }
+
+  test("coauthor edge ID is independent of argument order and depends on window and policy") {
+    val ab = coauthorEdgeId(researcherA, researcherB, 2000, 2026, "graph-v1")
+    assert(coauthorEdgeId(researcherB, researcherA, 2000, 2026, "graph-v1") == ab)
+    assert(coauthorEdgeId(researcherA, researcherB, 2015, 2026, "graph-v1") != ab)
+    assert(coauthorEdgeId(researcherA, researcherB, 2000, 2026, "graph-v2") != ab)
+    assert(coauthorEdgeId(researcherA, researcherA, 2000, 2026, "graph-v1").isLeft)
+  }
+
+  test("graph edge ID canonicalizes undirected endpoints only, and evidence order is ignored") {
+    val p = "graph-v1"
+    val ev = Seq("e2", "e1")
+    assert(
+      graphEdgeId(EdgeType.COAUTHORED_WITH, researcherB, researcherA, p, ev) ==
+        graphEdgeId(EdgeType.COAUTHORED_WITH, researcherA, researcherB, p, ev.reverse)
+    )
+    assert(
+      graphEdgeId(EdgeType.AUTHORED, researcherA, workId, p, ev) !=
+        graphEdgeId(EdgeType.AUTHORED, workId, researcherA, p, ev)
+    )
+    assert(
+      graphEdgeId(EdgeType.AUTHORED, researcherA, workId, p, Seq("e1")) !=
+        graphEdgeId(EdgeType.AUTHORED, researcherA, workId, p, Seq("e2"))
+    )
+  }
+
+  test("chunk ID changes with any of its inputs") {
+    val base = chunkId("e", "v1", "abstract", Some(1), "sha256:x")
+    assert(chunkId("e", "v1", "abstract", Some(2), "sha256:x") != base)
+    assert(chunkId("e", "v1", "abstract", None, "sha256:x") != base)
+    assert(chunkId("e", "v1", "profile", Some(1), "sha256:x") != base)
+    assert(chunkId("e", "v1", "abstract", Some(1), "sha256:y") != base)
+  }
+
+  test("ID parts containing the separator are refused") {
+    assertThrows[IllegalArgumentException](hash("a\u001fb"))
+  }
+
+  test("canonical pair rule: smaller ID first, self-pairs refused") {
+    assert(CanonicalPair("b", "a") == Right(("a", "b")))
+    assert(CanonicalPair("a", "b") == Right(("a", "b")))
+    assert(CanonicalPair("a", "a").isLeft)
+    assert(CanonicalPair.isCanonical(researcherA, researcherB))
+    assert(!CanonicalPair.isCanonical(researcherB, researcherA))
+    // Lexicographic, not numeric: position 10 sorts before position 2.
+    assert(CanonicalPair.isCanonical(mentionId(workId, 10), mentionId(workId, 2)))
+  }
+
+  test("ID format checks accept well-formed and reject malformed IDs") {
+    assert(IdFormat.isWorkId(workId))
+    assert(IdFormat.isWorkId("doi:10.1145/1542275.1542359"))
+    assert(IdFormat.isWorkId("openalex:W2071130955"))
+    assert(!IdFormat.isWorkId("conf/ics/LiaoHNZCT09")) // no namespace
+    assert(!IdFormat.isWorkId("doi:10.1145/ABC")) // not normalized
+    assert(!IdFormat.isWorkId("dblp:conf/ics/Liaoü09")) // not ASCII
+    assert(IdFormat.isResearcherId(researcherA) && IdFormat.isResearcherId(researcherB))
+    assert(!IdFormat.isResearcherId("orcid:0000-0002-1825-0098"))
+    assert(!IdFormat.isResearcherId("openalex:A5065936105")) // a candidate, not an identity
+    assert(!IdFormat.isResearcherId("synthetic:orcid-a"))
+    assert(IdFormat.isMentionId(mention1.mentionId))
+    assert(!IdFormat.isMentionId(workId + "#0"))
+    assert(IdFormat.isCoauthorEdgeId(edgeIdAB) && !IdFormat.isCoauthorEdgeId("cae-123"))
+    assert(IdFormat.isGraphEdgeId(graphEdgeIdAB) && !IdFormat.isGraphEdgeId(edgeIdAB))
+    assert(IdFormat.isChunkId(profileChunkId))
+    assert(
+      IdFormat.isEvidenceId(metricEvidence.evidenceId) && !IdFormat.isEvidenceId("ev-metric-17")
+    )
+    assert(IdFormat.isRunId(fixtureRunId) && !IdFormat.isRunId("run-2026-11-03T00:00:00Z"))
+  }

@@ -10,6 +10,8 @@ import sbt._
 object Versions {
   // Scala 3.3.7 depends on scala-library 2.13.16, matching the EMR emr-spark-8.0.0 runtime.
   val scala = "3.3.7" // 2025-10-09, Scala 3.3 LTS (stdlib is scala-library 2.13.16)
+  // Forced in every project via dependencyOverrides so no dependency can lift it past EMR's.
+  val scalaLibrary = "2.13.16" // EMR emr-spark-8.0.0 ships Scala 2.13.16
   val javaRelease = "17" // EMR emr-spark-8.0.x and the runtime image are Java 17
 
   // Target runtime per AWS release documentation for emr-spark-8.0.0 (released 2026-05-21):
@@ -20,6 +22,7 @@ object Versions {
   val upickle = "4.4.3" // 2026-02-14, the only JSON library (D-05)
   val scalaTest = "3.2.20" // 2026-03-25, the only test framework (D-05)
   val logback = "1.5.38" // 2026-07-09, logging implementation (Runtime scope only)
+  val typesafeConfig = "1.4.9" // 2026-06-03, HOCON configuration loader (core, Compile scope)
 
   // Multi-arch index digest (includes linux/arm64, D-11); tag pushed 2026-09-18.
   val javaRuntimeImage =
@@ -30,6 +33,8 @@ object Dependencies {
   val upickle = "com.lihaoyi" %% "upickle" % Versions.upickle
   val scalaTest = "org.scalatest" %% "scalatest" % Versions.scalaTest % Test
   val logback = "ch.qos.logback" % "logback-classic" % Versions.logback % Runtime
+  val typesafeConfig = "com.typesafe" % "config" % Versions.typesafeConfig
+  val scalaLibrary = "org.scala-lang" % "scala-library" % Versions.scalaLibrary
 
   // The EMR runtime supplies Hadoop and Spark, so both stay Provided (still on the Test classpath).
   val hadoop = Seq("hadoop-client-api", "hadoop-client-runtime")

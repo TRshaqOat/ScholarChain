@@ -1,0 +1,326 @@
+{
+  "config_version": "dblp-subset.v1",
+  "description": "ScholarChain DBLP seed subset rule and enrichment fetch bounds. Distributed systems, systems, and parallel computing venues.",
+  "dblp": {
+    "snapshot_date": "2026-10-03",
+    "release_doi": "10.4230/dblp.xml.2026-10-03",
+    "xml_gz_url": "https://drops.dagstuhl.de/storage/artifacts/dblp/xml/2026/dblp-2026-10-03.xml.gz",
+    "xml_gz_md5_url": "https://drops.dagstuhl.de/storage/artifacts/dblp/xml/2026/dblp-2026-10-03.xml.gz.md5",
+    "xml_gz_md5": "cbd329100ea1bbb2873fa2f6d414ea00",
+    "xml_gz_bytes": 1107081001,
+    "dtd_url": "https://dblp.org/xml/dblp.dtd",
+    "dtd_sha256": "2d864498f9eef9298662df11e3874171ff24cd4a21ab5974f1369c90acdb1ef6",
+    "dtd_bytes": 13134,
+    "dtd_local_names": [
+      "dblp.dtd",
+      "dblp-2023-06-28.dtd"
+    ],
+    "record_types": [
+      "article",
+      "inproceedings"
+    ],
+    "year_min": 2000,
+    "year_max": 2026,
+    "sample_prefix_bytes": 33554432,
+    "sample_max_records": 40,
+    "venues": [
+      {
+        "key_prefix": "conf/IEEEcloud/",
+        "title": "IEEE International Conference on Cloud Computing (CLOUD)",
+        "est_works_2000_2026": 1754,
+        "est_works_with_doi": 1754
+      },
+      {
+        "key_prefix": "conf/IEEEpact/",
+        "title": "International Conference on Parallel Architectures and Compilation Techniques (PACT)",
+        "est_works_2000_2026": 1142,
+        "est_works_with_doi": 1050
+      },
+      {
+        "key_prefix": "conf/asplos/",
+        "title": "International Conference on Architectural Support for Programming Languages and Operating Systems (ASPLOS)",
+        "est_works_2000_2026": 1632,
+        "est_works_with_doi": 1631
+      },
+      {
+        "key_prefix": "conf/ccgrid/",
+        "title": "IEEE/ACM International Symposium on Cluster, Cloud and Internet Computing (CCGRID)",
+        "est_works_2000_2026": 2922,
+        "est_works_with_doi": 2850
+      },
+      {
+        "key_prefix": "conf/cloud/",
+        "title": "ACM Symposium on Cloud Computing (SoCC)",
+        "est_works_2000_2026": 809,
+        "est_works_with_doi": 809
+      },
+      {
+        "key_prefix": "conf/cluster/",
+        "title": "IEEE International Conference on Cluster Computing (CLUSTER)",
+        "est_works_2000_2026": 2052,
+        "est_works_with_doi": 1988
+      },
+      {
+        "key_prefix": "conf/dsn/",
+        "title": "Dependable Systems and Networks (DSN)",
+        "est_works_2000_2026": 2764,
+        "est_works_with_doi": 2679
+      },
+      {
+        "key_prefix": "conf/europar/",
+        "title": "European Conference on Parallel Processing (Euro-Par)",
+        "est_works_2000_2026": 3550,
+        "est_works_with_doi": 3550
+      },
+      {
+        "key_prefix": "conf/eurosys/",
+        "title": "European Conference on Computer Systems (EuroSys)",
+        "est_works_2000_2026": 913,
+        "est_works_with_doi": 913
+      },
+      {
+        "key_prefix": "conf/fast/",
+        "title": "USENIX Conference on File and Storage Technologies (FAST)",
+        "est_works_2000_2026": 622,
+        "est_works_with_doi": 0
+      },
+      {
+        "key_prefix": "conf/hipc/",
+        "title": "International Conference on High Performance Computing, Data, and Analytics (HiPC)",
+        "est_works_2000_2026": 1531,
+        "est_works_with_doi": 1519
+      },
+      {
+        "key_prefix": "conf/hpdc/",
+        "title": "International Symposium on High-Performance Parallel Distributed Computing (HPDC)",
+        "est_works_2000_2026": 1166,
+        "est_works_with_doi": 1097
+      },
+      {
+        "key_prefix": "conf/icdcs/",
+        "title": "IEEE International Conference on Distributed Computing Systems (ICDCS)",
+        "est_works_2000_2026": 4732,
+        "est_works_with_doi": 4649
+      },
+      {
+        "key_prefix": "conf/icpads/",
+        "title": "International Conference on Parallel and Distributed Systems (ICPADS)",
+        "est_works_2000_2026": 3715,
+        "est_works_with_doi": 3626
+      },
+      {
+        "key_prefix": "conf/icpp/",
+        "title": "International Conference on Parallel Processing (ICPP)",
+        "est_works_2000_2026": 3506,
+        "est_works_with_doi": 3494
+      },
+      {
+        "key_prefix": "conf/ics/",
+        "title": "ACM International Conference on Supercomputing (ICS)",
+        "est_works_2000_2026": 1290,
+        "est_works_with_doi": 1290
+      },
+      {
+        "key_prefix": "conf/ipps/",
+        "title": "IEEE International Parallel and Distributed Processing Symposium (IPDPS)",
+        "est_works_2000_2026": 9463,
+        "est_works_with_doi": 9434
+      },
+      {
+        "key_prefix": "conf/ispa/",
+        "title": "International Symposium on Parallel and Distributed Processing with Applications (ISPA)",
+        "est_works_2000_2026": 3695,
+        "est_works_with_doi": 3695
+      },
+      {
+        "key_prefix": "conf/middleware/",
+        "title": "International Middleware Conference (Middleware)",
+        "est_works_2000_2026": 1180,
+        "est_works_with_doi": 1090
+      },
+      {
+        "key_prefix": "conf/nsdi/",
+        "title": "Symposium on Networked Systems Design and Implementation (NSDI)",
+        "est_works_2000_2026": 1285,
+        "est_works_with_doi": 0
+      },
+      {
+        "key_prefix": "conf/opodis/",
+        "title": "International Conference on Principles of Distributed Systems (OPODIS)",
+        "est_works_2000_2026": 804,
+        "est_works_with_doi": 749
+      },
+      {
+        "key_prefix": "conf/osdi/",
+        "title": "USENIX Symposium on Operating Systems Design and Implementation (OSDI)",
+        "est_works_2000_2026": 861,
+        "est_works_with_doi": 0
+      },
+      {
+        "key_prefix": "conf/pdp/",
+        "title": "International Euromicro Conference on Parallel, Distributed and Network-Based Processing (PDP)",
+        "est_works_2000_2026": 1923,
+        "est_works_with_doi": 1900
+      },
+      {
+        "key_prefix": "conf/podc/",
+        "title": "ACM Symposium on Principles of Distributed Computing (PODC)",
+        "est_works_2000_2026": 1721,
+        "est_works_with_doi": 1671
+      },
+      {
+        "key_prefix": "conf/ppopp/",
+        "title": "ACM SIGPLAN Symposium on Principles & Practice of Parallel Programming (PPoPP)",
+        "est_works_2000_2026": 1132,
+        "est_works_with_doi": 1132
+      },
+      {
+        "key_prefix": "conf/sc/",
+        "title": "International Conference for High Performance Computing, Networking, Storage and Analysis (SC)",
+        "est_works_2000_2026": 3722,
+        "est_works_with_doi": 3646
+      },
+      {
+        "key_prefix": "conf/sosp/",
+        "title": "Symposium on Operating Systems Principles (SOSP)",
+        "est_works_2000_2026": 545,
+        "est_works_with_doi": 545
+      },
+      {
+        "key_prefix": "conf/spaa/",
+        "title": "ACM Symposium on Parallelism in Algorithms and Architectures (SPAA)",
+        "est_works_2000_2026": 1269,
+        "est_works_with_doi": 1269
+      },
+      {
+        "key_prefix": "conf/srds/",
+        "title": "IEEE International Symposium on Reliable Distributed Systems (SRDS)",
+        "est_works_2000_2026": 1007,
+        "est_works_with_doi": 1003
+      },
+      {
+        "key_prefix": "conf/usenix/",
+        "title": "USENIX Annual Technical Conference (USENIX ATC)",
+        "est_works_2000_2026": 1424,
+        "est_works_with_doi": 0
+      },
+      {
+        "key_prefix": "conf/wdag/",
+        "title": "International Symposium on Distributed Computing (DISC)",
+        "est_works_2000_2026": 1187,
+        "est_works_with_doi": 1168
+      },
+      {
+        "key_prefix": "journals/cluster/",
+        "title": "Cluster Computing",
+        "est_works_2000_2026": 6192,
+        "est_works_with_doi": 6190
+      },
+      {
+        "key_prefix": "journals/concurrency/",
+        "title": "Concurrency and Computation: Practice and Experience",
+        "est_works_2000_2026": 7383,
+        "est_works_with_doi": 7379
+      },
+      {
+        "key_prefix": "journals/dc/",
+        "title": "Distributed Computing",
+        "est_works_2000_2026": 645,
+        "est_works_with_doi": 645
+      },
+      {
+        "key_prefix": "journals/fgcs/",
+        "title": "Future Generation Computer Systems",
+        "est_works_2000_2026": 7732,
+        "est_works_with_doi": 7732
+      },
+      {
+        "key_prefix": "journals/ijhpca/",
+        "title": "International Journal of High Performance Computing Applications",
+        "est_works_2000_2026": 1037,
+        "est_works_with_doi": 1035
+      },
+      {
+        "key_prefix": "journals/jpdc/",
+        "title": "Journal of Parallel and Distributed Computing",
+        "est_works_2000_2026": 3371,
+        "est_works_with_doi": 3370
+      },
+      {
+        "key_prefix": "journals/pc/",
+        "title": "Parallel Computing",
+        "est_works_2000_2026": 1588,
+        "est_works_with_doi": 1588
+      },
+      {
+        "key_prefix": "journals/ppl/",
+        "title": "Parallel Processing Letters",
+        "est_works_2000_2026": 739,
+        "est_works_with_doi": 727
+      },
+      {
+        "key_prefix": "journals/sigops/",
+        "title": "ACM SIGOPS: Operating Systems Review",
+        "est_works_2000_2026": 745,
+        "est_works_with_doi": 733
+      },
+      {
+        "key_prefix": "journals/tcc/",
+        "title": "IEEE Transactions on Cloud Computing",
+        "est_works_2000_2026": 1446,
+        "est_works_with_doi": 1446
+      },
+      {
+        "key_prefix": "journals/tjs/",
+        "title": "The Journal of Supercomputing",
+        "est_works_2000_2026": 9115,
+        "est_works_with_doi": 9115
+      },
+      {
+        "key_prefix": "journals/tocs/",
+        "title": "ACM Transactions on Computer Systems (TOCS)",
+        "est_works_2000_2026": 301,
+        "est_works_with_doi": 299
+      },
+      {
+        "key_prefix": "journals/topc/",
+        "title": "ACM Transactions on Parallel Computing",
+        "est_works_2000_2026": 250,
+        "est_works_with_doi": 250
+      },
+      {
+        "key_prefix": "journals/tos/",
+        "title": "ACM Transactions on Storage",
+        "est_works_2000_2026": 559,
+        "est_works_with_doi": 559
+      },
+      {
+        "key_prefix": "journals/tpds/",
+        "title": "IEEE Transactions on Parallel and Distributed Systems (TPDS)",
+        "est_works_2000_2026": 4996,
+        "est_works_with_doi": 4977
+      }
+    ]
+  },
+  "openalex": {
+    "api_base": "https://api.openalex.org",
+    "dois_per_request": 50,
+    "min_seconds_between_requests": 0.2,
+    "select": "id,doi,title,publication_year,type,ids,authorships,primary_location,primary_topic,cited_by_count,updated_date"
+  },
+  "crossref": {
+    "api_base": "https://api.crossref.org",
+    "dois_per_request": 50,
+    "min_seconds_between_requests": 0.4,
+    "select": "DOI,title,type,container-title,ISSN,issued,published-print,published-online,author,publisher,member,references-count,is-referenced-by-count,license,funder,page,volume,issue,indexed,URL"
+  },
+  "orcid": {
+    "api_base": "https://pub.orcid.org/v3.0",
+    "min_seconds_between_requests": 0.2,
+    "documented_anonymous_daily_reads": 25000,
+    "daily_request_cap": 24000,
+    "sample_max_ids": 30,
+    "fictional_test_record_id": "0000-0002-1825-0097",
+    "fictional_test_record_marker": "fictitious person"
+  }
+}

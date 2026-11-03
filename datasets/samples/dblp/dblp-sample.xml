@@ -1,0 +1,530 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE dblp SYSTEM "dblp-2023-06-28.dtd">
+<dblp>
+<inproceedings mdate="2018-11-06" key="conf/ics/LiaoHNZCT09">
+<author>Shih-wei Liao</author>
+<author>Tzu-Han Hung</author>
+<author>Donald Nguyen</author>
+<author>Hucheng Zhou</author>
+<author>Chinyen Chou</author>
+<author>Chia-Heng Tu</author>
+<title>Prefetch optimizations on large-scale applications via parameter value prediction.</title>
+<pages>519-520</pages>
+<year>2009</year>
+<booktitle>ICS</booktitle>
+<ee>https://doi.org/10.1145/1542275.1542359</ee>
+<crossref>conf/ics/2009</crossref>
+<url>db/conf/ics/ics2009.html#LiaoHNZCT09</url>
+</inproceedings>
+<inproceedings mdate="2026-07-21" key="conf/ics/ChenYSPCKH26">
+<author orcid="0000-0003-1996-7070">Hanqiu Chen</author>
+<author orcid="0009-0009-0962-5318">Shao-Peng Yang 0001</author>
+<author orcid="0000-0002-2608-7322">Mohammadreza Soltaniyeh</author>
+<author orcid="0000-0002-8649-4253">Shuyi Pei</author>
+<author orcid="0009-0006-1573-1377">Andrew Chang</author>
+<author orcid="0000-0002-3689-3985">Bryan S. Kim</author>
+<author orcid="0000-0002-2541-8767">Cong Hao</author>
+<title>COMETS: Cost-effective Multi-node Efficient Training System with Memory Pooling and Sharing.</title>
+<pages>328-341</pages>
+<year>2026</year>
+<booktitle>ICS</booktitle>
+<ee type="oa">https://doi.org/10.1145/3797905.3807845</ee>
+<crossref>conf/ics/2026</crossref>
+<url>db/conf/ics/ics2026.html#ChenYSPCKH26</url>
+</inproceedings>
+<inproceedings mdate="2021-07-25" key="conf/ics/Clauss14">
+<author orcid="0000-0002-5759-9195">Philippe Clauss</author>
+<title>Author retrospective for counting solutions to linear and nonlinear constraints through ehrhart polynomials: applications to analyze and transform scientific programs.</title>
+<pages>37-39</pages>
+<year>2014</year>
+<booktitle>ICS 25th Anniversary</booktitle>
+<ee>https://doi.org/10.1145/2591635.2591654</ee>
+<crossref>conf/ics/25a</crossref>
+<url>db/conf/ics/ics25.html#Clauss14</url>
+</inproceedings>
+<inproceedings mdate="2026-01-22" key="conf/ics/WangWLLT25">
+<author orcid="0009-0003-0204-6678">Qi Wang 0113</author>
+<author orcid="0009-0005-6602-9994">Yaobin Wang</author>
+<author orcid="0009-0002-2800-6976">Yi Luo</author>
+<author orcid="0009-0000-2307-7674">Rong Luo</author>
+<author orcid="0000-0002-5888-975X">Pingping Tang</author>
+<title>HR-SpMM: Adaptive Row Partitioning and Hybrid Kernel Design for Sparse Matrix Multiplication.</title>
+<pages>161-172</pages>
+<year>2025</year>
+<booktitle>ICS</booktitle>
+<ee>https://doi.org/10.1145/3721145.3725770</ee>
+<crossref>conf/ics/2025</crossref>
+<url>db/conf/ics/ics2025.html#WangWLLT25</url>
+</inproceedings>
+<inproceedings mdate="2024-10-01" key="conf/ics/GuptaSN17">
+<author orcid="0000-0002-3240-1840">Suyash Gupta 0001</author>
+<author>Rahul Shrivastava</author>
+<author orcid="0000-0002-5949-0046">V. Krishna Nandivada</author>
+<title>Optimizing recursive task parallel programs.</title>
+<pages>11:1-11:11</pages>
+<year>2017</year>
+<booktitle>ICS</booktitle>
+<ee>https://doi.org/10.1145/3079079.3079102</ee>
+<crossref>conf/ics/2017</crossref>
+<url>db/conf/ics/ics2017.html#GuptaSN17</url>
+</inproceedings>
+<inproceedings mdate="2026-07-21" key="conf/ics/ZhengWTPL26">
+<author orcid="0009-0006-6617-649X">Zhong Zheng</author>
+<author orcid="0000-0001-8150-5171">Xingfu Wu</author>
+<author orcid="0000-0001-6061-0191">Valerie E. Taylor</author>
+<author orcid="0000-0002-6418-5767">Michael E. Papka</author>
+<author orcid="0000-0002-1047-8724">Zhiling Lan</author>
+<title>SmartCap: Coordinated CPU-GPU Power Capping for Performance-Assurance Energy Efficiency.</title>
+<pages>175-187</pages>
+<year>2026</year>
+<booktitle>ICS</booktitle>
+<ee type="oa">https://doi.org/10.1145/3797905.3800526</ee>
+<crossref>conf/ics/2026</crossref>
+<url>db/conf/ics/ics2026.html#ZhengWTPL26</url>
+</inproceedings>
+<inproceedings mdate="2026-08-18" key="conf/ics/Mansouri-Ghiasi26a">
+<author orcid="0000-0002-0833-0042">Nika Mansouri-Ghiasi</author>
+<author orcid="0000-0003-0064-7616">Konstantina Koliogeorgi</author>
+<author orcid="0000-0002-0075-2312">Onur Mutlu</author>
+<title>Architecture for Health Initiative (Arch4Health): Computational Challenges in Health-Related Applications and the Role of Computer Architecture in Addressing Them.</title>
+<pages>103-108</pages>
+<year>2026</year>
+<booktitle>ICS Workshops</booktitle>
+<ee>https://doi.org/10.1145/3774895.3815158</ee>
+<crossref>conf/ics/2026w</crossref>
+<url>db/conf/ics/ics2026w.html#Mansouri-Ghiasi26a</url>
+</inproceedings>
+<inproceedings mdate="2018-11-06" key="conf/ics/ChangS07">
+<author>Jichuan Chang</author>
+<author>Gurindar S. Sohi</author>
+<title>Cooperative cache partitioning for chip multiprocessors.</title>
+<pages>242-252</pages>
+<year>2007</year>
+<crossref>conf/ics/2007</crossref>
+<booktitle>ICS</booktitle>
+<ee>https://doi.org/10.1145/1274971.1275005</ee>
+<url>db/conf/ics/ics2007.html#ChangS07</url>
+</inproceedings>
+<inproceedings mdate="2020-08-17" key="conf/ics/LiuLCOS09">
+<author>Tao Liu</author>
+<author>Haibo Lin</author>
+<author>Tong Chen 0001</author>
+<author>Kevin O'Brien</author>
+<author>Ling Shao 0002</author>
+<title>DBDB: optimizing DMATransfer for the cell be architecture.</title>
+<pages>36-45</pages>
+<year>2009</year>
+<booktitle>ICS</booktitle>
+<ee>https://doi.org/10.1145/1542275.1542286</ee>
+<crossref>conf/ics/2009</crossref>
+<url>db/conf/ics/ics2009.html#LiuLCOS09</url>
+</inproceedings>
+<inproceedings mdate="2018-11-06" key="conf/ics/ManikantanG08">
+<author>R. Manikantan</author>
+<author>R. Govindarajan</author>
+<title>Focused prefetching: performance oriented prefetching based on commit stalls.</title>
+<pages>339-348</pages>
+<year>2008</year>
+<booktitle>ICS</booktitle>
+<ee>https://doi.org/10.1145/1375527.1375576</ee>
+<crossref>conf/ics/2008</crossref>
+<url>db/conf/ics/ics2008.html#ManikantanG08</url>
+</inproceedings>
+<inproceedings mdate="2018-11-06" key="conf/ics/ZhangHB02">
+<author>Yi Zhang</author>
+<author>Steve Haga</author>
+<author>Rajeev Barua</author>
+<title>Execution history guided instruction prefetching.</title>
+<pages>199-208</pages>
+<year>2002</year>
+<crossref>conf/ics/2002</crossref>
+<booktitle>ICS</booktitle>
+<ee>https://doi.org/10.1145/514191.514220</ee>
+<url>db/conf/ics/ics2002.html#ZhangHB02</url>
+</inproceedings>
+<inproceedings mdate="2023-09-30" key="conf/ics/NaghmouchiSB10">
+<author>Jamin Naghmouchi</author>
+<author>Daniele Paolo Scarpazza</author>
+<author orcid="0000-0003-1911-756X">Mladen Berekovic</author>
+<title>Small-ruleset regular expression matching on GPGPUs: quantitative performance analysis and optimization.</title>
+<pages>337-348</pages>
+<year>2010</year>
+<booktitle>ICS</booktitle>
+<ee>https://doi.org/10.1145/1810085.1810130</ee>
+<crossref>conf/ics/2010</crossref>
+<url>db/conf/ics/ics2010.html#NaghmouchiSB10</url>
+</inproceedings>
+<inproceedings mdate="2025-01-19" key="conf/ics/BronevetskyS08">
+<author>Greg Bronevetsky</author>
+<author>Bronis R. de Supinski</author>
+<title>Soft error vulnerability of iterative linear algebra methods.</title>
+<pages>155-164</pages>
+<year>2008</year>
+<booktitle>ICS</booktitle>
+<ee>https://doi.org/10.1145/1375527.1375552</ee>
+<ee>https://www.wikidata.org/entity/Q130918715</ee>
+<crossref>conf/ics/2008</crossref>
+<url>db/conf/ics/ics2008.html#BronevetskyS08</url>
+</inproceedings>
+<inproceedings mdate="2018-11-06" key="conf/ics/LiuHK16">
+<author>Jianqiao Liu</author>
+<author>Nikhil Hegde</author>
+<author>Milind Kulkarni 0001</author>
+<title>Hybrid CPU-GPU scheduling and execution of tree traversals.</title>
+<pages>2:1-2:12</pages>
+<year>2016</year>
+<booktitle>ICS</booktitle>
+<ee>https://doi.org/10.1145/2925426.2926261</ee>
+<crossref>conf/ics/2016</crossref>
+<url>db/conf/ics/ics2016.html#LiuHK16</url>
+</inproceedings>
+<inproceedings mdate="2025-10-14" key="conf/ics/GaoZHGS0024">
+<author>Wei Gao 0064</author>
+<author>Xu Zhang</author>
+<author>Shan Huang</author>
+<author>Shangwei Guo</author>
+<author>Peng Sun 0006</author>
+<author orcid="0000-0002-2751-5114">Yonggang Wen 0001</author>
+<author>Tianwei Zhang 0004</author>
+<title>AutoSched: An Adaptive Self-configured Framework for Scheduling Deep Learning Training Workloads.</title>
+<pages>473-484</pages>
+<year>2024</year>
+<booktitle>ICS</booktitle>
+<ee>https://doi.org/10.1145/3650200.3656598</ee>
+<crossref>conf/ics/2024</crossref>
+<url>db/conf/ics/ics2024.html#GaoZHGS0024</url>
+</inproceedings>
+<inproceedings mdate="2026-09-24" key="conf/ics/LudmirDHP26">
+<author orcid="0000-0002-3703-3282">Jason Zev Ludmir</author>
+<author orcid="0000-0002-1959-3059">Nicholas S. DiBrita</author>
+<author orcid="0009-0001-8634-4722">Jason Han</author>
+<author orcid="0000-0003-3127-5931">Tirthak Patel</author>
+<title>SpinTune: Improving the Reliability of Quantum Sensor Networks for Practical Quantum-Classical Utility.</title>
+<pages>986-999</pages>
+<year>2026</year>
+<booktitle>ICS</booktitle>
+<ee type="oa">https://doi.org/10.1145/3797905.3807861</ee>
+<crossref>conf/ics/2026</crossref>
+<url>db/conf/ics/ics2026.html#LudmirDHP26</url>
+</inproceedings>
+<inproceedings mdate="2020-08-12" key="conf/ics/ZhangCFCMWLG19">
+<author>Wei Zhang 0149</author>
+<author>Weihao Cui</author>
+<author>Kaihua Fu</author>
+<author>Quan Chen 0002</author>
+<author>Daniel Edward Mawhirter</author>
+<author>Bo Wu 0002</author>
+<author>Chao Li 0009</author>
+<author>Minyi Guo</author>
+<title>Laius: Towards latency awareness and improved utilization of spatial multitasking accelerators in datacenters.</title>
+<pages>58-68</pages>
+<year>2019</year>
+<booktitle>ICS</booktitle>
+<ee>https://doi.org/10.1145/3330345.3330351</ee>
+<crossref>conf/ics/2019</crossref>
+<url>db/conf/ics/ics2019.html#ZhangCFCMWLG19</url>
+</inproceedings>
+<inproceedings mdate="2018-11-06" key="conf/ics/Wolski14">
+<author>Rich Wolski</author>
+<title>Author retrospective of Dynamic application scheduling using on-line analytics: then and now.</title>
+<pages>48-50</pages>
+<year>2014</year>
+<booktitle>ICS 25th Anniversary</booktitle>
+<ee>https://doi.org/10.1145/2591635.2591657</ee>
+<crossref>conf/ics/25a</crossref>
+<url>db/conf/ics/ics25.html#Wolski14</url>
+</inproceedings>
+<inproceedings mdate="2026-08-03" key="conf/ics/SahinIZA26">
+<author orcid="0009-0002-5151-2973">Berkan Sahin</author>
+<author orcid="0000-0001-6496-6224">Ecem Ilg&uuml;n</author>
+<author orcid="0000-0001-7951-7720">Klea Zambaku</author>
+<author orcid="0000-0002-5443-0706">Can Alkan</author>
+<title>In-depth data movement characterization of DNA read mapping algorithms.</title>
+<pages>82-83</pages>
+<year>2026</year>
+<booktitle>ICS Workshops</booktitle>
+<ee>https://doi.org/10.1145/3774895.3815153</ee>
+<crossref>conf/ics/2026w</crossref>
+<url>db/conf/ics/ics2026w.html#SahinIZA26</url>
+</inproceedings>
+<inproceedings mdate="2024-08-04" key="conf/ics/Hou00F17">
+<author>Kaixi Hou</author>
+<author orcid="0000-0002-2150-5759">Weifeng Liu 0002</author>
+<author orcid="0000-0003-3557-6301">Hao Wang 0002</author>
+<author>Wu-chun Feng</author>
+<title>Fast segmented sort on GPUs.</title>
+<pages>12:1-12:10</pages>
+<year>2017</year>
+<booktitle>ICS</booktitle>
+<ee>https://doi.org/10.1145/3079079.3079105</ee>
+<crossref>conf/ics/2017</crossref>
+<url>db/conf/ics/ics2017.html#Hou00F17</url>
+</inproceedings>
+<inproceedings mdate="2018-11-06" key="conf/ics/WhiteMQ08">
+<author>Brian S. White</author>
+<author>Sally A. McKee</author>
+<author>Daniel J. Quinlan</author>
+<title>A projection-based optimization framework for abstractions with application to the unstructured mesh domain.</title>
+<pages>104-113</pages>
+<year>2008</year>
+<booktitle>ICS</booktitle>
+<ee>https://doi.org/10.1145/1375527.1375545</ee>
+<crossref>conf/ics/2008</crossref>
+<url>db/conf/ics/ics2008.html#WhiteMQ08</url>
+</inproceedings>
+<inproceedings mdate="2019-09-25" key="conf/ics/Curtis-MauryDAN06">
+<author>Matthew Curtis-Maury</author>
+<author>James Dzierwa</author>
+<author orcid="0000-0002-6486-062X">Christos D. Antonopoulos</author>
+<author orcid="0000-0003-0217-8307">Dimitrios S. Nikolopoulos</author>
+<title>Online power-performance adaptation of multithreaded programs using hardware event-based prediction.</title>
+<pages>157-166</pages>
+<year>2006</year>
+<crossref>conf/ics/2006</crossref>
+<booktitle>ICS</booktitle>
+<ee>https://doi.org/10.1145/1183401.1183426</ee>
+<url>db/conf/ics/ics2006.html#Curtis-MauryDAN06</url>
+</inproceedings>
+<inproceedings mdate="2026-08-18" key="conf/ics/WangYWDXSLWLLLQ25">
+<author orcid="0009-0008-0761-3287">Siqi Wang</author>
+<author orcid="0000-0003-1101-7927">Hailong Yang 0002</author>
+<author orcid="0009-0001-7197-2873">Pengbo Wang</author>
+<author orcid="0009-0004-0540-0959">Shaokang Du</author>
+<author orcid="0000-0002-7787-6460">Yufan Xu 0001</author>
+<author orcid="0000-0003-2927-362X">Qingxiao Sun</author>
+<author orcid="0000-0003-1453-6642">Xiaoyan Liu</author>
+<author orcid="0009-0001-7293-545X">Xuezhu Wang</author>
+<author orcid="0009-0002-7275-201X">Xuning Liang</author>
+<author orcid="0000-0002-7186-0556">Zhongzhi Luan</author>
+<author orcid="0000-0003-1829-2817">Yi Liu 0013</author>
+<author orcid="0000-0002-5382-1473">Depei Qian 0001</author>
+<title>Accelerating Complex Stencil Computations with Adaptive Fusion Strategy.</title>
+<pages>265-278</pages>
+<year>2025</year>
+<booktitle>ICS</booktitle>
+<ee>https://doi.org/10.1145/3721145.3725768</ee>
+<crossref>conf/ics/2025</crossref>
+<url>db/conf/ics/ics2025.html#WangYWDXSLWLLLQ25</url>
+</inproceedings>
+<inproceedings mdate="2018-11-06" key="conf/ics/NakashimaNT13">
+<author>Jun Nakashima</author>
+<author>Sho Nakatani</author>
+<author>Kenjiro Taura</author>
+<title>Design and implementation of a customizable work stealing scheduler.</title>
+<pages>9:1-9:8</pages>
+<year>2013</year>
+<booktitle>ROSS@ICS</booktitle>
+<ee>https://doi.org/10.1145/2491661.2481433</ee>
+<crossref>conf/ics/2013ross</crossref>
+<url>db/conf/ics/ross2013.html#NakashimaNT13</url>
+</inproceedings>
+<inproceedings mdate="2025-10-15" key="conf/ics/LiuMHZJ025">
+<author orcid="0000-0001-6404-369X">Hongyi Liu</author>
+<author orcid="0000-0002-7693-2950">Yinping Ma</author>
+<author orcid="0009-0003-3462-5324">Xiaosong Huang</author>
+<author orcid="0009-0005-9500-4489">Lingzhe Zhang</author>
+<author orcid="0000-0002-5946-9829">Tong Jia</author>
+<author orcid="0000-0002-6278-2357">Ying Li 0012</author>
+<title>ORA: Job Runtime Prediction for High-Performance Computing Platforms Using the Online Retrieval-Augmented Language Model.</title>
+<pages>884-894</pages>
+<year>2025</year>
+<booktitle>ICS</booktitle>
+<ee>https://doi.org/10.1145/3721145.3725757</ee>
+<crossref>conf/ics/2025</crossref>
+<url>db/conf/ics/ics2025.html#LiuMHZJ025</url>
+</inproceedings>
+<inproceedings mdate="2026-04-21" key="conf/ics/HelalLCTRPC21">
+<author orcid="0000-0003-3354-6352">Ahmed E. Helal</author>
+<author orcid="0000-0002-3776-9353">Jan Laukemann</author>
+<author>Fabio Checconi</author>
+<author>Jesmin Jahan Tithi</author>
+<author>Teresa M. Ranadive</author>
+<author>Fabrizio Petrini</author>
+<author>Jeewhan Choi</author>
+<title>ALTO: adaptive linearized storage of sparse tensors.</title>
+<pages>404-416</pages>
+<year>2021</year>
+<booktitle>ICS</booktitle>
+<ee>https://doi.org/10.1145/3447818.3461703</ee>
+<crossref>conf/ics/2021</crossref>
+<url>db/conf/ics/ics2021.html#HelalLCTRPC21</url>
+</inproceedings>
+<inproceedings mdate="2025-01-19" key="conf/ics/GrosserH16">
+<author orcid="0000-0003-3874-6003">Tobias Grosser</author>
+<author>Torsten Hoefler</author>
+<title>Polly-ACC Transparent compilation to heterogeneous hardware.</title>
+<pages>1:1-1:13</pages>
+<year>2016</year>
+<booktitle>ICS</booktitle>
+<ee>https://doi.org/10.1145/2925426.2926286</ee>
+<ee>https://www.wikidata.org/entity/Q130894324</ee>
+<crossref>conf/ics/2016</crossref>
+<url>db/conf/ics/ics2016.html#GrosserH16</url>
+</inproceedings>
+<inproceedings mdate="2026-08-18" key="conf/ics/ChenHW26">
+<author orcid="0009-0002-9135-3567">Jiahao Chen</author>
+<author orcid="0009-0008-0549-2864">Xianbo He</author>
+<author orcid="0009-0004-6497-221X">Lulin Wang</author>
+<title>CoLo: Correcting LLM-Generated IR with Precise Error Location.</title>
+<pages>75-79</pages>
+<year>2026</year>
+<booktitle>ICS Workshops</booktitle>
+<ee>https://doi.org/10.1145/3774895.3812202</ee>
+<crossref>conf/ics/2026w</crossref>
+<url>db/conf/ics/ics2026w.html#ChenHW26</url>
+</inproceedings>
+<inproceedings mdate="2026-07-21" key="conf/ics/WangTFZWRT26">
+<author orcid="0009-0001-2037-0127">Zixu Wang</author>
+<author orcid="0000-0002-9907-5859">Weiyuan Tong</author>
+<author orcid="0000-0003-3542-4869">Jianbin Fang</author>
+<author orcid="0009-0000-2722-0386">Yao Zhang</author>
+<author orcid="0000-0002-9817-7079">Wei Wang 0056</author>
+<author orcid="0000-0003-3183-7228">Jie Ren 0007</author>
+<author orcid="0000-0002-4333-2334">Zhanyong Tang</author>
+<title>GRASP: Optimizing VLIW Instruction Scheduling via Graph Reinforcement Learning.</title>
+<pages>93-105</pages>
+<year>2026</year>
+<booktitle>ICS</booktitle>
+<ee type="oa">https://doi.org/10.1145/3797905.3807840</ee>
+<crossref>conf/ics/2026</crossref>
+<url>db/conf/ics/ics2026.html#WangTFZWRT26</url>
+</inproceedings>
+<inproceedings mdate="2025-05-01" key="conf/ics/RenauTLCST05">
+<author>Jose Renau</author>
+<author orcid="0000-0001-8975-0294">James Tuck 0001</author>
+<author>Wei Liu 0014</author>
+<author>Luis Ceze</author>
+<author>Karin Strauss</author>
+<author>Josep Torrellas</author>
+<title>Tasking with out-of-order spawn in TLS chip multiprocessors: microarchitecture and compilation.</title>
+<pages>179-188</pages>
+<year>2005</year>
+<crossref>conf/ics/2005</crossref>
+<booktitle>ICS</booktitle>
+<ee>https://doi.org/10.1145/1088149.1088173</ee>
+<url>db/conf/ics/ics2005.html#RenauTLCST05</url>
+</inproceedings>
+<inproceedings mdate="2026-07-21" key="conf/ics/ChunduryBLSM26">
+<author orcid="0009-0001-8335-9259">Srikar Chundury</author>
+<author orcid="0009-0005-4249-7857">Blake Burgstahler</author>
+<author orcid="0000-0003-1270-4147">Jiajia Li 0001</author>
+<author orcid="0000-0002-6923-6455">In-Saeng Suh</author>
+<author orcid="0000-0002-0258-0294">Frank Mueller 0001</author>
+<title>Diagonal-Budgeted Trotterization for Efficient Quantum Hamiltonian Simulation.</title>
+<pages>1350-1362</pages>
+<year>2026</year>
+<booktitle>ICS</booktitle>
+<ee>https://doi.org/10.1145/3797905.3807869</ee>
+<crossref>conf/ics/2026</crossref>
+<url>db/conf/ics/ics2026.html#ChunduryBLSM26</url>
+</inproceedings>
+<inproceedings mdate="2024-10-06" key="conf/ics/AndersonLM22">
+<author orcid="0000-0002-4506-2657">Jonathon M. Anderson</author>
+<author orcid="0000-0002-5670-2920">Yumeng Liu</author>
+<author orcid="0000-0002-9026-5453">John M. Mellor-Crummey</author>
+<title>Preparing for performance analysis at exascale.</title>
+<pages>34:1-34:13</pages>
+<year>2022</year>
+<booktitle>ICS</booktitle>
+<ee>https://doi.org/10.1145/3524059.3532397</ee>
+<crossref>conf/ics/2022</crossref>
+<url>db/conf/ics/ics2022.html#AndersonLM22</url>
+</inproceedings>
+<inproceedings mdate="2024-08-27" key="conf/ics/XuYM12">
+<author>Yi Xu 0010</author>
+<author>Jun Yang 0002</author>
+<author>Rami G. Melhem</author>
+<title>Channel borrowing: an energy-efficient nanophotonic crossbar architecture with light-weight arbitration.</title>
+<pages>133-142</pages>
+<year>2012</year>
+<booktitle>ICS</booktitle>
+<ee>https://doi.org/10.1145/2304576.2304595</ee>
+<crossref>conf/ics/2012</crossref>
+<url>db/conf/ics/ics2012.html#XuYM12</url>
+</inproceedings>
+<inproceedings mdate="2018-11-06" key="conf/ics/AloorN15">
+<author>Raghesh Aloor</author>
+<author orcid="0000-0002-5949-0046">V. Krishna Nandivada</author>
+<title>Unique Worker model for OpenMP.</title>
+<pages>47-56</pages>
+<year>2015</year>
+<booktitle>ICS</booktitle>
+<ee>https://doi.org/10.1145/2751205.2751238</ee>
+<crossref>conf/ics/2015</crossref>
+<url>db/conf/ics/ics2015.html#AloorN15</url>
+</inproceedings>
+<inproceedings mdate="2025-10-15" key="conf/ics/YueYM25">
+<author orcid="0009-0006-5211-0203">Anna Yue</author>
+<author orcid="0000-0001-9653-8777">Pen-Chung Yew</author>
+<author orcid="0009-0005-5319-689X">Sanyam Mehta</author>
+<title>EVeREST-C: An Effective and Versatile Runtime Energy Saving Tool for CPUs.</title>
+<pages>991-1004</pages>
+<year>2025</year>
+<booktitle>ICS</booktitle>
+<ee>https://doi.org/10.1145/3721145.3725759</ee>
+<crossref>conf/ics/2025</crossref>
+<url>db/conf/ics/ics2025.html#YueYM25</url>
+</inproceedings>
+<inproceedings mdate="2026-08-18" key="conf/ics/ShiMMGP26">
+<author orcid="0009-0003-4387-367X">Ruimin Shi</author>
+<author orcid="0009-0008-4601-069X">Samuel Miksits</author>
+<author orcid="0009-0003-1777-562X">Ron Minnich</author>
+<author orcid="0000-0003-4229-5735">Maya B. Gokhale</author>
+<author orcid="0000-0003-4158-3583">Ivy Peng</author>
+<title>An Energy Characterization Study of ML operators in XNNPACK on RISC-V Vector Hardware.</title>
+<pages>154-159</pages>
+<year>2026</year>
+<booktitle>ICS Workshops</booktitle>
+<ee>https://doi.org/10.1145/3774895.3815549</ee>
+<crossref>conf/ics/2026w</crossref>
+<url>db/conf/ics/ics2026w.html#ShiMMGP26</url>
+</inproceedings>
+<inproceedings mdate="2025-01-19" key="conf/ics/ChenKZ11">
+<author>Feng Chen 0005</author>
+<author>David A. Koufaty</author>
+<author>Xiaodong Zhang 0001</author>
+<title>Hystor: making the best use of solid state drives in high performance storage systems.</title>
+<pages>22-32</pages>
+<year>2011</year>
+<booktitle>ICS</booktitle>
+<ee>https://doi.org/10.1145/1995896.1995902</ee>
+<ee>https://www.wikidata.org/entity/Q130985976</ee>
+<crossref>conf/ics/2011</crossref>
+<url>db/conf/ics/ics2011.html#ChenKZ11</url>
+</inproceedings>
+<inproceedings mdate="2024-05-07" key="conf/ics/MichelogiannakisWWS14">
+<author orcid="0000-0003-3743-6054">George Michelogiannakis</author>
+<author>Alexander Williams</author>
+<author orcid="0000-0002-8327-5717">Samuel Williams 0001</author>
+<author orcid="0000-0002-0608-3690">John Shalf</author>
+<title>Collective memory transfers for multi-core chips.</title>
+<pages>343-352</pages>
+<year>2014</year>
+<booktitle>ICS</booktitle>
+<ee>https://doi.org/10.1145/2597652.2597654</ee>
+<crossref>conf/ics/2014</crossref>
+<url>db/conf/ics/ics2014.html#MichelogiannakisWWS14</url>
+</inproceedings>
+<inproceedings mdate="2024-06-18" key="conf/ics/Vanecek024">
+<author orcid="0009-0008-4120-9472">Stepan Vanecek</author>
+<author orcid="0000-0001-9013-435X">Martin Schulz 0001</author>
+<title>sys-sage: A Unified Representation of Dynamic Topologies &amp; Attributes on HPC Systems.</title>
+<pages>363-375</pages>
+<year>2024</year>
+<booktitle>ICS</booktitle>
+<ee>https://doi.org/10.1145/3650200.3656627</ee>
+<crossref>conf/ics/2024</crossref>
+<url>db/conf/ics/ics2024.html#Vanecek024</url>
+</inproceedings>
+<inproceedings mdate="2022-04-05" key="conf/ics/WuM13">
+<author>Xing Wu 0004</author>
+<author>Frank Mueller 0001</author>
+<title>Elastic and scalable tracing and accurate replay of non-deterministic events.</title>
+<pages>59-68</pages>
+<year>2013</year>
+<booktitle>ICS</booktitle>
+<ee>https://doi.org/10.1145/2464996.2465001</ee>
+<crossref>conf/ics/2013</crossref>
+<url>db/conf/ics/ics2013.html#WuM13</url>
+</inproceedings>
+</dblp>

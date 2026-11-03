@@ -1,0 +1,555 @@
+{
+  "Provenance": {
+    "schemaVersion": "provenance-v1",
+    "sourceDataset": "DBLP",
+    "sourceRecordId": "conf/ics/LiaoHNZCT09",
+    "snapshot": "2026-10-03",
+    "runId": "run-78764f1e9c70e21f34ef30d82b71089b",
+    "policyVersion": null,
+    "modelVersion": null
+  },
+  "WorkRecord": {
+    "schemaVersion": "work-record-v1",
+    "workId": "dblp:conf/ics/LiaoHNZCT09",
+    "source": "DBLP",
+    "sourceRecordId": "conf/ics/LiaoHNZCT09",
+    "title": "Prefetch optimizations on large-scale applications via parameter value prediction.",
+    "normalizedTitle": "prefetch optimizations on large scale applications via parameter value prediction",
+    "year": 2009,
+    "venueId": "dblp-venue:conf/ics",
+    "workType": "inproceedings",
+    "doi": "10.1145/1542275.1542359",
+    "arxivId": null,
+    "externalIds": {},
+    "authors": [
+      {
+        "schemaVersion": "author-mention-v1",
+        "mentionId": "dblp:conf/ics/LiaoHNZCT09#1",
+        "workId": "dblp:conf/ics/LiaoHNZCT09",
+        "position": 1,
+        "rawName": "Sample Synthetic-A",
+        "normalizedName": "sample synthetic-a",
+        "orcid": "0000-0002-1825-0097",
+        "sourceAuthorId": null,
+        "institutionIds": [
+          "openalex:I185103710"
+        ],
+        "provenance": {
+          "schemaVersion": "provenance-v1",
+          "sourceDataset": "DBLP",
+          "sourceRecordId": "conf/ics/LiaoHNZCT09",
+          "snapshot": "2026-10-03",
+          "runId": "run-78764f1e9c70e21f34ef30d82b71089b",
+          "policyVersion": null,
+          "modelVersion": null
+        }
+      },
+      {
+        "schemaVersion": "author-mention-v1",
+        "mentionId": "dblp:conf/ics/LiaoHNZCT09#2",
+        "workId": "dblp:conf/ics/LiaoHNZCT09",
+        "position": 2,
+        "rawName": "Sample Synthetic-B 0001",
+        "normalizedName": "sample synthetic-b",
+        "orcid": null,
+        "sourceAuthorId": null,
+        "institutionIds": [],
+        "provenance": {
+          "schemaVersion": "provenance-v1",
+          "sourceDataset": "DBLP",
+          "sourceRecordId": "conf/ics/LiaoHNZCT09",
+          "snapshot": "2026-10-03",
+          "runId": "run-78764f1e9c70e21f34ef30d82b71089b",
+          "policyVersion": null,
+          "modelVersion": null
+        }
+      }
+    ],
+    "abstractTextRef": null,
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "DBLP",
+      "sourceRecordId": "conf/ics/LiaoHNZCT09",
+      "snapshot": "2026-10-03",
+      "runId": "run-78764f1e9c70e21f34ef30d82b71089b",
+      "policyVersion": null,
+      "modelVersion": null
+    }
+  },
+  "AuthorMention": {
+    "schemaVersion": "author-mention-v1",
+    "mentionId": "dblp:conf/ics/LiaoHNZCT09#1",
+    "workId": "dblp:conf/ics/LiaoHNZCT09",
+    "position": 1,
+    "rawName": "Sample Synthetic-A",
+    "normalizedName": "sample synthetic-a",
+    "orcid": "0000-0002-1825-0097",
+    "sourceAuthorId": null,
+    "institutionIds": [
+      "openalex:I185103710"
+    ],
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "DBLP",
+      "sourceRecordId": "conf/ics/LiaoHNZCT09",
+      "snapshot": "2026-10-03",
+      "runId": "run-78764f1e9c70e21f34ef30d82b71089b",
+      "policyVersion": null,
+      "modelVersion": null
+    }
+  },
+  "CanonicalResearcher": {
+    "schemaVersion": "canonical-researcher-v1",
+    "researcherId": "orcid:0000-0002-1825-0097",
+    "displayName": "Sample Synthetic-A",
+    "alternateNames": [
+      "S. Synthetic-A"
+    ],
+    "orcid": "0000-0002-1825-0097",
+    "externalIds": {
+      "dblp-person": "homepages/00/0000"
+    },
+    "identityConfidence": 0.98,
+    "uncertainty": null,
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "DERIVED",
+      "sourceRecordId": "orcid:0000-0002-1825-0097",
+      "snapshot": "2026-10-03",
+      "runId": "run-78764f1e9c70e21f34ef30d82b71089b",
+      "policyVersion": "er-v1",
+      "modelVersion": null
+    }
+  },
+  "AuthorshipRecord": {
+    "schemaVersion": "authorship-v1",
+    "researcherId": "orcid:0000-0002-1825-0097",
+    "workId": "dblp:conf/ics/LiaoHNZCT09",
+    "mentionId": "dblp:conf/ics/LiaoHNZCT09#1",
+    "position": 1,
+    "year": 2009,
+    "matchConfidence": 0.98,
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "DERIVED",
+      "sourceRecordId": "dblp:conf/ics/LiaoHNZCT09#1",
+      "snapshot": "2026-10-03",
+      "runId": "run-78764f1e9c70e21f34ef30d82b71089b",
+      "policyVersion": "er-v1",
+      "modelVersion": null
+    }
+  },
+  "PublicationTeam": {
+    "schemaVersion": "publication-team-v1",
+    "workId": "dblp:conf/ics/LiaoHNZCT09",
+    "year": 2009,
+    "mentionIds": [
+      "dblp:conf/ics/LiaoHNZCT09#1",
+      "dblp:conf/ics/LiaoHNZCT09#2"
+    ],
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "DBLP",
+      "sourceRecordId": "conf/ics/LiaoHNZCT09",
+      "snapshot": "2026-10-03",
+      "runId": "run-78764f1e9c70e21f34ef30d82b71089b",
+      "policyVersion": null,
+      "modelVersion": null
+    }
+  },
+  "CoauthorPairCandidate": {
+    "schemaVersion": "coauthor-pair-candidate-v1",
+    "authorA": "dblp:conf/ics/LiaoHNZCT09#1",
+    "authorB": "dblp:conf/ics/LiaoHNZCT09#2",
+    "workId": "dblp:conf/ics/LiaoHNZCT09",
+    "year": 2009,
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "DBLP",
+      "sourceRecordId": "conf/ics/LiaoHNZCT09",
+      "snapshot": "2026-10-03",
+      "runId": "run-78764f1e9c70e21f34ef30d82b71089b",
+      "policyVersion": null,
+      "modelVersion": null
+    }
+  },
+  "CoauthorEdge": {
+    "schemaVersion": "coauthor-edge-v1",
+    "edgeId": "cae-adc27e574aecdb4fd1cb8915fa5a31fe",
+    "researcherA": "orcid:0000-0002-1825-0097",
+    "researcherB": "scr:er-v1:7a47f03bb657358ae076e68ca43dab88",
+    "windowStartYear": 2000,
+    "windowEndYear": 2026,
+    "jointPublicationCount": 2,
+    "firstCollaborationYear": 2005,
+    "lastCollaborationYear": 2009,
+    "representativeWorkIds": [
+      "dblp:conf/ics/LiaoHNZCT09",
+      "doi:10.1145/1088149.1088173"
+    ],
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "DERIVED",
+      "sourceRecordId": "cae-adc27e574aecdb4fd1cb8915fa5a31fe",
+      "snapshot": "2026-10-03",
+      "runId": "run-78764f1e9c70e21f34ef30d82b71089b",
+      "policyVersion": "graph-v1",
+      "modelVersion": null
+    }
+  },
+  "ResearcherMetrics": {
+    "schemaVersion": "researcher-metrics-v1",
+    "researcherId": "orcid:0000-0002-1825-0097",
+    "windowStartYear": 2000,
+    "windowEndYear": 2026,
+    "publicationCount": 2,
+    "distinctCoauthorCount": 5,
+    "totalCoauthorOccurrences": 6,
+    "averageCoauthorsPerPaper": 3,
+    "maximumCoauthorsOnOnePaper": 5,
+    "maximumTeamWorkIds": [
+      "dblp:conf/ics/LiaoHNZCT09"
+    ],
+    "weightedDegree": 7,
+    "componentId": "cc-1",
+    "componentSize": 12,
+    "communityId": "community-17",
+    "crossCommunityDegree": 1,
+    "communitiesConnected": 2,
+    "participationCoefficient": 0.5,
+    "coreness": 2,
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "DERIVED",
+      "sourceRecordId": "orcid:0000-0002-1825-0097",
+      "snapshot": "2026-10-03",
+      "runId": "run-78764f1e9c70e21f34ef30d82b71089b",
+      "policyVersion": "graph-v1",
+      "modelVersion": null
+    }
+  },
+  "Venue": {
+    "schemaVersion": "venue-v1",
+    "venueId": "dblp-venue:conf/ics",
+    "name": "ICS",
+    "venueType": "conference",
+    "externalIds": {
+      "openalex": "S4306419857"
+    },
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "DBLP",
+      "sourceRecordId": "conf/ics",
+      "snapshot": "2026-10-03",
+      "runId": "run-78764f1e9c70e21f34ef30d82b71089b",
+      "policyVersion": null,
+      "modelVersion": null
+    }
+  },
+  "Institution": {
+    "schemaVersion": "institution-v1",
+    "institutionId": "openalex:I185103710",
+    "name": "Synthetic Institute A",
+    "countryCode": "US",
+    "externalIds": {},
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "OPENALEX",
+      "sourceRecordId": "https://openalex.org/I185103710",
+      "snapshot": "2026-10-03",
+      "runId": "run-78764f1e9c70e21f34ef30d82b71089b",
+      "policyVersion": null,
+      "modelVersion": null
+    }
+  },
+  "Topic": {
+    "schemaVersion": "topic-v1",
+    "topicId": "openalex:T10054",
+    "name": "Parallel Computing and Optimization Techniques",
+    "subfield": "Hardware and Architecture",
+    "field": "Computer Science",
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "OPENALEX",
+      "sourceRecordId": "https://openalex.org/T10054",
+      "snapshot": "2026-10-03",
+      "runId": "run-78764f1e9c70e21f34ef30d82b71089b",
+      "policyVersion": null,
+      "modelVersion": null
+    }
+  },
+  "MatchCandidate": {
+    "schemaVersion": "match-candidate-v1",
+    "entityType": "RESEARCHER",
+    "sourceId": "dblp:conf/ics/LiaoHNZCT09#1",
+    "targetId": "synthetic:orcid-a",
+    "blockingKey": "name:synthetic-a|s",
+    "features": {
+      "nameSimilarity": 0.92,
+      "doiOverlap": 1
+    },
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "DERIVED",
+      "sourceRecordId": "dblp:conf/ics/LiaoHNZCT09#1",
+      "snapshot": "2026-10-03",
+      "runId": "run-78764f1e9c70e21f34ef30d82b71089b",
+      "policyVersion": null,
+      "modelVersion": null
+    }
+  },
+  "MatchDecision": {
+    "schemaVersion": "match-decision-v1",
+    "entityType": "RESEARCHER",
+    "sourceId": "dblp:conf/ics/LiaoHNZCT09#1",
+    "targetId": "synthetic:orcid-a",
+    "features": {
+      "nameSimilarity": 0.92,
+      "doiOverlap": 1
+    },
+    "rulesFired": [
+      "doi-overlap"
+    ],
+    "decision": "ACCEPTED",
+    "confidence": 0.97,
+    "reasonCodes": [
+      "SHARED_DOI"
+    ],
+    "promptVersion": null,
+    "decidedAt": "2026-11-03T00:00:00Z",
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "DERIVED",
+      "sourceRecordId": "dblp:conf/ics/LiaoHNZCT09#1",
+      "snapshot": "2026-10-03",
+      "runId": "run-78764f1e9c70e21f34ef30d82b71089b",
+      "policyVersion": "er-v1",
+      "modelVersion": null
+    }
+  },
+  "GraphNode": {
+    "schemaVersion": "graph-node-v1",
+    "nodeId": "orcid:0000-0002-1825-0097",
+    "label": "Researcher",
+    "properties": {
+      "displayName": "Sample Synthetic-A"
+    },
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "DERIVED",
+      "sourceRecordId": "orcid:0000-0002-1825-0097",
+      "snapshot": "2026-10-03",
+      "runId": "run-78764f1e9c70e21f34ef30d82b71089b",
+      "policyVersion": "graph-v1",
+      "modelVersion": null
+    }
+  },
+  "GraphEdge": {
+    "schemaVersion": "graph-edge-v1",
+    "edgeId": "ge-59d2e3ea0c2185ed5ae9f8280026bfed",
+    "edgeType": "COAUTHORED_WITH",
+    "fromId": "orcid:0000-0002-1825-0097",
+    "toId": "scr:er-v1:7a47f03bb657358ae076e68ca43dab88",
+    "properties": {
+      "jointPublicationCount": "2",
+      "firstCollaborationYear": "2005",
+      "lastCollaborationYear": "2009",
+      "coauthorEdgeId": "cae-adc27e574aecdb4fd1cb8915fa5a31fe"
+    },
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "DERIVED",
+      "sourceRecordId": "ge-59d2e3ea0c2185ed5ae9f8280026bfed",
+      "snapshot": "2026-10-03",
+      "runId": "run-78764f1e9c70e21f34ef30d82b71089b",
+      "policyVersion": "graph-v1",
+      "modelVersion": null
+    }
+  },
+  "EvidenceItem": {
+    "schemaVersion": "evidence-v1",
+    "evidenceId": "ev-53344ff0d3e40fb09029d37bdf4fb9b8",
+    "evidenceType": "METRIC_RECORD",
+    "subjectIds": [
+      "orcid:0000-0002-1825-0097"
+    ],
+    "workId": null,
+    "sourceUri": "s3://example-scholarchain-graph/metrics/type=researcher_collaboration/window=all-years/",
+    "chunkId": null,
+    "graphPath": null,
+    "score": null,
+    "text": null,
+    "textHash": null,
+    "facts": {
+      "distinctCoauthorCount": "5",
+      "windowStartYear": "2000",
+      "windowEndYear": "2026"
+    },
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "DERIVED",
+      "sourceRecordId": "orcid:0000-0002-1825-0097",
+      "snapshot": "2026-10-03",
+      "runId": "run-78764f1e9c70e21f34ef30d82b71089b",
+      "policyVersion": "graph-v1",
+      "modelVersion": null
+    }
+  },
+  "EvidenceBundle": {
+    "schemaVersion": "evidence-bundle-v1",
+    "queryId": "qry-example-1",
+    "graphEvidence": [
+      {
+        "schemaVersion": "evidence-v1",
+        "evidenceId": "ev-53344ff0d3e40fb09029d37bdf4fb9b8",
+        "evidenceType": "METRIC_RECORD",
+        "subjectIds": [
+          "orcid:0000-0002-1825-0097"
+        ],
+        "workId": null,
+        "sourceUri": "s3://example-scholarchain-graph/metrics/type=researcher_collaboration/window=all-years/",
+        "chunkId": null,
+        "graphPath": null,
+        "score": null,
+        "text": null,
+        "textHash": null,
+        "facts": {
+          "distinctCoauthorCount": "5",
+          "windowStartYear": "2000",
+          "windowEndYear": "2026"
+        },
+        "provenance": {
+          "schemaVersion": "provenance-v1",
+          "sourceDataset": "DERIVED",
+          "sourceRecordId": "orcid:0000-0002-1825-0097",
+          "snapshot": "2026-10-03",
+          "runId": "run-78764f1e9c70e21f34ef30d82b71089b",
+          "policyVersion": "graph-v1",
+          "modelVersion": null
+        }
+      }
+    ],
+    "semanticEvidence": [
+      {
+        "schemaVersion": "evidence-v1",
+        "evidenceId": "ev-fdc1dbab27a68f4c386c78da1c0c3306",
+        "evidenceType": "PROFILE",
+        "subjectIds": [
+          "chunk-45c7bab4d9adaa0d45c8d8321de4b12c"
+        ],
+        "workId": null,
+        "sourceUri": "s3://example-scholarchain-rag/profiles/researcher/",
+        "chunkId": "chunk-45c7bab4d9adaa0d45c8d8321de4b12c",
+        "graphPath": null,
+        "score": 0.842,
+        "text": "Sample Synthetic-A works on prefetching for parallel applications.",
+        "textHash": "sha256:8a34b13ec97c06b38d67d0bde45513216ff58e40d671c4d37109c9e9e2d1880d",
+        "facts": {},
+        "provenance": {
+          "schemaVersion": "provenance-v1",
+          "sourceDataset": "DERIVED",
+          "sourceRecordId": "chunk-45c7bab4d9adaa0d45c8d8321de4b12c",
+          "snapshot": "2026-10-03",
+          "runId": "run-78764f1e9c70e21f34ef30d82b71089b",
+          "policyVersion": null,
+          "modelVersion": "example-embedding-model"
+        }
+      }
+    ],
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "RUNTIME",
+      "sourceRecordId": "qry-example-1",
+      "snapshot": "2026-10-03",
+      "runId": "run-78764f1e9c70e21f34ef30d82b71089b",
+      "policyVersion": null,
+      "modelVersion": "example-synthesis-model"
+    }
+  },
+  "QueryPlan": {
+    "schemaVersion": "query-plan-v1",
+    "queryId": "qry-example-1",
+    "operations": [
+      "RESEARCHER_RANKING",
+      "BRIDGE_RANKING"
+    ],
+    "researcherNames": [],
+    "researcherIds": [],
+    "yearFrom": 2015,
+    "yearTo": 2026,
+    "topics": [
+      "distributed systems"
+    ],
+    "venues": [],
+    "institutions": [],
+    "rankingMetric": "DISTINCT_COAUTHOR_COUNT",
+    "graphLimit": 100,
+    "vectorLimit": 30,
+    "maxPathDepth": 6,
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "RUNTIME",
+      "sourceRecordId": "qry-example-1",
+      "snapshot": "2026-10-03",
+      "runId": "run-78764f1e9c70e21f34ef30d82b71089b",
+      "policyVersion": null,
+      "modelVersion": "example-synthesis-model"
+    }
+  },
+  "AnswerClaim": {
+    "schemaVersion": "answer-claim-v1",
+    "claimId": "claim-1",
+    "text": "The researcher has 5 distinct coauthors in the 2000 to 2026 window.",
+    "evidenceIds": [
+      "ev-53344ff0d3e40fb09029d37bdf4fb9b8"
+    ],
+    "verificationStatus": "VERIFIED",
+    "uncertainty": "Depends on the er-v1 identity policy and the 2026-10-03 snapshot.",
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "RUNTIME",
+      "sourceRecordId": "qry-example-1",
+      "snapshot": "2026-10-03",
+      "runId": "run-78764f1e9c70e21f34ef30d82b71089b",
+      "policyVersion": null,
+      "modelVersion": "example-synthesis-model"
+    }
+  },
+  "AnswerResponse": {
+    "schemaVersion": "answer-response-v1",
+    "queryId": "qry-example-1",
+    "summary": "One researcher matched.",
+    "claims": [
+      {
+        "schemaVersion": "answer-claim-v1",
+        "claimId": "claim-1",
+        "text": "The researcher has 5 distinct coauthors in the 2000 to 2026 window.",
+        "evidenceIds": [
+          "ev-53344ff0d3e40fb09029d37bdf4fb9b8"
+        ],
+        "verificationStatus": "VERIFIED",
+        "uncertainty": "Depends on the er-v1 identity policy and the 2026-10-03 snapshot.",
+        "provenance": {
+          "schemaVersion": "provenance-v1",
+          "sourceDataset": "RUNTIME",
+          "sourceRecordId": "qry-example-1",
+          "snapshot": "2026-10-03",
+          "runId": "run-78764f1e9c70e21f34ef30d82b71089b",
+          "policyVersion": null,
+          "modelVersion": "example-synthesis-model"
+        }
+      }
+    ],
+    "abstained": false,
+    "uncertainty": null,
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "RUNTIME",
+      "sourceRecordId": "qry-example-1",
+      "snapshot": "2026-10-03",
+      "runId": "run-78764f1e9c70e21f34ef30d82b71089b",
+      "policyVersion": null,
+      "modelVersion": "example-synthesis-model"
+    }
+  }
+}

@@ -19,6 +19,8 @@ lazy val commonSettings = Seq(
   // Fail resolution when one library resolves with two suffixes, e.g. both _2.13 and _3 (D-02).
   conflictWarning := ConflictWarning("cross-version", Level.Error, failOnConflict = true),
   libraryDependencies += Dependencies.scalaTest,
+  // Pin the Scala 2.13 stdlib to the EMR runtime's version (phase-02 review risk, D-02).
+  dependencyOverrides += Dependencies.scalaLibrary,
   scalacOptions ++= Seq("-deprecation", "-feature", "-release", Versions.javaRelease),
   javacOptions ++= Seq("--release", Versions.javaRelease),
   // check stays AWS-free and Docker-free: tests tagged with these names run only outside check.
@@ -35,7 +37,7 @@ def module(id: String, dir: String): Project =
   Project(id, file(s"modules/$dir")).settings(commonSettings, name := id)
 
 lazy val core = module("core", "core")
-  .settings(libraryDependencies += Dependencies.upickle)
+  .settings(libraryDependencies ++= Seq(Dependencies.upickle, Dependencies.typesafeConfig))
 
 lazy val entityResolution = module("entityResolution", "entity-resolution")
   .dependsOn(core)

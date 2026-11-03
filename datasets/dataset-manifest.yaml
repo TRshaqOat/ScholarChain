@@ -1,0 +1,267 @@
+# ScholarChain dataset manifest. Owner: dataset-engineer (datasets/**).
+# Every license, limit, URL, size, and checksum below was observed on the access date shown
+# (fetched page, HTTP header, or computed checksum). Anything not observed is marked UNVERIFIED or UNKNOWN.
+# Evidence access times are 2026-11-02 between 23:30Z and 2026-11-03 00:10Z (local date 2026-11-02, UTC-6);
+# phase-03 repair-01 evidence (ORCID fictional test record) was accessed 2026-11-03 00:52Z to 00:56Z.
+# Format rule (checked by datasets/scripts/validate.sh): every dataset sits two spaces under "datasets:"
+# and every required field sits four spaces under its dataset.
+
+manifest_version: "1"
+datasets_in_scope: [dblp, openalex, crossref, orcid]   # D-10: exactly four datasets
+subset_config: datasets/config/subset.v1.json            # config_version dblp-subset.v1 (venue list, years, fetch bounds)
+raw_bucket: "<raw-bucket>"   # resolved at run time from configuration key scholarchain.storage.raw-bucket (env override SCHOLARCHAIN_RAW_BUCKET); layout s3://<raw-bucket>/<dataset>/snapshot=<date>/
+# Human architect rulings on the phase-03 work order 1 escalations (phase-03 repair-01 work order, 2026-11-02).
+# A ruling decides what ScholarChain does. It does not turn an UNVERIFIED provider fact into a verified one.
+human_rulings:
+  - id: "phase-03/repair-01/decision-1"
+    topic: "ORCID samples"
+    ruling: "Do not commit real ORCID records; real ORCID data stays under scratch/datasets/ only. Committed ORCID samples may contain only ORCID's official fictional test record 0000-0002-1825-0097 and a few synthetic records, labeled synthetic in a top-level field and in the file name, with identifiers prefixed 'synthetic:', and linked by DOI to works in the committed DBLP sample."
+    enforced_by: "datasets/scripts/validate.sh (orcid decision 1 checks); datasets/scripts/build_samples.sh never copies real ORCID records"
+  - id: "phase-03/repair-01/decision-2"
+    topic: "OPENALEX_API_KEY"
+    ruling: "Reading OPENALEX_API_KEY from an environment variable is acceptable. It must never be written to a file, logged, echoed, or included in error output. The human sets it only in their own terminal for full runs."
+    enforced_by: "datasets/scripts/fetch_openalex.sh (non-exported copy, header through a process substitution, responses that echo the key are discarded) and datasets/scripts/lib.sh (xtrace forced off, curl -q ignores ~/.curlrc)"
+  - id: "phase-03/repair-01/decision-3"
+    topic: "DBLP subset size"
+    ruling: "Accept the 46-venue subset of about 111,417 works."
+    enforced_by: "datasets/config/subset.v1.json (venue list unchanged)"
+
+s3_upload: "Not performed by dataset-engineer. Uploads from scratch/datasets/ to the raw prefixes run through an approved script by deploy-engineer."
+
+datasets:
+  dblp:
+    name: "DBLP computer science bibliography XML (monthly release)"
+    purpose: "Seed dataset: publication records, author sequences, venues, years, DOIs in electronic-edition links, ORCID attributes, and person records. Defines the subset that drives every enrichment."
+    required: true
+    owning_agent: dataset-engineer
+    official_source:
+      - "https://drops.dagstuhl.de/storage/artifacts/dblp/xml/2026/dblp-2026-10-03.xml.gz"
+      - "https://drops.dagstuhl.de/storage/artifacts/dblp/xml/2026/dblp-2026-10-03.xml.gz.md5"
+      - "https://dblp.org/xml/dblp.dtd"
+    documentation_links:
+      - "https://dblp.org/xml/README.txt (legal information, version of 2019-11-22)"
+      - "https://dblp.org/xml/CHANGES.txt (DTD change log; latest entry 2023-06-28)"
+      - "https://drops.dagstuhl.de/entities/artifact/10.4230/dblp.xml.2026-10-03 (release landing page, DOI 10.4230/dblp.xml.2026-10-03)"
+      - "https://drops.dagstuhl.de/entities/collection/10.4230/dblp.xml (monthly release collection)"
+    license: "CC0 1.0 Public Domain Dedication; also ODC-BY 1.0 as a secondary license. dblp asks for, but does not require, a link to dblp as the source."
+    license_evidence:
+      - "https://dblp.org/xml/README.txt, accessed 2026-11-02: metadata including the XML export 'is released under the CC0 1.0 Public Domain Dedication license'"
+      - "https://drops.dagstuhl.de/entities/artifact/10.4230/dblp.xml.2026-10-03, accessed 2026-11-02: license 'Creative Commons Zero v1.0 Universal'"
+      - "dblp.dtd header comment (sha256 2d864498...1ef6) repeats the CC0 statement"
+    access_rules: "Static file download, no key, no published rate limit (UNVERIFIED: none found). dblp.org web pages and the search API answer HTTP 202 with an Anubis bot challenge to scripted clients (observed 2026-11-02), so scripts use only the file downloads. The SPARQL endpoint https://sparql.dblp.org/sparql answered scripted queries and was used only for size estimates."
+    snapshot_date: "2026-10-03"
+    retrieval_date: "Sample prefix and DTD retrieved 2026-11-02T23:59Z. The full release has not been downloaded (human-run --full)."
+    retrieval_command:
+      sample: "bash datasets/scripts/fetch_dblp.sh"
+      full: "bash datasets/scripts/fetch_dblp.sh --full"
+    format: "XML (ISO-8859-1) with an external DTD; the release DOCTYPE names dblp-2023-06-28.dtd, provided as a copy of dblp.dtd"
+    compression: "gzip (single member)"
+    expected_size:
+      release_xml_gz_bytes: 1107081001        # HTTP Content-Length observed 2026-11-02; Last-Modified Mon, 05 Oct 2026 08:22:55 GMT
+      release_xml_decompressed_bytes: "about 5.3 GB (estimate from the observed 64 MiB prefix ratio of 4.83; UNVERIFIED)"
+      dtd_bytes: 13134
+      subset_works_estimate: 111417          # dblp SPARQL, article+inproceedings, 46 venue streams, 2000-2026, queried 2026-11-02; size accepted by human ruling decision-3
+      subset_works_with_doi_estimate: 106246
+      subset_distinct_authors_estimate: 157101
+      subset_authors_with_orcid_in_dblp_estimate: 34451
+    observed_size:
+      sample_prefix_bytes: 33554432
+      sample_records_scanned_in_prefix: 315038
+      sample_subset_matches_in_prefix: 1324
+      sample_written_records: 40
+      full_release: "UNKNOWN until --full runs (expected bytes above)"
+    s3_raw_prefix: "s3://<raw-bucket>/dblp/snapshot=2026-10-03/"
+    integrity_policy: "The published MD5 cbd329100ea1bbb2873fa2f6d414ea00 (from the .md5 file, re-fetched and compared to config each run) is verified on the full download, followed by gzip -t. SHA-256 is computed at download and written to <file>.sha256. The DTD is pinned by sha256 2d864498f9eef9298662df11e3874171ff24cd4a21ab5974f1369c90acdb1ef6 (observed 2026-11-02, 13,134 bytes, Last-Modified 2023-06-28). The sample prefix sha256 is 7aa37c1d2c0c3c677cedd57a50df60eae6dfe10eecf71cd35200bfb643b97966. Every extract directory has a SHA256SUMS file and a _SUCCESS marker. The ETag \"41fcb729-65d1396c59225\" is recorded for information only."
+    schema_version: "dblp-xml/dtd-2023-06-28; subset output dblp-subset.v1"
+    schema_note: datasets/schemas/dblp.md
+    subset_rule: "Records of type article or inproceedings whose key starts with one of the 46 venue key prefixes in datasets/config/subset.v1.json (dblp.venues[].key_prefix) and whose <year> is between 2000 and 2026 inclusive. Person records: <www key='homepages/...'> whose <author> names equal an author name on a subset work. SAMPLE mode applies the same rule to the first 33,554,432 compressed bytes and keeps the first 40 matches. In the 2026-10-03 release those all come from conf/ics. Subset size accepted by the human architect (decision-3): 46 venues, about 111,417 works (a SPARQL estimate; the observed count is UNKNOWN until --full runs)."
+    incremental_update_strategy: "dblp publishes immutable monthly releases with DOIs. To refresh, add a new config version (snapshot_date, URLs, md5, bytes), run --full into a new snapshot=<date> directory and S3 prefix, and never overwrite an earlier snapshot. Downstream diffs use record key plus mdate."
+    linkage_fields: [dblp_key, doi, normalized_title, normalized_author_sequence, author_orcid_attribute, person_record_orcid, year, venue]
+    privacy_notes: "Author names, dblp homonym suffixes, ORCID iDs, and person-record homepages and affiliations are personal data about researchers, published by dblp under CC0. They are used only for scholarly collaboration analysis. The committed sample holds 40 public bibliographic records, and no person records are committed."
+    known_limitations:
+      - "A matching author name is not sufficient evidence of author identity."
+      - "The size estimates come from dblp SPARQL stream membership (index date UNKNOWN), while the extractor filters by key prefix. In the sample prefix, conf/ics gives 1,324 records by key prefix against an estimate of 1,290 by stream."
+      - "The USENIX venues (conf/osdi, conf/nsdi, conf/usenix, conf/fast; about 4,192 works) carry no DOIs in dblp, so they cannot be linked to OpenAlex or Crossref by DOI."
+      - "The SAMPLE prefix covers only conf/ics and contains no person records, so persons.xml is empty in SAMPLE mode."
+      - "The year 2026 is incomplete as of the 2026-10-03 release."
+      - "Record order inside the dump is not documented. The sample relies on observed order, so a new release can change which records the prefix holds."
+    validation_commands:
+      - "bash datasets/scripts/validate.sh"
+      - "gzip -t scratch/datasets/dblp/snapshot=2026-10-03/raw/dblp-2026-10-03.xml.gz"
+      - "test \"$(md5 -q scratch/datasets/dblp/snapshot=2026-10-03/raw/dblp-2026-10-03.xml.gz 2>/dev/null || md5sum scratch/datasets/dblp/snapshot=2026-10-03/raw/dblp-2026-10-03.xml.gz | cut -d' ' -f1)\" = cbd329100ea1bbb2873fa2f6d414ea00"
+      - "cd scratch/datasets/dblp/snapshot=2026-10-03/full && shasum -a 256 -c SHA256SUMS"
+    samples:
+      - {path: datasets/samples/dblp/dblp-sample.xml, records: 40, bytes: 23094, license_basis: "CC0 1.0 (dblp)"}
+      - {path: datasets/samples/dblp/dblp-2023-06-28.dtd, records: 1, bytes: 13134, license_basis: "CC0 1.0 (dblp; header comment)"}
+      - {path: datasets/samples/dblp/dois.txt, records: 40, bytes: 958, license_basis: "derived from CC0 records"}
+      - {path: datasets/samples/dblp/orcids.txt, records: 90, bytes: 1800, license_basis: "derived from CC0 records"}
+
+  openalex:
+    name: "OpenAlex works (REST API)"
+    purpose: "Enrichment: OpenAlex work and author IDs, author ORCIDs, institutions (ROR), venues (sources), topics, and citation counts for the DBLP subset's DOIs. Its authorship ORCIDs also drive the ORCID fetch."
+    required: true
+    owning_agent: dataset-engineer
+    official_source:
+      - "https://api.openalex.org/works"
+    documentation_links:
+      - "https://help.openalex.org/api/ (API reference; states 'all data is CC0')"
+      - "https://help.openalex.org/how-to-use-the-api/rate-limits-and-authentication (rate limits; page 'Last updated October 15, 2026')"
+      - "https://help.openalex.org/access/example-costs/ (per-request costs and daily budgets)"
+      - "https://help.openalex.org/api/authentication/ (api_key parameter or Authorization: Bearer header)"
+      - "https://help.openalex.org/api/filtering/ (OR with '|', 'up to 100 values')"
+      - "https://help.openalex.org/api/get-single-entities/ (singleton DOI lookup, cost free)"
+    license: "CC0 1.0"
+    license_evidence:
+      - "https://help.openalex.org/api/, accessed 2026-11-02: 'all data is CC0', linking to https://creativecommons.org/publicdomain/zero/1.0/"
+    access_rules: "No key needed for basic use. Rate limits: 10 req/s without a key, 30 req/s with a free key. Daily budgets: $0.10 without a key, shared per IP address (stated in the response meta.notice), and $1 per day with a free key. Costs: singleton lookups free; list and filter calls $0.10 per 1,000 (observed meta.cost_usd 0.0001 per list call). Cursor paging past the first page needs a key (not used here). The mailto and polite pool are not mentioned in current docs (UNVERIFIED whether they still exist). The optional key is read from OPENALEX_API_KEY, sent as an Authorization header, and never written to a file, logged, echoed, or put in error output (human ruling decision-2: an environment variable is acceptable, set only by the human in their own terminal for full runs). Evidence accessed 2026-11-02."
+    snapshot_date: "API retrieval; the snapshot is the UTC date a run starts. Sample retrieved 2026-11-03T00:00Z."
+    retrieval_date: "Sample 2026-11-03T00:00Z (UTC). The full run has not been made."
+    retrieval_command:
+      sample: "bash datasets/scripts/fetch_openalex.sh"
+      full: "bash datasets/scripts/fetch_openalex.sh --full"
+    format: "JSON API responses (raw, one file per batch) and JSON Lines (works.jsonl)"
+    compression: "none (raw responses about 5 KB per work)"
+    expected_size:
+      full_list_requests: 2125              # ceil(106,246 estimated DOIs / 50)
+      full_bytes_estimate: "about 540 MB (106,246 x 5,074 bytes per work, from the sample average)"
+      full_cost_estimate_usd: 0.21
+    observed_size:
+      sample_requests: 1
+      sample_works: 40
+      sample_raw_works_jsonl_bytes: 202944
+      sample_missing_dois: 0
+    s3_raw_prefix: "s3://<raw-bucket>/openalex/snapshot=<full-run start date, UTC>/"
+    integrity_policy: "No provider checksum exists. Each response is checked for valid JSON with a results array and meta.count <= per_page, then written atomically. At completion SHA256SUMS covers every raw and derived file, and run-info.json records the input DOI list sha256, API base, config version, and retrieval time. A changed input DOI list stops the run (exit 4)."
+    schema_version: "openalex-api-works/select-v1"
+    schema_note: datasets/schemas/openalex.md
+    subset_rule: "Only the DOIs in the DBLP subset's dois.txt, matched exactly through filter doi:https://doi.org/<doi> in batches of 50. DOIs containing ',' or '|' use the singleton route. No other OpenAlex records are fetched."
+    incremental_update_strategy: "Re-fetch the subset's DOI list for each new DBLP snapshot into a new snapshot prefix. The from_updated_date filter needs a paid plan, so it is not used, and changes are detected with updated_date."
+    linkage_fields: [doi, openalex_work_id, authorships.author.orcid, openalex_author_id, institutions.ror, title, publication_year, primary_location.source]
+    privacy_notes: "Author display names, ORCID iDs, and institutional affiliations are personal data published under CC0. The committed sample keeps only fields ScholarChain uses and drops raw affiliation strings and abstracts."
+    known_limitations:
+      - "OpenAlex author IDs are algorithmic clusters, so they are candidate evidence, not identity."
+      - "The keyless daily budget ($0.10, about 1,000 list calls) is below the full run's 2,125 calls. Without a key the run exits 7 when the budget runs out and resumes on re-run."
+      - "Response meta.notice contains text addressed to AI agents. It is treated as untrusted data and never acted on."
+      - "Repeated pipe-ORed filters may be rate-limited like boolean searches. UNVERIFIED: the docs list the limit for searches only."
+    validation_commands:
+      - "bash datasets/scripts/validate.sh"
+      - "cd scratch/datasets/openalex/full && shasum -a 256 -c SHA256SUMS"
+      - "jq -e . scratch/datasets/openalex/full/works.jsonl > /dev/null"
+      - "wc -l scratch/datasets/openalex/full/missing-dois.txt"
+    samples:
+      - {path: datasets/samples/openalex/works-sample.jsonl, records: 40, bytes: 99797, license_basis: "CC0 1.0 (OpenAlex)"}
+
+  crossref:
+    name: "Crossref works metadata (REST API)"
+    purpose: "Enrichment: DOI-registered metadata (title, container, dates, publisher, author sequence with ORCID and affiliation where deposited, funders, content-license URLs) for the DBLP subset's DOIs. It strengthens work matching."
+    required: true
+    owning_agent: dataset-engineer
+    official_source:
+      - "https://api.crossref.org/works"
+    documentation_links:
+      - "https://www.crossref.org/documentation/retrieve-metadata/rest-api/ (reuse statement; page last updated 2020-04-08)"
+      - "https://www.crossref.org/documentation/retrieve-metadata/rest-api/access-and-authentication/ (pools and limits; page last updated 2025-10-16)"
+      - "https://www.crossref.org/documentation/retrieve-metadata/rest-api/tips-for-using-the-crossref-rest-api/ (rows up to 1000, back off on 429)"
+      - "https://www.crossref.org/documentation/retrieve-metadata/rest-api/rest-api-filters/ (doi filter)"
+      - "https://api.crossref.org/swagger-docs (select, cursors)"
+    license: "No named license. Crossref states that 'almost none of the metadata is subject to copyright' and 'you may use it for any purpose', and that some abstracts may be copyrighted by publishers or authors. A formal license name is UNVERIFIED."
+    license_evidence:
+      - "https://www.crossref.org/documentation/retrieve-metadata/rest-api/, accessed 2026-11-02"
+    access_rules: "No sign-up. Pools per the documentation: public (rate 5, concurrency 1), polite (rate 10, concurrency 3; identify with mailto or a User-Agent), Plus (rate 150; paid key). The docs give no interval. Observed headers on 2026-11-02: singleton polite x-rate-limit-limit 10 per x-rate-limit-interval 1s with x-concurrency-limit 3 (pool polite-single), and list polite 3 per 1s (pool polite-array). Scripts send mailto from SCHOLARCHAIN_CONTACT_EMAIL (required, never stored), make one request at a time, and pause 0.4 s."
+    snapshot_date: "API retrieval; the snapshot is the UTC date a run starts. Sample retrieved 2026-11-03T00:01Z."
+    retrieval_date: "Sample 2026-11-03T00:01Z (UTC). The full run has not been made."
+    retrieval_command:
+      sample: "SCHOLARCHAIN_CONTACT_EMAIL=<you> bash datasets/scripts/fetch_crossref.sh"
+      full: "SCHOLARCHAIN_CONTACT_EMAIL=<you> bash datasets/scripts/fetch_crossref.sh --full"
+    format: "JSON API responses (message-version 1.0.0) and JSON Lines (works.jsonl)"
+    compression: "none"
+    expected_size:
+      full_list_requests: 2125              # ceil(106,246 / 50), plus one singleton per DOI a batch misses (sample: 0)
+      full_bytes_estimate: "about 205 MB (106,246 x 1,922 bytes per work, from the sample average)"
+    observed_size:
+      sample_requests: 1
+      sample_works: 40
+      sample_raw_works_jsonl_bytes: 76872
+      sample_missing_dois: 0
+    s3_raw_prefix: "s3://<raw-bucket>/crossref/snapshot=<full-run start date, UTC>/"
+    integrity_policy: "No provider checksum exists. Each response is checked for valid JSON with message.items, then written atomically. DOIs a batch does not return are retried singly, and 404s are recorded as markers. At completion SHA256SUMS and run-info.json record the input DOI list sha256 and retrieval time."
+    schema_version: "crossref-rest-api/message-version-1.0.0; select list crossref.select in subset.v1.json"
+    schema_note: datasets/schemas/crossref.md
+    subset_rule: "Only the DOIs in the DBLP subset's dois.txt. The list route filter doi:A,doi:B,... runs in batches of 50, and any DOI a batch does not return goes through the singleton route /works/{doi}. DOIs containing ',' always use the singleton route."
+    incremental_update_strategy: "Re-fetch the subset's DOI list for each new DBLP snapshot into a new snapshot prefix. Index-date filters are not used (UNVERIFIED for this purpose). Changes are detected with the indexed timestamp."
+    linkage_fields: [doi, title, author_sequence, author.ORCID, author.affiliation.name, issued_year, container-title, ISSN]
+    privacy_notes: "Author names, ORCID iDs, and affiliations are personal data as deposited by publishers. The committed sample keeps only fields ScholarChain uses, and no abstracts or references."
+    known_limitations:
+      - "OR semantics for repeated doi filters were observed (2 of 2 DOIs returned on 2026-11-02) but are not documented. The singleton fallback keeps results correct if that behaviour changes."
+      - "ORCID coverage is sparse (85 of 163 sample authors have none) and authenticated-orcid is often false."
+      - "Abstracts may be copyrighted, so they are never committed."
+    validation_commands:
+      - "bash datasets/scripts/validate.sh"
+      - "cd scratch/datasets/crossref/full && shasum -a 256 -c SHA256SUMS"
+      - "jq -e . scratch/datasets/crossref/full/works.jsonl > /dev/null"
+      - "wc -l scratch/datasets/crossref/full/missing-dois.txt"
+    samples:
+      - {path: datasets/samples/crossref/works-sample.jsonl, records: 40, bytes: 66299, license_basis: "Crossref reuse statement (facts not subject to copyright); abstracts excluded"}
+
+  orcid:
+    name: "ORCID public records (anonymous Public API v3.0)"
+    purpose: "Identity evidence: public names, other names, external identifiers, employment affiliations, and work DOIs for ORCID iDs found in the DBLP subset or in fetched OpenAlex authorships."
+    required: true
+    owning_agent: dataset-engineer
+    official_source:
+      - "https://pub.orcid.org/v3.0/{orcid}/record"
+    documentation_links:
+      - "https://info.orcid.org/documentation/integration-guide/registering-a-public-api-client/ (anonymous and registered limits)"
+      - "https://info.orcid.org/public-client-terms-of-service/ (Public APIs Terms of Service, last updated 23 October 2024)"
+      - "https://info.orcid.org/privacy-policy/ (Public Data File released under CC0 1.0)"
+      - "https://info.orcid.org/documentation/integration-guide/working-with-bulk-data/ (annual Public Data File, XML)"
+      - "https://pub.orcid.org/v3.0/0000-0002-1825-0097/record (ORCID's fictional demonstration record)"
+      - "https://github.com/ORCID/orcid-api-tutorial/blob/master/docs/display.md (ORCID-maintained tutorial that uses 0000-0002-1825-0097 as its example iD)"
+    license: "UNVERIFIED for redistribution (provider fact unchanged). Data obtained from the Public APIs is under a 'limited license to use any Registry data marked public' subject to the Terms of Service (non-commercial, no continuous polling, export-control limits), with no stated redistribution grant. Only the annual Public Data File is stated to be CC0 1.0. The escalation is resolved by human ruling decision-1: real ORCID records are never committed. The committed samples are the fictional test record 0000-0002-1825-0097 and synthetic records."
+    license_evidence:
+      - "https://info.orcid.org/public-client-terms-of-service/, accessed 2026-11-02 (sections 2 and 3)"
+      - "https://info.orcid.org/privacy-policy/, accessed 2026-11-02: 'The Public Data File is released under a CC0 1.0 Public Domain Dedication'"
+      - "Fictional test record: https://pub.orcid.org/v3.0/0000-0002-1825-0097/record, retrieved 2026-11-03T00:56:02Z (probe 00:52:47Z), HTTP 200. Its public biography (source null, so asserted by the record holder) reads 'Josiah Carberry is a fictitious person. This account is used as a demonstration account by ORCID, CrossRef and others who wish to demonstrate the interaction of ORCID with other scholarly communication systems without having to use a real-person's account.'"
+      - "https://github.com/ORCID/orcid-api-tutorial/blob/master/docs/display.md (repository of the ORCID GitHub organization), accessed 2026-11-03T00:53Z: uses https://orcid.org/0000-0002-1825-0097 as the example iD. The same iD appears in ORCID/orcid-php-demo-app and in ORCID/orcid-angular test specs (gh search code, 2026-11-03)."
+      - "Corroborating third party: https://en.wikipedia.org/wiki/Josiah_Carberry, accessed 2026-11-02: 'He is assigned ORCID 0000-0002-1825-0097' and has 'a demonstration account used in training examples'. The ORCID support article on iD structure (support.orcid.org) answered HTTP 403 and was not read."
+    access_rules: "Anonymous API, no credentials: 12 req/s, 40 burst/s, 25,000 reads/day per IP. Exceeding the burst returns 503, and exceeding the quota blocks further requests. A registered Public API client gets 100,000 reads/day, but its credentials are personal and are not used here. Non-commercial use only, with no continuous polling. Scripts pause 0.2 s and stop at 24,000 requests per UTC day (exit 7). Evidence accessed 2026-11-02."
+    snapshot_date: "API retrieval; the snapshot is the UTC date a run starts. Sample retrieved 2026-11-03T00:03Z."
+    retrieval_date: "Sample 2026-11-03T00:03Z (UTC); fictional test record 2026-11-03T00:56:02Z. The full run has not been made."
+    retrieval_command:
+      sample: "bash datasets/scripts/fetch_orcid.sh   # also fetches the fictional test record into scratch/datasets/orcid/test-record/"
+      full: "bash datasets/scripts/fetch_orcid.sh --full   # repeat daily until it exits 0 (exit 7 means the daily cap was reached)"
+    format: "JSON (ORCID API v3.0 record), one file per iD, combined into JSON Lines"
+    compression: "gzip (raw records and records.jsonl.gz)"
+    expected_size:
+      full_record_requests: "at least 34,451 (ORCID iDs on DBLP subset persons, SPARQL estimate) plus extra iDs from OpenAlex authorships; total UNKNOWN until the upstream full runs finish"
+      full_days_at_cap: "at least 2"
+      full_bytes_estimate: "about 15.5 KB compressed per record (sample average), so about 1.1 GB for 34,451 iDs counting raw plus combined"
+    observed_size:
+      sample_requests: 30
+      sample_records: 30
+      sample_records_jsonl_gz_bytes: 465352
+      sample_uncompressed_record_size: "median 35,840 B, mean 237,303 B, max 1,845,591 B (from the first uncompressed sample run)"
+      test_record_requests: 1
+      test_record_json_gz_bytes: 2982
+    s3_raw_prefix: "s3://<raw-bucket>/orcid/snapshot=<full-run start date, UTC>/"
+    integrity_policy: "No provider checksum exists. Each record is checked for orcid-identifier.path before it is gzip-compressed. iDs are format-checked (and checksum-checked when they come from DBLP) before they are used in a URL. 404, 409, and 410 answers are recorded as markers. SHA256SUMS and run-info.json are written at completion. The fictional test record is checked for the configured iD and for the self-declared marker 'fictitious person' in its biography; otherwise it is refused (exit 4). Committed ORCID sample files are covered by datasets/samples/SHA256SUMS."
+    schema_version: "orcid-api-v3.0/record"
+    schema_note: datasets/schemas/orcid.md
+    subset_rule: "Union of ORCID iDs from DBLP (subset <author orcid> attributes and subset-author person records) and from fetched OpenAlex authorships. No other iD is requested. SAMPLE takes at most 30 iDs, preferring iDs present in both DBLP and OpenAlex. Crossref ORCIDs do not drive fetches. Committed samples (decision-1): only orcid.fictional_test_record_id from the config, plus hand-authored synthetic records whose work_dois come from datasets/samples/dblp/dois.txt."
+    incremental_update_strategy: "Re-fetch only for a new DBLP snapshot (no continuous polling, per the Terms). Changes are detected with history.last-modified-date. iDs that answered 404, 409, or 410 are re-checked only on a new snapshot."
+    linkage_fields: [orcid, work_dois, name, other_names, employments.org_id, external_ids]
+    privacy_notes: "ORCID records are personal data that researchers chose to make public: names, employment history, and identifiers. Purpose limitation is scholarly collaboration analysis only. The projection drops biography, emails, addresses, keywords, and researcher URLs. Raw and minimized real records stay in git-ignored scratch and the private raw bucket, never in the repository (decision-1). The committed fictional test record describes a fictitious person. The synthetic records describe no person, use 'synthetic:' identifiers, and share no name with any author in the committed samples (checked by validate.sh)."
+    known_limitations:
+      - "Coverage depends on researchers making data public, so many fields are empty."
+      - "The anonymous daily quota makes the full run take several days."
+      - "Record sizes have a heavy tail, up to 1.8 MB uncompressed in the sample."
+      - "The committed ORCID samples are not real researcher records, so they cannot show real coverage or data quality. The synthetic records claim real DBLP sample DOIs under fictitious names, which is a deliberate name mismatch against the works' real authors."
+      - "The fictional test record's works are Crossref test DOIs (10.5555/...) plus one IEEE DOI, none in the DBLP sample, so it does not link to the DBLP sample."
+      - "iDs from DBLP <author orcid> attributes are included as DBLP person-identity evidence. The work order names DBLP person records; see the dataset-engineer report under ASSUMPTIONS."
+    validation_commands:
+      - "bash datasets/scripts/validate.sh"
+      - "cd scratch/datasets/orcid/full && shasum -a 256 -c SHA256SUMS"
+      - "gzip -t scratch/datasets/orcid/full/records.jsonl.gz"
+    samples:   # real-record review copy stays in scratch: scratch/datasets/orcid/sample/orcid-sample.minimized.jsonl (30 records, 77,554 bytes)
+      - {path: datasets/samples/orcid/orcid-fictional-test-record.jsonl, records: 1, bytes: 935, license_basis: "ORCID's fictional demonstration record, committed under human ruling decision-1 (redistribution of ORCID API data in general is UNVERIFIED)"}
+      - {path: datasets/samples/orcid/synthetic-orcid-records.jsonl, records: 3, bytes: 1801, license_basis: "synthetic, hand-authored for ScholarChain; contains only DOIs from the CC0 DBLP sample"}
