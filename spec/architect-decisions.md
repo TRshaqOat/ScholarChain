@@ -185,3 +185,10 @@ Deferred backlog, in priority order: approximate betweenness; experiment B; expe
 
 - 2026-11-02 (Phase 2 review): Ponytail was injected into the code-reviewer despite PONYTAIL_SUBAGENT_MATCHER. Fallback until fixed: send /ponytail off before reviewer and test-engineer prompts, and /ponytail full afterwards.
 - 2026-11-02 (after Phase 2): Ponytail matcher fixed by setting both variables in the env block of ~/.claude/settings.json. Verified that code-reviewer receives no Ponytail ruleset and build-engineer does. The /ponytail off fallback is no longer needed.
+
+## D-12 Paid plan, cost guardrails, and Bedrock models (RATIFIED 2026-11-03)
+
+- Free plan on-demand Bedrock quotas were 0 for Claude Haiku 4.5 and Titan Text Embeddings V2 (Titan marked not adjustable), and EMR was denied. The account was upgraded to the Paid plan on 2026-11-03 (earlier than the planned 2026-11-12).
+- Guardrails: a $60/month project spend limit (the project pauses at the limit); early cost controls skipped because they could block EMR launches and ECS scale-out; AWS Budget "scholarchain-monthly" ($100, IncludeCredit=false, so alerts track gross usage) with email alerts at 10/25/50/75% actual and 100% forecast.
+- Credits: $180 after the Free-plan credit activities. Those activities used throwaway console resources (one EC2 instance, a partial Lambda web function and its code bucket, one RDS database and its backups), all deleted afterwards and verified by CLI. They are not project infrastructure; project infrastructure comes only from Terraform.
+- Models: synthesis and adjudication use us.anthropic.claude-haiku-4-5-20251001-v1:0 (Claude 3 Haiku has reached end of life); embeddings use amazon.titan-embed-text-v2:0. Anthropic use-case form submitted 2026-11-03. On-demand quotas to be re-verified after the upgrade; bulk embeddings may use Bedrock batch inference.
