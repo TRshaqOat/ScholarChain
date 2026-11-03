@@ -192,3 +192,16 @@ Deferred backlog, in priority order: approximate betweenness; experiment B; expe
 - Guardrails: a $60/month project spend limit (the project pauses at the limit); early cost controls skipped because they could block EMR launches and ECS scale-out; AWS Budget "scholarchain-monthly" ($100, IncludeCredit=false, so alerts track gross usage) with email alerts at 10/25/50/75% actual and 100% forecast.
 - Credits: $180 after the Free-plan credit activities. Those activities used throwaway console resources (one EC2 instance, a partial Lambda web function and its code bucket, one RDS database and its backups), all deleted afterwards and verified by CLI. They are not project infrastructure; project infrastructure comes only from Terraform.
 - Models: synthesis and adjudication use us.anthropic.claude-haiku-4-5-20251001-v1:0 (Claude 3 Haiku has reached end of life); embeddings use amazon.titan-embed-text-v2:0. Anthropic use-case form submitted 2026-11-03. On-demand quotas to be re-verified after the upgrade; bulk embeddings may use Bedrock batch inference.
+
+## D-13 Instructor guidance (received 2026-11-03) and cost plan (RATIFIED 2026-11-03)
+
+Instructor answers:
+- Bounded, DOI-driven subsets of OpenAlex, Crossref, and ORCID are approved. Required: document the data selection criteria, integration procedures, matching rules, and resulting coverage, and show how the sources enrich DBLP and how missing or inconsistent information is handled.
+- A DBLP subset with fewer than 1M coauthor edges is approved. Required: report the actual numbers of publications, authors, and edges; demonstrate scalability by evaluating performance at different dataset sizes; explain the limitations of the smaller dataset.
+- Recommended total AWS spending is below $25. Billing alerts do not enforce a limit.
+
+Decisions:
+- Target gross AWS usage below $25 (credits mean out-of-pocket cost is expected to be $0). The AWS Budget is lowered to $25 (gross, alerts at 10/25/50/75% actual and 100% forecast). The $60 project spend limit stays as a hard backstop.
+- Short cloud windows instead of a week-long deployment: (1) ephemeral EMR clusters for the pipeline and the size-scaling runs, each terminated after its run; (2) one runtime window of at most about 48 hours for Neptune, ECS, and the stores: load, smoke tests, experiments D/E/F, and demo video recording, then destroy.
+- Deferred experiment B is replaced by a data-size scaling experiment: the Hadoop and Spark pipeline on EMR at about 25%, 50%, and 100% of the subset, with run times, counts, and cost per run.
+- The final report explicitly covers selection criteria, integration, matching rules, coverage, handling of missing and inconsistent data, and the limitations of the smaller dataset.
