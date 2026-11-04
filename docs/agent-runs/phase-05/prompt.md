@@ -133,3 +133,31 @@ Use the hadoop-engineer agent to rerun the full Hadoop chain with policy er-v2 o
 ## Work order 11: entity-resolution-engineer (re-key the gold queue)
 
 Use the entity-resolution-engineer agent to create an er-v2 strata file for the existing review queue in scratch/er/review-queue-wo5/, using the work order 10 run in scratch/hadoop/wo5-v2/. Do not resample: keep the same row IDs and pairs, and take decision, path, and stratum fields from the er-v2 decisions. Write it as scratch/er/review-queue-wo5/review-queue-20261103-strata-er-v2.csv. Leave the blind CSV and the er-v1 strata file unchanged. Report how many queued pairs changed decision, by entity type. If Evaluate needs a change to score rows whose current decision differs from their sampling stratum, make it and test it. Do not read labels/. Run sbt check twice if any source changes. Return a standard report.
+
+## Human rulings after work order 11
+
+- Work order 9 returned BLOCKED-ON (hadoop-engineer). It was resolved under option (a): the er-v2 config was kept and work order 10 made J10 select the configured policy version. sbt check is green after work orders 10 and 11.
+- Transitive work conflict (work order 10, risk 1) is a Phase 6 carry-forward. Spark clustering over ACCEPTED pairs, for researchers and works, must refuse any cluster that would contain two records with a CONFLICT decision between them (including J03+J04 conflict DOI groups) or two different valid ORCIDs, and must count and report refusals. No Phase 5 change.
+- The run ID does not include the policy version or threshold overrides (work order 10, risk 2). Accepted as a residual risk; the manifest records both. Fix it in the next hadoop work order that touches Pipeline, or in the Phase 5 repair round if the reviewer rates it major or above.
+- Uneven er-v2 gold cells (work order 11 risks) are accepted. er-v1 is the stratified evaluation. er-v2 is reported with per-cell row counts and no stratified claim for paths whose rows were sampled from other strata.
+- er-v2 (run-4db46b8bcc1d3473446298ac6705f149 in scratch/hadoop/wo5-v2/) is the decision set Phase 6 consumes. scratch/hadoop/wo5-full/ (er-v1) is deleted after the Phase 5 gate.
+- Per D-10, test-engineer runs once in Phase 11, not in Phase 5.
+- The Phase 5 code review runs in a fifth orchestrator session.
+
+## Code review: code-reviewer
+
+Use the code-reviewer agent to perform a read-only review of the complete Phase 5 change set against work orders 1 to 11 and all human rulings in docs/agent-runs/phase-05/prompt.md, the Phase 5 section of spec/ScholarChain-spec.md, and decisions D-05, D-09, D-10, and D-13 in spec/architect-decisions.md.
+
+Scope: every uncommitted change shown by git status in datasets/, modules/core/, modules/entity-resolution/, modules/hadoop/, build.sbt, and project/Dependencies.scala. Many modules/entity-resolution files are untracked, so read untracked files in full rather than relying on git diff. Do not read anything under labels/ or scratch/er/review-queue-wo5/.
+
+Check in this order:
+1. Exact-identifier conflicts never silently merge, under er-v1 and er-v2.
+2. The LLM adjudication path can abstain, validates strict JSON, cannot create identifiers, and is never called from Hadoop.
+3. No leakage from gold labels into matching, calibration, or sampling.
+4. Policy versioning: er-v1 is reproducible, er-v2 is selected only from configuration, and decisions record their version.
+5. J10 correctness, determinism, counters, and provenance on every decision.
+6. The hadoop job jar contains no AWS SDK. Dependency scopes and pins follow D-09.
+7. Dataset manifest and scripts: bounded by default, no invented licenses or sources.
+8. Tests that would pass even if the behavior were broken.
+
+Verify every finding against the actual files. Report only findings rated critical or major, each with severity, file and line, a concrete failure input, expected impact, and owning agent. List minor findings in one short section without detail. Return APPROVE or REQUEST_CHANGES. Do not edit any file.
