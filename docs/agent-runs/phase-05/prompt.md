@@ -70,3 +70,32 @@ Scope rule: every item below is required. Minimal implementations are fine; anyt
 7. Tests under modules/entity-resolution/src/test/ only: every policy rule (exact IDs, conflicts, homonym suffixes, absent features, thresholds); adjudication schema validation (fabricated ID, malformed JSON, abstain, prompt-injection text in a title); cache keys; sampler determinism and blindness; evaluator metrics on a hand-computed fixture.
 
 Run sbt check twice. Run the calibration tool on scratch/hadoop/wo4-full/. Report, in the standard report contract: the calibration table and the recommended max-block-size; the policy definition, weights, thresholds, and their rationale; the prompt version and JSON schema; exact test counts; and known risks.
+
+## Human rulings after work order 4
+
+- max-block-size = 150 (5.92M candidates, connectivity 0.9908), per scratch/er/calibration/block-size.tsv.
+- Thresholds stay accept 0.93, reject 0.35, LLM band [0.65, 0.93].
+- An identifier disagreement is CONFLICT only when other evidence would have accepted the pair; otherwise REJECTED. Never merged either way. Confirmed.
+- Pairs in the LLM band stay UNRESOLVED (treated as different researchers). Live adjudication is a later bounded demonstration on a sample, once Bedrock on-demand access is granted.
+- ER tool classes in the hadoop jar are accepted (harmless unless invoked).
+- For Phase 6: Spark's transitive clustering over ACCEPTED pairs must refuse to merge any cluster containing two different valid ORCIDs, and count such refusals.
+- The gold-set queue is regenerated after the full Hadoop rerun; labeling waits for it.
+- Phase 5 continues in a third orchestrator session from work order 5 onward, to limit context size.
+
+## Work order 5: domain-engineer
+
+Use the domain-engineer agent to set entity-resolution.max-block-size to 150 in modules/core/src/main/resources/scholarchain.conf, replacing the PROVISIONAL marker with a comment citing the Phase 5 calibration (scratch/er/calibration/block-size.tsv). Keep the thresholds unchanged. Update any test that asserts the old default. Run sbt check twice. Return a standard report.
+
+## Work order 6: hadoop-engineer (full-data rerun with decisions)
+
+Use the hadoop-engineer agent to rerun and extend the Hadoop pipeline on the full datasets.
+1. J02 reads the full enrichment outputs: scratch/datasets/openalex/full/works.jsonl, scratch/datasets/crossref/full/works.jsonl, and the full ORCID records file produced by fetch_orcid.sh (ORCID v3.0 record JSON, not the sample projection). Key ORCID records by orcid-identifier.path and de-duplicate, counting duplicates. Handle multi-work DOIs as the manifest's known limitations describe.
+2. Run IDs include input fingerprints (path plus size or checksum) in StableIds.runId's input list (Phase 4 ruling).
+3. Fix the capped-conflict wording in Logic.scala and JOBS.md (Phase 4 review minor 1).
+4. Add J10 MatchDecisionJob, map-only, after J06 and before J09: apply WorkPairFeatures and MatchPolicy.decide / decideBlocked from modules/entity-resolution to the J03+J04 matches and conflicts and the J06 blocking candidates, writing MatchDecision records with counters per outcome and match path. J10 must never call Bedrock or any adjudication code, and the hadoop jar must still bundle no AWS SDK. J09 exports the decisions, partitioned by entity type and decision.
+5. Run the full chain locally on the full inputs, with max-block-size 150, under scratch/hadoop/wo5-full/. Check free disk first and stop with BLOCKED-ON if less than 5 GiB would remain.
+Update JOBS.md. Run sbt check twice. Report all counters per job, decisions by outcome and path, disk used, and run time.
+
+## Work order 7: entity-resolution-engineer (recalibrate and regenerate the review queue)
+
+Use the entity-resolution-engineer agent to, using the work order 6 outputs under scratch/hadoop/wo5-full/: (1) rerun score calibration, including work pairs now that full enrichment data exists, and report whether the work weights or thresholds should change (report only; do not change them without a human ruling); (2) regenerate the gold-set review queue with at least 250 researcher and about 50 work pairs, where the work pairs now include non-exact paths. Name the strata file without the word "key" in its file name. Keep the labeling CSV blind. Run sbt check twice if any source changes. Return a standard report.
