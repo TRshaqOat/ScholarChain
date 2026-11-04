@@ -187,3 +187,15 @@ Use the entity-resolution-engineer agent to re-key the work order 7 gold queue t
 ## Repair-02 work order R4: code-reviewer (review 2)
 
 Use the code-reviewer agent to re-review the Phase 5 change set after repair-02. Verify that review 1 finding 1 is fixed under er-v2, that er-v1 is unchanged, that the R2 tests use the reviewer's failure input, and that the R2 report shows 0 software/amazon/awssdk entries in the hadoop assembly. Scope: changes since review 1 in modules/entity-resolution and modules/hadoop, plus anything they touch. Do not read labels/ or scratch/er/review-queue-wo5/. Report only critical or major findings, each with severity, file and line, failure input, and owner; list minor findings briefly. Return APPROVE or REQUEST_CHANGES. Do not edit any file.
+
+## Human rulings after review 2
+
+Date: 2026-11-04. Applies to review 2 (code-reviewer, REQUEST_CHANGES, one major) and the R1 to R3 reports in repair-02.md.
+
+1. Review 2 finding 1 is accepted as a residual risk. There is no repair-03 and no review 3. The capped suffix-conflict group orcid:0000-0001-5832-0347 (152 mentions) stays in oversize-conflicts/ and suffix-conflicts/ only, with no EXACT_CONFLICT decisions. Reasons: Phase 5 allows one repair round; it is 1 of 16 groups; repair-02 is strictly more conservative than before (no member is ACCEPTED to the iD); clusters spanning two DBLP suffixes are already refused in Phase 6; the remaining gap is closed in Phase 6 by ruling 2.
+2. Phase 6 refusal rule, extended. Spark reads the J03+J04 suffix-conflicts/ and oversize-conflicts/ outputs of the run it consumes (Hadoop outputs; the spec requires Spark to consume Hadoop outputs, not only J09). For each listed researcher identifier, the group's members are the researcher mentions carrying that identifier, and Spark checks that the member count equals groupSize. Canonical clustering refuses any cluster that would contain two or more members of one listed group and counts these refusals under their own reason. This applies to all 16 suffix-conflict groups, not only the capped one.
+3. max-conflict-group-size stays at 100 for Phase 5.
+4. Review 2 minor findings are residual risks for Phase 11: J10 decisions record er-v1:exact-id-group-conflict rather than er-v2:orcid-group-homonym-suffix-conflict; orcidGroupSuffixConflict counts four-digit suffixes in non-DBLP names (conservative); the LogicSpec resolve tests run only under er-v2. Precedence between a blocked ACCEPTED decision and an EXACT_ID CONFLICT decision on the same pair (3,282 pairs) is a Phase 6 matter covered by the existing refusal rule.
+5. No supplementary gold sample for the suffix-conflict groups. The gold set does not measure the new rule; Phase 17 documents this as a limitation.
+6. Phase 6 consumes run-035e75abfa6798c938cbd534273dbd8d under scratch/hadoop/wo5-v2b/. The er-v2 gold evaluation uses scratch/er/review-queue-wo5/repair-02/review-queue-20261103-strata-er-v2.csv.
+7. The Phase 5 code review closes with these rulings. The human gate follows the gold evaluation and the human's two sbt check runs.
