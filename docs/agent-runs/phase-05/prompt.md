@@ -99,3 +99,37 @@ Update JOBS.md. Run sbt check twice. Report all counters per job, decisions by o
 ## Work order 7: entity-resolution-engineer (recalibrate and regenerate the review queue)
 
 Use the entity-resolution-engineer agent to, using the work order 6 outputs under scratch/hadoop/wo5-full/: (1) rerun score calibration, including work pairs now that full enrichment data exists, and report whether the work weights or thresholds should change (report only; do not change them without a human ruling); (2) regenerate the gold-set review queue with at least 250 researcher and about 50 work pairs, where the work pairs now include non-exact paths. Name the strata file without the word "key" in its file name. Keep the labeling CSV blind. Run sbt check twice if any source changes. Return a standard report.
+
+## Human rulings after work order 7
+
+- Blocking volume at max-block-size 150 is accepted: 26.67M blocked candidates on full enrichment, against 5.92M predicted by calibration on sample-sized enrichment. No block-size recalibration in Phase 5. Recorded as a residual risk.
+- The J06 work-pairs/ output that feeds J10 is accepted as a design deviation from work order 6.
+- Policy er-v2 adopts two work rules: (a) SAME_SOURCE_SHARED_DOI: a blocked WORK pair whose two records come from the same source and share a DOI is CONFLICT, consistent with J03+J04; (b) a deterministic work rule: identical normalized title, identical author sequence, and year distance at most 1 is ACCEPTED on the DETERMINISTIC path, regardless of venue. The identifier step still runs first, so an identifier disagreement still gives CONFLICT or REJECTED as in er-v1.
+- er-v2 does not change researcher rules or weights. The affiliation-weight proposal is declined for Phase 5: it would accept more researcher pairs before any gold evaluation, and over-merging corrupts downstream metrics, while splitting is the documented conservative failure.
+- Thresholds are unchanged: accept 0.93, reject 0.35, LLM band [0.65, 0.93].
+- er-v2 is decided from silver calibration only, before any gold label is evaluated. Gold labels must not be used to tune er-v2.
+- The gold set is the work order 7 queue in scratch/er/review-queue-wo5/. It is not resampled. After the er-v2 rerun, its rows are re-keyed to the er-v2 decisions, and both er-v1 and er-v2 are evaluated on the same labels.
+- Calibration evidence is archived in docs/agent-runs/phase-05/evidence/ (human-owned).
+- Work orders 8 to 11 run in a fourth orchestrator session, to limit context size.
+
+## Work order 8: entity-resolution-engineer (er-v2 policy)
+
+Use the entity-resolution-engineer agent to implement policy er-v2 in modules/entity-resolution, as ruled in "Human rulings after work order 7":
+1. Add the SAME_SOURCE_SHARED_DOI rule for blocked WORK pairs.
+2. Add the deterministic work rule (identical normalized title, identical author sequence, year distance at most 1, venue ignored). It runs after the identifier step.
+3. Keep er-v1 selectable by policy version with unchanged behavior, so the er-v1 outputs on disk stay reproducible. Researcher rules, weights, and thresholds are identical in both versions.
+4. Add hand-checkable tests: two OpenAlex works sharing a DOI (CONFLICT), an ACM dual-DOI pair with the same title and authors but different DOIs (not ACCEPTED), a DOI-less pair that the new deterministic rule accepts, a one-year-gap pair, and a test that er-v1 decisions are unchanged.
+5. Update Calibrate and ReviewQueue so they accept a run whose matchPolicyVersion is er-v1 or er-v2.
+Do not edit scholarchain.conf; domain-engineer owns it. Run sbt check twice. Report the full rule order for both versions, the new rule IDs, and the test counts.
+
+## Work order 9: domain-engineer (policy version)
+
+Use the domain-engineer agent to set the entity-resolution policy version in modules/core/src/main/resources/scholarchain.conf to er-v2, and update any test that asserts the old value. Change the max-block-size comment to cite docs/agent-runs/phase-05/evidence/block-size.tsv instead of the scratch path. Keep max-block-size and all thresholds unchanged. If no policy-version key exists, report BLOCKED-ON instead of inventing one. Run sbt check twice. Return a standard report.
+
+## Work order 10: hadoop-engineer (er-v2 rerun)
+
+Use the hadoop-engineer agent to rerun the full Hadoop chain with policy er-v2 on the same full inputs as work order 6, under scratch/hadoop/wo5-v2/. Do not change J01 to J09 logic; change code only if the policy-version check or tests require it. Do not delete scratch/hadoop/wo5-full/. Check free disk first and stop with BLOCKED-ON if less than 5 GiB would remain. Run sbt check twice if any source changes. Report counters per job, decisions by entity type, path, and outcome, and the difference from the work order 6 run for each path and outcome. Confirm that every RESEARCHER decision count is identical to work order 6, and that no WORK pair is ACCEPTED where J03+J04 reported CONFLICT for the same DOI group.
+
+## Work order 11: entity-resolution-engineer (re-key the gold queue)
+
+Use the entity-resolution-engineer agent to create an er-v2 strata file for the existing review queue in scratch/er/review-queue-wo5/, using the work order 10 run in scratch/hadoop/wo5-v2/. Do not resample: keep the same row IDs and pairs, and take decision, path, and stratum fields from the er-v2 decisions. Write it as scratch/er/review-queue-wo5/review-queue-20261103-strata-er-v2.csv. Leave the blind CSV and the er-v1 strata file unchanged. Report how many queued pairs changed decision, by entity type. If Evaluate needs a change to score rows whose current decision differs from their sampling stratum, make it and test it. Do not read labels/. Run sbt check twice if any source changes. Return a standard report.
