@@ -161,3 +161,29 @@ Check in this order:
 8. Tests that would pass even if the behavior were broken.
 
 Verify every finding against the actual files. Report only findings rated critical or major, each with severity, file and line, a concrete failure input, expected impact, and owning agent. List minor findings in one short section without detail. Return APPROVE or REQUEST_CHANGES. Do not edit any file.
+
+## Human rulings after review 1
+
+- Review 1 finding 1 (MAJOR) is fixed in Phase 5 repair round repair-02, not deferred, because the Phase 5 gate requires that exact-ID conflicts never silently merge.
+- Rule: under er-v2, a researcher exact-identifier group (orcid: key) whose member mentions carry two or more distinct non-empty DBLP homonym suffixes is a conflict group. The whole group goes to J03+J04 conflicts/ (conservative; never merged), is counted, and reaches J10 as EXACT_CONFLICT. er-v1 behavior is unchanged.
+- er-v2 is amended in place rather than bumped to er-v3, because no er-v2 output has been committed or consumed. The rerun gets a new run ID and output directory.
+- Phase 6 carry-forward is extended: Spark clustering also refuses any cluster containing two mentions whose DBLP homonym suffixes disagree (homonym_suffix_agreement = 0 under feat-v1), which covers transitive chains. Refusals are counted by reason.
+- All review 1 minor findings are residual risks for Phase 11, per the stopping rule. The blind CSV ID-order hint is noted in labels/README.md; labels are decided on evidence only.
+- repair-02 is the single Phase 5 repair round. After review 2, remaining minor findings are residual risks.
+- repair-02 runs in a sixth orchestrator session. R1 to R3 reports go to docs/agent-runs/phase-05/repair-02.md; review 2 goes to review-report.md.
+
+## Repair-02 work order R1: entity-resolution-engineer
+
+Use the entity-resolution-engineer agent to fix review 1 finding 1 in modules/entity-resolution, per "Human rulings after review 1". Add a pure, versioned function that decides whether a researcher exact-identifier group is a conflict group. Under er-v2, an orcid: group whose member mentions carry two or more distinct non-empty DBLP homonym suffixes is a conflict. Under er-v1, behavior is unchanged. Use the same suffix extraction as the feat-v1 homonym_suffix_agreement feature. Add hand-checkable tests: the reviewer's failure input (one ORCID on "Wei Wang 0001" and "Wei Wang 0002"), a group where one mention has no suffix (not a conflict), and an er-v1 test showing no change. Do not edit modules/hadoop or scholarchain.conf. Run sbt check twice. Report the function signature and rule ID for the hadoop-engineer.
+
+## Repair-02 work order R2: hadoop-engineer
+
+Use the hadoop-engineer agent to apply the R1 function in J03+J04 under the configured policy version, per "Human rulings after review 1". Groups the new rule marks as conflicts go to conflicts/ and get a new counter. Add LogicSpec and PipelineSpec cases with the reviewer's failure input, under er-v2 and er-v1. Then rerun the full chain under er-v2 on the same inputs into scratch/hadoop/wo5-v2b/. Do not delete scratch/hadoop/wo5-full/ or scratch/hadoop/wo5-v2/. Check free disk first and stop with BLOCKED-ON if less than 5 GiB would remain. Run sbt check twice. Also run sbt packageJobs and report the hadoop assembly size and the output of: unzip -Z1 <hadoop assembly jar> | grep -c software/amazon/awssdk. Report the number of orcid groups the new rule marks as conflicts and their mention counts, counters per job, decisions by entity type, path, and outcome with deltas against work order 10, and confirm that every WORK decision is unchanged from work order 10.
+
+## Repair-02 work order R3: entity-resolution-engineer
+
+Use the entity-resolution-engineer agent to re-key the work order 7 gold queue to the R2 run in scratch/hadoop/wo5-v2b/, using ReviewQueue --rekey with the er-v1 strata file scratch/er/review-queue-wo5/review-queue-20261103-strata.csv as input. Write the output under scratch/er/review-queue-wo5/repair-02/. Do not resample, and leave every existing file in scratch/er/review-queue-wo5/ unchanged. Report the exact output path and how many rows changed decision or path compared with the work order 11 er-v2 strata file, by entity type. Do not read labels/. Run sbt check twice only if any source changes.
+
+## Repair-02 work order R4: code-reviewer (review 2)
+
+Use the code-reviewer agent to re-review the Phase 5 change set after repair-02. Verify that review 1 finding 1 is fixed under er-v2, that er-v1 is unchanged, that the R2 tests use the reviewer's failure input, and that the R2 report shows 0 software/amazon/awssdk entries in the hadoop assembly. Scope: changes since review 1 in modules/entity-resolution and modules/hadoop, plus anything they touch. Do not read labels/ or scratch/er/review-queue-wo5/. Report only critical or major findings, each with severity, file and line, failure input, and owner; list minor findings briefly. Return APPROVE or REQUEST_CHANGES. Do not edit any file.
