@@ -46,16 +46,18 @@ Session plan: session 1 (overnight, started 2026-11-04) runs work orders 1 to 5,
 ## Work order 1: build-engineer
 
 Make the Spark project (sbt project sparkAnalytics, directory modules/spark; confirm both names from build.sbt) ready for local Phase 6 work. First read build.sbt and project/Dependencies.scala and report what already exists. Change only what is missing:
-1. Spark SQL 4.0.2 (only the Spark artifacts DataFrames need) via CrossVersion.for3Use2_13, in Provided scope for packaging. No mixed _2.13/_3 artifacts; keep or extend the existing mixed-classpath check.
+
+1. Spark SQL 4.0.2 (only the Spark artifacts DataFrames need) via CrossVersion.for3Use2_13, in Provided scope for packaging. No mixed \_2.13/\_3 artifacts; keep or extend the existing mixed-classpath check.
 2. Tests can create a local SparkSession on Java 17: forked tests, the --add-opens JVM options Spark 4 needs, and serial test execution for this project.
 3. Local runs: `sbt "sparkAnalytics/runMain <main class> <args>"` works with Provided Spark on the run classpath, in a forked JVM whose heap is configurable (default 6g).
 4. A Spark assembly for the later EMR run that excludes Spark, Hadoop, and the AWS SDK, reachable from packageJobs or a new packageSpark alias. Report `unzip -Z1 <jar> | grep -c org/apache/spark` and the same for software/amazon/awssdk; both must be 0.
 5. No new library beyond Spark artifacts at the already-pinned version (D-09).
-Run sbt check twice. If nothing needs changing, say so and report COMPLETE.
+   Run sbt check twice. If nothing needs changing, say so and report COMPLETE.
 
 ## Work order 2: spark-engineer (jobs 1 and 2: canonical entities and the coauthorship graph)
 
 Implement spec Phase 6 jobs 1 and 2 under the rulings above.
+
 1. Inputs: read the R2 run as described in modules/hadoop/JOBS.md. List every input path and the record count read from it.
 2. Canonical builder:
    - Researcher and work clustering per rulings 4 to 6.
@@ -85,11 +87,12 @@ Implement spec Phase 6 jobs 1 and 2 under the rulings above.
    - self-pairs dropped and integrity violations;
    - stage DAG summary, partition counts, and shuffle read and write;
    - wall time, output paths, and free disk before and after.
-Run sbt check twice.
+     Run sbt check twice.
 
 ## Work order 3: spark-engineer (jobs 3, 4 and 8: researcher statistics, components, k-core)
 
 Read the work order 2 outputs (paths from its report).
+
 1. Job 3: P_r, C_r, T_r, A_r, M_r, and W_r per researcher and window, with the work IDs responsible for M_r. Define each measure in modules/spark/JOBS.md.
 2. Job 4: connected components by iterative min-label propagation over DataFrames, with checkpointing. Store component ID and size per window, and report the fraction of researchers in the largest component and the singleton count.
 3. Job 8: k-core coreness by iterative peeling, per window.
@@ -102,11 +105,12 @@ Read the work order 2 outputs (paths from its report).
    - component counts and sizes per window;
    - the coreness distribution and iterations to converge;
    - partition and shuffle metrics, wall time, and output paths.
-Run sbt check twice.
+     Run sbt check twice.
 
 ## Work order 4: spark-engineer (jobs 5, 6 and 7: paths, communities, bridges)
 
 Read the work order 2 and 3 outputs.
+
 1. Job 5:
    - Bounded BFS path evidence (ruling 11) for the selected pairs, storing each path with the supporting work IDs for every hop.
    - The sampled average path length or effective diameter estimate, with its sampling parameters.
@@ -121,7 +125,7 @@ Read the work order 2 and 3 outputs.
    - community counts and the size distribution per window, plus convergence;
    - bridge measure distributions;
    - partition and shuffle metrics, wall time, and output paths.
-Run sbt check twice.
+     Run sbt check twice.
 
 ## Work order 5: spark-engineer (jobs 9, 10 and 11: temporal analysis, summaries, export, end-to-end run)
 
@@ -131,17 +135,18 @@ Run sbt check twice.
    - communities of size 3 or more;
    - paths for the selected pairs;
    - topics where available.
-   Report the count of each.
+     Report the count of each.
 3. Job 11: Parquet export and the JSON manifest (ruling 13).
 4. One end-to-end driver that runs jobs 1 to 11 in order with a fresh run ID and writes the run manifest. Do a full local run, and check that its counts equal the staged runs from work orders 2 to 4 (determinism).
 5. Complete modules/spark/JOBS.md: every job's inputs and outputs, partitioning and shuffle boundaries, checkpointing, measure and bridge definitions with limitations, how to run locally, and the s3a paths for the later EMR run.
 6. Report everything the spec lists: stage DAGs, partition counts, shuffle metrics, graph counts, component counts, community counts, metric distributions, path-test results, temporal windows, rejected integrity violations, and output paths, plus publications, researchers, and edges per window.
-Run sbt check twice.
+   Run sbt check twice.
 
 ## Code review: code-reviewer
 
 Review the complete Phase 6 change set against work orders 1 to 5, the human rulings above, the spec's Phase 6 section (jobs and gate), and D-01, D-02, D-09, and D-10. The orchestrator supplies the change set: git status, git diff for tracked files, and every untracked file under modules/spark plus any build file, written to its scratchpad (not a phase folder).
 Check especially:
+
 - refusal rules a to d are enforced on every path into a cluster, including tier 1;
 - no large table is collected to the driver;
 - algorithms are DataFrame-only, with checkpointing where iterative;
@@ -150,4 +155,4 @@ Check especially:
 - fixtures are genuinely hand-checkable;
 - bridge definitions and limitations are written down;
 - no edits outside owned paths, and no reads of labels/.
-Verify each candidate finding against the files. Give critical and major findings in full (severity, file and line, failure input, impact, owning agent), and minor findings briefly. Return APPROVE or REQUEST_CHANGES. Do not edit any file.
+  Verify each candidate finding against the files. Give critical and major findings in full (severity, file and line, failure input, impact, owning agent), and minor findings briefly. Return APPROVE or REQUEST_CHANGES. Do not edit any file.
