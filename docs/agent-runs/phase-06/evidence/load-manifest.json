@@ -1,0 +1,650 @@
+{
+  "schemaVersion": "spark-export-manifest-v1",
+  "runId": "run-0375535e0174b7330b18a78988c07211",
+  "snapshot": "2026-10-03",
+  "codeVersion": "src-93bc726cd50a",
+  "inputHadoopRunId": "run-035e75abfa6798c938cbd534273dbd8d",
+  "matchPolicyVersion": "er-v2",
+  "graphPolicy": "graph-v1",
+  "windows": [
+    {
+      "name": "all-years",
+      "startYear": 2000,
+      "endYear": 2026
+    },
+    {
+      "name": "2000-2014",
+      "startYear": 2000,
+      "endYear": 2014
+    },
+    {
+      "name": "2015-2026",
+      "startYear": 2015,
+      "endYear": 2026
+    }
+  ],
+  "chain": {
+    "canonicalGraphRunId": "run-10ceed31b3f602bb998eae7c00929ae9",
+    "researcherAnalyticsRunId": "run-d7865ad3f5f8195546c1dab817328ee5",
+    "communityPathRunId": "run-83b496169099a614ec519133077a1993",
+    "temporalSummaryExportRunId": "run-0375535e0174b7330b18a78988c07211"
+  },
+  "note": "Parquet tables are exported in place; store-specific formats (Neptune bulk-load CSV, DynamoDB items, S3 Vectors) are Phase 7+8 (ruling 13).",
+  "tables": [
+    {
+      "logicalName": "canonical/mention-map",
+      "table": "canonical/mention-map",
+      "schemaVersion": "spark-canonical-mention-map-v1",
+      "stage": "spark-canonical-graph",
+      "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+      "codeVersion": "src-93bc726cd50a",
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-10ceed31b3f602bb998eae7c00929ae9/canonical/mention-map",
+      "format": "parquet",
+      "partitionColumns": [],
+      "schema": "mentionId STRING,researcherId STRING,sourceWorkId STRING,sourceDataset STRING,sourceRecordId STRING,assignedTier STRING,clusterMentionCount BIGINT,separationReason STRING,tier2RefusalRules ARRAY<STRING>,tier1RefusalRules ARRAY<STRING>,identityConfidence DOUBLE,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING",
+      "rowCount": 1273265,
+      "verifiedRowCount": 1273265,
+      "intendedTargets": [
+        "s3"
+      ]
+    },
+    {
+      "logicalName": "canonical/researcher-refusals",
+      "table": "canonical/researcher-refusals",
+      "schemaVersion": "spark-canonical-researcher-refusals-v1",
+      "stage": "spark-canonical-graph",
+      "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+      "codeVersion": "src-93bc726cd50a",
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-10ceed31b3f602bb998eae7c00929ae9/canonical/researcher-refusals",
+      "format": "parquet",
+      "partitionColumns": [],
+      "schema": "tier STRING,clusterKey BIGINT,clusterMemberCount BIGINT,clusterNodeCount BIGINT,sampleMember STRING,rules ARRAY<STRING>,entityType STRING,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING",
+      "rowCount": 5110,
+      "verifiedRowCount": 5110,
+      "intendedTargets": [
+        "s3"
+      ]
+    },
+    {
+      "logicalName": "canonical/work-map",
+      "table": "canonical/work-map",
+      "schemaVersion": "spark-canonical-work-map-v1",
+      "stage": "spark-canonical-graph",
+      "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+      "codeVersion": "src-93bc726cd50a",
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-10ceed31b3f602bb998eae7c00929ae9/canonical/work-map",
+      "format": "parquet",
+      "partitionColumns": [],
+      "schema": "sourceWorkId STRING,workId STRING,sourceDataset STRING,sourceRecordId STRING,assignedTier STRING,clusterMemberCount BIGINT,separationReason STRING,tier2RefusalRules ARRAY<STRING>,tier1RefusalRules ARRAY<STRING>,identityConfidence DOUBLE,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING",
+      "rowCount": 325029,
+      "verifiedRowCount": 325029,
+      "intendedTargets": [
+        "s3"
+      ]
+    },
+    {
+      "logicalName": "canonical/work-refusals",
+      "table": "canonical/work-refusals",
+      "schemaVersion": "spark-canonical-work-refusals-v1",
+      "stage": "spark-canonical-graph",
+      "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+      "codeVersion": "src-93bc726cd50a",
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-10ceed31b3f602bb998eae7c00929ae9/canonical/work-refusals",
+      "format": "parquet",
+      "partitionColumns": [],
+      "schema": "tier STRING,clusterKey BIGINT,clusterMemberCount BIGINT,clusterNodeCount BIGINT,sampleMember STRING,rules ARRAY<STRING>,entityType STRING,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING",
+      "rowCount": 334,
+      "verifiedRowCount": 334,
+      "intendedTargets": [
+        "s3"
+      ]
+    },
+    {
+      "logicalName": "nodes/type=researcher",
+      "table": "canonical/researchers",
+      "schemaVersion": "spark-canonical-researchers-v1",
+      "stage": "spark-canonical-graph",
+      "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+      "codeVersion": "src-93bc726cd50a",
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-10ceed31b3f602bb998eae7c00929ae9/canonical/researchers",
+      "format": "parquet",
+      "partitionColumns": [],
+      "schema": "researcherId STRING,displayName STRING,alternateNames ARRAY<STRING>,orcid STRING,mentionCount BIGINT,anchorMentionId STRING,sourceDatasets ARRAY<STRING>,dblpAnchored BOOLEAN,assignedTier STRING,separationReason STRING,identityConfidence DOUBLE,uncertainty STRING,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING",
+      "rowCount": 259057,
+      "verifiedRowCount": 259057,
+      "intendedTargets": [
+        "neptune",
+        "dynamodb",
+        "s3"
+      ]
+    },
+    {
+      "logicalName": "nodes/type=work",
+      "table": "canonical/works",
+      "schemaVersion": "spark-canonical-works-v1",
+      "stage": "spark-canonical-graph",
+      "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+      "codeVersion": "src-93bc726cd50a",
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-10ceed31b3f602bb998eae7c00929ae9/canonical/works",
+      "format": "parquet",
+      "partitionColumns": [],
+      "schema": "workId STRING,title STRING,normalizedTitle STRING,year INT,venueId STRING,workType STRING,doi STRING,memberWorkIds ARRAY<STRING>,sourceDatasets ARRAY<STRING>,dblpAnchored BOOLEAN,assignedTier STRING,separationReason STRING,identityConfidence DOUBLE,uncertainty STRING,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING",
+      "rowCount": 113205,
+      "verifiedRowCount": 113205,
+      "intendedTargets": [
+        "neptune",
+        "dynamodb",
+        "s3"
+      ]
+    },
+    {
+      "logicalName": "edges/type=authored",
+      "table": "canonical/authored",
+      "schemaVersion": "spark-canonical-authored-v1",
+      "stage": "spark-canonical-graph",
+      "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+      "codeVersion": "src-93bc726cd50a",
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-10ceed31b3f602bb998eae7c00929ae9/canonical/authored",
+      "format": "parquet",
+      "partitionColumns": [],
+      "schema": "researcherId STRING,workId STRING,mentionIds ARRAY<STRING>,position INT,year INT,sourceDatasets ARRAY<STRING>,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING",
+      "rowCount": 535898,
+      "verifiedRowCount": 535898,
+      "intendedTargets": [
+        "neptune",
+        "dynamodb"
+      ]
+    },
+    {
+      "logicalName": "nodes/type=venue",
+      "table": "canonical/venues",
+      "schemaVersion": "spark-canonical-venues-v1",
+      "stage": "spark-canonical-graph",
+      "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+      "codeVersion": "src-93bc726cd50a",
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-10ceed31b3f602bb998eae7c00929ae9/canonical/venues",
+      "format": "parquet",
+      "partitionColumns": [],
+      "schema": "venueId STRING,name STRING,venueType STRING,externalIds MAP<STRING, STRING>,sourceProvenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING",
+      "rowCount": 288,
+      "verifiedRowCount": 288,
+      "intendedTargets": [
+        "neptune",
+        "s3"
+      ]
+    },
+    {
+      "logicalName": "nodes/type=topic",
+      "table": "canonical/topics",
+      "schemaVersion": "spark-canonical-topics-v1",
+      "stage": "spark-canonical-graph",
+      "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+      "codeVersion": "src-93bc726cd50a",
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-10ceed31b3f602bb998eae7c00929ae9/canonical/topics",
+      "format": "parquet",
+      "partitionColumns": [],
+      "schema": "topicId STRING,name STRING,subfield STRING,field STRING,sourceProvenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING",
+      "rowCount": 1226,
+      "verifiedRowCount": 1226,
+      "intendedTargets": [
+        "neptune",
+        "s3"
+      ]
+    },
+    {
+      "logicalName": "nodes/type=institution",
+      "table": "canonical/institutions",
+      "schemaVersion": "spark-canonical-institutions-v1",
+      "stage": "spark-canonical-graph",
+      "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+      "codeVersion": "src-93bc726cd50a",
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-10ceed31b3f602bb998eae7c00929ae9/canonical/institutions",
+      "format": "parquet",
+      "partitionColumns": [],
+      "schema": "institutionId STRING,name STRING,countryCode STRING,externalIds MAP<STRING, STRING>,sourceProvenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING",
+      "rowCount": 58404,
+      "verifiedRowCount": 58404,
+      "intendedTargets": [
+        "neptune",
+        "s3"
+      ]
+    },
+    {
+      "logicalName": "edges/type=has_topic",
+      "table": "canonical/work-topics",
+      "schemaVersion": "spark-canonical-work-topics-v1",
+      "stage": "spark-canonical-graph",
+      "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+      "codeVersion": "src-93bc726cd50a",
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-10ceed31b3f602bb998eae7c00929ae9/canonical/work-topics",
+      "format": "parquet",
+      "partitionColumns": [],
+      "schema": "workId STRING,topicId STRING,evidenceEdgeIds ARRAY<STRING>,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING",
+      "rowCount": 106682,
+      "verifiedRowCount": 106682,
+      "intendedTargets": [
+        "neptune"
+      ]
+    },
+    {
+      "logicalName": "edges/type=affiliated_with",
+      "table": "canonical/researcher-institutions",
+      "schemaVersion": "spark-canonical-researcher-institutions-v1",
+      "stage": "spark-canonical-graph",
+      "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+      "codeVersion": "src-93bc726cd50a",
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-10ceed31b3f602bb998eae7c00929ae9/canonical/researcher-institutions",
+      "format": "parquet",
+      "partitionColumns": [],
+      "schema": "researcherId STRING,institutionId STRING,via ARRAY<STRING>,evidenceIds ARRAY<STRING>,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING",
+      "rowCount": 379708,
+      "verifiedRowCount": 379708,
+      "intendedTargets": [
+        "neptune"
+      ]
+    },
+    {
+      "logicalName": "edges/type=coauthored_with",
+      "table": "graph/coauthor-edges",
+      "schemaVersion": "spark-graph-coauthor-edges-v1",
+      "stage": "spark-canonical-graph",
+      "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+      "codeVersion": "src-93bc726cd50a",
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-10ceed31b3f602bb998eae7c00929ae9/graph/coauthor-edges",
+      "format": "parquet",
+      "partitionColumns": [
+        "window"
+      ],
+      "schema": "edgeId STRING,researcherA STRING,researcherB STRING,windowStartYear INT,windowEndYear INT,jointPublicationCount BIGINT,firstCollaborationYear INT,lastCollaborationYear INT,representativeWorkIds ARRAY<STRING>,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING,window STRING",
+      "rowCount": 1590754,
+      "verifiedRowCount": 1590754,
+      "intendedTargets": [
+        "neptune",
+        "dynamodb"
+      ]
+    },
+    {
+      "logicalName": "graph/self-pairs",
+      "table": "graph/self-pairs",
+      "schemaVersion": "spark-graph-self-pairs-v1",
+      "stage": "spark-canonical-graph",
+      "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+      "codeVersion": "src-93bc726cd50a",
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-10ceed31b3f602bb998eae7c00929ae9/graph/self-pairs",
+      "format": "parquet",
+      "partitionColumns": [],
+      "schema": "authorA STRING,authorB STRING,workId STRING,year INT,researcherId STRING,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING",
+      "rowCount": 95,
+      "verifiedRowCount": 95,
+      "intendedTargets": [
+        "s3"
+      ]
+    },
+    {
+      "logicalName": "integrity-violations",
+      "table": "integrity-violations",
+      "schemaVersion": "spark-integrity-violations-v1",
+      "stage": "spark-canonical-graph",
+      "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+      "codeVersion": "src-93bc726cd50a",
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-10ceed31b3f602bb998eae7c00929ae9/integrity-violations",
+      "format": "parquet",
+      "partitionColumns": [],
+      "schema": "check STRING,subjectId STRING,relatedId STRING,detail STRING,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING",
+      "rowCount": 0,
+      "verifiedRowCount": 0,
+      "intendedTargets": [
+        "s3"
+      ]
+    },
+    {
+      "logicalName": "metrics/type=components",
+      "table": "analytics/components",
+      "schemaVersion": "spark-analytics-components-v1",
+      "stage": "spark-researcher-analytics",
+      "runId": "run-d7865ad3f5f8195546c1dab817328ee5",
+      "codeVersion": "src-93bc726cd50a",
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-d7865ad3f5f8195546c1dab817328ee5/analytics/components",
+      "format": "parquet",
+      "partitionColumns": [
+        "window"
+      ],
+      "schema": "windowStartYear INT,windowEndYear INT,componentId STRING,componentRoot STRING,componentSize BIGINT,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING,window STRING",
+      "rowCount": 34546,
+      "verifiedRowCount": 34546,
+      "intendedTargets": [
+        "s3",
+        "dynamodb"
+      ]
+    },
+    {
+      "logicalName": "metrics/type=researcher_collaboration+kcore",
+      "table": "analytics/researcher-metrics",
+      "schemaVersion": "spark-analytics-researcher-metrics-v1",
+      "stage": "spark-researcher-analytics",
+      "runId": "run-d7865ad3f5f8195546c1dab817328ee5",
+      "codeVersion": "src-93bc726cd50a",
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-d7865ad3f5f8195546c1dab817328ee5/analytics/researcher-metrics",
+      "format": "parquet",
+      "partitionColumns": [
+        "window"
+      ],
+      "schema": "researcherId STRING,windowStartYear INT,windowEndYear INT,publicationCount BIGINT,distinctCoauthorCount BIGINT,totalCoauthorOccurrences BIGINT,averageCoauthorsPerPaper DOUBLE,maximumCoauthorsOnOnePaper BIGINT,maximumTeamWorkIds ARRAY<STRING>,weightedDegree DOUBLE,componentId STRING,componentSize BIGINT,coreness INT,graphDegree BIGINT,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING,window STRING",
+      "rowCount": 397100,
+      "verifiedRowCount": 397100,
+      "intendedTargets": [
+        "neptune",
+        "dynamodb",
+        "s3"
+      ]
+    },
+    {
+      "logicalName": "analytics/integrity-violations",
+      "table": "analytics/integrity-violations",
+      "schemaVersion": "spark-analytics-integrity-violations-v1",
+      "stage": "spark-researcher-analytics",
+      "runId": "run-d7865ad3f5f8195546c1dab817328ee5",
+      "codeVersion": "src-93bc726cd50a",
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-d7865ad3f5f8195546c1dab817328ee5/analytics/integrity-violations",
+      "format": "parquet",
+      "partitionColumns": [],
+      "schema": "check STRING,subjectId STRING,relatedId STRING,detail STRING,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING",
+      "rowCount": 21,
+      "verifiedRowCount": 21,
+      "intendedTargets": [
+        "s3"
+      ]
+    },
+    {
+      "logicalName": "path-evidence",
+      "table": "paths/path-evidence",
+      "schemaVersion": "spark-paths-path-evidence-v1",
+      "stage": "spark-community-path",
+      "runId": "run-83b496169099a614ec519133077a1993",
+      "codeVersion": "src-93bc726cd50a",
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-83b496169099a614ec519133077a1993/paths/path-evidence",
+      "format": "parquet",
+      "partitionColumns": [
+        "window"
+      ],
+      "schema": "pairId STRING,windowStartYear INT,windowEndYear INT,sourceResearcherId STRING,targetResearcherId STRING,status STRING,pathLength INT,maxDepth INT,componentId STRING,researcherIds ARRAY<STRING>,hops ARRAY<STRUCT<hop: INT, fromResearcherId: STRING, toResearcherId: STRING, edgeId: STRING, jointPublicationCount: BIGINT, firstCollaborationYear: INT, lastCollaborationYear: INT, supportingWorkIds: ARRAY<STRING>>>,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING,window STRING",
+      "rowCount": 50,
+      "verifiedRowCount": 50,
+      "intendedTargets": [
+        "neptune",
+        "dynamodb",
+        "s3"
+      ]
+    },
+    {
+      "logicalName": "paths/path-length-estimate",
+      "table": "paths/path-length-estimate",
+      "schemaVersion": "spark-paths-path-length-estimate-v1",
+      "stage": "spark-community-path",
+      "runId": "run-83b496169099a614ec519133077a1993",
+      "codeVersion": "src-93bc726cd50a",
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-83b496169099a614ec519133077a1993/paths/path-length-estimate",
+      "format": "parquet",
+      "partitionColumns": [],
+      "schema": "window STRING,windowStartYear INT,windowEndYear INT,largestComponentId STRING,largestComponentSize BIGINT,requestedSources INT,sampledSources INT,sampleSeed BIGINT,sourceResearcherIds ARRAY<STRING>,reachablePairs BIGINT,meanDistance DOUBLE,meanDistanceStdError DOUBLE,medianDistance INT,effectiveDiameter90 INT,maxObservedDistance INT,distanceHistogram ARRAY<STRUCT<distance: INT, pairs: BIGINT>>,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING",
+      "rowCount": 3,
+      "verifiedRowCount": 3,
+      "intendedTargets": [
+        "dynamodb",
+        "s3"
+      ]
+    },
+    {
+      "logicalName": "metrics/type=communities",
+      "table": "analytics/communities",
+      "schemaVersion": "spark-analytics-communities-v1",
+      "stage": "spark-community-path",
+      "runId": "run-83b496169099a614ec519133077a1993",
+      "codeVersion": "src-93bc726cd50a",
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-83b496169099a614ec519133077a1993/analytics/communities",
+      "format": "parquet",
+      "partitionColumns": [
+        "window"
+      ],
+      "schema": "windowStartYear INT,windowEndYear INT,communityId STRING,communityLabel STRING,communitySize BIGINT,internalEdges BIGINT,crossCommunityEdges BIGINT,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING,window STRING",
+      "rowCount": 79740,
+      "verifiedRowCount": 79740,
+      "intendedTargets": [
+        "neptune",
+        "dynamodb",
+        "s3"
+      ]
+    },
+    {
+      "logicalName": "edges/type=cross_community",
+      "table": "analytics/cross-community-edges",
+      "schemaVersion": "spark-analytics-cross-community-edges-v1",
+      "stage": "spark-community-path",
+      "runId": "run-83b496169099a614ec519133077a1993",
+      "codeVersion": "src-93bc726cd50a",
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-83b496169099a614ec519133077a1993/analytics/cross-community-edges",
+      "format": "parquet",
+      "partitionColumns": [
+        "window"
+      ],
+      "schema": "windowStartYear INT,windowEndYear INT,edgeId STRING,researcherA STRING,researcherB STRING,communityA STRING,communityB STRING,jointPublicationCount BIGINT,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING,window STRING",
+      "rowCount": 509683,
+      "verifiedRowCount": 509683,
+      "intendedTargets": [
+        "neptune",
+        "s3"
+      ]
+    },
+    {
+      "logicalName": "metrics/type=bridges",
+      "table": "analytics/researcher-communities",
+      "schemaVersion": "spark-analytics-researcher-communities-v1",
+      "stage": "spark-community-path",
+      "runId": "run-83b496169099a614ec519133077a1993",
+      "codeVersion": "src-93bc726cd50a",
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-83b496169099a614ec519133077a1993/analytics/researcher-communities",
+      "format": "parquet",
+      "partitionColumns": [
+        "window"
+      ],
+      "schema": "windowStartYear INT,windowEndYear INT,researcherId STRING,communityId STRING,communitySize BIGINT,graphDegree BIGINT,crossCommunityDegree BIGINT,communitiesConnected BIGINT,participationCoefficient DOUBLE,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING,window STRING",
+      "rowCount": 397100,
+      "verifiedRowCount": 397100,
+      "intendedTargets": [
+        "neptune",
+        "dynamodb",
+        "s3"
+      ]
+    },
+    {
+      "logicalName": "analytics/community-path-violations",
+      "table": "analytics/community-path-violations",
+      "schemaVersion": "spark-analytics-community-path-violations-v1",
+      "stage": "spark-community-path",
+      "runId": "run-83b496169099a614ec519133077a1993",
+      "codeVersion": "src-93bc726cd50a",
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-83b496169099a614ec519133077a1993/analytics/community-path-violations",
+      "format": "parquet",
+      "partitionColumns": [],
+      "schema": "check STRING,subjectId STRING,relatedId STRING,detail STRING,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING",
+      "rowCount": 0,
+      "verifiedRowCount": 0,
+      "intendedTargets": [
+        "s3"
+      ]
+    },
+    {
+      "logicalName": "temporal/window-summary",
+      "table": "temporal/window-summary",
+      "schemaVersion": "spark-temporal-window-summary-v1",
+      "stage": "spark-temporal-summary-export",
+      "runId": "run-0375535e0174b7330b18a78988c07211",
+      "codeVersion": "src-93bc726cd50a",
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-0375535e0174b7330b18a78988c07211/temporal/window-summary",
+      "format": "parquet",
+      "partitionColumns": [],
+      "schema": "window STRING,windowStartYear INT,windowEndYear INT,publications BIGINT,researchers BIGINT,meanDistinctCoauthorCount DOUBLE,medianDistinctCoauthorCount DOUBLE,meanAverageCoauthorsPerPaper DOUBLE,meanMaximumCoauthorsOnOnePaper DOUBLE,maxMaximumCoauthorsOnOnePaper BIGINT,meanCoreness DOUBLE,maxCoreness INT,coauthorEdges BIGINT,sumJointPublicationCount BIGINT,components BIGINT,largestComponentSize BIGINT,singletonResearchers BIGINT,communities BIGINT,largestCommunitySize BIGINT,communitiesAtLeastMinSize BIGINT,meanParticipationCoefficient DOUBLE,medianParticipationCoefficient DOUBLE,researchersWithCrossCommunityEdge BIGINT,years INT,publicationsPerYear DOUBLE,largestComponentFraction DOUBLE,crossCommunityResearcherFraction DOUBLE,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING",
+      "rowCount": 3,
+      "verifiedRowCount": 3,
+      "intendedTargets": [
+        "dynamodb",
+        "s3"
+      ]
+    },
+    {
+      "logicalName": "temporal/researcher-changes",
+      "table": "temporal/researcher-changes",
+      "schemaVersion": "spark-temporal-researcher-changes-v1",
+      "stage": "spark-temporal-summary-export",
+      "runId": "run-0375535e0174b7330b18a78988c07211",
+      "codeVersion": "src-93bc726cd50a",
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-0375535e0174b7330b18a78988c07211/temporal/researcher-changes",
+      "format": "parquet",
+      "partitionColumns": [],
+      "schema": "fromWindow STRING,fromWindowStartYear INT,fromWindowEndYear INT,toWindow STRING,toWindowStartYear INT,toWindowEndYear INT,researcherId STRING,presence STRING,fromPublicationCount BIGINT,toPublicationCount BIGINT,fromDistinctCoauthorCount BIGINT,toDistinctCoauthorCount BIGINT,fromAverageCoauthorsPerPaper DOUBLE,toAverageCoauthorsPerPaper DOUBLE,fromMaximumCoauthorsOnOnePaper BIGINT,toMaximumCoauthorsOnOnePaper BIGINT,fromCoreness INT,toCoreness INT,fromComponentSize BIGINT,toComponentSize BIGINT,fromInLargestComponent BOOLEAN,toInLargestComponent BOOLEAN,fromCommunityId STRING,toCommunityId STRING,fromCommunitySize BIGINT,toCommunitySize BIGINT,fromCrossCommunityDegree BIGINT,toCrossCommunityDegree BIGINT,fromCommunitiesConnected BIGINT,toCommunitiesConnected BIGINT,fromParticipationCoefficient DOUBLE,toParticipationCoefficient DOUBLE,deltaDistinctCoauthorCount BIGINT,deltaAverageCoauthorsPerPaper DOUBLE,deltaMaximumCoauthorsOnOnePaper BIGINT,deltaCoreness INT,deltaCrossCommunityDegree BIGINT,deltaParticipationCoefficient DOUBLE,retainedCoauthors BIGINT,largestComponentTransition STRING,crossCommunityTransition STRING,communityRetention DOUBLE,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING",
+      "rowCount": 191318,
+      "verifiedRowCount": 191318,
+      "intendedTargets": [
+        "dynamodb",
+        "s3"
+      ]
+    },
+    {
+      "logicalName": "temporal/community-transitions",
+      "table": "temporal/community-transitions",
+      "schemaVersion": "spark-temporal-community-transitions-v1",
+      "stage": "spark-temporal-summary-export",
+      "runId": "run-0375535e0174b7330b18a78988c07211",
+      "codeVersion": "src-93bc726cd50a",
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-0375535e0174b7330b18a78988c07211/temporal/community-transitions",
+      "format": "parquet",
+      "partitionColumns": [],
+      "schema": "fromWindow STRING,fromWindowStartYear INT,fromWindowEndYear INT,toWindow STRING,toWindowStartYear INT,toWindowEndYear INT,fromCommunityId STRING,toCommunityId STRING,sharedResearchers BIGINT,fromCommunitySize BIGINT,toCommunitySize BIGINT,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING",
+      "rowCount": 11140,
+      "verifiedRowCount": 11140,
+      "intendedTargets": [
+        "s3"
+      ]
+    },
+    {
+      "logicalName": "temporal/window-comparison",
+      "table": "temporal/window-comparison",
+      "schemaVersion": "spark-temporal-window-comparison-v1",
+      "stage": "spark-temporal-summary-export",
+      "runId": "run-0375535e0174b7330b18a78988c07211",
+      "codeVersion": "src-93bc726cd50a",
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-0375535e0174b7330b18a78988c07211/temporal/window-comparison",
+      "format": "parquet",
+      "partitionColumns": [],
+      "schema": "fromWindow STRING,fromWindowStartYear INT,fromWindowEndYear INT,toWindow STRING,toWindowStartYear INT,toWindowEndYear INT,researchersFrom BIGINT,researchersTo BIGINT,researchersInBoth BIGINT,researchersFromOnly BIGINT,researchersToOnly BIGINT,researchersRetainingACoauthor BIGINT,medianCommunityRetention DOUBLE,meanCommunityRetention DOUBLE,largestComponentInToIn BIGINT,largestComponentInToOut BIGINT,largestComponentOutToIn BIGINT,largestComponentOutToOut BIGINT,becameCrossCommunity BIGINT,stoppedCrossCommunity BIGINT,stayedCrossCommunity BIGINT,fromMeanDistinctCoauthorCount DOUBLE,toMeanDistinctCoauthorCount DOUBLE,fromMeanAverageCoauthorsPerPaper DOUBLE,toMeanAverageCoauthorsPerPaper DOUBLE,fromMeanMaximumCoauthorsOnOnePaper DOUBLE,toMeanMaximumCoauthorsOnOnePaper DOUBLE,fromMeanCoreness DOUBLE,toMeanCoreness DOUBLE,fromMeanCrossCommunityDegree DOUBLE,toMeanCrossCommunityDegree DOUBLE,fromMeanParticipationCoefficient DOUBLE,toMeanParticipationCoefficient DOUBLE,inclusionLimitation STRING,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING",
+      "rowCount": 1,
+      "verifiedRowCount": 1,
+      "intendedTargets": [
+        "dynamodb",
+        "s3"
+      ]
+    },
+    {
+      "logicalName": "semantic-summaries",
+      "table": "summaries/semantic-summaries",
+      "schemaVersion": "spark-summaries-semantic-summaries-v1",
+      "stage": "spark-temporal-summary-export",
+      "runId": "run-0375535e0174b7330b18a78988c07211",
+      "codeVersion": "src-93bc726cd50a",
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-0375535e0174b7330b18a78988c07211/summaries/semantic-summaries",
+      "format": "parquet",
+      "partitionColumns": [
+        "documentType",
+        "window"
+      ],
+      "schema": "subjectId STRING,windowStartYear INT,windowEndYear INT,text STRING,textHash STRING,templateVersion STRING,facts STRING,supportingIds ARRAY<STRING>,summaryId STRING,vectorIndex STRING,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING,documentType STRING,window STRING",
+      "rowCount": 107979,
+      "verifiedRowCount": 107979,
+      "intendedTargets": [
+        "s3vectors",
+        "s3"
+      ]
+    },
+    {
+      "logicalName": "summary-export-violations",
+      "table": "summary-export-violations",
+      "schemaVersion": "spark-summary-export-violations-v1",
+      "stage": "spark-temporal-summary-export",
+      "runId": "run-0375535e0174b7330b18a78988c07211",
+      "codeVersion": "src-93bc726cd50a",
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-0375535e0174b7330b18a78988c07211/summary-export-violations",
+      "format": "parquet",
+      "partitionColumns": [],
+      "schema": "check STRING,subjectId STRING,relatedId STRING,detail STRING,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING",
+      "rowCount": 0,
+      "verifiedRowCount": 0,
+      "intendedTargets": [
+        "s3"
+      ]
+    }
+  ],
+  "stores": {
+    "neptune": [
+      "nodes/type=researcher",
+      "nodes/type=work",
+      "edges/type=authored",
+      "nodes/type=venue",
+      "nodes/type=topic",
+      "nodes/type=institution",
+      "edges/type=has_topic",
+      "edges/type=affiliated_with",
+      "edges/type=coauthored_with",
+      "metrics/type=researcher_collaboration+kcore",
+      "path-evidence",
+      "metrics/type=communities",
+      "edges/type=cross_community",
+      "metrics/type=bridges"
+    ],
+    "dynamodb": [
+      "nodes/type=researcher",
+      "nodes/type=work",
+      "edges/type=authored",
+      "edges/type=coauthored_with",
+      "metrics/type=components",
+      "metrics/type=researcher_collaboration+kcore",
+      "path-evidence",
+      "paths/path-length-estimate",
+      "metrics/type=communities",
+      "metrics/type=bridges",
+      "temporal/window-summary",
+      "temporal/researcher-changes",
+      "temporal/window-comparison"
+    ],
+    "s3vectors": [
+      "semantic-summaries"
+    ],
+    "s3": [
+      "canonical/mention-map",
+      "canonical/researcher-refusals",
+      "canonical/work-map",
+      "canonical/work-refusals",
+      "nodes/type=researcher",
+      "nodes/type=work",
+      "nodes/type=venue",
+      "nodes/type=topic",
+      "nodes/type=institution",
+      "graph/self-pairs",
+      "integrity-violations",
+      "metrics/type=components",
+      "metrics/type=researcher_collaboration+kcore",
+      "analytics/integrity-violations",
+      "path-evidence",
+      "paths/path-length-estimate",
+      "metrics/type=communities",
+      "edges/type=cross_community",
+      "metrics/type=bridges",
+      "analytics/community-path-violations",
+      "temporal/window-summary",
+      "temporal/researcher-changes",
+      "temporal/community-transitions",
+      "temporal/window-comparison",
+      "semantic-summaries",
+      "summary-export-violations"
+    ]
+  }
+}

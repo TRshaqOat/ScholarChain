@@ -1,0 +1,705 @@
+{
+  "schemaVersion": "spark-run-manifest-v1",
+  "stage": "spark-pipeline",
+  "runId": "run-de1f982ae8f83848b4f869d8718f5e3d",
+  "attempt": 1,
+  "runDir": "scratch/spark/snapshot=2026-10-03/run=run-de1f982ae8f83848b4f869d8718f5e3d",
+  "snapshot": "2026-10-03",
+  "codeVersion": "src-93bc726cd50a",
+  "configVersion": "config-v1",
+  "input": {
+    "path": "scratch/hadoop/wo5-v2b/snapshot=2026-10-03/run=run-035e75abfa6798c938cbd534273dbd8d",
+    "hadoopRunId": "run-035e75abfa6798c938cbd534273dbd8d",
+    "pairsFile": null
+  },
+  "lineage": {
+    "inputHadoopRunId": "run-035e75abfa6798c938cbd534273dbd8d",
+    "matchPolicyVersion": "er-v2"
+  },
+  "settings": {
+    "master": "local[*]",
+    "shufflePartitions": 40,
+    "checkpointDir": "scratch/spark/checkpoints",
+    "minFreeDiskGiB": 5,
+    "driverMaxHeapBytes": 6442450944,
+    "availableProcessors": 10
+  },
+  "fingerprints": [
+    "hadoop-run=run-035e75abfa6798c938cbd534273dbd8d",
+    "input:hadoop=scratch/hadoop/wo5-v2b/snapshot=2026-10-03/run=run-035e75abfa6798c938cbd534273dbd8d:4734758761",
+    "config:canonical-policy-version=canon-v1",
+    "config:graph-policy=graph-v1",
+    "config:windows=all-years:2000-2026,2000-2014:2000-2014,2015-2026:2015-2026",
+    "config:cc-max-iterations=60",
+    "config:kcore-max-iterations=100",
+    "config:community-max-iterations=10",
+    "config:path-max-depth=6",
+    "config:path-sample-sources=20",
+    "config:sample-seed=20261003",
+    "config:summary-min-publications=2",
+    "config:summary-min-community-size=3",
+    "pairs=sample:50"
+  ],
+  "startedAt": "2026-11-05T17:12:59.034572Z",
+  "inputs": [],
+  "tables": [],
+  "stages": [
+    {
+      "jobs": "1, 2",
+      "stage": "spark-canonical-graph",
+      "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+      "attempt": 1,
+      "runDir": "scratch/spark/snapshot=2026-10-03/run=run-10ceed31b3f602bb998eae7c00929ae9",
+      "wallSeconds": 182.805869583,
+      "stageCount": 685,
+      "tables": 15,
+      "integrityViolationsByCheck": []
+    },
+    {
+      "jobs": "3, 4, 8",
+      "stage": "spark-researcher-analytics",
+      "runId": "run-d7865ad3f5f8195546c1dab817328ee5",
+      "attempt": 1,
+      "runDir": "scratch/spark/snapshot=2026-10-03/run=run-d7865ad3f5f8195546c1dab817328ee5",
+      "wallSeconds": 455.296151167,
+      "stageCount": 3750,
+      "tables": 3,
+      "integrityViolationsByCheck": [
+        {
+          "check": "CORENESS_BELOW_MAX_TEAM",
+          "count": 9
+        },
+        {
+          "check": "WEIGHTED_DEGREE_NE_TOTAL_OCCURRENCES",
+          "count": 12
+        }
+      ]
+    },
+    {
+      "jobs": "5, 6, 7",
+      "stage": "spark-community-path",
+      "runId": "run-83b496169099a614ec519133077a1993",
+      "attempt": 1,
+      "runDir": "scratch/spark/snapshot=2026-10-03/run=run-83b496169099a614ec519133077a1993",
+      "wallSeconds": 326.429379542,
+      "stageCount": 538,
+      "tables": 6,
+      "integrityViolationsByCheck": []
+    },
+    {
+      "jobs": "9, 10, 11",
+      "stage": "spark-temporal-summary-export",
+      "runId": "run-0375535e0174b7330b18a78988c07211",
+      "attempt": 1,
+      "runDir": "scratch/spark/snapshot=2026-10-03/run=run-0375535e0174b7330b18a78988c07211",
+      "wallSeconds": 29.510990459,
+      "stageCount": 398,
+      "tables": 6,
+      "integrityViolationsByCheck": []
+    }
+  ],
+  "loadManifest": "scratch/spark/snapshot=2026-10-03/run=run-0375535e0174b7330b18a78988c07211/export/load-manifest.json",
+  "perWindow": [
+    {
+      "window": "2000-2014",
+      "windowStartYear": 2000,
+      "windowEndYear": 2014,
+      "publications": 45522,
+      "researchers": 66350,
+      "meanDistinctCoauthorCount": 6.56991710625471,
+      "medianDistinctCoauthorCount": 4,
+      "meanAverageCoauthorsPerPaper": 3.972446796311193,
+      "meanMaximumCoauthorsOnOnePaper": 4.705892991710625,
+      "maxMaximumCoauthorsOnOnePaper": 114,
+      "meanCoreness": 4.792946495855313,
+      "maxCoreness": 114,
+      "coauthorEdges": 217957,
+      "sumJointPublicationCount": 297320,
+      "components": 7709,
+      "largestComponentSize": 46062,
+      "singletonResearchers": 3119,
+      "communities": 15312,
+      "largestCommunitySize": 323,
+      "communitiesAtLeastMinSize": 8075,
+      "meanParticipationCoefficient": 0.2559348684083286,
+      "medianParticipationCoefficient": 0,
+      "researchersWithCrossCommunityEdge": 33552,
+      "years": 15,
+      "publicationsPerYear": 3034.8,
+      "largestComponentFraction": 0.6942275810097965,
+      "crossCommunityResearcherFraction": 0.505681989449887,
+      "schemaVersion": "spark-temporal-window-summary-v1"
+    },
+    {
+      "window": "all-years",
+      "windowStartYear": 2000,
+      "windowEndYear": 2026,
+      "publications": 110257,
+      "researchers": 191318,
+      "meanDistinctCoauthorCount": 8.234729612477656,
+      "medianDistinctCoauthorCount": 4,
+      "meanAverageCoauthorsPerPaper": 5.086753872604002,
+      "meanMaximumCoauthorsOnOnePaper": 5.791253306014071,
+      "maxMaximumCoauthorsOnOnePaper": 286,
+      "meanCoreness": 5.9198873080421075,
+      "maxCoreness": 286,
+      "coauthorEdges": 787726,
+      "sumJointPublicationCount": 1019039,
+      "components": 16091,
+      "largestComponentSize": 141367,
+      "singletonResearchers": 4849,
+      "communities": 38034,
+      "largestCommunitySize": 621,
+      "communitiesAtLeastMinSize": 23635,
+      "meanParticipationCoefficient": 0.2951888087062124,
+      "medianParticipationCoefficient": 0.3116319444444444,
+      "researchersWithCrossCommunityEdge": 108648,
+      "years": 27,
+      "publicationsPerYear": 4083.5925925925926,
+      "largestComponentFraction": 0.7389111322510167,
+      "crossCommunityResearcherFraction": 0.5678922004202427,
+      "schemaVersion": "spark-temporal-window-summary-v1"
+    },
+    {
+      "window": "2015-2026",
+      "windowStartYear": 2015,
+      "windowEndYear": 2026,
+      "publications": 64735,
+      "researchers": 139432,
+      "meanDistinctCoauthorCount": 8.392205519536406,
+      "medianDistinctCoauthorCount": 5,
+      "meanAverageCoauthorsPerPaper": 5.531527131634111,
+      "meanMaximumCoauthorsOnOnePaper": 6.152239084284813,
+      "maxMaximumCoauthorsOnOnePaper": 286,
+      "meanCoreness": 6.238632451661025,
+      "maxCoreness": 286,
+      "coauthorEdges": 585071,
+      "sumJointPublicationCount": 721719,
+      "components": 10746,
+      "largestComponentSize": 98812,
+      "singletonResearchers": 1798,
+      "communities": 26394,
+      "largestCommunitySize": 400,
+      "communitiesAtLeastMinSize": 18315,
+      "meanParticipationCoefficient": 0.27917967338178,
+      "medianParticipationCoefficient": 0.24489795918367352,
+      "researchersWithCrossCommunityEdge": 76251,
+      "years": 12,
+      "publicationsPerYear": 5394.583333333333,
+      "largestComponentFraction": 0.7086751965115612,
+      "crossCommunityResearcherFraction": 0.5468687245395605,
+      "schemaVersion": "spark-temporal-window-summary-v1"
+    }
+  ],
+  "summariesByTypeAndWindow": [
+    {
+      "documentType": "collaboration-community",
+      "window": "2000-2014",
+      "summaries": 8075,
+      "minTextLength": 346,
+      "maxTextLength": 730,
+      "meanTextLength": 537.8691021671826
+    },
+    {
+      "documentType": "collaboration-community",
+      "window": "2015-2026",
+      "summaries": 18315,
+      "minTextLength": 343,
+      "maxTextLength": 756,
+      "meanTextLength": 531.7870597870598
+    },
+    {
+      "documentType": "collaboration-community",
+      "window": "all-years",
+      "summaries": 23635,
+      "minTextLength": 345,
+      "maxTextLength": 756,
+      "meanTextLength": 535.8320287708906
+    },
+    {
+      "documentType": "collaboration-path",
+      "window": "all-years",
+      "summaries": 50,
+      "minTextLength": 128,
+      "maxTextLength": 977,
+      "meanTextLength": 628.48
+    },
+    {
+      "documentType": "researcher-profile",
+      "window": "all-years",
+      "summaries": 54935,
+      "minTextLength": 664,
+      "maxTextLength": 2029,
+      "meanTextLength": 1179.9206880859197
+    },
+    {
+      "documentType": "topic-summary",
+      "window": "2000-2014",
+      "summaries": 685,
+      "minTextLength": 239,
+      "maxTextLength": 453,
+      "meanTextLength": 348.73430656934306
+    },
+    {
+      "documentType": "topic-summary",
+      "window": "2015-2026",
+      "summaries": 1077,
+      "minTextLength": 238,
+      "maxTextLength": 458,
+      "meanTextLength": 358.7288765088208
+    },
+    {
+      "documentType": "topic-summary",
+      "window": "all-years",
+      "summaries": 1207,
+      "minTextLength": 238,
+      "maxTextLength": 448,
+      "meanTextLength": 357.0422535211268
+    }
+  ],
+  "stepSeconds": {
+    "pipeline: jobs 1-2": 183.1222555,
+    "pipeline: jobs 3, 4, 8": 455.334348166,
+    "pipeline: jobs 5-7": 326.458272542,
+    "pipeline: jobs 9-11": 29.557831167
+  },
+  "stagesByStep": [
+    {
+      "step": "read inputs",
+      "stages": 146,
+      "tasks": 689,
+      "maxTasksInAStage": 21,
+      "shuffleReadBytes": 222384950,
+      "shuffleWriteBytes": 222380738,
+      "spillDiskBytes": 0,
+      "stageMs": 23179
+    },
+    {
+      "step": "cluster researchers",
+      "stages": 235,
+      "tasks": 2471,
+      "maxTasksInAStage": 40,
+      "shuffleReadBytes": 7068715706,
+      "shuffleWriteBytes": 6282391839,
+      "spillDiskBytes": 0,
+      "stageMs": 461249
+    },
+    {
+      "step": "write canonical/mention-map",
+      "stages": 21,
+      "tasks": 199,
+      "maxTasksInAStage": 12,
+      "shuffleReadBytes": 1194623306,
+      "shuffleWriteBytes": 1194623306,
+      "spillDiskBytes": 0,
+      "stageMs": 33116
+    },
+    {
+      "step": "write canonical/researcher-refusals",
+      "stages": 9,
+      "tasks": 120,
+      "maxTasksInAStage": 40,
+      "shuffleReadBytes": 49061095,
+      "shuffleWriteBytes": 49061095,
+      "spillDiskBytes": 0,
+      "stageMs": 3094
+    },
+    {
+      "step": "cluster works",
+      "stages": 145,
+      "tasks": 1552,
+      "maxTasksInAStage": 40,
+      "shuffleReadBytes": 723972125,
+      "shuffleWriteBytes": 712165557,
+      "spillDiskBytes": 0,
+      "stageMs": 88752
+    },
+    {
+      "step": "write canonical/work-map",
+      "stages": 23,
+      "tasks": 216,
+      "maxTasksInAStage": 21,
+      "shuffleReadBytes": 125294291,
+      "shuffleWriteBytes": 125294291,
+      "spillDiskBytes": 0,
+      "stageMs": 9424
+    },
+    {
+      "step": "write canonical/work-refusals",
+      "stages": 9,
+      "tasks": 118,
+      "maxTasksInAStage": 40,
+      "shuffleReadBytes": 19631036,
+      "shuffleWriteBytes": 19631036,
+      "spillDiskBytes": 0,
+      "stageMs": 1383
+    },
+    {
+      "step": "write canonical/researchers",
+      "stages": 8,
+      "tasks": 60,
+      "maxTasksInAStage": 12,
+      "shuffleReadBytes": 300743305,
+      "shuffleWriteBytes": 300743305,
+      "spillDiskBytes": 0,
+      "stageMs": 4572
+    },
+    {
+      "step": "write canonical/works",
+      "stages": 7,
+      "tasks": 59,
+      "maxTasksInAStage": 21,
+      "shuffleReadBytes": 108380953,
+      "shuffleWriteBytes": 108380953,
+      "spillDiskBytes": 0,
+      "stageMs": 1563
+    },
+    {
+      "step": "write canonical/authored",
+      "stages": 8,
+      "tasks": 54,
+      "maxTasksInAStage": 12,
+      "shuffleReadBytes": 171411228,
+      "shuffleWriteBytes": 171411228,
+      "spillDiskBytes": 0,
+      "stageMs": 2327
+    },
+    {
+      "step": "write canonical/venues",
+      "stages": 5,
+      "tasks": 12,
+      "maxTasksInAStage": 8,
+      "shuffleReadBytes": 33096,
+      "shuffleWriteBytes": 33096,
+      "spillDiskBytes": 0,
+      "stageMs": 59
+    },
+    {
+      "step": "write canonical/topics",
+      "stages": 5,
+      "tasks": 12,
+      "maxTasksInAStage": 8,
+      "shuffleReadBytes": 120276,
+      "shuffleWriteBytes": 120276,
+      "spillDiskBytes": 0,
+      "stageMs": 58
+    },
+    {
+      "step": "write canonical/institutions",
+      "stages": 5,
+      "tasks": 13,
+      "maxTasksInAStage": 8,
+      "shuffleReadBytes": 7640688,
+      "shuffleWriteBytes": 7640688,
+      "spillDiskBytes": 0,
+      "stageMs": 237
+    },
+    {
+      "step": "write canonical/work-topics",
+      "stages": 7,
+      "tasks": 27,
+      "maxTasksInAStage": 8,
+      "shuffleReadBytes": 15635768,
+      "shuffleWriteBytes": 15635768,
+      "spillDiskBytes": 0,
+      "stageMs": 402
+    },
+    {
+      "step": "write canonical/researcher-institutions",
+      "stages": 10,
+      "tasks": 77,
+      "maxTasksInAStage": 20,
+      "shuffleReadBytes": 184975968,
+      "shuffleWriteBytes": 184975968,
+      "spillDiskBytes": 0,
+      "stageMs": 2727
+    },
+    {
+      "step": "researcher institutions",
+      "stages": 4,
+      "tasks": 18,
+      "maxTasksInAStage": 8,
+      "shuffleReadBytes": 1442600,
+      "shuffleWriteBytes": 1442600,
+      "spillDiskBytes": 0,
+      "stageMs": 142
+    },
+    {
+      "step": "write graph/coauthor-edges",
+      "stages": 12,
+      "tasks": 124,
+      "maxTasksInAStage": 40,
+      "shuffleReadBytes": 955765818,
+      "shuffleWriteBytes": 892092085,
+      "spillDiskBytes": 1281424,
+      "stageMs": 8597
+    },
+    {
+      "step": "write graph/self-pairs",
+      "stages": 10,
+      "tasks": 62,
+      "maxTasksInAStage": 12,
+      "shuffleReadBytes": 260114834,
+      "shuffleWriteBytes": 260114834,
+      "spillDiskBytes": 0,
+      "stageMs": 2800
+    },
+    {
+      "step": "coauthor graph",
+      "stages": 5,
+      "tasks": 30,
+      "maxTasksInAStage": 10,
+      "shuffleReadBytes": 0,
+      "shuffleWriteBytes": 63673733,
+      "spillDiskBytes": 0,
+      "stageMs": 612
+    },
+    {
+      "step": "write integrity-violations",
+      "stages": 29,
+      "tasks": 278,
+      "maxTasksInAStage": 82,
+      "shuffleReadBytes": 423048267,
+      "shuffleWriteBytes": 423048267,
+      "spillDiskBytes": 0,
+      "stageMs": 23807
+    },
+    {
+      "step": "report",
+      "stages": 194,
+      "tasks": 646,
+      "maxTasksInAStage": 20,
+      "shuffleReadBytes": 183296971,
+      "shuffleWriteBytes": 156088839,
+      "spillDiskBytes": 0,
+      "stageMs": 10949
+    },
+    {
+      "step": "connected components",
+      "stages": 183,
+      "tasks": 2154,
+      "maxTasksInAStage": 52,
+      "shuffleReadBytes": 5857046331,
+      "shuffleWriteBytes": 5857046331,
+      "spillDiskBytes": 0,
+      "stageMs": 42902
+    },
+    {
+      "step": "write analytics/components",
+      "stages": 8,
+      "tasks": 34,
+      "maxTasksInAStage": 11,
+      "shuffleReadBytes": 6509906,
+      "shuffleWriteBytes": 6509906,
+      "spillDiskBytes": 0,
+      "stageMs": 523
+    },
+    {
+      "step": "k-core",
+      "stages": 3476,
+      "tasks": 28696,
+      "maxTasksInAStage": 52,
+      "shuffleReadBytes": 24861030868,
+      "shuffleWriteBytes": 24861030868,
+      "spillDiskBytes": 0,
+      "stageMs": 518435
+    },
+    {
+      "step": "write analytics/researcher-metrics",
+      "stages": 9,
+      "tasks": 94,
+      "maxTasksInAStage": 40,
+      "shuffleReadBytes": 88885854,
+      "shuffleWriteBytes": 88885854,
+      "spillDiskBytes": 0,
+      "stageMs": 1425
+    },
+    {
+      "step": "write analytics/integrity-violations",
+      "stages": 9,
+      "tasks": 94,
+      "maxTasksInAStage": 42,
+      "shuffleReadBytes": 22327870,
+      "shuffleWriteBytes": 22327870,
+      "spillDiskBytes": 0,
+      "stageMs": 944
+    },
+    {
+      "step": "select pairs",
+      "stages": 6,
+      "tasks": 17,
+      "maxTasksInAStage": 10,
+      "shuffleReadBytes": 63946,
+      "shuffleWriteBytes": 35856,
+      "spillDiskBytes": 0,
+      "stageMs": 215
+    },
+    {
+      "step": "bounded paths",
+      "stages": 89,
+      "tasks": 1123,
+      "maxTasksInAStage": 55,
+      "shuffleReadBytes": 4004796074,
+      "shuffleWriteBytes": 4004796074,
+      "spillDiskBytes": 0,
+      "stageMs": 41015
+    },
+    {
+      "step": "write paths/path-evidence",
+      "stages": 21,
+      "tasks": 661,
+      "maxTasksInAStage": 55,
+      "shuffleReadBytes": 245369207,
+      "shuffleWriteBytes": 245369207,
+      "spillDiskBytes": 0,
+      "stageMs": 7196
+    },
+    {
+      "step": "path-length estimate",
+      "stages": 204,
+      "tasks": 7200,
+      "maxTasksInAStage": 267,
+      "shuffleReadBytes": 11738115595,
+      "shuffleWriteBytes": 11738115595,
+      "spillDiskBytes": 0,
+      "stageMs": 338753
+    },
+    {
+      "step": "write paths/path-length-estimate",
+      "stages": 13,
+      "tasks": 549,
+      "maxTasksInAStage": 267,
+      "shuffleReadBytes": 1139389,
+      "shuffleWriteBytes": 1139389,
+      "spillDiskBytes": 0,
+      "stageMs": 4491
+    },
+    {
+      "step": "label propagation",
+      "stages": 94,
+      "tasks": 1158,
+      "maxTasksInAStage": 25,
+      "shuffleReadBytes": 5734147900,
+      "shuffleWriteBytes": 5734147900,
+      "spillDiskBytes": 0,
+      "stageMs": 36610
+    },
+    {
+      "step": "write analytics/communities",
+      "stages": 21,
+      "tasks": 187,
+      "maxTasksInAStage": 12,
+      "shuffleReadBytes": 505662960,
+      "shuffleWriteBytes": 505662960,
+      "spillDiskBytes": 0,
+      "stageMs": 11617
+    },
+    {
+      "step": "write analytics/cross-community-edges",
+      "stages": 10,
+      "tasks": 71,
+      "maxTasksInAStage": 12,
+      "shuffleReadBytes": 472129095,
+      "shuffleWriteBytes": 472129095,
+      "spillDiskBytes": 0,
+      "stageMs": 4050
+    },
+    {
+      "step": "write analytics/researcher-communities",
+      "stages": 13,
+      "tasks": 116,
+      "maxTasksInAStage": 20,
+      "shuffleReadBytes": 741677352,
+      "shuffleWriteBytes": 741677352,
+      "spillDiskBytes": 0,
+      "stageMs": 6162
+    },
+    {
+      "step": "write analytics/community-path-violations",
+      "stages": 7,
+      "tasks": 48,
+      "maxTasksInAStage": 24,
+      "shuffleReadBytes": 30923716,
+      "shuffleWriteBytes": 30923716,
+      "spillDiskBytes": 0,
+      "stageMs": 690
+    },
+    {
+      "step": "write temporal/window-summary",
+      "stages": 24,
+      "tasks": 151,
+      "maxTasksInAStage": 40,
+      "shuffleReadBytes": 36311439,
+      "shuffleWriteBytes": 36311184,
+      "spillDiskBytes": 0,
+      "stageMs": 5897
+    },
+    {
+      "step": "write temporal/researcher-changes",
+      "stages": 34,
+      "tasks": 223,
+      "maxTasksInAStage": 12,
+      "shuffleReadBytes": 196241297,
+      "shuffleWriteBytes": 196241297,
+      "spillDiskBytes": 0,
+      "stageMs": 8949
+    },
+    {
+      "step": "write temporal/community-transitions",
+      "stages": 17,
+      "tasks": 83,
+      "maxTasksInAStage": 12,
+      "shuffleReadBytes": 43711552,
+      "shuffleWriteBytes": 43711552,
+      "spillDiskBytes": 0,
+      "stageMs": 1462
+    },
+    {
+      "step": "write temporal/window-comparison",
+      "stages": 6,
+      "tasks": 13,
+      "maxTasksInAStage": 8,
+      "shuffleReadBytes": 15565,
+      "shuffleWriteBytes": 15565,
+      "spillDiskBytes": 0,
+      "stageMs": 265
+    },
+    {
+      "step": "write summaries/semantic-summaries",
+      "stages": 116,
+      "tasks": 1111,
+      "maxTasksInAStage": 40,
+      "shuffleReadBytes": 1441971720,
+      "shuffleWriteBytes": 1441971720,
+      "spillDiskBytes": 0,
+      "stageMs": 242410
+    },
+    {
+      "step": "export",
+      "stages": 99,
+      "tasks": 218,
+      "maxTasksInAStage": 11,
+      "shuffleReadBytes": 9375,
+      "shuffleWriteBytes": 9375,
+      "spillDiskBytes": 0,
+      "stageMs": 980
+    },
+    {
+      "step": "write summary-export-violations",
+      "stages": 15,
+      "tasks": 58,
+      "maxTasksInAStage": 15,
+      "shuffleReadBytes": 7336711,
+      "shuffleWriteBytes": 7336711,
+      "spillDiskBytes": 0,
+      "stageMs": 826
+    }
+  ],
+  "stageCount": 5371,
+  "disk": {
+    "freeBeforeBytes": 29025488896,
+    "freeAfterBytes": 25763520512
+  },
+  "wallSeconds": 994.501438792,
+  "finishedAt": "2026-11-05T17:29:33.538647Z"
+}

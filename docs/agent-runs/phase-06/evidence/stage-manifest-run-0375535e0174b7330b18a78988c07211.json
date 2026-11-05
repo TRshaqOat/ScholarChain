@@ -1,0 +1,791 @@
+{
+  "schemaVersion": "spark-run-manifest-v1",
+  "stage": "spark-temporal-summary-export",
+  "runId": "run-0375535e0174b7330b18a78988c07211",
+  "attempt": 1,
+  "runDir": "scratch/spark/snapshot=2026-10-03/run=run-0375535e0174b7330b18a78988c07211",
+  "snapshot": "2026-10-03",
+  "codeVersion": "src-93bc726cd50a",
+  "configVersion": "config-v1",
+  "input": {
+    "path": "scratch/spark/snapshot=2026-10-03/run=run-83b496169099a614ec519133077a1993",
+    "communityPathRunId": "run-83b496169099a614ec519133077a1993",
+    "researcherAnalyticsPath": "scratch/spark/snapshot=2026-10-03/run=run-d7865ad3f5f8195546c1dab817328ee5",
+    "researcherAnalyticsRunId": "run-d7865ad3f5f8195546c1dab817328ee5",
+    "canonicalGraphPath": "scratch/spark/snapshot=2026-10-03/run=run-10ceed31b3f602bb998eae7c00929ae9",
+    "canonicalGraphRunId": "run-10ceed31b3f602bb998eae7c00929ae9"
+  },
+  "lineage": {
+    "inputHadoopRunId": "run-035e75abfa6798c938cbd534273dbd8d",
+    "matchPolicyVersion": "er-v2"
+  },
+  "settings": {
+    "master": "local[*]",
+    "shufflePartitions": 40,
+    "adaptiveExecution": "true",
+    "graphPolicy": "graph-v1",
+    "windows": [
+      {
+        "name": "all-years",
+        "startYear": 2000,
+        "endYear": 2026
+      },
+      {
+        "name": "2000-2014",
+        "startYear": 2000,
+        "endYear": 2014
+      },
+      {
+        "name": "2015-2026",
+        "startYear": 2015,
+        "endYear": 2026
+      }
+    ],
+    "comparisons": [
+      "2000-2014->2015-2026"
+    ],
+    "comparisonRule": "ordered pairs of non-overlapping windows, earlier first",
+    "inclusionLimitation": "Windows share one canonical identity and one graph definition, but their contents are not equally sampled: the DBLP subset (D-10, about 100k works) was selected as a bounded subset, so its coverage of venues and years, and the OpenAlex/Crossref/ORCID enrichment driven by it, may differ between periods; the windows have different lengths (15 vs 12 years) and the last year may be incomplete; communities are computed separately per window by a label propagation with a round cap, so community IDs never match across windows. Differences between windows mix real change with these coverage differences.",
+    "summaryTemplateVersion": "summary-template-v1",
+    "profileWindow": "all-years",
+    "summaryMinPublications": 2,
+    "summaryMinCommunitySize": 3,
+    "minFreeDiskGiB": 5,
+    "driverMaxHeapBytes": 6442450944,
+    "availableProcessors": 10
+  },
+  "fingerprints": [
+    "community-path-run=run-83b496169099a614ec519133077a1993",
+    "researcher-analytics-run=run-d7865ad3f5f8195546c1dab817328ee5",
+    "canonical-graph-run=run-10ceed31b3f602bb998eae7c00929ae9",
+    "input:community-path=scratch/spark/snapshot=2026-10-03/run=run-83b496169099a614ec519133077a1993:104280613",
+    "input:researcher-analytics=scratch/spark/snapshot=2026-10-03/run=run-d7865ad3f5f8195546c1dab817328ee5:44764160",
+    "input:canonical-graph=scratch/spark/snapshot=2026-10-03/run=run-10ceed31b3f602bb998eae7c00929ae9:460248464",
+    "config:graph-policy=graph-v1",
+    "config:windows=all-years:2000-2026,2000-2014:2000-2014,2015-2026:2015-2026",
+    "config:summary-min-publications=2",
+    "config:summary-min-community-size=3",
+    "config:summary-template=summary-template-v1"
+  ],
+  "startedAt": "2026-11-05T17:29:04.005400Z",
+  "inputs": [
+    {
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-d7865ad3f5f8195546c1dab817328ee5/analytics/researcher-metrics",
+      "exists": true,
+      "rows": 397100
+    },
+    {
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-d7865ad3f5f8195546c1dab817328ee5/analytics/components",
+      "exists": true,
+      "rows": 34546
+    },
+    {
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-83b496169099a614ec519133077a1993/analytics/researcher-communities",
+      "exists": true,
+      "rows": 397100
+    },
+    {
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-83b496169099a614ec519133077a1993/analytics/communities",
+      "exists": true,
+      "rows": 79740
+    },
+    {
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-83b496169099a614ec519133077a1993/analytics/cross-community-edges",
+      "exists": true,
+      "rows": 509683
+    },
+    {
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-83b496169099a614ec519133077a1993/paths/path-evidence",
+      "exists": true,
+      "rows": 50
+    },
+    {
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-10ceed31b3f602bb998eae7c00929ae9/canonical/researchers",
+      "exists": true,
+      "rows": 259057
+    },
+    {
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-10ceed31b3f602bb998eae7c00929ae9/canonical/authored",
+      "exists": true,
+      "rows": 535898
+    },
+    {
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-10ceed31b3f602bb998eae7c00929ae9/canonical/works",
+      "exists": true,
+      "rows": 113205
+    },
+    {
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-10ceed31b3f602bb998eae7c00929ae9/canonical/venues",
+      "exists": true,
+      "rows": 288
+    },
+    {
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-10ceed31b3f602bb998eae7c00929ae9/canonical/topics",
+      "exists": true,
+      "rows": 1226
+    },
+    {
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-10ceed31b3f602bb998eae7c00929ae9/canonical/work-topics",
+      "exists": true,
+      "rows": 106682
+    },
+    {
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-10ceed31b3f602bb998eae7c00929ae9/canonical/researcher-institutions",
+      "exists": true,
+      "rows": 379708
+    },
+    {
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-10ceed31b3f602bb998eae7c00929ae9/canonical/institutions",
+      "exists": true,
+      "rows": 58404
+    },
+    {
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-10ceed31b3f602bb998eae7c00929ae9/graph/coauthor-edges",
+      "exists": true,
+      "rows": 1590754
+    }
+  ],
+  "tables": [
+    {
+      "name": "temporal/window-summary",
+      "schemaVersion": "spark-temporal-window-summary-v1",
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-0375535e0174b7330b18a78988c07211/temporal/window-summary",
+      "format": "parquet",
+      "partitionColumns": [],
+      "hashPartitionKey": null,
+      "writePartitions": 1,
+      "schema": "window STRING,windowStartYear INT,windowEndYear INT,publications BIGINT,researchers BIGINT,meanDistinctCoauthorCount DOUBLE,medianDistinctCoauthorCount DOUBLE,meanAverageCoauthorsPerPaper DOUBLE,meanMaximumCoauthorsOnOnePaper DOUBLE,maxMaximumCoauthorsOnOnePaper BIGINT,meanCoreness DOUBLE,maxCoreness INT,coauthorEdges BIGINT,sumJointPublicationCount BIGINT,components BIGINT,largestComponentSize BIGINT,singletonResearchers BIGINT,communities BIGINT,largestCommunitySize BIGINT,communitiesAtLeastMinSize BIGINT,meanParticipationCoefficient DOUBLE,medianParticipationCoefficient DOUBLE,researchersWithCrossCommunityEdge BIGINT,years INT,publicationsPerYear DOUBLE,largestComponentFraction DOUBLE,crossCommunityResearcherFraction DOUBLE,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING",
+      "rowCount": 3,
+      "intendedTargets": [
+        "dynamodb",
+        "s3"
+      ],
+      "fileCount": 1,
+      "totalBytes": 12173,
+      "minFileBytes": 12173,
+      "maxFileBytes": 12173
+    },
+    {
+      "name": "temporal/researcher-changes",
+      "schemaVersion": "spark-temporal-researcher-changes-v1",
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-0375535e0174b7330b18a78988c07211/temporal/researcher-changes",
+      "format": "parquet",
+      "partitionColumns": [],
+      "hashPartitionKey": "researcherId",
+      "writePartitions": 8,
+      "schema": "fromWindow STRING,fromWindowStartYear INT,fromWindowEndYear INT,toWindow STRING,toWindowStartYear INT,toWindowEndYear INT,researcherId STRING,presence STRING,fromPublicationCount BIGINT,toPublicationCount BIGINT,fromDistinctCoauthorCount BIGINT,toDistinctCoauthorCount BIGINT,fromAverageCoauthorsPerPaper DOUBLE,toAverageCoauthorsPerPaper DOUBLE,fromMaximumCoauthorsOnOnePaper BIGINT,toMaximumCoauthorsOnOnePaper BIGINT,fromCoreness INT,toCoreness INT,fromComponentSize BIGINT,toComponentSize BIGINT,fromInLargestComponent BOOLEAN,toInLargestComponent BOOLEAN,fromCommunityId STRING,toCommunityId STRING,fromCommunitySize BIGINT,toCommunitySize BIGINT,fromCrossCommunityDegree BIGINT,toCrossCommunityDegree BIGINT,fromCommunitiesConnected BIGINT,toCommunitiesConnected BIGINT,fromParticipationCoefficient DOUBLE,toParticipationCoefficient DOUBLE,deltaDistinctCoauthorCount BIGINT,deltaAverageCoauthorsPerPaper DOUBLE,deltaMaximumCoauthorsOnOnePaper BIGINT,deltaCoreness INT,deltaCrossCommunityDegree BIGINT,deltaParticipationCoefficient DOUBLE,retainedCoauthors BIGINT,largestComponentTransition STRING,crossCommunityTransition STRING,communityRetention DOUBLE,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING",
+      "rowCount": 191318,
+      "intendedTargets": [
+        "dynamodb",
+        "s3"
+      ],
+      "fileCount": 8,
+      "totalBytes": 20756440,
+      "minFileBytes": 2572971,
+      "maxFileBytes": 2626789
+    },
+    {
+      "name": "temporal/community-transitions",
+      "schemaVersion": "spark-temporal-community-transitions-v1",
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-0375535e0174b7330b18a78988c07211/temporal/community-transitions",
+      "format": "parquet",
+      "partitionColumns": [],
+      "hashPartitionKey": null,
+      "writePartitions": 1,
+      "schema": "fromWindow STRING,fromWindowStartYear INT,fromWindowEndYear INT,toWindow STRING,toWindowStartYear INT,toWindowEndYear INT,fromCommunityId STRING,toCommunityId STRING,sharedResearchers BIGINT,fromCommunitySize BIGINT,toCommunitySize BIGINT,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING",
+      "rowCount": 11140,
+      "intendedTargets": [
+        "s3"
+      ],
+      "fileCount": 1,
+      "totalBytes": 1129518,
+      "minFileBytes": 1129518,
+      "maxFileBytes": 1129518
+    },
+    {
+      "name": "temporal/window-comparison",
+      "schemaVersion": "spark-temporal-window-comparison-v1",
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-0375535e0174b7330b18a78988c07211/temporal/window-comparison",
+      "format": "parquet",
+      "partitionColumns": [],
+      "hashPartitionKey": null,
+      "writePartitions": 1,
+      "schema": "fromWindow STRING,fromWindowStartYear INT,fromWindowEndYear INT,toWindow STRING,toWindowStartYear INT,toWindowEndYear INT,researchersFrom BIGINT,researchersTo BIGINT,researchersInBoth BIGINT,researchersFromOnly BIGINT,researchersToOnly BIGINT,researchersRetainingACoauthor BIGINT,medianCommunityRetention DOUBLE,meanCommunityRetention DOUBLE,largestComponentInToIn BIGINT,largestComponentInToOut BIGINT,largestComponentOutToIn BIGINT,largestComponentOutToOut BIGINT,becameCrossCommunity BIGINT,stoppedCrossCommunity BIGINT,stayedCrossCommunity BIGINT,fromMeanDistinctCoauthorCount DOUBLE,toMeanDistinctCoauthorCount DOUBLE,fromMeanAverageCoauthorsPerPaper DOUBLE,toMeanAverageCoauthorsPerPaper DOUBLE,fromMeanMaximumCoauthorsOnOnePaper DOUBLE,toMeanMaximumCoauthorsOnOnePaper DOUBLE,fromMeanCoreness DOUBLE,toMeanCoreness DOUBLE,fromMeanCrossCommunityDegree DOUBLE,toMeanCrossCommunityDegree DOUBLE,fromMeanParticipationCoefficient DOUBLE,toMeanParticipationCoefficient DOUBLE,inclusionLimitation STRING,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING",
+      "rowCount": 1,
+      "intendedTargets": [
+        "dynamodb",
+        "s3"
+      ],
+      "fileCount": 1,
+      "totalBytes": 16994,
+      "minFileBytes": 16994,
+      "maxFileBytes": 16994
+    },
+    {
+      "name": "summaries/semantic-summaries",
+      "schemaVersion": "spark-summaries-semantic-summaries-v1",
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-0375535e0174b7330b18a78988c07211/summaries/semantic-summaries",
+      "format": "parquet",
+      "partitionColumns": [
+        "documentType",
+        "window"
+      ],
+      "hashPartitionKey": "subjectId",
+      "writePartitions": 2,
+      "schema": "subjectId STRING,windowStartYear INT,windowEndYear INT,text STRING,textHash STRING,templateVersion STRING,facts STRING,supportingIds ARRAY<STRING>,summaryId STRING,vectorIndex STRING,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING,documentType STRING,window STRING",
+      "rowCount": 107979,
+      "intendedTargets": [
+        "s3vectors",
+        "s3"
+      ],
+      "fileCount": 16,
+      "totalBytes": 144320814,
+      "minFileBytes": 47290,
+      "maxFileBytes": 49460104
+    },
+    {
+      "name": "summary-export-violations",
+      "schemaVersion": "spark-summary-export-violations-v1",
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-0375535e0174b7330b18a78988c07211/summary-export-violations",
+      "format": "parquet",
+      "partitionColumns": [],
+      "hashPartitionKey": null,
+      "writePartitions": 1,
+      "schema": "check STRING,subjectId STRING,relatedId STRING,detail STRING,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING",
+      "rowCount": 0,
+      "intendedTargets": [
+        "s3"
+      ],
+      "fileCount": 1,
+      "totalBytes": 1469,
+      "minFileBytes": 1469,
+      "maxFileBytes": 1469
+    }
+  ],
+  "loadManifestPath": "scratch/spark/snapshot=2026-10-03/run=run-0375535e0174b7330b18a78988c07211/export/load-manifest.json",
+  "counts": {
+    "windowSummary": [
+      {
+        "window": "2000-2014",
+        "windowStartYear": 2000,
+        "windowEndYear": 2014,
+        "publications": 45522,
+        "researchers": 66350,
+        "meanDistinctCoauthorCount": 6.56991710625471,
+        "medianDistinctCoauthorCount": 4,
+        "meanAverageCoauthorsPerPaper": 3.972446796311193,
+        "meanMaximumCoauthorsOnOnePaper": 4.705892991710625,
+        "maxMaximumCoauthorsOnOnePaper": 114,
+        "meanCoreness": 4.792946495855313,
+        "maxCoreness": 114,
+        "coauthorEdges": 217957,
+        "sumJointPublicationCount": 297320,
+        "components": 7709,
+        "largestComponentSize": 46062,
+        "singletonResearchers": 3119,
+        "communities": 15312,
+        "largestCommunitySize": 323,
+        "communitiesAtLeastMinSize": 8075,
+        "meanParticipationCoefficient": 0.2559348684083286,
+        "medianParticipationCoefficient": 0,
+        "researchersWithCrossCommunityEdge": 33552,
+        "years": 15,
+        "publicationsPerYear": 3034.8,
+        "largestComponentFraction": 0.6942275810097965,
+        "crossCommunityResearcherFraction": 0.505681989449887,
+        "schemaVersion": "spark-temporal-window-summary-v1"
+      },
+      {
+        "window": "all-years",
+        "windowStartYear": 2000,
+        "windowEndYear": 2026,
+        "publications": 110257,
+        "researchers": 191318,
+        "meanDistinctCoauthorCount": 8.234729612477656,
+        "medianDistinctCoauthorCount": 4,
+        "meanAverageCoauthorsPerPaper": 5.086753872604002,
+        "meanMaximumCoauthorsOnOnePaper": 5.791253306014071,
+        "maxMaximumCoauthorsOnOnePaper": 286,
+        "meanCoreness": 5.9198873080421075,
+        "maxCoreness": 286,
+        "coauthorEdges": 787726,
+        "sumJointPublicationCount": 1019039,
+        "components": 16091,
+        "largestComponentSize": 141367,
+        "singletonResearchers": 4849,
+        "communities": 38034,
+        "largestCommunitySize": 621,
+        "communitiesAtLeastMinSize": 23635,
+        "meanParticipationCoefficient": 0.2951888087062124,
+        "medianParticipationCoefficient": 0.3116319444444444,
+        "researchersWithCrossCommunityEdge": 108648,
+        "years": 27,
+        "publicationsPerYear": 4083.5925925925926,
+        "largestComponentFraction": 0.7389111322510167,
+        "crossCommunityResearcherFraction": 0.5678922004202427,
+        "schemaVersion": "spark-temporal-window-summary-v1"
+      },
+      {
+        "window": "2015-2026",
+        "windowStartYear": 2015,
+        "windowEndYear": 2026,
+        "publications": 64735,
+        "researchers": 139432,
+        "meanDistinctCoauthorCount": 8.392205519536406,
+        "medianDistinctCoauthorCount": 5,
+        "meanAverageCoauthorsPerPaper": 5.531527131634111,
+        "meanMaximumCoauthorsOnOnePaper": 6.152239084284813,
+        "maxMaximumCoauthorsOnOnePaper": 286,
+        "meanCoreness": 6.238632451661025,
+        "maxCoreness": 286,
+        "coauthorEdges": 585071,
+        "sumJointPublicationCount": 721719,
+        "components": 10746,
+        "largestComponentSize": 98812,
+        "singletonResearchers": 1798,
+        "communities": 26394,
+        "largestCommunitySize": 400,
+        "communitiesAtLeastMinSize": 18315,
+        "meanParticipationCoefficient": 0.27917967338178,
+        "medianParticipationCoefficient": 0.24489795918367352,
+        "researchersWithCrossCommunityEdge": 76251,
+        "years": 12,
+        "publicationsPerYear": 5394.583333333333,
+        "largestComponentFraction": 0.7086751965115612,
+        "crossCommunityResearcherFraction": 0.5468687245395605,
+        "schemaVersion": "spark-temporal-window-summary-v1"
+      }
+    ],
+    "windowComparison": [
+      {
+        "fromWindow": "2000-2014",
+        "fromWindowStartYear": 2000,
+        "fromWindowEndYear": 2014,
+        "toWindow": "2015-2026",
+        "toWindowStartYear": 2015,
+        "toWindowEndYear": 2026,
+        "researchersFrom": 66350,
+        "researchersTo": 139432,
+        "researchersInBoth": 14464,
+        "researchersFromOnly": 51886,
+        "researchersToOnly": 124968,
+        "researchersRetainingACoauthor": 9538,
+        "medianCommunityRetention": 0,
+        "meanCommunityRetention": 0.09602587675947616,
+        "largestComponentInToIn": 10983,
+        "largestComponentInToOut": 1136,
+        "largestComponentOutToIn": 1527,
+        "largestComponentOutToOut": 818,
+        "becameCrossCommunity": 2738,
+        "stoppedCrossCommunity": 1869,
+        "stayedCrossCommunity": 8252,
+        "fromMeanDistinctCoauthorCount": 11.938675331858407,
+        "toMeanDistinctCoauthorCount": 17.968058628318584,
+        "fromMeanAverageCoauthorsPerPaper": 3.7973657811710257,
+        "toMeanAverageCoauthorsPerPaper": 4.74081242279092,
+        "fromMeanMaximumCoauthorsOnOnePaper": 5.699045907079646,
+        "toMeanMaximumCoauthorsOnOnePaper": 7.190749446902655,
+        "fromMeanCoreness": 5.959831305309734,
+        "toMeanCoreness": 7.5859375,
+        "fromMeanCrossCommunityDegree": 5.413509402654867,
+        "toMeanCrossCommunityDegree": 9.355710730088495,
+        "fromMeanParticipationCoefficient": 0.39480900663710866,
+        "toMeanParticipationCoefficient": 0.4559492997763519,
+        "provenance": "[provenance-v1,DERIVED,2000-2014->2015-2026,2026-10-03,run-0375535e0174b7330b18a78988c07211,graph-v1,null]",
+        "schemaVersion": "spark-temporal-window-comparison-v1"
+      }
+    ],
+    "researcherChangesByPresence": [
+      {
+        "fromWindow": "2000-2014",
+        "toWindow": "2015-2026",
+        "presence": "BOTH",
+        "count": 14464
+      },
+      {
+        "fromWindow": "2000-2014",
+        "toWindow": "2015-2026",
+        "presence": "FROM_ONLY",
+        "count": 51886
+      },
+      {
+        "fromWindow": "2000-2014",
+        "toWindow": "2015-2026",
+        "presence": "TO_ONLY",
+        "count": 124968
+      }
+    ],
+    "largestComponentTransitions": [
+      {
+        "fromWindow": "2000-2014",
+        "toWindow": "2015-2026",
+        "largestComponentTransition": "ABSENT->IN",
+        "count": 86302
+      },
+      {
+        "fromWindow": "2000-2014",
+        "toWindow": "2015-2026",
+        "largestComponentTransition": "ABSENT->OUT",
+        "count": 38666
+      },
+      {
+        "fromWindow": "2000-2014",
+        "toWindow": "2015-2026",
+        "largestComponentTransition": "IN->ABSENT",
+        "count": 33943
+      },
+      {
+        "fromWindow": "2000-2014",
+        "toWindow": "2015-2026",
+        "largestComponentTransition": "IN->IN",
+        "count": 10983
+      },
+      {
+        "fromWindow": "2000-2014",
+        "toWindow": "2015-2026",
+        "largestComponentTransition": "IN->OUT",
+        "count": 1136
+      },
+      {
+        "fromWindow": "2000-2014",
+        "toWindow": "2015-2026",
+        "largestComponentTransition": "OUT->ABSENT",
+        "count": 17943
+      },
+      {
+        "fromWindow": "2000-2014",
+        "toWindow": "2015-2026",
+        "largestComponentTransition": "OUT->IN",
+        "count": 1527
+      },
+      {
+        "fromWindow": "2000-2014",
+        "toWindow": "2015-2026",
+        "largestComponentTransition": "OUT->OUT",
+        "count": 818
+      }
+    ],
+    "crossCommunityTransitions": [
+      {
+        "fromWindow": "2000-2014",
+        "toWindow": "2015-2026",
+        "crossCommunityTransition": "ABSENT->CROSS",
+        "count": 65261
+      },
+      {
+        "fromWindow": "2000-2014",
+        "toWindow": "2015-2026",
+        "crossCommunityTransition": "ABSENT->NO_CROSS",
+        "count": 59707
+      },
+      {
+        "fromWindow": "2000-2014",
+        "toWindow": "2015-2026",
+        "crossCommunityTransition": "CROSS->ABSENT",
+        "count": 23431
+      },
+      {
+        "fromWindow": "2000-2014",
+        "toWindow": "2015-2026",
+        "crossCommunityTransition": "CROSS->CROSS",
+        "count": 8252
+      },
+      {
+        "fromWindow": "2000-2014",
+        "toWindow": "2015-2026",
+        "crossCommunityTransition": "CROSS->NO_CROSS",
+        "count": 1869
+      },
+      {
+        "fromWindow": "2000-2014",
+        "toWindow": "2015-2026",
+        "crossCommunityTransition": "NO_CROSS->ABSENT",
+        "count": 28455
+      },
+      {
+        "fromWindow": "2000-2014",
+        "toWindow": "2015-2026",
+        "crossCommunityTransition": "NO_CROSS->CROSS",
+        "count": 2738
+      },
+      {
+        "fromWindow": "2000-2014",
+        "toWindow": "2015-2026",
+        "crossCommunityTransition": "NO_CROSS->NO_CROSS",
+        "count": 1605
+      }
+    ],
+    "changeDistributions": {
+      "2000-2014->2015-2026": {
+        "deltaDistinctCoauthorCount": {
+          "min": -239,
+          "median": 1,
+          "p90": 26,
+          "p99": 108,
+          "max": 415
+        },
+        "deltaAverageCoauthorsPerPaper": {
+          "min": -78.8,
+          "median": 0.5454545454545459,
+          "p90": 3.5,
+          "p99": 16.342142857142832,
+          "max": 120
+        },
+        "deltaMaximumCoauthorsOnOnePaper": {
+          "min": -112,
+          "median": 1,
+          "p90": 7,
+          "p99": 32.36999999999898,
+          "max": 124
+        },
+        "deltaCoreness": {
+          "min": -112,
+          "median": 1,
+          "p90": 7,
+          "p99": 32.36999999999898,
+          "max": 124
+        },
+        "deltaParticipationCoefficient": {
+          "min": -0.9146796897443263,
+          "median": 0.007896892700775593,
+          "p90": 0.5699490740740741,
+          "p99": 0.8429752066115702,
+          "max": 0.9644739289478579
+        },
+        "retainedCoauthors": {
+          "min": 0,
+          "median": 1,
+          "p90": 5,
+          "p99": 16,
+          "max": 60
+        },
+        "communityRetention": {
+          "min": 0,
+          "median": 0,
+          "p90": 0.3333333333333333,
+          "p99": 1,
+          "max": 1
+        }
+      }
+    },
+    "communityTransitionRows": 11140,
+    "summariesByTypeAndWindow": [
+      {
+        "documentType": "collaboration-community",
+        "window": "2000-2014",
+        "summaries": 8075,
+        "minTextLength": 346,
+        "maxTextLength": 730,
+        "meanTextLength": 537.8691021671826
+      },
+      {
+        "documentType": "collaboration-community",
+        "window": "2015-2026",
+        "summaries": 18315,
+        "minTextLength": 343,
+        "maxTextLength": 756,
+        "meanTextLength": 531.7870597870598
+      },
+      {
+        "documentType": "collaboration-community",
+        "window": "all-years",
+        "summaries": 23635,
+        "minTextLength": 345,
+        "maxTextLength": 756,
+        "meanTextLength": 535.8320287708906
+      },
+      {
+        "documentType": "collaboration-path",
+        "window": "all-years",
+        "summaries": 50,
+        "minTextLength": 128,
+        "maxTextLength": 977,
+        "meanTextLength": 628.48
+      },
+      {
+        "documentType": "researcher-profile",
+        "window": "all-years",
+        "summaries": 54935,
+        "minTextLength": 664,
+        "maxTextLength": 2029,
+        "meanTextLength": 1179.9206880859197
+      },
+      {
+        "documentType": "topic-summary",
+        "window": "2000-2014",
+        "summaries": 685,
+        "minTextLength": 239,
+        "maxTextLength": 453,
+        "meanTextLength": 348.73430656934306
+      },
+      {
+        "documentType": "topic-summary",
+        "window": "2015-2026",
+        "summaries": 1077,
+        "minTextLength": 238,
+        "maxTextLength": 458,
+        "meanTextLength": 358.7288765088208
+      },
+      {
+        "documentType": "topic-summary",
+        "window": "all-years",
+        "summaries": 1207,
+        "minTextLength": 238,
+        "maxTextLength": 448,
+        "meanTextLength": 357.0422535211268
+      }
+    ],
+    "sampleSummaries": [
+      {
+        "documentType": "collaboration-community",
+        "window": "2000-2014",
+        "subjectId": "comm-0007a2212521a39023b6692c5453cf77",
+        "summaryId": "chunk-d0ba7db03be8d90f284e310ef801b2e7",
+        "text": "Collaboration community comm-0007a2212521a39023b6692c5453cf77, 2000-2014: 18 researchers with 36 coauthor edges inside (density 0.235) and 36 edges to 17 other communities; its members have 31 publications in the window. Most connected members: Alvin R. Lebeck (22 coauthors); David Tarjan (16 coauthors); Mithuna Thottethodi (14 coauthors); Jun Pang 0001 (11 coauthors); Chris Dwyer (5 coauthors). Frequent topics: Parallel Computing and Optimization Techniques (15 works); Interconnection Networks and Systems (3 works); Cloud Computing and Resource Management (2 works). Frequent venues: ASPLOS (6 works); IPDPS (5 works); IEEE Trans. Parallel Distributed Syst. (3 works)."
+      },
+      {
+        "documentType": "collaboration-path",
+        "window": "all-years",
+        "subjectId": "pair-0005602c593095096a3adc42523d53b5",
+        "summaryId": "chunk-c9e8d737467ec17f9132c6c5eb203566",
+        "text": "In 2000-2026, Lin Liu 0004 and Thiago D'Angelo are joined by a shortest coauthor path of 5 hops: Lin Liu 0004 -> Yuanyuan Yang 0001 (3 joint works, 2008-2013, e.g. \"Achieving 100% throughput in input-buffered WDM optical packet interconnects.\") -> Fan Ye 0003 (10 joint works, 2013-2024, e.g. \"Fair Caching Algorithms for Peer Data Sharing in Pervasive Edge Computing Environments.\") -> Lixia Zhang 0001 (1 joint works, 2003-2003, e.g. \"PEAS: A Robust Energy Conserving Protocol for Long-lived Sensor Networks.\") -> Ricardo V. Oliveira (1 joint works, 2007-2007, e.g. \"Understanding Resiliency of Internet Topology against Prefix Hijack Attacks.\") -> Thiago D'Angelo (1 joint works, 2016-2016, e.g. \"Building Wearables for Geology: An Operating System Approach.\")."
+      },
+      {
+        "documentType": "researcher-profile",
+        "window": "all-years",
+        "subjectId": "scr:canon-v1.er-v2:0000ca86c3918262816e1a820e745211",
+        "summaryId": "chunk-8bc679d18259fb2ed2eea1064f512060",
+        "text": "Daniel Paranhos da Silva (scr:canon-v1.er-v2:0000ca86c3918262816e1a820e745211), 2000-2026: 3 publications in the DBLP subset, first in 2003 and last in 2007. Distinct coauthors (C_r) 10; total coauthor occurrences (T_r) 14; average coauthors per paper (A_r) 4.67; most coauthors on one paper (M_r) 8; weighted degree (W_r) 14. Coreness 8; connected component of 141367 researchers (the largest). Community of 40 researchers; 1 coauthors in other communities; 2 communities connected; participation coefficient 0.180. Most frequent coauthors: Francisco V. Brasileiro (3 joint works); Walfredo Cirne (3 joint works); Carla O. Barros (1 joint works). Frequent topics: Distributed and Parallel Computing Systems (3 works). Frequent venues: Euro-Par (1 works); ICPP (1 works); Parallel Comput. (1 works). Institutions on record (any year): Universidade Federal de Campina Grande. Recent works: \"On the efficacy, efficiency and emergent behavior of task replication in large distributed systems.\" (2007); \"Trading Cycles for Information: Using Replication to Schedule Bag-of-Tasks Applications on Computational Grids.\" (2003); \"Running Bag-of-Tasks Applications on Computational Grids: The MyGrid Approach.\" (2003)."
+      },
+      {
+        "documentType": "topic-summary",
+        "window": "2000-2014",
+        "subjectId": "openalex:T10002",
+        "summaryId": "chunk-1015e065d4150ec96945a21e20cc62b5",
+        "text": "Topic Advanced Chemical Physics Studies (openalex:T10002; field Physics and Astronomy, subfield Atomic and Molecular Physics, and Optics), 2000-2014: 25 works by 91 researchers in the DBLP subset. Most active researchers: Alessandro Curioni (3 works); Atsushi Ishikawa (2 works); Costas Bekas (2 works). Frequent venues: SC (15 works); Parallel Comput. (5 works); Future Gener. Comput. Syst. (4 works)."
+      }
+    ],
+    "exportTables": 30,
+    "exportRowCountMismatches": 0,
+    "loadManifest": "scratch/spark/snapshot=2026-10-03/run=run-0375535e0174b7330b18a78988c07211/export/load-manifest.json",
+    "storeTableCounts": {
+      "neptune": 14,
+      "dynamodb": 13,
+      "s3vectors": 1,
+      "s3": 26
+    },
+    "integrityViolationsByCheck": []
+  },
+  "stepSeconds": {
+    "read inputs": 2.447469001,
+    "temporal comparison": 0.02381275,
+    "write temporal/window-summary": 1.543526334,
+    "write temporal/researcher-changes": 2.064689125,
+    "write temporal/community-transitions": 0.668585667,
+    "write temporal/window-comparison": 0.332578375,
+    "summaries": 0.128750833,
+    "write summaries/semantic-summaries": 19.251129584,
+    "export": 1.8704600459999998,
+    "write summary-export-violations": 0.44448075,
+    "report": 0.684419375
+  },
+  "stagesByStep": [
+    {
+      "step": "read inputs",
+      "stages": 60,
+      "tasks": 202,
+      "maxTasksInAStage": 10,
+      "shuffleReadBytes": 5025,
+      "shuffleWriteBytes": 5025,
+      "spillDiskBytes": 0,
+      "stageMs": 1975
+    },
+    {
+      "step": "write temporal/window-summary",
+      "stages": 24,
+      "tasks": 151,
+      "maxTasksInAStage": 40,
+      "shuffleReadBytes": 36311439,
+      "shuffleWriteBytes": 36311184,
+      "spillDiskBytes": 0,
+      "stageMs": 5897
+    },
+    {
+      "step": "write temporal/researcher-changes",
+      "stages": 34,
+      "tasks": 223,
+      "maxTasksInAStage": 12,
+      "shuffleReadBytes": 196241297,
+      "shuffleWriteBytes": 196241297,
+      "spillDiskBytes": 0,
+      "stageMs": 8949
+    },
+    {
+      "step": "write temporal/community-transitions",
+      "stages": 17,
+      "tasks": 83,
+      "maxTasksInAStage": 12,
+      "shuffleReadBytes": 43711552,
+      "shuffleWriteBytes": 43711552,
+      "spillDiskBytes": 0,
+      "stageMs": 1462
+    },
+    {
+      "step": "write temporal/window-comparison",
+      "stages": 6,
+      "tasks": 13,
+      "maxTasksInAStage": 8,
+      "shuffleReadBytes": 15565,
+      "shuffleWriteBytes": 15565,
+      "spillDiskBytes": 0,
+      "stageMs": 265
+    },
+    {
+      "step": "write summaries/semantic-summaries",
+      "stages": 116,
+      "tasks": 1111,
+      "maxTasksInAStage": 40,
+      "shuffleReadBytes": 1441971720,
+      "shuffleWriteBytes": 1441971720,
+      "spillDiskBytes": 0,
+      "stageMs": 242410
+    },
+    {
+      "step": "export",
+      "stages": 99,
+      "tasks": 218,
+      "maxTasksInAStage": 11,
+      "shuffleReadBytes": 9375,
+      "shuffleWriteBytes": 9375,
+      "spillDiskBytes": 0,
+      "stageMs": 980
+    },
+    {
+      "step": "write summary-export-violations",
+      "stages": 15,
+      "tasks": 58,
+      "maxTasksInAStage": 15,
+      "shuffleReadBytes": 7336711,
+      "shuffleWriteBytes": 7336711,
+      "spillDiskBytes": 0,
+      "stageMs": 826
+    },
+    {
+      "step": "report",
+      "stages": 27,
+      "tasks": 75,
+      "maxTasksInAStage": 11,
+      "shuffleReadBytes": 232105,
+      "shuffleWriteBytes": 206895,
+      "spillDiskBytes": 0,
+      "stageMs": 491
+    }
+  ],
+  "stageCount": 398,
+  "disk": {
+    "freeBeforeBytes": 26601111552,
+    "freeAfterBytes": 25280589824
+  },
+  "wallSeconds": 29.510990459,
+  "finishedAt": "2026-11-05T17:29:33.516858Z"
+}

@@ -2,6 +2,8 @@
 //
 // Environment inputs (the only ones this build reads):
 //   SCHOLARCHAIN_IMAGE_TAG  immutable image tag (Git SHA) for dockerLocal; required by dockerLocal only.
+//   SCHOLARCHAIN_SPARK_HEAP heap (-Xmx) of the forked sparkAnalytics run/runMain JVM; optional,
+//                           default 6g. Keep it at most half of physical RAM (phase-06 ruling 17).
 //
 // Aliases: fmt, check (the definition of done), packageJobs, dockerLocal. check never needs Docker or AWS.
 
@@ -10,6 +12,31 @@ ThisBuild / version := "0.1.0"
 ThisBuild / scalaVersion := Versions.scala
 
 val ImageTagEnv = "SCHOLARCHAIN_IMAGE_TAG"
+val SparkHeapEnv = "SCHOLARCHAIN_SPARK_HEAP"
+
+// The JVM options Spark 4.0.2 itself adds on Java 17 (org.apache.spark.launcher.JavaModuleOptions).
+val SparkJvmOptions = Seq(
+  "-XX:+IgnoreUnrecognizedVMOptions",
+  "--add-modules=jdk.incubator.vector",
+  "-Djdk.reflect.useDirectMethodHandle=false",
+  "-Dio.netty.tryReflectionSetAccessible=true",
+  "--add-opens=java.security.jgss/sun.security.krb5=ALL-UNNAMED"
+) ++ Seq(
+  "java.lang",
+  "java.lang.invoke",
+  "java.lang.reflect",
+  "java.io",
+  "java.net",
+  "java.nio",
+  "java.util",
+  "java.util.concurrent",
+  "java.util.concurrent.atomic",
+  "jdk.internal.ref",
+  "sun.nio.ch",
+  "sun.nio.cs",
+  "sun.security.action",
+  "sun.util.calendar"
+).map(p => s"--add-opens=java.base/$p=ALL-UNNAMED")
 
 lazy val markTestRun =
   taskKey[Unit]("Runs every project's tests, then writes .claude/.last-test-run")
@@ -65,7 +92,22 @@ lazy val sparkAnalytics = module("sparkAnalytics", "spark")
     // Spark supplies scala-library 2.13 at runtime; the job jar carries only scala3-library_3.
     assembly / assemblyExcludedJars := (assembly / fullClasspath).value.filter(
       _.data.getName.startsWith("scala-library-")
-    )
+    ),
+    // One shared local SparkSession per test JVM: fork, open the JDK modules, run suites serially.
+    Test / fork := true,
+    Test / parallelExecution := false,
+    Test / javaOptions ++= SparkJvmOptions :+ "-Xmx2g",
+    // run/runMain put Provided Spark on the classpath, fork, and resolve relative paths from the
+    // repository root (so scratch/spark/ means the repo's scratch/spark/).
+    Compile / run := Defaults
+      .runTask(Compile / fullClasspath, Compile / run / mainClass, Compile / run / runner)
+      .evaluated,
+    Compile / runMain := Defaults
+      .runMainTask(Compile / fullClasspath, Compile / run / runner)
+      .evaluated,
+    run / fork := true,
+    run / baseDirectory := (ThisBuild / baseDirectory).value,
+    run / javaOptions ++= SparkJvmOptions :+ s"-Xmx${sys.env.getOrElse(SparkHeapEnv, "6g")}"
   )
 
 lazy val storage = module("storage", "storage")

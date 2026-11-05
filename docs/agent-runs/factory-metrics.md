@@ -43,3 +43,11 @@ Running log for the Phase 16 agentic-factory evaluation. One row per agent invoc
 | 2026-11-04 | 05 | hadoop-engineer (R2) | COMPLETE | y | - | 1 | 0 | ? | rule applied in J03+J04; 16 groups; rerun |
 | 2026-11-04 | 05 | entity-resolution-engineer (R3) | COMPLETE | y | - | 1 | 0 | ? | re-key, 0 rows changed |
 | 2026-11-04 | 05 | code-reviewer (review 2) | REQUEST_CHANGES | n | 0/1/5 | 1 | 0 | ? | major (capped group) ruled residual risk; Phase 5: 1 BLOCKED-ON, 1 repair round |
+| 2026-11-04/05 | 06 | build-engineer (WO1) | COMPLETE | y | - | 0 | 0 | ? | build.sbt only: forked serial tests, Spark JVM options, forked runMain; jar 0/0 |
+| 2026-11-04/05 | 06 | spark-engineer (WO2) | COMPLETE | n | - | 0 | 0 | ? | jobs 1-2; review 1 MAJOR-1 and MAJOR-2 touch its tables |
+| 2026-11-05 | 06 | spark-engineer (WO3) | COMPLETE | n | - | 0 | 0 | ? | jobs 3, 4, 8; MAJOR-1 (components) |
+| 2026-11-05 | 06 | spark-engineer (WO4) | COMPLETE | n | - | 0 | 0 | ? | jobs 5-7; MAJOR-1 (cross-community edges) |
+| 2026-11-05 | 06 | spark-engineer (WO5) | COMPLETE | n | - | 0 | 0 | ? | jobs 9-11, end-to-end; first attempt OOM, second succeeded; MAJOR-1 (temporal) |
+| 2026-11-05 | 06 | code-reviewer (review 1) | REQUEST_CHANGES | n | 0/3/8 | 0 | 0 | ? | MAJOR-3 closed by human ruling 23 |
+| 2026-11-05 | 06 | spark-engineer (repair-01) | COMPLETE | y | - | 1 | 0 | ? | fixes MAJOR-1, MAJOR-2, m3, code version; content hashes equal to WO5 run |
+| 2026-11-05 | 06 | code-reviewer (review 2) | APPROVE | y | 0/0/3 | 1 | 0 | ? | n2 ruled at gate; n1, n3 residual; Phase 6: 0 BLOCKED-ON, 1 repair round |
