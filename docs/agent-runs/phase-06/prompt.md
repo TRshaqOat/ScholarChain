@@ -156,3 +156,55 @@ Check especially:
 - bridge definitions and limitations are written down;
 - no edits outside owned paths, and no reads of labels/.
   Verify each candidate finding against the files. Give critical and major findings in full (severity, file and line, failure input, impact, owning agent), and minor findings briefly. Return APPROVE or REQUEST_CHANGES. Do not edit any file.
+
+## Human rulings after review 1 (binding)
+
+Review 1 returned REQUEST_CHANGES with three major findings (MAJOR-1, MAJOR-2, MAJOR-3) and minors m1 to m8. There is one repair round (repair-01), then review 2. The rulings before work order 1 still apply.
+
+21. MAJOR-1 (provenance): accepted; fix it in repair-01. The spec requires every graph element to carry enough provenance to locate the source dataset record and the pipeline run that produced it. Every table that Spark writes under export/ or lists in load-manifest.json, and every table named in MAJOR-1 (components, cross-community edges, the temporal tables, the mention and work maps, self-pairs, refusals), carries on every row:
+   - runId (the Phase 6 run) and snapshot;
+   - schemaVersion (ruling 22);
+   - a source pointer: either the source record IDs directly, or canonical IDs that resolve to source records through the mention and work maps, which themselves carry source and sourceRecordId.
+   The run manifest and load-manifest.json also record the input Hadoop run ID (run-035e75abfa6798c938cbd534273dbd8d), the entity-resolution policy version, and the code version (ruling 24). Use the field names of the Provenance record in modules/core where they fit. Read modules/core only; do not edit it.
+
+22. MAJOR-2 (core schemas): closed by ruling, plus a small fix in repair-01. The spec allows the exact fields to differ, but identifiers, versioning, provenance, uncertainty, and time windows are mandatory. The Phase 6 Parquet tables are Spark analytic tables, not serialized core records. There is no change to modules/core and no domain-engineer work in Phase 6. In repair-01:
+   - every exported table carries a schemaVersion column, and load-manifest.json records it per table;
+   - modules/spark/JOBS.md gets a section that maps each exported table to its nearest core record and lists the fields that are renamed, split out, added, or missing. AUTHORED stays per researcher and work; the per-mention link is the mention map (the RESOLVES_TO relationship). Community and bridge fields stay in their own tables and join to researcher metrics on researcher ID and window;
+   - uncertainty stays visible: the mention map keeps how each mention was resolved (tier, UNRESOLVED, or the refusal reason).
+   Store-specific shapes that follow the core records are built in Phase 7+8 from these tables (ruling 13).
+
+23. MAJOR-3 (template ownership): closed by ruling, with no code change. Ruling 12 stands for Phase 6: the template summaries are interim semantic-context text written by spark-engineer. From Phase 7+8 on, rag-engineer owns the rendering templates (spec, Phase 7+8). It either adopts the Phase 6 templates by reference or defines its own in modules/rag that render from the Phase 6 Parquet tables. The Spark summary job stays in place until then. This ruling is recorded in human-gate.md. Review 2 does not re-raise this finding.
+
+24. Code version (the reviewer's run-traceability note): fix it in repair-01. Replace the constant code-version label with a required input (a --code-version flag, or a config key that the flag overrides) with no default. The driver refuses to start without it. The value goes into the run ID and the run manifest. For the repair-01 run, pass src-<12 hex>, computed with:
+   find modules/spark/src/main build.sbt -type f | LC_ALL=C sort | xargs shasum -a 256 | shasum -a 256 | cut -c1-12
+   Report the exact command and the value. On EMR the human passes the git commit SHA. Tests pass a fixed value.
+
+25. m3 (hardcoded local[*]): fix it in repair-01, because it would override YARN on EMR. The code sets a master only when spark.master is not already set (spark-submit or --master sets it). A local runMain falls back to local[*]. The shared test session sets its master explicitly. Add a small test of the fallback rule.
+
+26. Residual risks, not repaired in Phase 6 (they go to human-gate.md and the Phase 11 backlog):
+   - m1, m2, m4, and m7;
+   - m5, a contract test for the rule-ID list (test-engineer, Phase 11);
+   - m6, five canonical works that each merge two DBLP records (the 21 integrity-violation rows stay recorded);
+   - m8, the core default of 20 community iterations (domain-engineer, Phase 11; Spark keeps 10);
+   - label propagation does not converge within 10 rounds (387 nodes were still changing in round 10 in window all; recorded per ruling 8);
+   - tier-2 refusals remove the probabilistic links of 149,056 mentions (a recall cost; precision is kept).
+
+27. Deleting anything under scratch/spark/ is a human decision made after the commit. No agent deletes anything there.
+
+## Repair 1: spark-engineer (repair-01)
+
+Read the Review 1 section of review-report.md (MAJOR-1, MAJOR-2, m3, and the run-traceability note) and rulings 21 to 27. Edit only modules/spark/**. If a change outside it seems unavoidable, report BLOCKED-ON with the owner.
+1. Provenance columns and manifest fields (ruling 21).
+2. schemaVersion columns and the JOBS.md mapping section (ruling 22).
+3. A required code version (ruling 24).
+4. The master fallback (ruling 25).
+5. Update the fixtures and tests for the new columns. Add a check in the export step that every exported table has the provenance and schemaVersion columns, with a test showing that a table without them is refused.
+6. One fresh end-to-end run (jobs 1 to 11) with the repair code and code version src-<hash>. Use the memory settings of the successful work order 5 attempt, and check free disk first (ruling 17). Compare the result with the work order 5 run (run-eb4284f015763055514b0dacf41132b4):
+   - the row count of every table;
+   - an order-independent checksum (for example, the sum of xxhash64 over the key columns) of researchers, works, AUTHORED, coauthor edges, components, and communities, per window.
+   Only added columns are expected to differ. Explain any other difference.
+7. Report what changed for each finding (with file paths), the new run ID and output paths, the load-manifest path, the comparison table, sbt check twice, the Spark jar's org/apache/spark and software/amazon/awssdk counts, free disk before and after, and wall time.
+
+## Review 2: code-reviewer
+
+Review the Phase 6 change set again; the orchestrator supplies it as for review 1. Focus on repair-01 against rulings 21 to 27. Verify, with file and line evidence, that MAJOR-1, MAJOR-2 (as ruled in 22), m3, and the code-version fix are resolved. MAJOR-3 is closed by ruling 23, and the minors in ruling 26 are accepted residual risks: do not re-raise them unless the repair made them worse. Report any new critical or major finding introduced by the repair in full, and minors briefly. Return APPROVE or REQUEST_CHANGES. Do not edit any file.
