@@ -3,7 +3,13 @@ package scholarchain.hadoop
 import org.apache.hadoop.conf.Configuration
 import org.scalatest.funsuite.AnyFunSuite
 import scholarchain.core.*
-import scholarchain.entityresolution.OversizePolicy
+import scholarchain.entityresolution.{
+  CandidateOrigin,
+  MatchPolicy,
+  OversizePolicy,
+  Thresholds,
+  WorkPairFeatures
+}
 import upickle.default.read
 
 import java.nio.charset.StandardCharsets.ISO_8859_1
@@ -27,6 +33,13 @@ class PipelineSpec extends AnyFunSuite:
     )
   private val env = Map(scholarchain.core.config.ConfigLoader.ConfigFileEnv -> confFile.toString)
 
+  // The fictional record twice more, as full v3.0 API records (the fetch_orcid.sh format): with the
+  // committed projection, three records share one orcid-identifier.path.
+  private val orcidV3 = Files.writeString(
+    Files.createTempFile(tempDir("scholarchain-orcid-v3"), "records", ".jsonl"),
+    s"$orcidV3FictionalRecord\n$orcidV3FictionalRecord\n"
+  )
+
   private val opts = PipelineOptions
     .parse(
       Seq(
@@ -49,7 +62,7 @@ class PipelineSpec extends AnyFunSuite:
         "--crossref-snapshot",
         "2026-11-03",
         "--orcid",
-        sample("orcid").getPath,
+        s"${sample("orcid").getPath},$orcidV3",
         "--orcid-snapshot",
         "2026-11-03",
         "--reducers",
@@ -65,6 +78,15 @@ class PipelineSpec extends AnyFunSuite:
 
   private lazy val first = Pipeline.run(conf, opts, env).fold(e => fail(e), identity)
   private lazy val second = Pipeline.run(conf, opts, env).fold(e => fail(e), identity)
+  // The configured default is er-v2 (first, second); er-v1 stays selectable through the env layer.
+  private val PolicyEnv = "SCHOLARCHAIN_ER_POLICY_VERSION"
+  private lazy val v1Run = Pipeline
+    .run(
+      conf,
+      opts.copy(out = tempDir("scholarchain-hadoop-v1").toString),
+      env + (PolicyEnv -> "er-v1")
+    )
+    .fold(e => fail(e), identity)
 
   private def dir(r: PipelineResult, rel: String): JPath =
     JPath.of(r.runDir.toUri.getPath).resolve(rel)
@@ -78,23 +100,62 @@ class PipelineSpec extends AnyFunSuite:
     .map("<author[ >]".r.findAllIn(_).size)
     .toVector
 
-  test("run directory carries the snapshot and run ID; the manifest records attempt 1") {
+  /** Bytes of a file, or of every file below a directory (Hadoop's checksum files excluded). */
+  private def bytes(f: java.io.File): Long =
+    if f.isDirectory then f.listFiles.toSeq.filterNot(_.getName.endsWith(".crc")).map(bytes).sum
+    else f.length
+
+  test("run ID: snapshots plus input fingerprints (path and bytes); manifest v3 records them") {
     assert(first.attempt == 1 && IdFormat.isRunId(first.runId))
     assert(first.runDir.toString.endsWith(s"snapshot=2026-10-03/run=${first.runId}"))
+    def print(name: String, path: String) = s"input:$name=$path:${bytes(new java.io.File(path))}"
+    val prints = Vector(
+      print("dblp", opts.dblp.head),
+      print("dblp-dtd", opts.dblpDtd),
+      print("openalex", opts.openAlex.head),
+      print("crossref", opts.crossref.head),
+      print("orcid", opts.orcid(0)),
+      print("orcid", opts.orcid(1))
+    )
+    val snapshots =
+      Seq("dblp=2026-10-03", "openalex=2026-11-03", "crossref=2026-11-03", "orcid=2026-11-03")
     assert(
       first.runId == StableIds.runId(
         Pipeline.Stage,
         "test-sha",
         "config-v1",
-        Seq("dblp=2026-10-03", "openalex=2026-11-03", "crossref=2026-11-03", "orcid=2026-11-03"),
+        snapshots ++ prints,
         1
       )
     )
     val m = read[RunManifest](Files.readString(dir(first, "_manifest.json")))
+    assert(m.schemaVersion == "hadoop-run-manifest-v3" && m.inputFingerprints == prints)
     assert(m.attempt == 1 && m.oversizeTeamThreshold == 5 && m.reducers == 2)
     assert(m.maxBlockSize == MaxBlock && m.maxConflictGroupSize == 100)
-    assert(m.entityResolutionRules == "norm-v1.block-v1.feat-v1")
+    assert(m.entityResolutionRules == "norm-v1.block-v1.feat-v1" && m.matchPolicyVersion == "er-v2")
+    assert(
+      m.thresholds == Map(
+        "accept-threshold" -> 0.93,
+        "reject-threshold" -> 0.35,
+        "llm-band-min" -> 0.65,
+        "llm-band-max" -> 0.93
+      )
+    )
+    assert(scala.util.Try(java.time.Instant.parse(m.startedAt)).isSuccess)
     assert(Files.exists(dir(first, s"_counters/${Jobs.J09}.json")))
+  }
+
+  test("input fingerprints: a changed input size changes the run ID; a missing input fails") {
+    val f = Files.writeString(Files.createTempFile("scholarchain-fp", ".jsonl"), "{}\n")
+    val o = opts.copy(crossref = Seq(f.toString))
+    val before = Pipeline.fingerprints(new Configuration(), o).fold(e => fail(e), identity)
+    Files.writeString(f, "{}\n{}\n")
+    val after = Pipeline.fingerprints(new Configuration(), o).fold(e => fail(e), identity)
+    assert(before.contains(s"input:crossref=$f:3") && after.contains(s"input:crossref=$f:6"))
+    def id(p: Vector[String]) = StableIds.runId(Pipeline.Stage, "x", "config-v1", p, 1)
+    assert(id(before) != id(after))
+    val missing = Pipeline.fingerprints(new Configuration(), o.copy(orcid = Seq(s"$f.absent")))
+    assert(missing.left.exists(_.contains("input --orcid not found")))
   }
 
   test("J01 counters: 40 records in, 40 accepted, none rejected; works and mentions written") {
@@ -108,8 +169,11 @@ class PipelineSpec extends AnyFunSuite:
     assert(gzLines(dir(first, s"${Jobs.J01}/mentions")).size == teamSizes.sum)
   }
 
-  test("J02 counters: 84 enrichment records in, 3 synthetic ORCID records rejected to rejects-v1") {
-    assert(c(first, Jobs.J02, Counters.Input) == 84 && c(first, Jobs.J02, Counters.Accepted) == 81)
+  test("J02 counters: 86 enrichment records in, 3 synthetic ORCID records rejected to rejects-v1") {
+    assert(c(first, Jobs.J02, Counters.Input) == 86 && c(first, Jobs.J02, Counters.Accepted) == 83)
+    // Three records of one ORCID iD (projection + two v3.0 copies) give one profile.
+    assert(c(first, Jobs.J02, Counters.OrcidDuplicate) == 2)
+    assert(c(first, Jobs.J02, Counters.Conflict) == 0)
     assert(c(first, Jobs.J02, Counters.Rejected) == 3)
     val rejects = gzLines(dir(first, s"${Jobs.J02}/${Reject.Dir}")).map(read[RejectRecord](_))
     assert(
@@ -163,11 +227,13 @@ class PipelineSpec extends AnyFunSuite:
 
   test("a rerun of the same inputs gets attempt 2, a new run ID, and logically equal output") {
     assert(second.attempt == 2 && second.runId != first.runId)
+    def startedAt(r: PipelineResult) =
+      read[RunManifest](Files.readString(dir(r, "_manifest.json"))).startedAt
     def logical(r: PipelineResult, rel: String) =
-      gzLines(dir(r, rel)).map(_.replace(r.runId, "RUN")).sorted
+      gzLines(dir(r, rel)).map(_.replace(r.runId, "RUN").replace(startedAt(r), "AT")).sorted
     val blocking = (0 until Blocking.Passes).flatMap(l =>
       Seq("blocks", "oversize").map(d => s"${Jobs.J05Pass(l)}/$d")
-    ) :+ s"${Jobs.J06}/candidates"
+    ) ++ Seq(s"${Jobs.J06}/candidates", s"${Jobs.J06}/work-pairs", s"${Jobs.J10}/decisions")
     val compared =
       Seq(s"${Jobs.J09}", s"${Jobs.J02}/${Reject.Dir}", s"${Jobs.J04}/conflicts") ++ blocking
     for rel <- compared do assert(logical(first, rel) == logical(second, rel), rel)
@@ -237,3 +303,200 @@ class PipelineSpec extends AnyFunSuite:
     assert(c(first, Jobs.J06, Counters.Duplicate) == meetings.size - expected.size)
     assert(gzLines(dir(first, s"${Jobs.J09}/blocking-candidates")).size == cands.size)
   }
+
+  test("policy version: an unknown configured version fails before any job or run directory") {
+    val o = opts.copy(out = tempDir("scholarchain-hadoop-v3").toString)
+    val r = Pipeline.run(conf, o, env + (PolicyEnv -> "er-v3"))
+    assert(r.left.exists(_.contains("policy-version er-v3 is not implemented (er-v1, er-v2)")))
+    assert(!Files.exists(JPath.of(o.out).resolve("snapshot=2026-10-03")))
+  }
+
+  test("J10 er-v2 (configured default): one decision per candidate, recomputed; exported") {
+    checkDecisions(first, MatchPolicy.V2)
+  }
+
+  test("J10 er-v1 (env override): one decision per candidate, recomputed; manifest records it") {
+    assert(
+      read[RunManifest](
+        Files.readString(dir(v1Run, "_manifest.json"))
+      ).matchPolicyVersion == "er-v1"
+    )
+    checkDecisions(v1Run, MatchPolicy.V1)
+    // Researcher rules are identical in er-v1 and er-v2, so researcher decisions are too.
+    def researchers(r: PipelineResult) =
+      gzLines(dir(r, s"${Jobs.J10}/decisions"))
+        .map(read[MatchDecision](_))
+        .filter(_.entityType == MatchEntityType.RESEARCHER)
+        .map(d =>
+          d.provenance.sourceRecordId ->
+            (d.decision, d.rulesFired, d.reasonCodes, d.confidence, d.features)
+        )
+        .toMap
+    assert(researchers(v1Run) == researchers(first) && researchers(first).nonEmpty)
+  }
+
+  // Review 1 finding 1 (fictional IDs): one ORCID on DBLP "Wei Wang 0001" (conf/x/A1) and
+  // "Wei Wang 0002" (conf/y/B7), disjoint coauthors, added as a second --dblp input.
+  private val wangOrcid = "0000-0001-2345-6789"
+  private val wangXml = Files.writeString(
+    tempDir("scholarchain-suffix").resolve("dblp-suffix.xml"),
+    s"""<?xml version="1.0" encoding="ISO-8859-1"?>
+       |<!DOCTYPE dblp SYSTEM "dblp-2023-06-28.dtd">
+       |<dblp>
+       |<inproceedings mdate="2026-01-01" key="conf/x/A1">
+       |<author orcid="$wangOrcid">Wei Wang 0001</author>
+       |<author>Alice Fictional</author>
+       |<title>A first fictional paper.</title>
+       |<year>2020</year>
+       |<booktitle>X</booktitle>
+       |</inproceedings>
+       |<inproceedings mdate="2026-01-01" key="conf/y/B7">
+       |<author orcid="$wangOrcid">Wei Wang 0002</author>
+       |<author>Bob Fictional</author>
+       |<title>A second fictional paper.</title>
+       |<year>2021</year>
+       |<booktitle>Y</booktitle>
+       |</inproceedings>
+       |</dblp>
+       |""".stripMargin
+  )
+  private def wangRun(policy: String) = Pipeline
+    .run(
+      conf,
+      opts.copy(
+        out = tempDir(s"scholarchain-suffix-$policy").toString,
+        dblp = opts.dblp :+ wangXml.toString
+      ),
+      env + (PolicyEnv -> policy)
+    )
+    .fold(e => fail(e), identity)
+  private lazy val wangV2 = wangRun(MatchPolicy.V2)
+  private lazy val wangV1 = wangRun(MatchPolicy.V1)
+  private val (wangA, wangB) = ("dblp:conf/x/A1#1", "dblp:conf/y/B7#1")
+
+  private def wangDecisions(r: PipelineResult) =
+    gzLines(dir(r, s"${Jobs.J10}/decisions"))
+      .map(read[MatchDecision](_))
+      .filter(d => Set(wangA, wangB)(d.sourceId) || Set(wangA, wangB)(d.targetId))
+
+  test("orcid suffix conflict er-v2: the group goes to conflicts/, is counted, decides CONFLICT") {
+    val key = s"orcid:$wangOrcid"
+    def cands(rel: String) = gzLines(dir(wangV2, rel)).map(read[MatchCandidate](_))
+    assert(!cands(s"${Jobs.J04}/matches").exists(_.blockingKey == key))
+    assert(
+      cands(s"${Jobs.J04}/conflicts")
+        .filter(_.blockingKey == key)
+        .map(c => (c.sourceId, c.targetId)) == Vector((wangA, wangB))
+    )
+    assert(c(wangV2, Jobs.J04, Counters.OrcidSuffixConflict) == 1)
+    val line = gzLines(dir(wangV2, s"${Jobs.J04}/suffix-conflicts")).map(ujson.read(_))
+    assert(line.map(l => (l("identifier").str, l("groupSize").num.toInt)) == Vector((key, 2)))
+    assert(line.forall(_("rule").str == MatchPolicy.Rule.OrcidGroupSuffixConflict))
+    // J10: the exact-ID decisions (sourceRecordId `<key>|a|b`) are one EXACT_CONFLICT -> CONFLICT;
+    // no mention matches the iD. Any blocked decision on the pair (r0:wang|w) is not ACCEPTED either.
+    val ds = wangDecisions(wangV2)
+    val exact = ds.filter(_.provenance.sourceRecordId.startsWith(key + "|"))
+    assert(
+      exact.map(d => (d.sourceId, d.targetId, d.decision)) == Vector(
+        (wangA, wangB, MatchOutcome.CONFLICT)
+      )
+    )
+    assert(exact.forall(_.rulesFired.contains(MatchPolicy.Rule.ExactGroupConflict)))
+    assert(
+      !ds.exists(d =>
+        d.decision == MatchOutcome.ACCEPTED && Set(d.sourceId, d.targetId) == Set(wangA, wangB)
+      )
+    )
+    checkDecisions(wangV2, MatchPolicy.V2)
+  }
+
+  test("orcid suffix conflict er-v1: the same input is unchanged, both mentions match the iD") {
+    val key = s"orcid:$wangOrcid"
+    def cands(rel: String) = gzLines(dir(wangV1, rel)).map(read[MatchCandidate](_))
+    assert(
+      cands(s"${Jobs.J04}/matches").filter(_.blockingKey == key).map(_.sourceId).sorted ==
+        Vector(wangA, wangB)
+    )
+    assert(!cands(s"${Jobs.J04}/conflicts").exists(_.blockingKey == key))
+    assert(c(wangV1, Jobs.J04, Counters.OrcidSuffixConflict) == 0)
+    assert(gzLines(dir(wangV1, s"${Jobs.J04}/suffix-conflicts")).isEmpty)
+    assert(
+      wangDecisions(wangV1)
+        .filter(_.targetId == key)
+        .map(d => (d.sourceId, d.decision))
+        .sortBy(_._1) ==
+        Vector((wangA, MatchOutcome.ACCEPTED), (wangB, MatchOutcome.ACCEPTED))
+    )
+    checkDecisions(wangV1, MatchPolicy.V1)
+  }
+
+  /** J10 output of run `r` against an independent recomputation under policy `version`. */
+  private def checkDecisions(first: PipelineResult, version: String): Unit =
+    def cands(rel: String) = gzLines(dir(first, rel)).map(read[MatchCandidate](_))
+    val matches = cands(s"${Jobs.J04}/matches")
+    val conflicts = cands(s"${Jobs.J04}/conflicts")
+    val blocked = cands(s"${Jobs.J06}/candidates")
+    val pairs = gzLines(dir(first, s"${Jobs.J06}/work-pairs")).map(read[WorkPairInput](_))
+    val blockedWorks = blocked.filter(_.entityType == MatchEntityType.WORK)
+    assert(pairs.map(_.candidate).toSet == blockedWorks.toSet && pairs.nonEmpty)
+    assert(c(first, Jobs.J06, Counters.WorkPair) == pairs.size)
+    val ds = gzLines(dir(first, s"${Jobs.J10}/decisions")).map(read[MatchDecision](_))
+    assert(ds.size == matches.size + conflicts.size + blocked.size)
+    assert(c(first, Jobs.J10, Counters.Accepted) == ds.size)
+    assert(c(first, Jobs.J10, Counters.DeferredWorkCandidate) == blockedWorks.size)
+    assert(
+      c(first, Jobs.J10, Counters.Input) ==
+        ds.size + blockedWorks.size + c(first, Jobs.J10, Counters.Rejected)
+    )
+    assert(c(first, Jobs.J10, Counters.Rejected) == 0)
+    // Independent recomputation with the entity-resolution functions and the J01/J02 works.
+    val works =
+      (gzLines(dir(first, s"${Jobs.J01}/works")) ++ gzLines(dir(first, s"${Jobs.J02}/works")))
+        .map(read[WorkRecord](_))
+        .map(w => w.workId -> w)
+        .toMap
+    val t = Thresholds(0.93, 0.35, 0.65, 0.93)
+    def expected(c: MatchCandidate, o: CandidateOrigin) =
+      if o != CandidateOrigin.BLOCKED then (MatchPolicy.decide(c, o, t, version), c.features)
+      else
+        val f =
+          if c.entityType == MatchEntityType.RESEARCHER then c.features
+          else c.features ++ WorkPairFeatures.work(works(c.sourceId), works(c.targetId), version)
+        (MatchPolicy.decideBlocked(c.entityType, f, t, version), f)
+    val all = matches.map((_, CandidateOrigin.EXACT_MATCH)) ++
+      conflicts.map((_, CandidateOrigin.EXACT_CONFLICT)) ++
+      blocked.map((_, CandidateOrigin.BLOCKED))
+    val byRecord = ds.map(d => d.provenance.sourceRecordId -> d).toMap
+    assert(byRecord.size == ds.size)
+    val startedAt = read[RunManifest](Files.readString(dir(first, "_manifest.json"))).startedAt
+    for (cand, origin) <- all do
+      val d = byRecord(cand.provenance.sourceRecordId)
+      val (v, f) = expected(cand, origin)
+      assert(
+        (d.decision, d.rulesFired, d.reasonCodes, d.confidence, d.features) ==
+          (v.outcome, v.rulesFired, v.reasonCodes, v.confidence, f)
+      )
+      assert(
+        (d.entityType, d.sourceId, d.targetId) == (cand.entityType, cand.sourceId, cand.targetId)
+      )
+      assert(Validation.validate(d).isRight && d.decidedAt == startedAt)
+      assert(d.provenance.policyVersion.contains(version) && d.provenance.runId == first.runId)
+      assert(d.promptVersion.isEmpty && d.provenance.modelVersion.isEmpty)
+    // Counters per entity type, match path, and outcome.
+    val counted = all
+      .map((cand, o) =>
+        s"${cand.entityType}.${expected(cand, o)._1.path}.${expected(cand, o)._1.outcome}"
+      )
+      .groupMapReduce(identity)(_ => 1L)(_ + _)
+    val group = first.counters(Jobs.J10).collect {
+      case (k, n) if k.startsWith(Counters.DecisionGroup + "/") =>
+        k.stripPrefix(Counters.DecisionGroup + "/") -> n
+    }
+    assert(group == counted && group.values.sum == ds.size)
+    assert(counted.keySet.exists(_.endsWith(".ACCEPTED")) && counted.size > 2)
+    // J09 exports the decisions partitioned by entity type and outcome (the decision value).
+    val exported = dir(first, s"${Jobs.J09}/match-decisions")
+    assert(gzLines(exported).size == ds.size)
+    for d <- ds.map(d => (d.entityType, d.decision)).distinct do
+      val part = exported.resolve(s"entity_type=${d._1}/outcome=${d._2}")
+      assert(gzLines(part).map(read[MatchDecision](_)).forall(x => (x.entityType, x.decision) == d))

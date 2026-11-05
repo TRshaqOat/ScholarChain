@@ -205,3 +205,24 @@ class SourceNormalizersSpec extends AnyFunSuite:
       )
     )
   }
+
+  test("ORCID v3.0: a full API record normalizes exactly like its committed projection") {
+    val projection = lines(sample("orcid/orcid-fictional-test-record.jsonl")).head
+    val v3 = ok(SourceNormalizers.orcid(orcidV3FictionalRecord, ctx))
+    assert(v3 == ok(SourceNormalizers.orcid(projection, ctx)))
+    // Keyed by orcid-identifier.path; the projection reads only the documented v3.0 paths.
+    val p = SourceNormalizers.projectV3(ujson.read(orcidV3FictionalRecord))
+    assert(p("orcid").str == "0000-0002-1825-0097")
+    assert(p("work_dois").arr.size == 6 && p("employments").arr.size == 2)
+    assert(!ujson.write(p).contains("dropped"))
+  }
+
+  test("ORCID v3.0: no orcid-identifier.path is a missing key; a wrong field type is malformed") {
+    val noPath = """{"orcid-identifier":{"uri":null,"path":null},"person":null}"""
+    assert(
+      SourceNormalizers.orcid(noPath, ctx).left.map(_.counter) == Left(Some(Counters.MissingKey))
+    )
+    val badType = """{"orcid-identifier":{"path":"0000-0002-1825-0097"},
+      |"activities-summary":{"works":{"group":"not an array"}}}""".stripMargin.replace("\n", "")
+    assert(SourceNormalizers.orcid(badType, ctx).left.map(_.reason) == Left("malformed-record"))
+  }

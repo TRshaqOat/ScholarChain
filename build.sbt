@@ -41,11 +41,15 @@ lazy val core = module("core", "core")
 
 lazy val entityResolution = module("entityResolution", "entity-resolution")
   .dependsOn(core)
+  .settings(libraryDependencies += Dependencies.bedrockRuntime) // bounded LLM adjudication
 
 lazy val hadoop = module("hadoop", "hadoop")
   .dependsOn(core, entityResolution)
   .settings(
     libraryDependencies ++= Dependencies.hadoop,
+    // hadoop uses only entityResolution's pure functions; EMR supplies the AWS SDK v2, so cut its
+    // whole subtree (netty, httpclient, ...) from the classpath and the job jar.
+    excludeDependencies += ExclusionRule("software.amazon.awssdk"),
     // The cluster has no Scala 3 stdlib (and EMR 7.x may expose 2.12), so relocate ours (D-03).
     assembly / assemblyShadeRules := Seq(
       ShadeRule.rename("scala.**" -> "scholarchain.shaded.scala.@1").inAll

@@ -23,6 +23,8 @@ object Versions {
   val scalaTest = "3.2.20" // 2026-03-25, the only test framework (D-05)
   val logback = "1.5.38" // 2026-07-09, logging implementation (Runtime scope only)
   val typesafeConfig = "1.4.9" // 2026-06-03, HOCON configuration loader (core, Compile scope)
+  // 2026-02-18, AWS SDK for Java v2; the work order names it as the emr-spark-8.0.0 SDK v2 version.
+  val awsSdk = "2.41.32"
 
   // Multi-arch index digest (includes linux/arm64, D-11); tag pushed 2026-09-18.
   val javaRuntimeImage =
@@ -35,6 +37,7 @@ object Dependencies {
   val logback = "ch.qos.logback" % "logback-classic" % Versions.logback % Runtime
   val typesafeConfig = "com.typesafe" % "config" % Versions.typesafeConfig
   val scalaLibrary = "org.scala-lang" % "scala-library" % Versions.scalaLibrary
+  val bedrockRuntime = "software.amazon.awssdk" % "bedrockruntime" % Versions.awsSdk
 
   // The EMR runtime supplies Hadoop and Spark, so both stay Provided (still on the Test classpath).
   val hadoop = Seq("hadoop-client-api", "hadoop-client-runtime")

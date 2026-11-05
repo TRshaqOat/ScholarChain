@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "scholarchain:er-adjudication-v1:response",
+  "title": "er-adjudication-v1 response",
+  "description": "Enforced in code by AdjudicationPrompt.validate. In addition to this schema: sourceId and targetId must equal the request's IDs, and every citedFields entry must be a key of the request's fields object. Any violation, after one bounded retry, becomes ABSTAIN and the pair stays UNRESOLVED.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["sourceId", "targetId", "decision", "confidence", "citedFields", "reasonCodes"],
+  "properties": {
+    "sourceId": { "type": "string" },
+    "targetId": { "type": "string" },
+    "decision": { "enum": ["ACCEPT", "REJECT", "ABSTAIN"] },
+    "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+    "citedFields": { "type": "array", "items": { "type": "string" } },
+    "reasonCodes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "enum": [
+          "NAME_MATCH", "NAME_MISMATCH", "INITIALS_COMPATIBLE", "INITIALS_INCOMPATIBLE",
+          "HOMONYM_SUFFIX_MISMATCH", "COAUTHOR_OVERLAP", "NO_COAUTHOR_OVERLAP",
+          "AFFILIATION_MATCH", "AFFILIATION_MISMATCH", "TOPIC_CONSISTENT", "TOPIC_INCONSISTENT",
+          "TITLE_MATCH", "TITLE_MISMATCH", "YEAR_COMPATIBLE", "YEAR_INCOMPATIBLE",
+          "VENUE_COMPATIBLE", "VENUE_INCOMPATIBLE", "INSUFFICIENT_EVIDENCE",
+          "SUSPECTED_INSTRUCTIONS_IN_DATA"
+        ]
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "decision": { "enum": ["ACCEPT", "REJECT"] } } },
+      "then": { "properties": { "citedFields": { "minItems": 1 } } }
+    }
+  ]
+}

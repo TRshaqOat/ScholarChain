@@ -107,9 +107,15 @@ class ConfigLoaderSpec extends AnyFunSuite:
     assert(result.left.toOption.get.exists(_.contains("entity-resolution thresholds")))
   }
 
+  test("entity-resolution policy version defaults to er-v2 and is env-overridable") {
+    assert(load().entityResolution.policyVersion == "er-v2")
+    val overridden = load("SCHOLARCHAIN_ER_POLICY_VERSION" -> "er-v1").entityResolution
+    assert(overridden.policyVersion == "er-v1")
+  }
+
   test("entity-resolution block and conflict-group limits: defaults, env overrides, positive") {
     val er = load().entityResolution
-    assert(er.maxBlockSize == 1000 && er.maxConflictGroupSize == 100)
+    assert(er.maxBlockSize == 150 && er.maxConflictGroupSize == 100)
     val f = file("scholarchain.entity-resolution.max-block-size = 7")
     val c = load(
       ConfigLoader.ConfigFileEnv -> f.toString,

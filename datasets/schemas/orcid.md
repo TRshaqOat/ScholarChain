@@ -2,7 +2,7 @@
 
 - Source: ORCID anonymous Public API `GET https://pub.orcid.org/v3.0/{orcid}/record` with `Accept: application/json`.
 - Schema version: `orcid-api-v3.0/record`.
-- Raw responses are stored gzip-compressed and unmodified in `scratch/datasets/orcid/<mode>/raw/{orcid}.json.gz`, then combined into `records.jsonl.gz`. The minimized projection of real records is written to `scratch/datasets/orcid/sample/orcid-sample.minimized.jsonl` for review only.
+- Raw responses are stored gzip-compressed and unmodified in `scratch/datasets/orcid/<mode>/raw/{orcid}.json.gz`, then combined into `records.jsonl.gz`. Each run directory also holds `ids.txt` (the selected iDs, in priority order), `selection.json` (`config_version`, `config_sha256`, `max_ids`, `class_order`, `available` and `selected` counts for classes `b_dblp_person_records`, `a_dblp_and_openalex`, `c_dblp_author_elements`, `d_openalex_only` in that priority order, `class_a_ranking` with `rank` (`works` in --full, `string` in SAMPLE), `basis`, `work_identity`, and `selected_min_works` and `selected_max_works` among the selected class (a) iDs, and `work_linkage` with the DBLP and OpenAlex work-matching counts from `dblp_extract.py --pass orcid-work-counts`), and `requests-<UTC date>.count` (requests made on that UTC day). The SAMPLE run directory predates `selection.json` and has none. The minimized projection of real records is written to `scratch/datasets/orcid/sample/orcid-sample.minimized.jsonl` for review only.
 - The Public API returns only data that the researcher marked public. Nullability: every section except the iD may be empty or null.
 
 ## Committed samples (human ruling, phase-03 repair-01, Decision 1)

@@ -298,24 +298,102 @@ object SourceNormalizers:
 
   // ---- ORCID projection (datasets/schemas/orcid.md) --------------------------------------------
 
+  private def at(v: ujson.Value, path: String*): Option[ujson.Value] =
+    path.foldLeft(Option(v))((o, k) => o.flatMap(field(_, k)))
+  private def arrAt(v: ujson.Value, path: String*): Vector[ujson.Value] =
+    at(v, path*).map(_.arr.toVector).getOrElse(Vector.empty)
+  private def strAt(v: ujson.Value, path: String*): ujson.Value =
+    at(v, path*).flatMap(_.strOpt).map(ujson.Str(_)).getOrElse(ujson.Null)
+
+  /** Projects a full ORCID API v3.0 record (`fetch_orcid.sh` records.jsonl.gz) to the projection
+    * fields of datasets/schemas/orcid.md, with the same paths as the `build_samples.sh` projection.
+    * The iD is `orcid-identifier.path`, so records are keyed by the returned iD, not the requested
+    * one.
+    */
+  def projectV3(j: ujson.Value): ujson.Value =
+    val employments = arrAt(j, "activities-summary", "employments", "affiliation-group")
+      .flatMap(arr(_, "summaries"))
+      .flatMap(field(_, "employment-summary"))
+      .map { e =>
+        val org = field(e, "organization")
+        ujson.Obj(
+          "org" -> org.fold(ujson.Null)(strAt(_, "name")),
+          "country" -> org.fold(ujson.Null)(strAt(_, "address", "country")),
+          "org_id" -> org
+            .flatMap(field(_, "disambiguated-organization"))
+            .fold(ujson.Null)(d =>
+              ujson.Obj(
+                "source" -> strAt(d, "disambiguation-source"),
+                "id" -> strAt(d, "disambiguated-organization-identifier")
+              )
+            ),
+          "department" -> strAt(e, "department-name"),
+          "role" -> strAt(e, "role-title"),
+          "start_year" -> strAt(e, "start-date", "year", "value"),
+          "end_year" -> strAt(e, "end-date", "year", "value")
+        )
+      }
+    val dois = arrAt(j, "activities-summary", "works", "group")
+      .flatMap(g => arrAt(g, "external-ids", "external-id"))
+      .filter(x => str(x, "external-id-type").contains("doi"))
+      .flatMap(str(_, "external-id-value"))
+      .map(_.toLowerCase)
+      .distinct
+      .sorted
+    ujson.Obj(
+      "orcid" -> strAt(j, "orcid-identifier", "path"),
+      "name" -> at(j, "person", "name").fold(ujson.Null)(n =>
+        ujson.Obj(
+          "given" -> strAt(n, "given-names", "value"),
+          "family" -> strAt(n, "family-name", "value"),
+          "credit" -> strAt(n, "credit-name", "value")
+        )
+      ),
+      "other_names" -> arrAt(j, "person", "other-names", "other-name")
+        .flatMap(str(_, "content"))
+        .map(ujson.Str(_)),
+      "external_ids" -> arrAt(j, "person", "external-identifiers", "external-identifier").map(x =>
+        ujson.Obj("type" -> strAt(x, "external-id-type"), "value" -> strAt(x, "external-id-value"))
+      ),
+      "employments" -> employments,
+      "work_dois" -> dois.map(ujson.Str(_)),
+      "last_modified_ms" -> at(j, "history", "last-modified-date", "value").getOrElse(ujson.Null)
+    )
+
   /** An ORCID record becomes a Researcher GraphNode keyed by its iD, Institution records for
-    * employments, and AFFILIATED_WITH edges. Records without a valid iD (including `synthetic:`
-    * fixtures) are rejected as unsupported identifiers.
+    * employments, and AFFILIATED_WITH edges. Accepts the projection (committed samples) or a full
+    * v3.0 record (has `orcid-identifier`), which is projected first by [[projectV3]]. Records
+    * without a valid iD (including `synthetic:` fixtures) are rejected as unsupported identifiers.
     */
   def orcid(line: String, ctx: RunContext): Either[Reject, Vector[Keyed]] =
-    parse(line).flatMap { j =>
-      val raw = str(j, "orcid")
-      guarded(raw) {
-        for
-          r <- raw.toRight(Reject.missingKey("ORCID record has no orcid"))
-          id <- StableIds
-            .normalizeOrcid(r)
-            .toRight(
-              Reject("unsupported-identifier", s"'$r' is not a valid ORCID iD", Some(r))
-            )
-          out <- orcidRecord(j, id, ctx)
-        yield out
-      }
+    for
+      parsed <- parse(line)
+      v3 = parsed.obj.contains("orcid-identifier")
+      j <- guarded(None)(Right(if v3 then projectV3(parsed) else parsed))
+      out <- orcidProjection(j, v3, ctx)
+    yield out
+
+  private def orcidProjection(
+      j: ujson.Value,
+      v3: Boolean,
+      ctx: RunContext
+  ): Either[Reject, Vector[Keyed]] =
+    val raw = str(j, "orcid")
+    guarded(raw) {
+      for
+        r <- raw.toRight(
+          Reject.missingKey(
+            if v3 then "ORCID record has no orcid-identifier.path"
+            else "ORCID record has no orcid"
+          )
+        )
+        id <- StableIds
+          .normalizeOrcid(r)
+          .toRight(
+            Reject("unsupported-identifier", s"'$r' is not a valid ORCID iD", Some(r))
+          )
+        out <- orcidRecord(j, id, ctx)
+      yield out
     }
 
   private def orcidRecord(

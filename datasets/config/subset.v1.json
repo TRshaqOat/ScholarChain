@@ -320,6 +320,7 @@
     "documented_anonymous_daily_reads": 25000,
     "daily_request_cap": 24000,
     "sample_max_ids": 30,
+    "full_max_ids": 23000,
     "fictional_test_record_id": "0000-0002-1825-0097",
     "fictional_test_record_marker": "fictitious person"
   }

@@ -43,6 +43,92 @@ object TestSupport:
 
   def tempDir(prefix: String): JPath = Files.createTempDirectory(prefix)
 
+  private def year(y: String) = ujson.Obj("year" -> ujson.Obj("value" -> y))
+  private def employment(org: String, ringgold: String, start: String) = ujson.Obj(
+    "summaries" -> ujson.Arr(
+      ujson.Obj(
+        "employment-summary" -> ujson.Obj(
+          "department-name" -> "Psychoceramics",
+          "role-title" -> "Professor",
+          "start-date" -> year(start),
+          "end-date" -> ujson.Null,
+          "organization" -> ujson.Obj(
+            "name" -> org,
+            "address" -> ujson.Obj("city" -> "x", "country" -> "US"),
+            "disambiguated-organization" -> ujson.Obj(
+              "disambiguated-organization-identifier" -> ringgold,
+              "disambiguation-source" -> "RINGGOLD"
+            )
+          )
+        )
+      )
+    )
+  )
+  private def doiGroup(dois: String*) = ujson.Obj(
+    "external-ids" -> ujson.Obj(
+      "external-id" -> ujson.Arr.from(
+        dois.map(d => ujson.Obj("external-id-type" -> "doi", "external-id-value" -> d)) :+
+          ujson.Obj("external-id-type" -> "eid", "external-id-value" -> "2-s2.0-1")
+      )
+    )
+  )
+
+  /** The committed fictional test record (datasets/samples/orcid) in the full ORCID API v3.0 record
+    * shape that fetch_orcid.sh writes to records.jsonl.gz: the same field values, at the v3.0 paths
+    * the projection reads, plus fields the projection drops (biography, keywords, educations).
+    */
+  val orcidV3FictionalRecord: String = ujson.write(
+    ujson.Obj(
+      "orcid-identifier" -> ujson.Obj(
+        "uri" -> "https://orcid.org/0000-0002-1825-0097",
+        "path" -> "0000-0002-1825-0097",
+        "host" -> "orcid.org"
+      ),
+      "history" -> ujson.Obj(
+        "last-modified-date" -> ujson.Obj("value" -> ujson.Num(1788275402435d))
+      ),
+      "person" -> ujson.Obj(
+        "name" -> ujson.Obj(
+          "given-names" -> ujson.Obj("value" -> "Josiah"),
+          "family-name" -> ujson.Obj("value" -> "Carberry"),
+          "credit-name" -> ujson.Null
+        ),
+        "other-names" -> ujson.Obj(
+          "other-name" -> ujson.Arr.from(
+            Seq("Josiah Stinkney Carberry", "J. Carberry", "J. S. Carberry")
+              .map(n => ujson.Obj("content" -> n))
+          )
+        ),
+        "biography" -> ujson.Obj("content" -> "dropped by the projection"),
+        "keywords" -> ujson.Obj("keyword" -> ujson.Arr(ujson.Obj("content" -> "dropped"))),
+        "external-identifiers" -> ujson.Obj(
+          "external-identifier" -> ujson.Arr(
+            ujson.Obj(
+              "external-id-type" -> "Scopus Author ID",
+              "external-id-value" -> "7007156898"
+            )
+          )
+        )
+      ),
+      "activities-summary" -> ujson.Obj(
+        "educations" -> ujson.Obj("affiliation-group" -> ujson.Arr(employment("x", "1", "1"))),
+        "employments" -> ujson.Obj(
+          "affiliation-group" -> ujson.Arr(
+            employment("Wesleyan University", "5468", "1930"),
+            employment("Brown University", "6752", "1929")
+          )
+        ),
+        "works" -> ujson.Obj(
+          "group" -> ujson.Arr(
+            doiGroup("10.5555/12345678", "10.1109/TPS.1987.4316723"),
+            doiGroup("10.5555/12345679", "10.5555/12345680"),
+            doiGroup("10.5555/666655554444", "10.5555/987654321", "10.5555/12345678")
+          )
+        )
+      )
+    )
+  )
+
   /** Every JSON line of every gzip part file below dir (recursive). */
   def gzLines(dir: JPath): Vector[String] =
     if !Files.exists(dir) then Vector.empty

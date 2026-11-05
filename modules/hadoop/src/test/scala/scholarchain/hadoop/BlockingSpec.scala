@@ -2,8 +2,19 @@ package scholarchain.hadoop
 
 import org.scalatest.funsuite.AnyFunSuite
 import scholarchain.core.*
-import scholarchain.entityresolution.{BlockingKeys, Features, OversizePolicy}
+import scholarchain.entityresolution.{
+  BlockingKeys,
+  CandidateOrigin,
+  Features,
+  MatchPolicy,
+  OversizePolicy,
+  Thresholds,
+  WorkPairFeatures
+}
 import upickle.default.{read, write}
+
+import java.nio.file.{Files, Paths}
+import scala.jdk.CollectionConverters.*
 
 /** J05 and J06 logic on hand-checkable members. The multi-pass reducer logic (Blocking.group, run
   * pass by pass as J05 does) must give the same blocks as the entity-resolution oracle
@@ -11,6 +22,7 @@ import upickle.default.{read, write}
   */
 class BlockingSpec extends AnyFunSuite:
   import TestSupport.*
+  import MatchPolicy.{SourceAgreement, V1, V2}
 
   private def work(
       key: String,
@@ -238,4 +250,98 @@ class BlockingSpec extends AnyFunSuite:
     assert(c.provenance.policyVersion.contains("norm-v1.block-v1.feat-v1"))
     assert(c.provenance.sourceDataset == SourceType.DERIVED)
     assert(c.provenance.sourceRecordId == s"w0:deep_residual_learning|${wa.id}|${wb.id}")
+  }
+
+  test("J10 decisions: er-v1 applied unchanged; blocked work pairs add WorkPairFeatures") {
+    val t = Thresholds(0.93, 0.35, 0.65, 0.93)
+    val at = "2026-11-03T00:00:00Z"
+    val (wa, wb) = (Blocking.members(works(0)).head, Blocking.members(works(4)).head)
+    val f = Blocking.features(wa, wb, _ => None)
+    val c =
+      Blocking.candidate(MatchEntityType.WORK, wa.id, wb.id, "w0:deep_residual_learning", f, ctx)
+    val (v, d) =
+      Decisions.decide(c, CandidateOrigin.BLOCKED, Some((wa.work, wb.work)), t, runId, at, V1)
+    val withPair = f ++ WorkPairFeatures.work(wa.work, wb.work, V1)
+    assert(d.features == withPair && withPair(MatchPolicy.DblpRecordAgreement) == 0.0)
+    assert(v == MatchPolicy.decideBlocked(MatchEntityType.WORK, withPair, t, V1))
+    // Two different DBLP records are never merged.
+    assert(d.decision == MatchOutcome.REJECTED && d.reasonCodes.contains("DBLP_RECORD_MISMATCH"))
+    assert(Validation.validate(d).isRight && d.provenance.policyVersion.contains("er-v1"))
+    assert(d.promptVersion.isEmpty && d.provenance.modelVersion.isEmpty && d.decidedAt == at)
+    assert(
+      d.provenance.sourceRecordId == c.provenance.sourceRecordId && d.provenance.runId == runId
+    )
+    assert(Decisions.counter(c, v) == "WORK.EXACT_ID.REJECTED")
+    // A Crossref copy with the same DOI: identifier agreement accepts.
+    val dblp = works(0).copy(doi = Some("10.1/x"))
+    val cr = dblp.copy(workId = "doi:10.1/x", source = SourceType.CROSSREF)
+    val (v2, _) = Decisions.decide(c, CandidateOrigin.BLOCKED, Some((dblp, cr)), t, runId, at, V1)
+    assert(v2.outcome == MatchOutcome.ACCEPTED && v2.reasonCodes == Vector("EXACT_DOI_MATCH"))
+    // Researcher pairs and exact-ID candidates use the candidate's own features.
+    val (rs, rt) = (Blocking.members(works(0))(1), Blocking.members(works(1))(1))
+    val rc = Blocking.candidate(
+      MatchEntityType.RESEARCHER,
+      rs.id,
+      rt.id,
+      "r0:wang|w",
+      Blocking.features(rs, rt, _ => None),
+      ctx
+    )
+    val (rv, rd) = Decisions.decide(rc, CandidateOrigin.BLOCKED, None, t, runId, at, V1)
+    assert(rv == MatchPolicy.decideBlocked(MatchEntityType.RESEARCHER, rc.features, t, V1))
+    assert(rd.features == rc.features)
+    val exact =
+      rc.copy(targetId = "orcid:0000-0002-1825-0097", blockingKey = "orcid:0000-0002-1825-0097")
+    assert(
+      Decisions.decide(exact, CandidateOrigin.EXACT_MATCH, None, t, runId, at, V1)._1.outcome ==
+        MatchOutcome.ACCEPTED
+    )
+    assert(
+      Decisions.decide(rc, CandidateOrigin.EXACT_CONFLICT, None, t, runId, at, V1)._1.outcome ==
+        MatchOutcome.CONFLICT
+    )
+  }
+
+  test("J10 decisions: the given version reaches WorkPairFeatures and MatchPolicy (er-v2 rules)") {
+    val t = Thresholds(0.93, 0.35, 0.65, 0.93)
+    val at = "2026-11-03T00:00:00Z"
+    val (wa, wb) = (Blocking.members(works(0)).head, Blocking.members(works(4)).head)
+    val c = Blocking.candidate(
+      MatchEntityType.WORK,
+      wa.id,
+      wb.id,
+      "w0:deep_residual_learning",
+      Blocking.features(wa, wb, _ => None),
+      ctx
+    )
+    // Two OpenAlex works sharing one DOI: er-v1 accepts, er-v2 gives SAME_SOURCE_SHARED_DOI.
+    def oa(w: WorkRecord, id: String) =
+      w.copy(workId = id, source = SourceType.OPENALEX, doi = Some("10.1/shared"))
+    val pair = Some((oa(works(0), "openalex:W1"), oa(works(4), "openalex:W2")))
+    val (v1, d1) = Decisions.decide(c, CandidateOrigin.BLOCKED, pair, t, runId, at, V1)
+    val (v2, d2) = Decisions.decide(c, CandidateOrigin.BLOCKED, pair, t, runId, at, V2)
+    assert(v1.outcome == MatchOutcome.ACCEPTED && !d1.features.contains(SourceAgreement))
+    assert(v2.outcome == MatchOutcome.CONFLICT && v2.reasonCodes.contains("SAME_SOURCE_SHARED_DOI"))
+    assert(d2.features(SourceAgreement) == 1.0 && Validation.validate(d2).isRight)
+    assert(d1.provenance.policyVersion.contains(V1) && d2.provenance.policyVersion.contains(V2))
+    // Researcher and exact-ID decisions record the version they were decided under.
+    val exact = c.copy(blockingKey = "doi:10.1/shared")
+    val (_, de) = Decisions.decide(exact, CandidateOrigin.EXACT_MATCH, None, t, runId, at, V2)
+    assert(de.decision == MatchOutcome.ACCEPTED && de.provenance.policyVersion.contains(V2))
+    // An unknown version never decides.
+    assert(
+      intercept[IllegalArgumentException](
+        Decisions.decide(c, CandidateOrigin.BLOCKED, pair, t, runId, at, "er-v3")
+      ).getMessage.contains("er-v3")
+    )
+  }
+
+  test("J10 never adjudicates: no hadoop source names adjudication, Bedrock, or the AWS SDK") {
+    val main = Seq(Paths.get("modules/hadoop/src/main"), Paths.get("src/main"))
+      .find(Files.isDirectory(_))
+      .getOrElse(fail("cannot locate modules/hadoop/src/main"))
+    val sources = Files.walk(main).iterator.asScala.filter(_.toString.endsWith(".scala")).toVector
+    assert(sources.nonEmpty)
+    val banned = "Adjudicat|withAdjudication|LlmClient|Bedrock|software\\.amazon".r
+    for f <- sources do assert(banned.findFirstIn(Files.readString(f)).isEmpty, f.toString)
   }

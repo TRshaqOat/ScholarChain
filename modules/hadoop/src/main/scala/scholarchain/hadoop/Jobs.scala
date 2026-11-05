@@ -14,6 +14,7 @@ import org.apache.hadoop.mapreduce.lib.output.{FileOutputFormat, LazyOutputForma
 import org.apache.hadoop.mapreduce.lib.partition.HashPartitioner
 import org.apache.hadoop.mapreduce.{Job, Mapper, Reducer, TaskInputOutputContext}
 import scholarchain.core.*
+import scholarchain.entityresolution.{CandidateOrigin, MatchPolicy, Thresholds}
 import upickle.default.{ReadWriter, read, write}
 
 import java.nio.charset.StandardCharsets.ISO_8859_1
@@ -110,11 +111,12 @@ class DblpExtractMapper extends Mapper[LongWritable, Text, Text, Text]:
         Counters.inc(ctx, Counters.RepeatedAuthorName, p.repeatedAuthorNames)
 
 /** Shared by J01 and J02. Reduce: (Text "<kind>\t<id>", [Text JSON]) -> JSON lines in <kind>/.
-  * works: identical repeats count DUPLICATE; differing repeats count CONFLICT, the smallest record
-  * is kept and the others go to rejects-v1/; each kept work also writes its authors to mentions/.
-  * Enrichment entities (venues, institutions, topics, edges, researcher-profiles) repeat by design
-  * across works: the most frequent value is kept (ties: the smallest). rejects-v1 values pass
-  * through.
+  * works and researcher-profiles (one per ORCID iD, keyed by orcid-identifier.path): identical
+  * repeats count DUPLICATE; differing repeats count CONFLICT, the smallest record is kept and the
+  * others go to rejects-v1/; every extra profile record also counts ORCID_DUPLICATE. Each kept work
+  * also writes its authors to mentions/. Enrichment entities (venues, institutions, topics, edges)
+  * repeat by design across works: the most frequent value is kept (ties: the smallest). rejects-v1
+  * values pass through.
   */
 class NormalizedRecordReducer extends Reducer[Text, Text, NullWritable, Text]:
   private var out: Outputs = scala.compiletime.uninitialized
@@ -131,25 +133,27 @@ class NormalizedRecordReducer extends Reducer[Text, Text, NullWritable, Text]:
     val (kind, id) = Keyed.split(key)
     val vs = Tasks.sortedValues(values)
     kind match
-      case Reject.Dir => vs.foreach(out.write(kind, _))
-      case "works"    =>
+      case Reject.Dir                      => vs.foreach(out.write(kind, _))
+      case "works" | "researcher-profiles" =>
         val distinct = vs.distinct
         Counters.inc(ctx, Counters.Duplicate, vs.size - distinct.size)
+        if kind != "works" then Counters.inc(ctx, Counters.OrcidDuplicate, vs.size - 1)
         if distinct.size > 1 then
           Counters.inc(ctx, Counters.Conflict)
           distinct.tail.foreach { v =>
-            val w = read[WorkRecord](v)
+            val p = read[Provenance](ujson.read(v)("provenance"))
             val r = Reject(
               "conflicting-duplicate",
-              s"work $id has differing records; kept the smallest",
-              Some(w.sourceRecordId)
+              s"$kind $id has differing records; kept the smallest",
+              Some(p.sourceRecordId)
             )
-            out.write(Reject.Dir, write(r.record(run, w.source, s"work:$id", v)))
+            out.write(Reject.Dir, write(r.record(run, p.sourceDataset, s"$kind:$id", v)))
           }
-        out.write("works", distinct.head)
-        read[WorkRecord](distinct.head).authors.foreach(m =>
-          out.write("mentions", WireCodec.encode(m))
-        )
+        out.write(kind, distinct.head)
+        if kind == "works" then
+          read[WorkRecord](distinct.head).authors.foreach(m =>
+            out.write("mentions", WireCodec.encode(m))
+          )
       case other =>
         out.write(
           other,
@@ -223,7 +227,15 @@ class ExactKeyMapper extends Mapper[LongWritable, Text, Text, Text]:
           .map(m =>
             ExactIdentifiers
               .mentionKeys(m)
-              .map(_ -> IndexEntry("mention", m.mentionId, m.provenance.sourceDataset, m.workId))
+              .map(
+                _ -> IndexEntry(
+                  "mention",
+                  m.mentionId,
+                  m.provenance.sourceDataset,
+                  m.workId,
+                  Some(m.rawName)
+                )
+              )
           )
       case other => Left(Reject("unsupported-input", s"unexpected input directory $other"))
     entries match
@@ -235,18 +247,24 @@ class ExactKeyMapper extends Mapper[LongWritable, Text, Text, Text]:
 
 /** Reduce: (Text identifier, [Text IndexEntry]) -> MatchCandidate JSON in matches/ and conflicts/.
   * A conflicting group above entity-resolution.max-conflict-group-size writes no pairs: it counts
-  * OVERSIZE_CONFLICT and writes one oversize-conflicts/ line. One stats/ line per reducer with its
-  * largest identifier group.
+  * OVERSIZE_CONFLICT and writes one oversize-conflicts/ line. A researcher group that the
+  * configured policy's MatchPolicy.orcidGroupSuffixConflict marks counts ORCID_SUFFIX_CONFLICT and
+  * writes one suffix-conflicts/ line {job, identifier, groupSize, rule, policyVersion}. One stats/
+  * line per reducer with its largest identifier group.
   */
 class ExactJoinReducer extends Reducer[Text, Text, NullWritable, Text]:
   private var out: Outputs = scala.compiletime.uninitialized
   private var run: RunContext = scala.compiletime.uninitialized
   private var maxConflict = 0
+  private var policyVersion = ""
   private var largest = (0, "")
 
   override def setup(ctx: Reducer[Text, Text, NullWritable, Text]#Context): Unit =
     out = new Outputs(ctx); run = RunContext.from(ctx.getConfiguration)
     maxConflict = Keys.required(ctx.getConfiguration, Keys.MaxConflictGroupSize).toInt
+    policyVersion =
+      MatchPolicy.requireVersion(Keys.required(ctx.getConfiguration, Keys.MatchPolicyVersion))
+    Counters.inc(ctx, Counters.OrcidSuffixConflict, 0)
 
   override def reduce(
       key: Text,
@@ -258,9 +276,21 @@ class ExactJoinReducer extends Reducer[Text, Text, NullWritable, Text]:
       values.asScala.map(_.toString).toVector.sorted.foreach(out.write(Reject.Dir, _))
     else
       val entries = Tasks.sortedValues(values).map(read[IndexEntry](_))
-      val o = ExactIdentifiers.resolve(id, entries, run, maxConflict)
+      val o = ExactIdentifiers.resolve(id, entries, run, maxConflict, policyVersion)
       Counters.inc(ctx, Counters.Duplicate, o.duplicates)
       if o.conflicted then Counters.inc(ctx, Counters.Conflict)
+      if o.suffixConflict then
+        Counters.inc(ctx, Counters.OrcidSuffixConflict)
+        out.write(
+          "suffix-conflicts",
+          Tasks.statsLine(
+            run.job,
+            "identifier" -> id,
+            "groupSize" -> o.groupSize,
+            "rule" -> MatchPolicy.Rule.OrcidGroupSuffixConflict,
+            "policyVersion" -> policyVersion
+          )
+        )
       Counters.inc(ctx, Counters.OversizeConflict, o.oversizeConflicts.size)
       o.oversizeConflicts.foreach(g =>
         out.write(
@@ -477,11 +507,13 @@ class BlockingKeyReducer extends Reducer[Text, Text, NullWritable, Text]:
 // ---- J06 CandidateJoinJob -----------------------------------------------------------------------
 
 /** Map: (LongWritable, Text BlockRecord JSON of any J05 pass's blocks/) -> (Text
-  * "<entityType>\t<sourceId>\t<targetId>", Text JSON [blockingKey, features]) for every member pair
-  * of the block (sourceId < targetId). Features are entity-resolution Features (feat-v1). Two
-  * mentions of one work are skipped and count SAME_WORK_PAIR_SKIPPED. Venue names for the venue
-  * feature come from a side input read once in setup: the venues/ directories of J01 and J02 (one
-  * line per venue, so the table is bounded by the number of venues, not of works).
+  * "<entityType>\t<sourceId>\t<targetId>", Text JSON [blockingKey, features, works]) for every
+  * member pair of the block (sourceId < targetId). Features are entity-resolution Features
+  * (feat-v1). `works` is [[workA, workB]] for WORK pairs (J10 needs both records) and [] for
+  * researcher pairs. Two mentions of one work are skipped and count SAME_WORK_PAIR_SKIPPED. Venue
+  * names for the venue feature come from a side input read once in setup: the venues/ directories
+  * of J01 and J02 (one line per venue, so the table is bounded by the number of venues, not of
+  * works).
   */
 class CandidatePairMapper extends Mapper[LongWritable, Text, Text, Text]:
   private var run: RunContext = scala.compiletime.uninitialized
@@ -516,14 +548,24 @@ class CandidatePairMapper extends Mapper[LongWritable, Text, Text, Text]:
         pairs.foreach { (x, y) =>
           ctx.write(
             new Text(s"${block.entityType}\t${x.id}\t${y.id}"),
-            new Text(write((block.key, Blocking.features(x, y, venues.get))))
+            new Text(
+              write(
+                (
+                  block.key,
+                  Blocking.features(x, y, venues.get),
+                  Option.when(block.entityType == MatchEntityType.WORK)((x.work, y.work))
+                )
+              )
+            )
           )
         }
 
-/** Reduce: (Text "<entityType>\t<sourceId>\t<targetId>", [Text [blockingKey, features]]) -> one
-  * MatchCandidate in candidates/. A pair met in several blocks (r2 is multi-key) is written once,
-  * with the smallest blocking key; the extra meetings count DUPLICATE. Features depend only on the
-  * two members, so every meeting carries the same features.
+/** Reduce: (Text "<entityType>\t<sourceId>\t<targetId>", [Text [blockingKey, features, works]]) ->
+  * one MatchCandidate in candidates/, and for a WORK pair also one WorkPairInput (the candidate
+  * plus both work records, for J10) in work-pairs/, counting WORK_PAIR. A pair met in several
+  * blocks (r2 is multi-key) is written once, with the smallest blocking key; the extra meetings
+  * count DUPLICATE. Features and works depend only on the two members, so every meeting carries the
+  * same ones.
   */
 class CandidateJoinReducer extends Reducer[Text, Text, NullWritable, Text]:
   private var out: Outputs = scala.compiletime.uninitialized
@@ -540,9 +582,11 @@ class CandidateJoinReducer extends Reducer[Text, Text, NullWritable, Text]:
       Tasks.sortedValues(values).foreach(out.write(Reject.Dir, _))
     else
       val Array(t, a, b) = k.split('\t'): @unchecked
-      val vs = values.asScala.map(v => read[(String, Map[String, Double])](v.toString)).toVector
+      val vs = values.asScala
+        .map(v => read[(String, Map[String, Double], Option[(WorkRecord, WorkRecord)])](v.toString))
+        .toVector
       Counters.inc(ctx, Counters.Duplicate, vs.size - 1)
-      val (blockingKey, features) = vs.minBy(_._1)
+      val (blockingKey, features, works) = vs.minBy(_._1)
       val c = Blocking.candidate(MatchEntityType.valueOf(t), a, b, blockingKey, features, run)
       Validation.validate(c) match
         case Left(es) =>
@@ -552,7 +596,98 @@ class CandidateJoinReducer extends Reducer[Text, Text, NullWritable, Text]:
         case Right(_) =>
           Counters.inc(ctx, Counters.MatchCandidate)
           out.write("candidates", WireCodec.encode(c))
+          works.foreach { (wa, wb) =>
+            Counters.inc(ctx, Counters.WorkPair)
+            out.write(
+              "work-pairs",
+              write(WorkPairInput(Decisions.WorkPairSchemaVersion, c, wa, wb))
+            )
+          }
   override def cleanup(ctx: Reducer[Text, Text, NullWritable, Text]#Context): Unit = out.close()
+
+// ---- J10 MatchDecisionJob (map-only) ------------------------------------------------------------
+
+/** Map only, no reducers: (LongWritable, Text JSON line) -> one MatchDecision JSON line in
+  * decisions/ (part-m-NNNNN.gz), or a RejectRecord in rejects-v1/. Inputs: J03+J04 matches/ (origin
+  * EXACT_MATCH) and conflicts/ (EXACT_CONFLICT) and J06 candidates/ (BLOCKED) as MatchCandidate
+  * JSON; J06 work-pairs/ (BLOCKED) as WorkPairInput JSON. WORK lines of candidates/ count
+  * DEFERRED_WORK_CANDIDATE and are decided from work-pairs/, which carries the same candidate with
+  * both works for WorkPairFeatures, so INPUT = ACCEPTED + REJECTED + DEFERRED_WORK_CANDIDATE.
+  * Applies [[Decisions.decide]] (entity-resolution MatchPolicy and WorkPairFeatures under the
+  * configured policy version, er-v1 or er-v2; an unknown version fails the task in setup;
+  * thresholds from entity-resolution.* configuration). Never adjudicates and never calls an LLM.
+  * Each decision counts `<entityType>.<matchPath>.<outcome>` in group scholarchain.decisions, and
+  * LLM_ELIGIBLE when its score is inside the LLM band (the decision stays UNRESOLVED).
+  */
+class MatchDecisionMapper extends Mapper[LongWritable, Text, NullWritable, Text]:
+  private type Ctx = Mapper[LongWritable, Text, NullWritable, Text]#Context
+  private var out: Outputs = scala.compiletime.uninitialized
+  private var run: RunContext = scala.compiletime.uninitialized
+  private var thresholds: Thresholds = scala.compiletime.uninitialized
+  private var origin: CandidateOrigin = scala.compiletime.uninitialized
+  private var decidedAt = ""
+  private var policyVersion = ""
+  private var dir = ""
+
+  override def setup(ctx: Ctx): Unit =
+    Counters.register(ctx)
+    val conf = ctx.getConfiguration
+    def d(k: String) = Keys.required(conf, k).toDouble
+    run = RunContext.from(conf)
+    thresholds = Thresholds(
+      d(Keys.AcceptThreshold),
+      d(Keys.RejectThreshold),
+      d(Keys.LlmBandMin),
+      d(Keys.LlmBandMax)
+    )
+    decidedAt = Keys.required(conf, Keys.DecidedAt)
+    policyVersion = MatchPolicy.requireVersion(Keys.required(conf, Keys.MatchPolicyVersion))
+    dir = Tasks.inputDir(ctx)
+    origin = Decisions.Origins.getOrElse(dir, sys.error(s"unexpected J10 input directory $dir"))
+    out = new Outputs(ctx)
+
+  private def reject(ctx: Ctx, r: Reject, loc: String, raw: String): Unit =
+    Counters.inc(ctx, Counters.Rejected)
+    r.counter.foreach(Counters.inc(ctx, _))
+    out.write(Reject.Dir, write(r.record(run, SourceType.DERIVED, loc, raw)))
+
+  override def map(offset: LongWritable, value: Text, ctx: Ctx): Unit =
+    Counters.inc(ctx, Counters.Input)
+    val json = value.toString
+    val loc = s"$dir:offset:${offset.get}"
+    val input: Either[Reject, (MatchCandidate, Option[(WorkRecord, WorkRecord)])] =
+      if dir == "work-pairs" then
+        scala.util
+          .Try(read[WorkPairInput](json))
+          .toEither
+          .left
+          .map(e => Reject.malformed(s"WorkPairInput: ${e.getMessage}"))
+          .flatMap(p =>
+            Validation
+              .validate(p.candidate)
+              .left
+              .map(es => Reject.schema(es.mkString("; ")))
+              .map(_ => (p.candidate, Some((p.workA, p.workB))))
+          )
+      else Tasks.decode[MatchCandidate](json).map((_, None))
+    input match
+      case Left(r) => reject(ctx, r, loc, json)
+      case Right((c, _)) if dir == "candidates" && c.entityType == MatchEntityType.WORK =>
+        Counters.inc(ctx, Counters.DeferredWorkCandidate)
+      case Right((c, works)) =>
+        val (v, d) =
+          Decisions.decide(c, origin, works, thresholds, run.runId, decidedAt, policyVersion)
+        Validation.validate(d) match
+          case Left(es) =>
+            val id = Some(s"${c.sourceId}|${c.targetId}")
+            reject(ctx, Reject.schema(es.mkString("; "), id), loc, json)
+          case Right(_) =>
+            Counters.inc(ctx, Counters.Accepted)
+            if v.llmEligible then Counters.inc(ctx, Counters.LlmEligible)
+            ctx.getCounter(Counters.DecisionGroup, Decisions.counter(c, v)).increment(1)
+            out.write("decisions", WireCodec.encode(d))
+
+  override def cleanup(ctx: Ctx): Unit = out.close()
 
 // ---- J09 GraphCandidateExportJob ----------------------------------------------------------------
 
@@ -596,6 +731,13 @@ object Export:
       case "candidates" =>
         decode[MatchCandidate](json).map(c =>
           (s"blocking-candidates/entity_type=${c.entityType}", s"${c.sourceId}|${c.targetId}")
+        )
+      case "decisions" =>
+        decode[MatchDecision](json).map(d =>
+          (
+            s"match-decisions/entity_type=${d.entityType}/outcome=${d.decision}",
+            d.provenance.sourceRecordId
+          )
         )
       case "matches" | "conflicts" =>
         val dir = if kind == "matches" then "match-candidates" else "exact-id-conflicts"
@@ -678,6 +820,7 @@ object Jobs:
   val J05 = "j05-blocking-key"
   def J05Pass(level: Int): String = s"$J05-p$level"
   val J06 = "j06-candidate-join"
+  val J10 = "j10-match-decision"
   val J08 = "j07-j08-team-pair-expansion"
   val J09 = "j09-graph-export"
 
@@ -775,6 +918,14 @@ object Jobs:
     job.getConfiguration.setStrings(Keys.VenueDirs, venueDirs.map(_.toString)*)
     job.setMapperClass(classOf[CandidatePairMapper])
     job.setReducerClass(classOf[CandidateJoinReducer])
+    job
+
+  /** J10, map-only (0 reducers): J03+J04 matches/ and conflicts/, J06 candidates/ and work-pairs/.
+    */
+  def matchDecisions(conf: Configuration, in: Seq[Path], out: Path): Job =
+    val job = textJob(conf, J10, in, out, 0)
+    job.setMapperClass(classOf[MatchDecisionMapper])
+    job.setMapOutputKeyClass(classOf[NullWritable])
     job
 
   def teamPairs(conf: Configuration, dblpWorks: Seq[Path], out: Path, reducers: Int): Job =

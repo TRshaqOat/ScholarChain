@@ -2,6 +2,8 @@ package scholarchain.hadoop
 
 import org.scalatest.funsuite.AnyFunSuite
 import scholarchain.core.*
+import scholarchain.entityresolution.MatchPolicy
+import scholarchain.entityresolution.MatchPolicy.{V1, V2}
 
 class LogicSpec extends AnyFunSuite:
   import TestSupport.*
@@ -121,7 +123,8 @@ class LogicSpec extends AnyFunSuite:
         e("openalex:W1", SourceType.OPENALEX)
       ),
       ctx,
-      100
+      100,
+      V2
     )
     assert(
       o.matches.map(c => (c.sourceId, c.targetId)) == Vector(
@@ -147,7 +150,8 @@ class LogicSpec extends AnyFunSuite:
         e("openalex:W1", SourceType.OPENALEX)
       ),
       ctx,
-      100
+      100,
+      V2
     )
     assert(o.matches.isEmpty)
     assert(
@@ -157,29 +161,50 @@ class LogicSpec extends AnyFunSuite:
 
   test("conflict cap: a conflicting group above max-conflict-group-size emits no pairs") {
     val three = Seq("A", "B", "C").map(k => e(s"dblp:conf/x/$k", SourceType.DBLP))
-    val capped = ExactIdentifiers.resolve("doi:10.1/a", three, ctx, 2)
+    val capped = ExactIdentifiers.resolve("doi:10.1/a", three, ctx, 2, V2)
     assert(capped.conflicts.isEmpty && capped.matches.isEmpty && capped.conflicted)
     assert(
       capped.oversizeConflicts == Vector(ExactIdentifiers.OversizeConflict(MatchEntityType.WORK, 3))
     )
     assert(!capped.unmatched)
-    val open = ExactIdentifiers.resolve("doi:10.1/a", three, ctx, 3)
+    val open = ExactIdentifiers.resolve("doi:10.1/a", three, ctx, 3, V2)
     assert(open.conflicts.size == 3 && open.oversizeConflicts.isEmpty)
     val slots = (1 to 3).map(i =>
       IndexEntry("mention", s"dblp:conf/x/B#$i", SourceType.DBLP, "dblp:conf/x/B")
     )
-    val r = ExactIdentifiers.resolve("orcid:0000-0002-1825-0097", slots, ctx, 2)
+    val r = ExactIdentifiers.resolve("orcid:0000-0002-1825-0097", slots, ctx, 2, V2)
     assert(
       r.conflicts.isEmpty && r.oversizeConflicts == Vector(
         ExactIdentifiers.OversizeConflict(MatchEntityType.RESEARCHER, 3)
       )
     )
+    // The cap withholds only the clashing work's mentions: a mention of another work still matches.
+    val other = IndexEntry("mention", "dblp:conf/x/A#1", SourceType.DBLP, "dblp:conf/x/A")
+    val mixed = ExactIdentifiers.resolve("orcid:0000-0002-1825-0097", slots :+ other, ctx, 2, V2)
+    assert(mixed.matches.map(_.sourceId) == Vector("dblp:conf/x/A#1"))
+    assert(mixed.conflicted && mixed.oversizeConflicts.size == 1 && mixed.conflicts.isEmpty)
+  }
+
+  test("exact DOI join: two OpenAlex works with one DOI conflict; no work per DOI is assumed") {
+    val o = ExactIdentifiers.resolve(
+      "doi:10.1/a",
+      Seq(
+        e("openalex:W2", SourceType.OPENALEX),
+        e("dblp:conf/x/A", SourceType.DBLP),
+        e("openalex:W1", SourceType.OPENALEX)
+      ),
+      ctx,
+      100,
+      V2
+    )
+    assert(o.matches.isEmpty && o.conflicted)
+    assert(o.conflicts.map(c => (c.sourceId, c.targetId)) == Vector(("openalex:W1", "openalex:W2")))
   }
 
   test("exact DOI join: no DBLP work means unmatched") {
     assert(
       ExactIdentifiers
-        .resolve("doi:10.1/a", Seq(e("openalex:W1", SourceType.OPENALEX)), ctx, 100)
+        .resolve("doi:10.1/a", Seq(e("openalex:W1", SourceType.OPENALEX)), ctx, 100, V2)
         .unmatched
     )
   }
@@ -194,7 +219,8 @@ class LogicSpec extends AnyFunSuite:
         IndexEntry("mention", "dblp:conf/x/B#3", SourceType.DBLP, "dblp:conf/x/B")
       ),
       ctx,
-      100
+      100,
+      V2
     )
     assert(o.matches.map(_.sourceId) == Vector("dblp:conf/x/A#1", "openalex:W1#2"))
     assert(
@@ -207,4 +233,62 @@ class LogicSpec extends AnyFunSuite:
         ("dblp:conf/x/B#1", "dblp:conf/x/B#3")
       )
     )
+  }
+
+  // Review 1 finding 1 (fictional IDs): one ORCID on DBLP "Wei Wang 0001" and "Wei Wang 0002".
+  private val wangOrcid = "orcid:0000-0001-2345-6789"
+  private def mention(work: String, pos: Int, name: String) =
+    IndexEntry("mention", s"dblp:$work#$pos", SourceType.DBLP, s"dblp:$work", Some(name))
+  private val wang =
+    Seq(mention("conf/y/B7", 1, "Wei Wang 0002"), mention("conf/x/A1", 1, "Wei Wang 0001"))
+
+  test("orcid suffix conflict (er-v2): Wei Wang 0001 and 0002 under one ORCID never merge") {
+    val o = ExactIdentifiers.resolve(wangOrcid, wang, ctx, 100, V2)
+    assert(o.suffixConflict && o.conflicted && !o.unmatched && o.matches.isEmpty)
+    assert(
+      o.conflicts.map(c => (c.entityType, c.sourceId, c.targetId, c.blockingKey)) == Vector(
+        (MatchEntityType.RESEARCHER, "dblp:conf/x/A1#1", "dblp:conf/y/B7#1", wangOrcid)
+      )
+    )
+    assert(o.conflicts.forall(c => Validation.validate(c).isRight) && o.oversizeConflicts.isEmpty)
+  }
+
+  test("orcid suffix conflict (er-v1): the same input is unchanged, both mentions match the iD") {
+    val o = ExactIdentifiers.resolve(wangOrcid, wang, ctx, 100, V1)
+    assert(!o.suffixConflict && !o.conflicted && o.conflicts.isEmpty)
+    assert(
+      o.matches.map(c => (c.sourceId, c.targetId)) == Vector(
+        ("dblp:conf/x/A1#1", wangOrcid),
+        ("dblp:conf/y/B7#1", wangOrcid)
+      )
+    )
+  }
+
+  test("orcid suffix conflict (er-v2): the whole group conflicts, all n(n-1)/2 pairs, no match") {
+    // An unsuffixed mention and a same-work clash are swept into the one conflict group.
+    val group = wang ++ Seq(
+      mention("conf/z/C3", 2, "Wei Wang"),
+      mention("conf/x/A1", 3, "Wei Wang 0001")
+    )
+    val o = ExactIdentifiers.resolve(wangOrcid, group, ctx, 100, V2)
+    assert(o.suffixConflict && o.matches.isEmpty && o.groupSize == 4)
+    assert(o.conflicts.size == 6 && o.conflicts.forall(c => c.sourceId < c.targetId))
+    // Capped: no pairs, one oversize report, and still nothing matches.
+    val capped = ExactIdentifiers.resolve(wangOrcid, group, ctx, 3, V2)
+    assert(capped.suffixConflict && capped.matches.isEmpty && capped.conflicts.isEmpty)
+    assert(
+      capped.oversizeConflicts == Vector(
+        ExactIdentifiers.OversizeConflict(MatchEntityType.RESEARCHER, 4)
+      )
+    )
+  }
+
+  test("orcid suffix conflict (er-v2): one suffixed and one unsuffixed mention still match") {
+    val pair = Seq(mention("conf/x/A1", 1, "Wei Wang 0001"), mention("conf/y/B7", 1, "Wei Wang"))
+    val o = ExactIdentifiers.resolve(wangOrcid, pair, ctx, 100, V2)
+    assert(!o.suffixConflict && !o.conflicted && o.matches.size == 2)
+    // Not an orcid: key, so the rule does not apply.
+    val oa = ExactIdentifiers.resolve("openalex:A1", wang, ctx, 100, V2)
+    assert(!oa.suffixConflict && oa.matches.size == 2)
+    assert(MatchPolicy.Rule.OrcidGroupSuffixConflict == "er-v2:orcid-group-homonym-suffix-conflict")
   }

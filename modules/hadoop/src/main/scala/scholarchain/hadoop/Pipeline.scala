@@ -6,9 +6,11 @@ import org.apache.hadoop.mapreduce.Job
 import org.apache.hadoop.util.GenericOptionsParser
 import scholarchain.core.{SourceType, StableIds}
 import scholarchain.core.config.{ConfigLoader, ScholarChainConfig}
+import scholarchain.entityresolution.MatchPolicy
 import upickle.default.{ReadWriter, write}
 
 import java.nio.charset.StandardCharsets.UTF_8
+import java.time.Instant
 import scala.jdk.CollectionConverters.*
 
 /** Pipeline arguments. Every path may be local or `s3a://`; list arguments are comma-separated. */
@@ -66,13 +68,17 @@ final case class RunManifest(
     configVersion: String,
     attempt: Int,
     inputSnapshots: Vector[String],
+    inputFingerprints: Vector[String],
     inputs: Map[String, Vector[String]],
     reducers: Int,
     oversizeTeamThreshold: Int,
     graphPolicyVersion: String,
     maxBlockSize: Int,
     maxConflictGroupSize: Int,
-    entityResolutionRules: String
+    entityResolutionRules: String,
+    matchPolicyVersion: String,
+    thresholds: Map[String, Double],
+    startedAt: String
 ) derives ReadWriter
 
 final case class PipelineResult(
@@ -82,14 +88,16 @@ final case class PipelineResult(
     counters: Map[String, Map[String, Long]]
 )
 
-/** Driver for the job chain J01 -> J02 -> J03+J04 -> J05 (pass 0..2) -> J06 -> J07+J08 -> J09
-  * (sequential). A J05 pass runs only when the pass before it re-keyed at least one block.
+/** Driver for the job chain J01 -> J02 -> J03+J04 -> J05 (pass 0..2) -> J06 -> J10 -> J07+J08 ->
+  * J09 (sequential). A J05 pass runs only when the pass before it re-keyed at least one block.
   *
-  * Run ID: StableIds.runId("hadoop-pipeline", codeVersion, configVersion, input snapshots,
-  * attempt). The attempt is `--attempt` when given (run scripts pass it; the run fails if that
-  * attempt's run directory exists), else the smallest n >= 1 whose run directory does not exist
-  * yet, so every rerun of the same inputs gets a new attempt and a new run directory. Output
-  * layout: `<out>/snapshot=<dblp snapshot>/run=<runId>/<job>/<dir>/part-r-NNNNN.gz`.
+  * Run ID: StableIds.runId("hadoop-pipeline", codeVersion, configVersion, input snapshots ++ input
+  * fingerprints, attempt). A fingerprint is `input:<name>=<path as given>:<bytes>` (bytes: the file
+  * length, or the total of a directory), so changed input data gives a new run ID. The attempt is
+  * `--attempt` when given (run scripts pass it; the run fails if that attempt's run directory
+  * exists), else the smallest n >= 1 whose run directory does not exist yet, so every rerun of the
+  * same inputs gets a new attempt and a new run directory. Output layout:
+  * `<out>/snapshot=<dblp snapshot>/run=<runId>/<job>/<dir>/part-r-NNNNN.gz`.
   */
 object Pipeline:
   val Stage = "hadoop-pipeline"
@@ -113,14 +121,40 @@ object Pipeline:
   ): Either[String, PipelineResult] =
     for
       cfg <- ConfigLoader.load(env).left.map(_.mkString("; "))
-      result <- claim(conf, o, cfg)
+      _ <- Either.cond(
+        MatchPolicy.Versions.contains(cfg.entityResolution.policyVersion),
+        (),
+        s"configured entity-resolution.policy-version ${cfg.entityResolution.policyVersion} " +
+          s"is not implemented (${MatchPolicy.Versions.mkString(", ")})"
+      )
+      prints <- fingerprints(conf, o)
+      result <- claim(conf, o, cfg, prints)
     yield result
+
+  /** `input:<name>=<path as given>:<bytes>` for every input path, in argument order. */
+  def fingerprints(conf: Configuration, o: PipelineOptions): Either[String, Vector[String]] =
+    val named = Vector(
+      "dblp" -> o.dblp,
+      "dblp-dtd" -> Seq(o.dblpDtd),
+      "openalex" -> o.openAlex,
+      "crossref" -> o.crossref,
+      "orcid" -> o.orcid
+    ).flatMap((n, ps) => ps.map(n -> _))
+    named.foldLeft[Either[String, Vector[String]]](Right(Vector.empty)) {
+      case (Right(acc), (n, p)) =>
+        val path = new Path(p)
+        val fs = path.getFileSystem(conf)
+        if !fs.exists(path) then Left(s"input --$n not found: $p")
+        else Right(acc :+ s"input:$n=$p:${fs.getContentSummary(path).getLength}")
+      case (failed, _) => failed
+    }
 
   /** Chooses the attempt and its run ID; an attempt whose run directory exists is refused. */
   private def claim(
       base: Configuration,
       o: PipelineOptions,
-      cfg: ScholarChainConfig
+      cfg: ScholarChainConfig,
+      prints: Vector[String]
   ): Either[String, PipelineResult] =
     val configVersion = cfg.configVersion
     val snapshots = Vector(
@@ -131,12 +165,13 @@ object Pipeline:
     )
     val root = new Path(new Path(o.out), s"snapshot=${o.dblpSnapshot}")
     val fs = root.getFileSystem(base)
-    def idFor(a: Int) = StableIds.runId(Stage, o.codeVersion, configVersion, snapshots, a)
+    def idFor(a: Int) =
+      StableIds.runId(Stage, o.codeVersion, configVersion, snapshots ++ prints, a)
     def runDirFor(a: Int) = new Path(root, s"run=${idFor(a)}")
     val attempt = o.attempt.getOrElse(LazyList.from(1).find(a => !fs.exists(runDirFor(a))).get)
     if fs.exists(runDirFor(attempt)) then
       Left(s"attempt $attempt already exists: ${runDirFor(attempt)}; outputs are never overwritten")
-    else execute(base, o, fs, root, attempt, idFor(attempt), configVersion, snapshots, cfg)
+    else execute(base, o, fs, root, attempt, idFor(attempt), configVersion, snapshots, prints, cfg)
 
   private def execute(
       base: Configuration,
@@ -147,20 +182,30 @@ object Pipeline:
       runId: String,
       configVersion: String,
       snapshots: Vector[String],
+      prints: Vector[String],
       cfg: ScholarChainConfig
   ): Either[String, PipelineResult] =
     val (threshold, graphPolicy) = (cfg.graph.oversizeTeamThreshold, cfg.graph.policyVersion)
-    val (maxBlock, maxConflict) =
-      (cfg.entityResolution.maxBlockSize, cfg.entityResolution.maxConflictGroupSize)
+    val er = cfg.entityResolution
+    val (maxBlock, maxConflict) = (er.maxBlockSize, er.maxConflictGroupSize)
+    val thresholds = Seq(
+      Keys.AcceptThreshold -> er.acceptThreshold,
+      Keys.RejectThreshold -> er.rejectThreshold,
+      Keys.LlmBandMin -> er.llmBandMin,
+      Keys.LlmBandMax -> er.llmBandMax
+    )
+    // One decision instant per run: every J10 decision of the run carries it (also in the manifest).
+    val startedAt = Instant.now().toString
     val runDir = new Path(root, s"run=$runId")
     val manifest = RunManifest(
-      "hadoop-run-manifest-v2",
+      "hadoop-run-manifest-v3",
       runId,
       Stage,
       o.codeVersion,
       configVersion,
       attempt,
       snapshots.sorted,
+      prints,
       Map(
         "dblp" -> o.dblp.toVector,
         "dblp-dtd" -> Vector(o.dblpDtd),
@@ -173,7 +218,10 @@ object Pipeline:
       graphPolicy,
       maxBlock,
       maxConflict,
-      Blocking.RuleVersions
+      Blocking.RuleVersions,
+      er.policyVersion,
+      thresholds.map((k, v) => k.stripPrefix("scholarchain.entity-resolution.") -> v).toMap,
+      startedAt
     )
     // create(overwrite = false) claims the attempt; a concurrent run with the same attempt fails here.
     writeFile(
@@ -191,6 +239,9 @@ object Pipeline:
     conf.setInt(Keys.OversizeTeamThreshold, threshold)
     conf.setInt(Keys.MaxBlockSize, maxBlock)
     conf.setInt(Keys.MaxConflictGroupSize, maxConflict)
+    thresholds.foreach((k, v) => conf.set(k, v.toString))
+    conf.set(Keys.MatchPolicyVersion, er.policyVersion)
+    conf.set(Keys.DecidedAt, startedAt)
     conf.set(Keys.snapshot(SourceType.DBLP), o.dblpSnapshot)
     conf.set(Keys.snapshot(SourceType.OPENALEX), o.openAlexSnapshot)
     conf.set(Keys.snapshot(SourceType.CROSSREF), o.crossrefSnapshot)
@@ -218,7 +269,8 @@ object Pipeline:
         "conflicts",
         "teams",
         "pairs",
-        "candidates"
+        "candidates",
+        "decisions"
       )
     val paths = (xs: Seq[String]) => xs.map(new Path(_))
 
@@ -265,6 +317,11 @@ object Pipeline:
       )
     ) ++ passes.indices.map(l => passes(l) -> (() => j05(l))) ++ Seq(
       Jobs.J06 -> (() => j06()),
+      Jobs.J10 -> (() =>
+        val in = subdirs(Jobs.J04, Set("matches", "conflicts")) ++
+          subdirs(Jobs.J06, Set("candidates", "work-pairs"))
+        Option.when(in.nonEmpty)(Jobs.matchDecisions(conf, in, dir(Jobs.J10)))
+      ),
       Jobs.J08 -> (() =>
         Some(Jobs.teamPairs(conf, subdirs(Jobs.J01, Set("works")), dir(Jobs.J08), o.reducers))
       ),
@@ -272,7 +329,8 @@ object Pipeline:
         Some(
           Jobs.graphExport(
             conf,
-            Seq(Jobs.J01, Jobs.J02, Jobs.J04, Jobs.J06, Jobs.J08).flatMap(subdirs(_, exportable)),
+            Seq(Jobs.J01, Jobs.J02, Jobs.J04, Jobs.J06, Jobs.J10, Jobs.J08)
+              .flatMap(subdirs(_, exportable)),
             dir(Jobs.J09),
             o.reducers
           )

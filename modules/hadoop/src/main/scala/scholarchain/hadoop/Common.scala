@@ -28,11 +28,21 @@ object Counters:
   val RepeatedAuthorName = "REPEATED_AUTHOR_NAME"
   val ExactMatch = "EXACT_MATCH"
   val ExactUnmatched = "EXACT_UNMATCHED"
+
+  /** J03+J04: researcher groups that MatchPolicy.orcidGroupSuffixConflict makes conflict groups. */
+  val OrcidSuffixConflict = "ORCID_SUFFIX_CONFLICT"
   val BlockMember = "BLOCK_MEMBER"
   val BlockKept = "BLOCK_KEPT"
   val BlockRekeyed = "BLOCK_REKEYED"
   val SameWorkPairSkipped = "SAME_WORK_PAIR_SKIPPED"
   val MatchCandidate = "MATCH_CANDIDATE"
+  val OrcidDuplicate = "ORCID_DUPLICATE"
+  val WorkPair = "WORK_PAIR"
+  val DeferredWorkCandidate = "DEFERRED_WORK_CANDIDATE"
+  val LlmEligible = "LLM_ELIGIBLE"
+
+  /** J10 decision counts, one counter per `<entityType>.<matchPath>.<outcome>`. */
+  val DecisionGroup = "scholarchain.decisions"
 
   /** Counters every job reports, registered at zero so they are visible even when never hit. */
   val Standard: Seq[String] =
@@ -64,6 +74,16 @@ object Keys:
   val GraphPolicyVersion = "scholarchain.graph.policy-version"
   val MaxBlockSize = "scholarchain.entity-resolution.max-block-size"
   val MaxConflictGroupSize = "scholarchain.entity-resolution.max-conflict-group-size"
+
+  /** J10: the configured match policy version (er-v1 or er-v2), its thresholds
+    * (entity-resolution.*), and the run's decision instant (ISO-8601).
+    */
+  val MatchPolicyVersion = "scholarchain.entity-resolution.policy-version"
+  val AcceptThreshold = "scholarchain.entity-resolution.accept-threshold"
+  val RejectThreshold = "scholarchain.entity-resolution.reject-threshold"
+  val LlmBandMin = "scholarchain.entity-resolution.llm-band-min"
+  val LlmBandMax = "scholarchain.entity-resolution.llm-band-max"
+  val DecidedAt = "scholarchain.decided-at"
 
   /** J05 pass number = the blocking level that pass groups by. */
   val BlockLevel = "scholarchain.j05.level"

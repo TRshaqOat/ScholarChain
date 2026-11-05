@@ -1,0 +1,410 @@
+{
+  "policyVersion": "er-v1",
+  "labelledRows": 310,
+  "byEntityType": {
+    "RESEARCHER": {
+      "overall": {
+        "n": 259,
+        "unsure": 1,
+        "tp": 90,
+        "fp": 1,
+        "fn": 60,
+        "tn": 108,
+        "precision": 0.989010989010989,
+        "recall": 0.6,
+        "f1": 0.7468879668049792,
+        "coverage": 0.7027027027027027,
+        "unresolvedRate": 0.2972972972972973,
+        "confusion": {
+          "MATCH": {
+            "ACCEPTED": 90,
+            "CONFLICT": 1,
+            "REJECTED": 5,
+            "UNRESOLVED": 54
+          },
+          "NON_MATCH": {
+            "ACCEPTED": 1,
+            "CONFLICT": 12,
+            "REJECTED": 73,
+            "UNRESOLVED": 23
+          },
+          "UNSURE": {
+            "ACCEPTED": 0,
+            "CONFLICT": 0,
+            "REJECTED": 0,
+            "UNRESOLVED": 1
+          }
+        }
+      },
+      "byPath": {
+        "EXACT_ID": {
+          "n": 91,
+          "unsure": 0,
+          "tp": 39,
+          "fp": 0,
+          "fn": 3,
+          "tn": 49,
+          "precision": 1,
+          "recall": 0.9285714285714286,
+          "f1": 0.962962962962963,
+          "coverage": 1,
+          "unresolvedRate": 0,
+          "confusion": {
+            "MATCH": {
+              "ACCEPTED": 39,
+              "CONFLICT": 1,
+              "REJECTED": 2,
+              "UNRESOLVED": 0
+            },
+            "NON_MATCH": {
+              "ACCEPTED": 0,
+              "CONFLICT": 12,
+              "REJECTED": 37,
+              "UNRESOLVED": 0
+            },
+            "UNSURE": {
+              "ACCEPTED": 0,
+              "CONFLICT": 0,
+              "REJECTED": 0,
+              "UNRESOLVED": 0
+            }
+          }
+        },
+        "DETERMINISTIC": {
+          "n": 13,
+          "unsure": 0,
+          "tp": 13,
+          "fp": 0,
+          "fn": 0,
+          "tn": 0,
+          "precision": 1,
+          "recall": 1,
+          "f1": 1,
+          "coverage": 1,
+          "unresolvedRate": 0,
+          "confusion": {
+            "MATCH": {
+              "ACCEPTED": 13,
+              "CONFLICT": 0,
+              "REJECTED": 0,
+              "UNRESOLVED": 0
+            },
+            "NON_MATCH": {
+              "ACCEPTED": 0,
+              "CONFLICT": 0,
+              "REJECTED": 0,
+              "UNRESOLVED": 0
+            },
+            "UNSURE": {
+              "ACCEPTED": 0,
+              "CONFLICT": 0,
+              "REJECTED": 0,
+              "UNRESOLVED": 0
+            }
+          }
+        },
+        "PROBABILISTIC": {
+          "n": 116,
+          "unsure": 1,
+          "tp": 38,
+          "fp": 1,
+          "fn": 26,
+          "tn": 51,
+          "precision": 0.9743589743589743,
+          "recall": 0.59375,
+          "f1": 0.7378640776699028,
+          "coverage": 0.6724137931034483,
+          "unresolvedRate": 0.3275862068965517,
+          "confusion": {
+            "MATCH": {
+              "ACCEPTED": 38,
+              "CONFLICT": 0,
+              "REJECTED": 3,
+              "UNRESOLVED": 23
+            },
+            "NON_MATCH": {
+              "ACCEPTED": 1,
+              "CONFLICT": 0,
+              "REJECTED": 36,
+              "UNRESOLVED": 15
+            },
+            "UNSURE": {
+              "ACCEPTED": 0,
+              "CONFLICT": 0,
+              "REJECTED": 0,
+              "UNRESOLVED": 1
+            }
+          }
+        },
+        "LLM_BAND": {
+          "n": 39,
+          "unsure": 0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 31,
+          "tn": 8,
+          "precision": null,
+          "recall": 0,
+          "f1": null,
+          "coverage": 0,
+          "unresolvedRate": 1,
+          "confusion": {
+            "MATCH": {
+              "ACCEPTED": 0,
+              "CONFLICT": 0,
+              "REJECTED": 0,
+              "UNRESOLVED": 31
+            },
+            "NON_MATCH": {
+              "ACCEPTED": 0,
+              "CONFLICT": 0,
+              "REJECTED": 0,
+              "UNRESOLVED": 8
+            },
+            "UNSURE": {
+              "ACCEPTED": 0,
+              "CONFLICT": 0,
+              "REJECTED": 0,
+              "UNRESOLVED": 0
+            }
+          }
+        },
+        "LLM": {
+          "n": 0,
+          "unsure": 0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "tn": 0,
+          "precision": null,
+          "recall": null,
+          "f1": null,
+          "coverage": null,
+          "unresolvedRate": null,
+          "confusion": {
+            "MATCH": {
+              "ACCEPTED": 0,
+              "CONFLICT": 0,
+              "REJECTED": 0,
+              "UNRESOLVED": 0
+            },
+            "NON_MATCH": {
+              "ACCEPTED": 0,
+              "CONFLICT": 0,
+              "REJECTED": 0,
+              "UNRESOLVED": 0
+            },
+            "UNSURE": {
+              "ACCEPTED": 0,
+              "CONFLICT": 0,
+              "REJECTED": 0,
+              "UNRESOLVED": 0
+            }
+          }
+        }
+      }
+    },
+    "WORK": {
+      "overall": {
+        "n": 45,
+        "unsure": 5,
+        "tp": 19,
+        "fp": 0,
+        "fn": 18,
+        "tn": 8,
+        "precision": 1,
+        "recall": 0.5135135135135135,
+        "f1": 0.6785714285714285,
+        "coverage": 0.7555555555555555,
+        "unresolvedRate": 0.24444444444444444,
+        "confusion": {
+          "MATCH": {
+            "ACCEPTED": 19,
+            "CONFLICT": 6,
+            "REJECTED": 1,
+            "UNRESOLVED": 11
+          },
+          "NON_MATCH": {
+            "ACCEPTED": 0,
+            "CONFLICT": 0,
+            "REJECTED": 8,
+            "UNRESOLVED": 0
+          },
+          "UNSURE": {
+            "ACCEPTED": 0,
+            "CONFLICT": 0,
+            "REJECTED": 4,
+            "UNRESOLVED": 1
+          }
+        }
+      },
+      "byPath": {
+        "EXACT_ID": {
+          "n": 18,
+          "unsure": 1,
+          "tp": 6,
+          "fp": 0,
+          "fn": 7,
+          "tn": 5,
+          "precision": 1,
+          "recall": 0.46153846153846156,
+          "f1": 0.631578947368421,
+          "coverage": 1,
+          "unresolvedRate": 0,
+          "confusion": {
+            "MATCH": {
+              "ACCEPTED": 6,
+              "CONFLICT": 6,
+              "REJECTED": 1,
+              "UNRESOLVED": 0
+            },
+            "NON_MATCH": {
+              "ACCEPTED": 0,
+              "CONFLICT": 0,
+              "REJECTED": 5,
+              "UNRESOLVED": 0
+            },
+            "UNSURE": {
+              "ACCEPTED": 0,
+              "CONFLICT": 0,
+              "REJECTED": 1,
+              "UNRESOLVED": 0
+            }
+          }
+        },
+        "DETERMINISTIC": {
+          "n": 7,
+          "unsure": 0,
+          "tp": 7,
+          "fp": 0,
+          "fn": 0,
+          "tn": 0,
+          "precision": 1,
+          "recall": 1,
+          "f1": 1,
+          "coverage": 1,
+          "unresolvedRate": 0,
+          "confusion": {
+            "MATCH": {
+              "ACCEPTED": 7,
+              "CONFLICT": 0,
+              "REJECTED": 0,
+              "UNRESOLVED": 0
+            },
+            "NON_MATCH": {
+              "ACCEPTED": 0,
+              "CONFLICT": 0,
+              "REJECTED": 0,
+              "UNRESOLVED": 0
+            },
+            "UNSURE": {
+              "ACCEPTED": 0,
+              "CONFLICT": 0,
+              "REJECTED": 0,
+              "UNRESOLVED": 0
+            }
+          }
+        },
+        "PROBABILISTIC": {
+          "n": 14,
+          "unsure": 4,
+          "tp": 6,
+          "fp": 0,
+          "fn": 5,
+          "tn": 3,
+          "precision": 1,
+          "recall": 0.5454545454545454,
+          "f1": 0.7058823529411764,
+          "coverage": 0.6428571428571429,
+          "unresolvedRate": 0.35714285714285715,
+          "confusion": {
+            "MATCH": {
+              "ACCEPTED": 6,
+              "CONFLICT": 0,
+              "REJECTED": 0,
+              "UNRESOLVED": 5
+            },
+            "NON_MATCH": {
+              "ACCEPTED": 0,
+              "CONFLICT": 0,
+              "REJECTED": 3,
+              "UNRESOLVED": 0
+            },
+            "UNSURE": {
+              "ACCEPTED": 0,
+              "CONFLICT": 0,
+              "REJECTED": 3,
+              "UNRESOLVED": 1
+            }
+          }
+        },
+        "LLM_BAND": {
+          "n": 6,
+          "unsure": 0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 6,
+          "tn": 0,
+          "precision": null,
+          "recall": 0,
+          "f1": null,
+          "coverage": 0,
+          "unresolvedRate": 1,
+          "confusion": {
+            "MATCH": {
+              "ACCEPTED": 0,
+              "CONFLICT": 0,
+              "REJECTED": 0,
+              "UNRESOLVED": 6
+            },
+            "NON_MATCH": {
+              "ACCEPTED": 0,
+              "CONFLICT": 0,
+              "REJECTED": 0,
+              "UNRESOLVED": 0
+            },
+            "UNSURE": {
+              "ACCEPTED": 0,
+              "CONFLICT": 0,
+              "REJECTED": 0,
+              "UNRESOLVED": 0
+            }
+          }
+        },
+        "LLM": {
+          "n": 0,
+          "unsure": 0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "tn": 0,
+          "precision": null,
+          "recall": null,
+          "f1": null,
+          "coverage": null,
+          "unresolvedRate": null,
+          "confusion": {
+            "MATCH": {
+              "ACCEPTED": 0,
+              "CONFLICT": 0,
+              "REJECTED": 0,
+              "UNRESOLVED": 0
+            },
+            "NON_MATCH": {
+              "ACCEPTED": 0,
+              "CONFLICT": 0,
+              "REJECTED": 0,
+              "UNRESOLVED": 0
+            },
+            "UNSURE": {
+              "ACCEPTED": 0,
+              "CONFLICT": 0,
+              "REJECTED": 0,
+              "UNRESOLVED": 0
+            }
+          }
+        }
+      }
+    }
+  }
+}

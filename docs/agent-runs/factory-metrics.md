@@ -26,3 +26,20 @@ Running log for the Phase 16 agentic-factory evaluation. One row per agent invoc
 | 2026-11-03 | 04 | entity-resolution-engineer | COMPLETE | y | - | 0 | none | none | WO3: normalization, blocking keys, oversize policy, 10 features; 30 tests |
 | 2026-11-03 | 04 | hadoop-engineer | COMPLETE | y | - | 1 | none | guard-dangerous false positive on Scala text "b.key" (used file tools instead) | WO4: J05/J06, jar shaded; full 110,867-work local run |
 | 2026-11-03 | 04 | code-reviewer | APPROVE | y | 0/0/3 | - | none | none | 3 minor accepted as residual |
+| ? | 05 | dataset-engineer (WO1) | COMPLETE | n | - | 0 | 0 | ? | follow-up in repair-01 |
+| ? | 05 | dataset-engineer (repair-01) | ? | ? | - | ? | 0 | ? | see repair-01.md |
+| ? | 05 | dataset-engineer (WO2) | COMPLETE | y | - | 0 | 0 | ? | manifest updated with observed figures |
+| ? | 05 | build-engineer (WO3) | COMPLETE | y | - | 0 | 0 | ? | bedrockruntime pin, awssdk excluded from hadoop |
+| ? | 05 | entity-resolution-engineer (WO4) | COMPLETE | y | - | 0 | 0 | ? | match policy er-v1 |
+| ? | 05 | domain-engineer (WO5) | COMPLETE | y | - | 0 | 0 | ? | ER configuration |
+| ? | 05 | hadoop-engineer (WO6) | COMPLETE | y | - | 0 | 0 | ? | J10 decisions, er-v1 full run |
+| ? | 05 | entity-resolution-engineer (WO7) | COMPLETE | y | - | 0 | 0 | ? | gold review queue, 310 rows |
+| ? | 05 | entity-resolution-engineer (WO8) | COMPLETE | y | - | 0 | 0 | ? | er-v2 from silver data |
+| ? | 05 | domain-engineer (WO9) | BLOCKED-ON hadoop-engineer | n | - | 0 | 0 | ? | cross-owner dependency, routed via WO10 |
+| ? | 05 | hadoop-engineer (WO10) | COMPLETE | y | - | 0 | 0 | ? | er-v2 full run |
+| ? | 05 | entity-resolution-engineer (WO11) | COMPLETE | y | - | 0 | 0 | ? | er-v2 re-key |
+| 2026-11-04 | 05 | code-reviewer (review 1) | REQUEST_CHANGES | n | 0/1/11 | 0 | 0 | ? | major: ORCID group across DBLP homonym numbers |
+| 2026-11-04 | 05 | entity-resolution-engineer (R1) | COMPLETE | y | - | 1 | 0 | ? | orcidGroupSuffixConflict rule |
+| 2026-11-04 | 05 | hadoop-engineer (R2) | COMPLETE | y | - | 1 | 0 | ? | rule applied in J03+J04; 16 groups; rerun |
+| 2026-11-04 | 05 | entity-resolution-engineer (R3) | COMPLETE | y | - | 1 | 0 | ? | re-key, 0 rows changed |
+| 2026-11-04 | 05 | code-reviewer (review 2) | REQUEST_CHANGES | n | 0/1/5 | 1 | 0 | ? | major (capped group) ruled residual risk; Phase 5: 1 BLOCKED-ON, 1 repair round |

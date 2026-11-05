@@ -182,6 +182,63 @@ def pass_persons(stream, out):
     return stats
 
 
+def pass_orcid_work_counts(stream, openalex_path, out):
+    """Distinct subset works per ORCID iD over DBLP <author orcid> attributes (works.xml on stdin) and
+    OpenAlex authorships[].author.orcid (works.jsonl). Work identity: dblp:<key> for a DBLP record; an
+    OpenAlex work whose DOI (lower-cased, as in dois.txt) is on a DBLP record is that record (lowest key if
+    several); any other OpenAlex work is doi:<DOI>, or openalex:<id> without a DOI.
+    Writes orcid-work-counts.tsv (iD TAB count, iD order) and stats-orcid-work-counts.json."""
+    doi_key, works, shared = {}, {}, set()
+    stats = {"dblp_records": 0, "dblp_records_with_doi": 0, "dblp_dois_on_several_records": 0,
+             "openalex_works": 0, "openalex_works_matched_to_dblp_record": 0,
+             "openalex_works_unmatched_with_doi": 0, "openalex_works_without_doi": 0}
+    for _, _, text in records(stream):
+        km = KEY.search(text)
+        if not km:
+            continue
+        key = km.group(1)
+        stats["dblp_records"] += 1
+        rec_dois = {html.unescape(x).strip().lower() for x in DOI_EE.findall(text)}
+        stats["dblp_records_with_doi"] += bool(rec_dois)
+        for d in rec_dois:
+            if d in doi_key:
+                shared.add(d)
+                doi_key[d] = min(doi_key[d], key)
+            else:
+                doi_key[d] = key
+        for attrs, _ in AUTHOR.findall(text):
+            om = ORCID_ATTR.search(attrs or "")
+            if om and orcid_checksum_ok(om.group(1)):  # same filter as orcids-works.txt
+                works.setdefault(om.group(1), set()).add("dblp:" + key)
+    oa_id = re.compile(r"[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{3}[0-9X]")
+    with open(openalex_path, encoding="utf-8") as f:
+        for line in f:
+            if not line.strip():
+                continue
+            w = json.loads(line)
+            stats["openalex_works"] += 1
+            doi = (w.get("doi") or "").lower().removeprefix("https://doi.org/")
+            if doi in doi_key:
+                wid = "dblp:" + doi_key[doi]
+                stats["openalex_works_matched_to_dblp_record"] += 1
+            elif doi:
+                wid = "doi:" + doi
+                stats["openalex_works_unmatched_with_doi"] += 1
+            else:
+                wid = "openalex:" + str(w.get("id"))
+                stats["openalex_works_without_doi"] += 1
+            for a in w.get("authorships") or []:
+                oid = ((a or {}).get("author") or {}).get("orcid") or ""
+                oid = oid.removeprefix("https://orcid.org/")  # same filter as fetch_openalex.sh orcids.txt
+                if oa_id.fullmatch(oid):
+                    works.setdefault(oid, set()).add(wid)
+    stats["dblp_dois_on_several_records"] = len(shared)
+    stats["orcids_counted"] = len(works)
+    write_latin1(os.path.join(out, "orcid-work-counts.tsv"), "".join(f"{k}\t{len(works[k])}\n" for k in sorted(works)))
+    write_latin1(os.path.join(out, "stats-orcid-work-counts.json"), json.dumps(stats, indent=2, sort_keys=True) + "\n")
+    return stats
+
+
 def self_test():
     import io
     import tempfile
@@ -219,8 +276,9 @@ def self_test():
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--pass", dest="which", choices=["works", "persons"])
+    ap.add_argument("--pass", dest="which", choices=["works", "persons", "orcid-work-counts"])
     ap.add_argument("--config")
+    ap.add_argument("--openalex", help="OpenAlex works.jsonl (orcid-work-counts pass)")
     ap.add_argument("--out")
     ap.add_argument("--max-records", type=int, default=0, help="0 means no cap")
     ap.add_argument("--self-test", action="store_true")
@@ -234,6 +292,10 @@ def main():
         with open(a.config, encoding="utf-8") as f:
             cfg = json.load(f)
         s = pass_works(cfg, sys.stdin.buffer, a.out, a.max_records)
+    elif a.which == "orcid-work-counts":
+        if not a.openalex:
+            ap.error("--openalex is required for --pass orcid-work-counts")
+        s = pass_orcid_work_counts(sys.stdin.buffer, a.openalex, a.out)
     else:
         s = pass_persons(sys.stdin.buffer, a.out)
     print(json.dumps({k: v for k, v in s.items() if not isinstance(v, dict)}, sort_keys=True))

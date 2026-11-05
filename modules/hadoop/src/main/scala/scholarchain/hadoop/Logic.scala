@@ -1,14 +1,32 @@
 package scholarchain.hadoop
 
 import scholarchain.core.*
-import scholarchain.entityresolution.{BlockingKeys, Features, OversizePolicy, Versions}
+import scholarchain.entityresolution.{
+  BlockingKeys,
+  CandidateOrigin,
+  Features,
+  MatchPolicy,
+  OversizePolicy,
+  Thresholds,
+  Verdict,
+  Versions,
+  WorkPairFeatures
+}
 import upickle.default.{ReadWriter, read, write}
 
 import scala.collection.mutable
 
-/** One member of an exact-identifier group: the J03/J04 shuffle value (internal to the job). */
-final case class IndexEntry(kind: String, id: String, source: SourceType, workId: String)
-    derives ReadWriter
+/** One member of an exact-identifier group: the J03/J04 shuffle value (internal to the job).
+  * `rawName` is the mention's printed name (None for works), the input of
+  * MatchPolicy.orcidGroupSuffixConflict.
+  */
+final case class IndexEntry(
+    kind: String,
+    id: String,
+    source: SourceType,
+    workId: String,
+    rawName: Option[String] = None
+) derives ReadWriter
 
 /** Exact-identifier keys and group resolution (J03+J04). DOI and ORCID normalization come from core
   * StableIds; the source records were normalized in J01 and J02.
@@ -35,7 +53,8 @@ object ExactIdentifiers:
       conflicts: Vector[MatchCandidate],
       oversizeConflicts: Vector[OversizeConflict],
       duplicates: Int,
-      groupSize: Int
+      groupSize: Int,
+      suffixConflict: Boolean = false
   ):
     def conflicted: Boolean = conflicts.nonEmpty || oversizeConflicts.nonEmpty
     def unmatched: Boolean = matches.isEmpty && !conflicted
@@ -45,17 +64,25 @@ object ExactIdentifiers:
     *     conflict: every within-source pair is emitted as a conflict and nothing matches. Otherwise
     *     every non-DBLP work matches the single DBLP work (the canonical work of the DBLP-seeded
     *     corpus); with no DBLP work the key is unmatched.
-    *   - Researcher keys: two or more mentions of the same work under one key are a conflict (one
-    *     person cannot hold two author slots); every other mention matches the key itself.
+    *   - Researcher keys: if MatchPolicy.orcidGroupSuffixConflict(key, member raw names,
+    *     policyVersion) holds (er-v2: an `orcid:` group whose mentions carry two or more distinct
+    *     DBLP homonym numbers), the whole group is one conflict group: every member pair is a
+    *     conflict, nothing matches, and the Outcome is flagged `suffixConflict`. Otherwise two or
+    *     more mentions of the same work under one key are a conflict (one person cannot hold two
+    *     author slots); every other mention matches the key itself.
     * A conflicting group with more than maxConflictGroup members emits no pairs; it is reported as
-    * an [[OversizeConflict]] instead (the key still counts as a conflict and still matches
-    * nothing). Candidates carry empty feature maps: exact-ID matches are not blocked candidates.
+    * an [[OversizeConflict]] instead, and the key still counts as a conflict. The cap changes only
+    * the conflict output, not the matches: a capped work key still matches nothing, and under a
+    * capped researcher key the mentions of other works still match the key (only the clashing
+    * work's mentions are withheld). Candidates carry empty feature maps: exact-ID matches are not
+    * blocked candidates.
     */
   def resolve(
       key: String,
       entries: Seq[IndexEntry],
       ctx: RunContext,
-      maxConflictGroup: Int
+      maxConflictGroup: Int,
+      policyVersion: String
   ): Outcome =
     val members = entries.distinctBy(_.id).sortBy(_.id).toVector
     val dupes = entries.size - members.size
@@ -93,6 +120,17 @@ object ExactIdentifiers:
             members.filter(_ != dblp).map(o => cand(MatchEntityType.WORK, o.id, dblp.id))
           case None => Vector.empty
         Outcome(matches, Vector.empty, Vector.empty, dupes, members.size)
+    else if MatchPolicy.orcidGroupSuffixConflict(key, members.flatMap(_.rawName), policyVersion)
+    then
+      val r = MatchEntityType.RESEARCHER
+      Outcome(
+        Vector.empty,
+        conflictPairs(r, members),
+        oversize(r, Vector(members)),
+        dupes,
+        members.size,
+        suffixConflict = true
+      )
     else
       val (clash, ok) = members.groupBy(_.workId).values.toVector.partition(_.size > 1)
       val sortedClash = clash.sortBy(_.head.id)
@@ -309,3 +347,63 @@ object Blocking:
       features,
       ctx.provenance(SourceType.DERIVED, s"$key|$a|$b").copy(policyVersion = Some(RuleVersions))
     )
+
+/** A blocked WORK candidate with both work records (J06 work-pairs/, hadoop-internal format
+  * [[Decisions.WorkPairSchemaVersion]]). J10 needs both works for the er-v1 work-pair features, and
+  * only J06 holds them (inside the BlockRecords), so J06 hands them on; a map-only J10 needs no
+  * join and never loads a works table.
+  */
+final case class WorkPairInput(
+    schemaVersion: String,
+    candidate: MatchCandidate,
+    workA: WorkRecord,
+    workB: WorkRecord
+) derives ReadWriter
+
+/** J10 logic. The match policy, its thresholds, and the work-pair features are the
+  * entity-resolution-engineer's pure functions (MatchPolicy.decide / decideBlocked,
+  * WorkPairFeatures); this object only applies them, exactly as the entity-resolution Runner does
+  * without adjudication. It never calls adjudication or any LLM client.
+  */
+object Decisions:
+  val WorkPairSchemaVersion = "hadoop-work-pair-v1"
+
+  /** The J10 input directory a candidate came from, and the origin it stands for. */
+  val Origins: Map[String, CandidateOrigin] = Map(
+    "matches" -> CandidateOrigin.EXACT_MATCH,
+    "conflicts" -> CandidateOrigin.EXACT_CONFLICT,
+    "candidates" -> CandidateOrigin.BLOCKED,
+    "work-pairs" -> CandidateOrigin.BLOCKED
+  )
+
+  /** Features policy `version` sees: blocked work pairs add WorkPairFeatures.work(a, b, version) to
+    * feat-v1.
+    */
+  def features(
+      c: MatchCandidate,
+      works: Option[(WorkRecord, WorkRecord)],
+      version: String
+  ): Map[String, Double] =
+    works.fold(c.features)((a, b) => c.features ++ WorkPairFeatures.work(a, b, version))
+
+  /** The verdict of policy `version` (no default, so a caller can never fall back to er-v1
+    * silently) and the MatchDecision for one candidate (no prompt or model version).
+    */
+  def decide(
+      c: MatchCandidate,
+      origin: CandidateOrigin,
+      works: Option[(WorkRecord, WorkRecord)],
+      t: Thresholds,
+      runId: String,
+      decidedAt: String,
+      version: String
+  ): (Verdict, MatchDecision) =
+    val f = features(c, works, version)
+    val v =
+      if origin == CandidateOrigin.BLOCKED then
+        MatchPolicy.decideBlocked(c.entityType, f, t, version)
+      else MatchPolicy.decide(c, origin, t, version)
+    (v, MatchPolicy.toDecision(c, f, v, runId, decidedAt, None, None))
+
+  /** J10 counter name of a decision: `<entityType>.<matchPath>.<outcome>`. */
+  def counter(c: MatchCandidate, v: Verdict): String = s"${c.entityType}.${v.path}.${v.outcome}"

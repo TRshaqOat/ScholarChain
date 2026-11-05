@@ -3,8 +3,8 @@
 # No network. Exits 0 when every check passes and 1 when any check fails.
 #
 # Checks: manifest required fields for each dataset; S3 raw prefixes use the configured-bucket
-# placeholder; subset config sanity; bash -n on every script; Python syntax and the extractor
-# self-test; schema notes exist; every sample file is under 200,000 bytes; JSONL samples parse;
+# placeholder; subset config sanity and ORCID caps; bash -n on every script; the ORCID selection
+# self-test; Python syntax and the extractor self-test; schema notes exist; every sample file is under 200,000 bytes; JSONL samples parse;
 # the DBLP sample is well-formed XML with the DTD's entities resolved; OpenAlex and Crossref sample
 # DOIs are a non-empty subset of the DBLP sample DOIs; manifest sample sizes match the files;
 # ORCID samples hold only ORCID's fictional test record or labeled synthetic records (human ruling,
@@ -30,6 +30,12 @@ check "config is valid JSON with venues, years, and pinned checksums" jq -e '
   and (.dblp.year_min <= .dblp.year_max)
   and (.dblp.xml_gz_md5 | test("^[0-9a-f]{32}$")) and (.dblp.dtd_sha256 | test("^[0-9a-f]{64}$"))
   and (.dblp.sample_prefix_bytes < .dblp.xml_gz_bytes)' "$CONFIG" >/dev/null
+# 2,000-read retry margin under the documented quota: human ruling, phase-05 repair-01.
+check "config orcid caps: sample_max_ids <= full_max_ids <= daily_request_cap < documented_anonymous_daily_reads, full_max_ids <= documented - 2000" jq -e '
+  .orcid | (.full_max_ids | type == "number") and .sample_max_ids <= .full_max_ids
+  and .full_max_ids <= .daily_request_cap and .daily_request_cap < .documented_anonymous_daily_reads
+  and .full_max_ids <= .documented_anonymous_daily_reads - 2000' "$CONFIG" >/dev/null
+check "fetch_orcid.sh --self-test (selection priority, class a work ranking, and counts)" bash "$SCRIPTS_DIR/fetch_orcid.sh" --self-test
 
 python3 -I - "$REPO_ROOT" "$CONFIG" <<'PY'
 import hashlib, json, os, re, sys
