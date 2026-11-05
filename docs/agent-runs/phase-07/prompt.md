@@ -209,3 +209,12 @@ Check especially:
 - read and load ports are separated;
 - no edits outside owned paths, no reads of labels/, and the benchmark file is unchanged.
 Verify each candidate finding against the files. Give critical and major findings in full (severity, file and line, failure input, impact, owner) and minors briefly. Return APPROVE or REQUEST_CHANGES. Do not edit any file.
+
+## Human ruling 29 (before work order 7, binding)
+
+29. The 50-per-minute throttle exists only because of the Bedrock on-demand quota, so it applies only to the live Titan embedder. The fake embedder runs unthrottled. Work order 7 gains a step 0 for storage-engineer, done before its step 1:
+    - Make the throttle apply only when --live is set, or attach it to the live Embedder rather than the runner.
+    - Test the throttle with an injected clock, with no real sleeping in tests.
+    - Add a test showing that the fake path is not throttled.
+    - Document in STORAGE.md the facts field that embedding candidates now carry (reported by work order 5), and update the candidate validator if it should check that field.
+    - Run sbt check twice after step 0, then continue with steps 1 to 5 unchanged.
