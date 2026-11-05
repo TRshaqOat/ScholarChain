@@ -45,7 +45,7 @@ Human architect: Achyut Patel
 - The gold set does not measure the repair-02 ORCID suffix-conflict rule (ruled; Phase 17 limitation).
 
 ## Decision
-ACCEPTED
+ACCEPTED by human escalation (spec repair loop: "Repeat until APPROVE or human escalation"). Review 2 did not return APPROVE. Its one major finding was closed by the human ruling after review 2 (residual risk plus the extended Phase 6 refusal rule), which the reviewer stated closes it with no code change. No critical findings. The one repair round allowed per phase was used (repair-02).
 
 ## Manual changes
 - No manual edits to agent-owned files.
