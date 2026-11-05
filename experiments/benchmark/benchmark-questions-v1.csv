@@ -1,0 +1,31 @@
+question_id,category,question_text,researcher_a,researcher_b,window,answer_type,should_abstain,notes
+B01,coauthor_breadth,How many distinct coauthors does Jack J. Dongarra have?,Jack J. Dongarra,,all,count,no,
+B02,coauthor_breadth,How many distinct coauthors did Rajkumar Buyya have in 2015-2026?,Rajkumar Buyya,,2015-2026,count,no,
+B03,coauthor_breadth,"Which researcher had the most distinct coauthors in 2000-2014, and how many?",,,2000-2014,count,no,corpus-level question
+B04,max_team_size,What is the largest number of authors on a single paper in the corpus?,,,all,count,no,corpus-level question
+B05,max_team_size,What is the largest team Ian T. Foster has published with?,Ian T. Foster,,all,count,no,
+B06,max_team_size,What was the largest team Franck Cappello worked on in 2000-2014?,Franck Cappello,,2000-2014,count,no,
+B07,direct_collaboration,Have Jack J. Dongarra and Yves Robert coauthored a paper?,Jack J. Dongarra,Yves Robert,all,yes_no,no,
+B08,direct_collaboration,"How many joint papers do Rajkumar Buyya and Albert Y. Zomaya have, and when did they first collaborate?",Rajkumar Buyya,Albert Y. Zomaya,all,count,no,
+B09,direct_collaboration,Have Lei Zhang and Wei Wang coauthored a paper?,Lei Zhang,Wei Wang,all,abstain,yes,ambiguous common names that map to many distinct researchers
+B10,shortest_path,What is the shortest coauthorship path between Rajkumar Buyya and Rachid Guerraoui?,Rajkumar Buyya,Rachid Guerraoui,all,path,no,
+B11,shortest_path,What is the shortest coauthorship path between Ian T. Foster and José Duato?,Ian T. Foster,José Duato,all,path,no,
+B12,shortest_path,What is the shortest coauthorship path between Jack J. Dongarra and Elena Vasquez-Marlowe?,Jack J. Dongarra,Elena Vasquez-Marlowe,all,abstain,yes,invented researcher not in the corpus
+B13,components,"How many connected components does the graph have in 2000-2014, and what share of researchers is in the largest one?",,,2000-2014,count,no,corpus-level question
+B14,components,Is Dhabaleswar K. Panda 0001 in the largest connected component in 2015-2026?,Dhabaleswar K. Panda 0001,,2015-2026,yes_no,no,
+B15,components,How many researchers have no coauthors at all?,,,all,count,no,singleton count
+B16,communities,Which researchers are in the same collaboration community as Jack J. Dongarra in 2015-2026?,Jack J. Dongarra,,2015-2026,list,no,
+B17,communities,How many collaboration communities of size 3 or more exist in 2000-2014?,,,2000-2014,count,no,corpus-level question
+B18,communities,What topics characterize the collaboration community that includes Rajkumar Buyya?,Rajkumar Buyya,,all,list,no,combines community and topic data
+B19,bridges,Which researchers connect the most distinct communities?,,,all,list,no,corpus-level question
+B20,bridges,"What is Ian T. Foster's participation coefficient in 2015-2026, and how many communities does he connect?",Ian T. Foster,,2015-2026,count,no,
+B21,bridges,Which researchers had the highest cross-community degree in 2000-2014?,,,2000-2014,list,no,corpus-level question
+B22,temporal,How did Jack J. Dongarra's number of distinct coauthors change between 2000-2014 and 2015-2026?,Jack J. Dongarra,,both,count,no,compares the two windows
+B23,temporal,Did Minyi Guo's collaboration community change between 2000-2014 and 2015-2026?,Minyi Guo,,both,yes_no,no,compares the two windows
+B24,temporal,Is the largest connected component a larger share of researchers in 2015-2026 than in 2000-2014?,,,both,yes_no,no,compares the two windows
+B25,topics,What are the most common topics in Franck Cappello's papers?,Franck Cappello,,all,list,no,
+B26,topics,Which researchers have the most papers on cloud computing topics?,,,all,list,no,topic matched by name
+B27,institutions,Which institutions is Rachid Guerraoui affiliated with?,Rachid Guerraoui,,all,list,no,institutions are not windowed
+B28,institutions,Where was Albert Y. Zomaya affiliated in 2005?,Albert Y. Zomaya,,all,abstain,yes,institutions are not windowed so a year-specific affiliation is not in the data
+B29,evidence,Which papers support the collaboration between Jack J. Dongarra and Yves Robert?,Jack J. Dongarra,Yves Robert,all,list,no,
+B30,evidence,Which papers support each hop of the shortest path between Ian T. Foster and José Duato?,Ian T. Foster,José Duato,all,list,no,depends on B11
