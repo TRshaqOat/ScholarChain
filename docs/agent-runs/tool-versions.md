@@ -43,3 +43,13 @@ guard probe after ponytail install: echo 'terraform destroy' -> BLOCKED by guard
 PONYTAIL_DEFAULT_MODE and PONYTAIL_SUBAGENT_MATCHER moved into the env block of ~/.claude/settings.json (user scope), because ~/.zshrc exports did not reach the running VS Code session.
 Verified: Bash tool sees both variables; code-reviewer reports no Ponytail ruleset; build-engineer reports 'PONYTAIL MODE ACTIVE — level: full'.
 ```
+
+## Terraform (installed 2026-11-05)
+
+```text
+Terraform 1.16.6, darwin_arm64, released 2026-10-14 (22 days old at install; D-09 two-week rule met).
+Source: https://releases.hashicorp.com/terraform/1.16.6/terraform_1.16.6_darwin_arm64.zip
+sha256 verified against terraform_1.16.6_SHA256SUMS: 85e1bc78ab45bdc5f82a7bac3929e37d072834a584d22583a2498dc67bb624cd (OK)
+Installed to ~/.local/bin/terraform. `terraform version` reports v1.16.6 on darwin_arm64.
+Newer 1.17.1 deliberately not used (too recent under D-09).
+```
