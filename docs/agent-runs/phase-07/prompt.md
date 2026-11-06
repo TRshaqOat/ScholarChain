@@ -218,3 +218,22 @@ Verify each candidate finding against the files. Give critical and major finding
     - Add a test showing that the fake path is not throttled.
     - Document in STORAGE.md the facts field that embedding candidates now carry (reported by work order 5), and update the candidate validator if it should check that field.
     - Run sbt check twice after step 0, then continue with steps 1 to 5 unchanged.
+
+## Human rulings after work order 6 (binding)
+
+30. Name resolution (replaces the exact-match-only part of ruling 25):
+    - Candidates are the canonical researchers whose canonical display name equals the given name under the ruling 25 normalization.
+    - If one candidate holds at least 90% of the AUTHORED works summed over all candidates, and at least 5 works, the name resolves to it as RESOLVED_DOMINANT, recording its share and the candidate count.
+    - Otherwise the name is AMBIGUOUS; with no candidates it is UNKNOWN_RESEARCHER.
+    - This is a general entity-linking rule, not specific to the benchmark. Document it in modules/spark/JOBS.md so the Phase 9 runtime can adopt it. No change to Phase 5 or 6 clustering in this phase.
+31. config-version stays config-v1. The work order 2 change consolidated bucket names that no Phase 4 to 6 output depends on; this is recorded at the gate.
+32. Work order 7 step 0 (ruling 29) also documents, in STORAGE.md, the new item schema names that spark-engineer and rag-engineer reported, and updates the validators if they should check them.
+
+## Work order 6b: spark-engineer (dominant-candidate resolution and benchmark paths)
+
+1. Implement ruling 30 and report, for every benchmark name, the candidate count, the top candidate's share, and the decision.
+2. Report the corpus-wide scale of split identities: the number of exact display names with more than one canonical researcher where one candidate dominates under ruling 30, and the mentions and works held by the non-dominant candidates. This is report-only, for the final report.
+3. Rerun job 5 and the path part of job 10 as a new bounded run, for the union of the seeded 50 pairs and the resolved benchmark pairs. Report each pair's path result.
+4. Rerun what is needed so that a single conversion run under scratch/stores/ contains the updated path evidence and path embedding candidates; say which parts were rerun. Earlier runs stay untouched.
+5. Run the storage validator CLI on every new output; all must pass.
+Run sbt check twice. Report the new run IDs, the counts that changed, wall time, and free disk.
