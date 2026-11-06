@@ -237,3 +237,49 @@ Verify each candidate finding against the files. Give critical and major finding
 4. Rerun what is needed so that a single conversion run under scratch/stores/ contains the updated path evidence and path embedding candidates; say which parts were rerun. Earlier runs stay untouched.
 5. Run the storage validator CLI on every new output; all must pass.
 Run sbt check twice. Report the new run IDs, the counts that changed, wall time, and free disk.
+
+## Human rulings after review 1 (binding)
+
+Review 1 returned REQUEST_CHANGES with two major findings (F1, F2) and minors M1 to M13. There is one repair round (repair-01), then review 2. Rulings 1 to 32 still apply. The human's live embedding run (run-b28edbd40f932f0342c05d5b6f57b46c, 13,023 Titan vectors, 0 rejected, ValidateCli 0 violations) finished before this repair and is Phase 8 evidence; agents never rerun it. The human also loaded the live backup into the file vector store scratch/stores-live/ and ran the live retrieval smoke test on 2026-11-06: 6/6 passed (profile-self@1 0.98, community-self@5 1.00, path-self@1 1.00, topic-self@1 1.00, paper-self@1 0.98, profile-community-filter 1.00). No agent reads from, writes to, or deletes anything under scratch/stores-live/.
+
+33. F1 (DynamoDB number normalization): accepted; fix it in repair-01.
+    - Normalize every N value to DynamoDB's canonical number text before PutItem (for example 4.0 becomes 4, 0.50 becomes 0.5), and decide Unchanged versus Conflict by comparing numbers numerically or as normalized text, in the live adapter and in InMemoryDynamo alike.
+    - Confirm DynamoDB's number normalization against current AWS documentation (aws-docs MCP) and cite the page.
+    - Add tests with "4.0", "0.0", "1.50", a large plain decimal, and a simulated readback where "4.0" was written and "4" is read back (must be Unchanged).
+    - No change to the Spark item files. Canonical number text from Spark, if wanted, is a later spark-engineer item.
+34. F2 (evidence tracing) and M4: accepted; fix them in repair-01.
+    - The Neptune validator checks that every supporting work ID, inline and in evidence objects, exists as a Work vertex (EVIDENCE_WORK_MISSING), and that both edge endpoints have an AUTHORED edge to every cited work (EVIDENCE_NOT_AUTHORED).
+    - The evidence-object check also covers sorted and distinct workIds, runId, and snapshot (M4).
+    - Memory per ruling 27 (6g). If the AUTHORED set does not fit, say so and propose a streaming design; do not drop the check.
+    - Rerun ValidateCli --kind neptune with --evidence-root scratch/stores/s3 on conversion run run-1d6a86491812ff94887270c1ab885e69 as evidence, and report the counts per new rule.
+35. Cheap fixes in the same repair (storage-engineer):
+    - M1: Cli.main exits non-zero on any Throwable, including JVM errors such as OutOfMemoryError, so a failure can never report success.
+    - M3: the live Neptune pre-load check compares content hashes against the run manifest (preferred), or STORAGE.md is reworded to say it compares names only.
+    - M8: CliSpec passes an explicit environment instead of reading the ambient shell environment.
+    - Credential refresh. On 2026-11-05 the human's live embedding session 2 failed with "The security token included in the request is expired" after about 55 minutes. Diagnosis on 2026-11-06: the scholarchain-sdk profile's credential_process output (aws configure export-credentials --profile scholarchain --format process) carries an Expiration about 15 minutes ahead, and the overnight resume pass then ran about 3.5 hours without the error, so the cause is not settled. First inspect how each live client builds its credentials provider and report which case applies (credentials resolved once at startup, a provider that ignores Expiration, or something else). Then make every live client (Bedrock, S3, DynamoDB, Neptune, S3 Vectors) use a refreshing credentials provider for the named profile, never credentials resolved once at startup, and on an expired-token error refresh and retry the call once. Add unit tests for the provider wiring and the retry-on-expired path, with no network.
+    - The repair must not change the embedding output format, vector keys, metadata, or the EmbedCli run-ID inputs. If a change would alter them, report BLOCKED-ON instead.
+36. Residual risks and acknowledgements recorded at the gate (no repair):
+    - M2: the vector key is chunkId over the rendering-v1 text, not the Phase 6 summaryId. Accepted, because it keeps key and text bound. A summaryId back-reference is a Phase 9 option.
+    - M5: cross-check test of the two community-ID formulas (spark-engineer, Phase 11).
+    - M6: live read and load sides share one object; Phase 10 wiring uses read-only constructors, and Phase 12 IAM enforces read-only runtime roles.
+    - M7: the live Titan client sits in storage at the human's direction (work order 4); embedding-model client ownership (docs/agents.md exception 5) is acknowledged; the rag CLIs are local composition roots.
+    - M9: Phase 9 applies dominant-name-v1 with one normalization shared with EntityLinkCache, and gets works counts from EntityLinkCache or ResearcherMetricCache (a Phase 9 work order).
+    - M10: table prefix, Neptune loader role ARN, and other tunables become configuration keys before cloud window 2 (domain-engineer).
+    - M11 and the work order 1 git status call: process deviations.
+    - M12: parameterized openCypher query templates and a live GraphReadPort move to Phase 9 (storage-engineer, docs/agents.md exception 6); read-only graph credentials to Phase 12 (IAM).
+    - M13: the human records the Bedrock embedding usage and cost in the gate; the S3 Vectors cost estimate goes to the Phase 12 cost plan.
+37. Review 2 covers repair-01 against rulings 33 to 36. The items in ruling 36 are not re-raised unless the repair made them worse.
+
+## Repair 1: storage-engineer (repair-01)
+
+Read the Review 1 section of review-report.md (F1, F2, M1, M3, M4, M8) and rulings 33 to 37. Edit only modules/storage/**. If a change outside it seems unavoidable, report BLOCKED-ON with the owner.
+1. F1 (ruling 33).
+2. F2 and M4 (ruling 34), then the ValidateCli evidence run.
+3. M1, M3, M8, and credential refresh (ruling 35), including the credential diagnosis.
+4. Rerun the DynamoDB dry-run load on run-1d6a86491812ff94887270c1ab885e69 with sbt -J-Xmx6g, --passes 2 --recheck, to show pass 2 all Unchanged under the new normalization. Quote the printed result lines.
+5. Update STORAGE.md for every change.
+Run sbt check twice. Report per ruling 16, plus what changed for each finding with file paths, the credential diagnosis, and the new validator counts.
+
+## Review 2: code-reviewer
+
+Review the Phase 07 change set again; the orchestrator supplies it as for review 1. Focus on repair-01 against rulings 33 to 37. Verify, with file and line evidence, that F1, F2, M1, M3, M4, M8, and the credential refresh are resolved and tested without network access. The items in ruling 36 are accepted residual risks or acknowledgements: do not re-raise them unless the repair made them worse. Report any new critical or major finding introduced by the repair in full, and minors briefly. Return APPROVE or REQUEST_CHANGES. Do not edit any file.
