@@ -199,3 +199,12 @@ Edit only modules/entity-resolution/**. Ruling 23, m4.
 ## Review 2: code-reviewer
 
 Review the Phase 09 change set again; the orchestrator supplies it as for review 1. Focus on repair-01 against rulings 17 to 25. Verify, with file and line evidence, that F1 to F6 and the ruling 23 minors are resolved and tested without network access, and that each review 1 failure input now fails verification. Ruling 24 items are accepted: do not re-raise them unless the repair made them worse. Report any new critical or major finding in full and minors briefly. Return APPROVE or REQUEST_CHANGES. Do not edit any file.
+
+## Human rulings before session 2 (binding)
+
+26. Live adjudication hang (entity-resolution-engineer, repair-01 part C; found by the human on 2026-11-07).
+    - The human's resumed live adjudication run (run-70a26cef3256da28ef1257cb4498d0bb) never completed a request. It sampled 200 pairs and logged its plan, then the main thread waited in Throttle.acquire (BedrockLlmClient.scala:148), through the sleep function at AdjudicateSample.scala:217, for over 30 minutes at about 0% CPU, before the first Bedrock call. No cache.jsonl was written. Credentials were valid (sts get-caller-identity through scholarchain-sdk succeeded; no export-credentials process was running). The first attempt on Nov 7 at 02:01 very likely stopped the same way, since it also left no cache. The human stopped the run. Evidence (read-only): docs/agent-runs/phase-09/evidence/live-adjudication.txt and the thread dump docs/agent-runs/phase-09/evidence/live-adjudication-threads-9341.txt.
+    - Find and fix the cause (for example a wait computed from mixed clocks or units, nanoseconds passed where milliseconds are expected, or an uninitialised last-call time). Add a test that runs the throttle with the real clock and real sleep, no network, and shows the first acquire returns at once and later acquires are spaced as configured (a short test at a high per-minute rate is fine), and a test that the sleep function receives the unit it expects.
+    - Check that each answer is appended to cache.jsonl as soon as it returns, and add a test that a run stopped partway resumes from the partial cache without repeating answered pairs.
+    - Report the cause with file and line, and give the Terminal command for the human's rerun (unchanged, or corrected if flags changed). The human reruns the live adjudication after review 2; agents never run it.
+    - Review 2 checks this ruling together with rulings 17 to 25.
