@@ -51,3 +51,14 @@ Running log for the Phase 16 agentic-factory evaluation. One row per agent invoc
 | 2026-11-05 | 06 | code-reviewer (review 1) | REQUEST_CHANGES | n | 0/3/8 | 0 | 0 | ? | MAJOR-3 closed by human ruling 23 |
 | 2026-11-05 | 06 | spark-engineer (repair-01) | COMPLETE | y | - | 1 | 0 | ? | fixes MAJOR-1, MAJOR-2, m3, code version; content hashes equal to WO5 run |
 | 2026-11-05 | 06 | code-reviewer (review 2) | APPROVE | y | 0/0/3 | 1 | 0 | ? | n2 ruled at gate; n1, n3 residual; Phase 6: 0 BLOCKED-ON, 1 repair round |
+| 2026-11-05 | 07 | storage-engineer (WO1) | COMPLETE | n | - | 0 | 0 | ? | contracts, ports, fakes, validators; F2 validator gap and F1 fake model originate here; ran git status once |
+| 2026-11-05 | 07 | domain-engineer (WO2) | COMPLETE | y | - | 0 | 0 | ? | one bucket + prefixes; Community, MEMBER_OF; config-v1 kept |
+| 2026-11-05 | 07 | build-engineer (WO3) | COMPLETE | y | - | 0 | 0 | ? | 4 SDK modules + bedrockruntime to storage at 2.41.32; no 3b needed |
+| 2026-11-05 | 07 | storage-engineer (WO4) | COMPLETE | n | - | 0 | 0 | ? | CLIs, embedding runner, live adapters; F1 (live), M11 guard workaround; throttle applied to fake (fixed in WO7 step 0) |
+| 2026-11-05 | 07 | rag-engineer (WO5) | COMPLETE | y | - | 0 | 0 | ? | selection-v1, rendering-v1, render and smoke CLIs; flagged the fake-throttle issue |
+| 2026-11-05 | 07 | spark-engineer (WO6) | COMPLETE | y | - | 0 | 0 | ? | rankings, store conversion; exact-name rule left all benchmark pairs AMBIGUOUS (human rule change in ruling 30) |
+| 2026-11-05 | 07 | spark-engineer (WO6b) | COMPLETE | y | - | 0 | 0 | ? | dominant-name-v1; 4 benchmark pairs found; split-identity counts |
+| 2026-11-05 | 07 | storage-engineer (WO7) | COMPLETE | y | - | 0 | 0 | ? | step 0 (rulings 29, 32), full dry run, streaming Neptune reload fix, live command |
+| 2026-11-05 | 07 | code-reviewer (review 1) | REQUEST_CHANGES | n | 0/2/13 | 0 | 0 | ? | F1, F2 to storage-engineer; ruling 36 acknowledgements |
+| 2026-11-06 | 07 | storage-engineer (repair-01) | COMPLETE | y | - | 1 | 0 | ? | F1, F2, M1, M3, M4, M8, credential refresh (expired-token 403 not retried; shared refreshing provider, retry once); 448 tests; guard false positives handled with Edit |
+| 2026-11-06 | 07 | code-reviewer (review 2) | APPROVE | y | 0/0/6 | 1 | 0 | ? | N1-N6 minors to storage-engineer; Phase 7: 0 BLOCKED-ON, 1 repair round, 3 mid-session human rulings (29, 30-32) |

@@ -236,7 +236,7 @@ Template text only, from computed tables and source records (ruling 12; no LLM).
 |---|---|---|
 | `researcher-profile` | researchers with at least `summary-min-publications` (2) publications in the first configured window (`all-years`; ruling 7 calls it "all") | P_r, C_r, T_r, A_r, M_r, W_r, coreness, component (size, whether largest), community size and the three bridge measures, first and last year, top 3 coauthors by joint publications, top 3 topics and venues by works, top 3 institutions on record (by evidence count; not windowed), 3 most recent works |
 | `collaboration-community` | communities with at least `summary-min-community-size` (3) members, every window | size, internal edges, density = internal / (n(n-1)/2), cross-community edges, linked communities, members' publications in the window, top 5 members by degree, top 3 topics and venues |
-| `collaboration-path` | every path-evidence row (the selected pairs) | status, length, the path with each hop's joint publications, years, and the first supporting work title; or the reason no path is given (`BEYOND_DEPTH`, `UNREACHABLE`, `UNKNOWN_RESEARCHER`) |
+| `collaboration-path` | every path-evidence row (the selected pairs) | status, length, the path with each hop's joint publications, years, and the first supporting work title; or the reason no path is given (`BEYOND_DEPTH`, `UNREACHABLE`, `UNKNOWN_RESEARCHER`). The facts also carry `sourceName` and `targetName` (display name, or the ID when null; Phase 7 work order 6, required by rag rendering-v1). The Phase 6 run's path facts predate this and lack them. |
 | `topic-summary` | every topic with at least one DBLP-authored work in the window, every window | name, field, subfield, works, researchers, top 3 researchers and venues |
 
 Selected paper summaries are not produced. Work records carry only `abstractTextRef`, an S3 pointer (core WorkRecord; the text is never inlined), which Spark does not read, and work order 5 asks for topics.
@@ -287,6 +287,80 @@ sbt "sparkAnalytics/runMain scholarchain.spark.PipelineJob --input <hadoop run d
 - `lineage` (pipeline and every stage manifest): `inputHadoopRunId` and `matchPolicyVersion` of the Hadoop run; `codeVersion` is in every manifest head.
 - Determinism: the same input, code version, and configuration give the same stage tables and counts. CanonicalGraphJobSpec and TemporalSummarySpec check reruns on fixtures. Work order 5 compared a full local run with the staged runs of work orders 2 to 4.
 
+## BenchmarkPathJob (Phase 7 rulings 25 and 30: benchmark paths)
+
+```text
+sbt "sparkAnalytics/runMain scholarchain.spark.BenchmarkPathJob --input <community-path run dir> \
+  --benchmark experiments/benchmark/benchmark-questions-v1.csv [--dominant-share 0.9] \
+  [--dominant-min-works 5] --code-version <v> --out scratch/stores/spark \
+  --checkpoint-dir scratch/stores/checkpoints"
+```
+
+A bounded rerun of job 5 (path evidence) and the path part of job 10 for the union of the input run's seeded pairs (`paths/selected-pairs.csv`) and the benchmark pairs. The Phase 6 outputs are only read. Run ID: `StableIds.runId("spark-benchmark-paths", code version, config version, [community-path run, the three input sizes, graph policy, windows, path-max-depth, summary template, benchmark text hash, resolution rule with its share and min-works], attempt)`.
+
+- Benchmark pairs: questions whose `researcher_a` and `researcher_b` are both non-blank (the CSV is read with Spark's CSV reader, quoted fields allowed). Window `all` is the first configured window (`all-years`); any other window must be configured.
+- Name resolution: rule `dominant-name-v1` (below). A pair is searched only when both names are `RESOLVED_DOMINANT`; otherwise its status is `UNKNOWN_RESEARCHER` (if either name is unknown) or `AMBIGUOUS`, and it has no path-evidence row and no summary. The candidates are cut to the benchmark names (a broadcast semi-join) before ranking; one row per name reaches the driver.
+
+### Entity-linking rule `dominant-name-v1` (Phase 7 ruling 30; for adoption by the Phase 9 runtime)
+
+A general rule for linking a printed researcher name to one canonical researcher. It is not specific to the benchmark, and it changes no Phase 5 or 6 clustering.
+
+- Normalization (ruling 25): the given name is trimmed of leading and trailing spaces (Spark `trim`) and compared exactly, case and accents included, with `canonical/researchers.displayName`. `Ann Lee` does not match `Ann Lee 0001`. Alternate names are not candidates (work order 6's `exact-name-v1` also matched `alternateNames`; ruling 30 names the display name only).
+- Candidates: every canonical researcher with that display name. Each candidate's works are its rows in `canonical/authored` (one row per researcher and work, so the AUTHORED edges). Candidates are ranked by works descending, then researcherId ascending.
+- Decision, with share `s` = 0.9 and minimum `m` = 5 (job flags `--dominant-share`, `--dominant-min-works`; recorded in the manifest settings and the run-ID fingerprint; `s` must be above 0.5 so at most one candidate can dominate):
+  - no candidate: `UNKNOWN_RESEARCHER`;
+  - the top candidate holds at least `s` of the works summed over all candidates, and at least `m` works: `RESOLVED_DOMINANT` to it, recording its share and the candidate count;
+  - otherwise `AMBIGUOUS` (this includes a single candidate with fewer than `m` works, a literal reading of ruling 30, and any tie, whose share is at most 0.5).
+- Output per name: candidate count, total works, top candidate ID and works, top share (null when the candidates hold no works), the first 10 candidates in rank order, decision. `BenchmarkPathJob.dominance` computes it for any set of names in one window shuffle (partitioned by name) and one group-by; nothing is collected.
+- Limitations: a dominant share is evidence of a split identity (unmerged singletons sharing a well-known researcher's printed name), not proof. A different person with few works under the same name is linked to the dominant researcher. The rule ignores time, venue, coauthors, and ORCID, and a name printed differently from the anchor mention's display name is not found. Runtime answers that use it should say the name was linked by dominance and give the share.
+- Corpus-wide scale (work order 6b run `run-ee4ffd21aa20dbe4c078a4be96fe8c9f`, manifest `counts.splitIdentities`): 161,077 distinct display names over 259,057 researchers. 18,055 names have more than one researcher (116,035 researchers). Of those, 1,080 have a dominant candidate; their 1,893 non-dominant candidates hold 2,350 mentions and 1,970 authored rows (researcher-work pairs), against 107,374 mentions and 39,704 authored rows of the 1,080 dominant ones. The other 16,975 shared names stay ambiguous. The largest dominant name has 17 candidates.
+- Outputs (JobRun layout under `--out`): `paths/benchmark-pairs` (one row per question: both names, their statuses, IDs, candidate counts, top shares, top and total works, samples, rule, pair status, `pairId`), `paths/selected-pairs.csv`, `paths/path-evidence` (job 5 columns), `summaries/path-summaries` (the job 10 `collaboration-path` rows with `vectorIndex` and provenance), `paths/benchmark-path-violations` (`PATH_HOP_EDGE_MISSING`, `PATH_LENGTH_MISMATCH`, `SUMMARY_MISSING`, and `SEEDED_PATH_CHANGED`: a seeded pair whose status, length, or researcher sequence differs from the input run; job 5 is deterministic, so this must stay empty).
+- The manifest's `counts.splitIdentities` reports the corpus-wide scale of split identities under the rule (one aggregate row; report only).
+- Shuffle boundaries: the job 5 BFS rounds (see job 5); the name match (a broadcast semi-join of the benchmark names against `canonical/researchers`, a group-by of `canonical/authored` on researcherId, a window partitioned by name, a group-by on name); the corpus-wide split-identity count (the same group-by, window, and group-by over every display name, then one global aggregate); the summary joins of job 10; the violation joins (broadcast on the seeded pair IDs).
+- Results: work order 6 (`exact-name-v1`) resolved 0 of 8 questions. Work order 6b (`dominant-name-v1`, run `run-ee4ffd21aa20dbe4c078a4be96fe8c9f`) resolves B07, B08, B10, B11, B29, B30 (4 distinct pairs, all FOUND); B09 (`Lei Zhang`, `Wei Wang`) stays AMBIGUOUS and B12 UNKNOWN_RESEARCHER.
+
+## StoreConversionJob (Phase 7 work order 6: store-ready files)
+
+```text
+sbt "sparkAnalytics/runMain scholarchain.spark.StoreConversionJob --input <temporal-summary-export run dir> \
+  --paths <benchmark path run dir> --stores-root scratch/stores/s3 --code-version <v> \
+  --out scratch/stores/spark --checkpoint-dir scratch/stores/checkpoints"
+```
+
+Reads every Phase 6 table through the export's `export/load-manifest.json` (row counts checked against it) and the path run's `paths/path-evidence` and `summaries/path-summaries`; the path run must belong to the same chain. Writes the files of modules/storage/STORAGE.md under `--stores-root` (the local S3 fake), every key `<prefix>/<artifact>/snapshot=<d>/run=<this run>/...`, write-once (an existing run prefix stops the run). Run ID: `StableIds.runId("store-conversion", code version, config version, [export run, path run and size, windows, selection policy and seed, inline-evidence max, ranking size, every input table with its run and row count], attempt)`. The JobRun directory under `--out` holds `_manifest.json` (counts, timings, free disk) and the Parquet audit table `rankings/researcher-rankings`.
+
+| Output (key under the store root) | Built from | Rows per file family |
+|---|---|---|
+| `graph/neptune/.../vertices/{researcher,work,venue,institution,topic,community}/part-NNNNN.csv` | canonical researchers, works, venues, institutions, topics; analytics/communities (all windows) | one row per entity |
+| `graph/neptune/.../edges/{authored,coauthored-with,published-in,affiliated-with,has-topic,member-of}/part-NNNNN.csv` | canonical authored, graph/coauthor-edges, works with a venue, researcher-institutions, work-topics, analytics/researcher-communities | one row per edge; COAUTHORED_WITH one per pair and window |
+| `curated/coauthor-evidence/.../window=<w>/<edgeId>.json` | coauthor edges with more than 20 joint works | one object per edge |
+| `curated/dynamodb/.../ResearcherMetricCache/part-NNNNN.jsonl` | `WINDOW#<w>`: researcher-metrics joined with researcher-communities; `CHANGE#<from>><to>`: temporal/researcher-changes; `RANKING#<metric>`/`TOP#<w>`: the rankings | one item per (researcher, window), (researcher, comparison), (metric, window) |
+| `curated/dynamodb/.../EntityLinkCache/part-NNNNN.jsonl` | canonical researchers: displayName and alternateNames | one item per distinct (name key, researcher) |
+| `curated/dynamodb/.../ArtifactRegistry/part-00000.jsonl` | this run's objects | one `RUN#<run>` item per artifact (`neptune/graph`, `dynamodb/ResearcherMetricCache`, `dynamodb/EntityLinkCache`, `s3/coauthor-evidence`, `candidates/<index>`), with `contentHash` = storage `Cli.contentHash` over the artifact's objects, `rowCount`, `manifestKey` |
+| `semantic-context/candidates/.../<index>/part-00000.jsonl` | selection-v1 (below) | one line per candidate, in selectionRank order |
+| `runs/store-conversion/.../manifest.json` | every object above | `store-run-manifest-v1`: key, sha256, bytes, sourceRef (`<table>@<run>`), written last |
+
+Neptune values: every element carries `runId` and `snapshot` from the source row's provenance (the Phase 6 stage run that computed it) and `schemaVersion` `neptune-<name>-v1`; edges add `policyVersion` from the row's provenance. Edge IDs: COAUTHORED_WITH keeps the Phase 6 `cae-` ID; every other edge is `ge-` + H("graph-edge", TYPE, start, end, policyVersion). Up to 20 supporting work IDs are inline (space-separated, sorted); above that `supportingWorkIdsRef` names the evidence object. Fields are RFC 4180 (quoted when they hold a comma, quote, CR, or LF; quotes doubled); null is an empty field; doubles are plain decimals without an exponent.
+
+DynamoDB values: DynamoDB JSON (`S`, `N`, `BOOL`, `L`, `M`); a null column is no attribute. `WINDOW#` items carry every researcher-metrics measure, `maximumTeamWorkIds` (a list; a list longer than 50 IDs stops the run, because STORAGE.md defines no pointer layout for it; Phase 6 lists hold at most 17), the community and bridge columns, `runId` (researcher-analytics run), `communityRunId` (community-path run), `snapshot`, `schemaVersion` `researcher-metrics-window-v1`, `policyVersion`. `CHANGE#` items carry every researcher-changes column (`researcher-change-v1`). EntityLinkCache: `nameKey` = DynamoContract.nameKey (drop a trailing 4-digit DBLP homonym number, then affn-v1 canonical form, `name-v1:` prefix); the matched name is the display name when it gives the key, else the smallest alternate name giving it (`entity-link-v1`).
+
+### Rankings (ruling 21)
+
+- Definition: for each metric (publicationCount, distinctCoauthorCount, maximumCoauthorsOnOnePaper, coreness from researcher-metrics; crossCommunityDegree, communitiesConnected, participationCoefficient from researcher-communities) and window, the 50 researchers with the highest value; ties by researcherId ascending; rank 1..50 with no shared ranks; a null value is not ranked.
+- Algorithm: one `row_number` window per (metric, window) ordered by (value desc, researcherId). Exact; no approximation.
+- Limitations: a hard cut at 50, so a tie at rank 50 is broken by ID and the 51st equal researcher is not listed. The bridge rankings inherit every limitation of the communities (job 6); hubs dominate the degree measures.
+- Stored as 21 items `RANKING#<metric>` / `TOP#<window>` (`researcher-ranking-v1`, runId = this run) and as `rankings/researcher-rankings` in the JobRun directory.
+
+### Embedding candidates (selection-v1)
+
+Implements modules/rag/SELECTION.md exactly (owner: rag-engineer): `rankKey` = H("embed-select", "selection-v1", "20261003", index, subjectId, window) (the two frozen values are tested); paths: every path summary of the path run, hash order; profiles: tier 1 path researchers (source, target, hop IDs), tier 2 researchers of the all-years rankings, tier 3 the rest, first 5,000; communities: per-window quotas 2,000/1,000/1,000, tier 1 the all-years communities of tier 1 and 2 profiles; topics: all; papers: tier 1 hop works of FOUND paths (path rank, hop order), tier 2 recent works of the selected profiles (profile rank, list order), tier 3 eligible works by hash, skipping ineligible and repeated works, first 1,000. Paper text is the title trimmed like Java `String.trim`; paper facts are `paper-facts-v1`. The metadata lists (entityIds, topicIds, institutionIds, communityId) are derived from the facts as SELECTION.md's table says. Each line is `embedding-candidate-v1` (nulls written as null) plus `facts` as a JSON object.
+
+### Publishing and shuffle boundaries
+
+- Each family is a DataFrame of (k, line): hash-repartitioned on k (the element ID or item key) into ceil(rows / 250,000) partitions, sorted by k within each, so the same input gives the same bytes. Spark writes the lines as text under the JobRun directory; the driver then streams each part file, with the CSV header first, to its final key while computing its sha256, and deletes the temp part. The final store file system is a private Hadoop FileSystem instance with checksums off, so no `.crc` file reaches `graph/`.
+- Shuffles: one repartition per family; the WINDOW# join on (window, researcherId); the rankings window per (metric, window) and their group-by; the entity-link window per (nameKey, researcherId); selection: broadcast joins of the tier sets, a `row_number` per window for communities, a `row_number` per workId for papers, and the paper fact joins and top-N windows on workId for the 1,000 selected works only.
+- Driver: holds a 64 KB copy buffer, the manifest entries (one per object: 608 in work order 6), the at most 21 ranking items' counts, and bounded report rows. Limitation: every output byte passes through the driver once (copy and hash), and the evidence objects are written by the driver from one Spark-written file: about 1.7 GB locally; on EMR this is one sequential S3 stream per file.
+
 ## Running locally
 
 1. `sysctl -n hw.memsize`: keep the driver heap at most half of RAM (`SCHOLARCHAIN_SPARK_HEAP`, default 6g, set in build.sbt).
@@ -302,15 +376,15 @@ All paths go through the Hadoop FileSystem API, so the same flags take `s3a://` 
 
 ```text
 spark-submit --master yarn ... (sets spark.master; the job then sets none)
---input          s3a://<curated-bucket>/hadoop/snapshot=<dblp snapshot>/run=<hadoop run id>
---out            s3a://<graph-bucket>/spark
+--input          s3a://<bucket>/curated/hadoop/snapshot=<dblp snapshot>/run=<hadoop run id>
+--out            s3a://<bucket>/curated/spark
 --checkpoint-dir hdfs:///scholarchain/spark/checkpoints
 --code-version   <git sha>
 --shuffle-partitions <about 2-3 x total executor cores>
 ```
 
-- The bucket names are the core `storage.curated-bucket` and `storage.graph-bucket` (`SCHOLARCHAIN_CURATED_BUCKET`, `SCHOLARCHAIN_GRAPH_BUCKET`). The Hadoop output root `s3a://<curated-bucket>/hadoop` comes from modules/hadoop/JOBS.md.
-- Outputs: `s3a://<graph-bucket>/spark/snapshot=<date>/run=<runId>/...`, the same layout as locally. The load manifest is under the export stage's `export/`.
+- `<bucket>` is the one environment bucket, core `storage.bucket` (`SCHOLARCHAIN_BUCKET`), with the core `storage.prefixes` (Phase 7 ruling 7; the four per-purpose buckets were removed). Hadoop outputs sit under `curated/hadoop/` (modules/hadoop/JOBS.md still names the old buckets; its owner updates it).
+- Outputs: `s3a://<bucket>/curated/spark/snapshot=<date>/run=<runId>/...` (modules/storage/STORAGE.md, `curated/spark`), the same layout as locally. The load manifest is under the export stage's `export/`. `graph/` holds only Neptune bulk-load CSV, written by StoreConversionJob.
 - Checkpoints: cluster HDFS is suggested. Iterative jobs write a reliable checkpoint every round, and S3 rename semantics make checkpoint writes slow.
 - Unverified until cloud window 1:
   - the free-disk check on S3A (S3A reports no capacity limit, so the check cannot stop a run there);
@@ -363,6 +437,8 @@ Checks: `JobRun.write` refuses to write a table without the provenance struct. J
 | 5, 6, 7 | CommunityPathJob | researcher-metrics, components; coauthor-edges, researchers | paths/* (window), analytics/communities, cross-community-edges, researcher-communities (window), violations | 8 per window on researcherId; 1 for the others | every BFS and label-propagation round | windows table; largest components; pending targets; parents during the walk back | inputs, labels |
 | 9, 10, 11 | TemporalSummaryExportJob | the three runs above | temporal/*, summaries/semantic-summaries (documentType, window), summary-export-violations, export/load-manifest.json | 8 on researcherId for researcher-changes; 2 on subjectId for summaries; 1 for the others | none (no iteration) | windows table; largest components | inputs and dblpWorks, DISK_ONLY (execution memory is left to the top-N sorts) |
 | all | PipelineJob | Hadoop run | the four stage runs plus the pipeline manifest | n/a | n/a | n/a | n/a |
+| 5, 10 (paths) | BenchmarkPathJob | a CommunityPathJob run (and its canonical researchers and authored); the benchmark CSV | paths/benchmark-pairs, selected-pairs.csv, path-evidence (window), summaries/path-summaries (documentType, window), violations | 1 | every BFS round | windows table; benchmark names; seeded pair IDs | inputs |
+| store files | StoreConversionJob | the Phase 6 load manifest's tables; a BenchmarkPathJob run | Neptune CSV, evidence objects, DynamoDB items, candidates, store run manifest (under --stores-root); rankings/researcher-rankings | ceil(rows / 250,000) per family, hash on the element ID | none (no iteration) | windows table; selection tier sets | inputs DISK_ONLY; each family's lines while counted and written |
 
 - Schema versions and provenance: see "Provenance, schema versions, and the core records" above. Table schemas are recorded as DDL in each manifest.
 - Driver memory: only bounded results reach the driver: counts, top-N lists, histograms, at most `2 x path-sample-pairs` sampled IDs, and per-round convergence numbers. A 6g heap was enough for every local run.

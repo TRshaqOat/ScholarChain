@@ -112,6 +112,7 @@ lazy val sparkAnalytics = module("sparkAnalytics", "spark")
 
 lazy val storage = module("storage", "storage")
   .dependsOn(core)
+  .settings(libraryDependencies ++= Dependencies.storageAwsSdk)
 
 lazy val rag = module("rag", "rag")
   .dependsOn(core, storage)

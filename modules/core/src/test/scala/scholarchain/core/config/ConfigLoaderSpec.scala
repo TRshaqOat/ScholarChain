@@ -19,7 +19,7 @@ class ConfigLoaderSpec extends AnyFunSuite:
     assert(c.configVersion == "config-v1")
     assert(c.environment == "local")
     assert(c.region == "us-east-2")
-    assert(c.storage.rawBucket == "example-scholarchain-raw")
+    assert(c.storage.bucket == "example-scholarchain")
     assert(c.s3Vectors.indexes("researchers") == "researcher-profile-v1")
     assert(
       c.analytics.bridgeMeasures == Vector(
@@ -40,30 +40,68 @@ class ConfigLoaderSpec extends AnyFunSuite:
     )
   }
 
+  test("one bucket per environment with the eight ruling-7 prefixes") {
+    val c = load().storage
+    assert(
+      c.prefixes.all == Vector(
+        "raw/",
+        "curated/",
+        "graph/",
+        "semantic-context/",
+        "vectors/",
+        "reports/",
+        "logs/",
+        "runs/"
+      )
+    )
+    assert(ConfigLoader.RemovedKeys.forall(k => !ConfigLoader.merged(Map.empty).hasPath(k)))
+    assert(!ConfigLoader.EnvOverrides.contains("SCHOLARCHAIN_RAW_BUCKET"))
+  }
+
+  test("a layer that still sets a removed per-purpose bucket key is rejected") {
+    val f = file("scholarchain.storage.graph-bucket = old-graph")
+    val errors = ConfigLoader.load(Map(ConfigLoader.ConfigFileEnv -> f.toString)).left.toOption.get
+    assert(errors == List("removed configuration key 'storage.graph-bucket': use storage.bucket"))
+  }
+
   test("precedence: the config file overrides the reference") {
-    val f = file("scholarchain.storage.raw-bucket = file-raw\nscholarchain.neptune.port = 9000")
+    val f = file("scholarchain.storage.bucket = file-bucket\nscholarchain.neptune.port = 9000")
     val c = load(ConfigLoader.ConfigFileEnv -> f.toString)
-    assert(c.storage.rawBucket == "file-raw")
+    assert(c.storage.bucket == "file-bucket")
     assert(c.neptune.port == 9000)
-    assert(c.storage.curatedBucket == "example-scholarchain-curated") // untouched keys fall through
+    assert(c.storage.prefixes.graph == "graph/") // untouched keys fall through
   }
 
   test("precedence: environment variables override the config file and the reference") {
-    val f = file("scholarchain.storage.raw-bucket = file-raw\nscholarchain.neptune.port = 9000")
+    val f = file("scholarchain.storage.bucket = file-bucket\nscholarchain.neptune.port = 9000")
     val c = load(
       ConfigLoader.ConfigFileEnv -> f.toString,
-      "SCHOLARCHAIN_RAW_BUCKET" -> "env-raw",
+      "SCHOLARCHAIN_BUCKET" -> "env-bucket",
       "SCHOLARCHAIN_NEPTUNE_PORT" -> "9100"
     )
-    assert(c.storage.rawBucket == "env-raw")
+    assert(c.storage.bucket == "env-bucket")
     assert(c.neptune.port == 9100)
   }
 
   test("unlisted environment variables are ignored") {
     assert(
-      load("RAW_BUCKET" -> "x", "scholarchain.storage.raw-bucket" -> "y").storage.rawBucket ==
-        "example-scholarchain-raw"
+      load("BUCKET" -> "x", "scholarchain.storage.bucket" -> "y").storage.bucket ==
+        "example-scholarchain"
     )
+  }
+
+  test("an invalid bucket name or malformed or duplicate prefix is rejected") {
+    def errors(env: (String, String)*) = ConfigLoader.load(env.toMap).left.toOption.get
+    assert(errors("SCHOLARCHAIN_BUCKET" -> "s3://Bad_Bucket").exists(_.contains("valid S3 bucket")))
+    for bad <- Seq("raw", "/raw/", "raw/x/", "Raw/", "") do
+      val f = file(s"""scholarchain.storage.prefixes.raw = "$bad"""")
+      assert(
+        errors(ConfigLoader.ConfigFileEnv -> f.toString)
+          .exists(_.contains("one lower-case segment")),
+        bad
+      )
+    val dup = file("scholarchain.storage.prefixes.logs = \"runs/\"")
+    assert(errors(ConfigLoader.ConfigFileEnv -> dup.toString).exists(_.contains("distinct")))
   }
 
   test("every documented environment variable maps to a path in the reference") {
@@ -80,17 +118,19 @@ class ConfigLoaderSpec extends AnyFunSuite:
 
   test("a non-local environment must replace every placeholder") {
     val result = ConfigLoader.load(
-      Map("SCHOLARCHAIN_ENVIRONMENT" -> "dev", "SCHOLARCHAIN_RAW_BUCKET" -> "real")
+      Map("SCHOLARCHAIN_ENVIRONMENT" -> "dev", "SCHOLARCHAIN_BUCKET" -> "real-bucket")
     )
     val errors = result.left.toOption.get
     assert(errors.exists(_.contains("still uses placeholder values")))
-    assert(!errors.mkString.contains("real"))
+    assert(errors.exists(_.contains("example-scholarchain-vectors")))
+    assert(!errors.mkString.contains("real-bucket"))
   }
 
   test("a non-local environment with every value supplied loads") {
     val env = ConfigLoader.EnvOverrides.keys.map(k => k -> s"value-${k.toLowerCase}").toMap ++ Map(
       "SCHOLARCHAIN_ENVIRONMENT" -> "dev",
       "SCHOLARCHAIN_AWS_ACCOUNT_ID" -> "111111111111",
+      "SCHOLARCHAIN_BUCKET" -> "scholarchain-dev-111111111111-us-east-2",
       "SCHOLARCHAIN_NEPTUNE_PORT" -> "8182",
       "SCHOLARCHAIN_NEPTUNE_QUERY_TIMEOUT_MS" -> "5000",
       "SCHOLARCHAIN_ER_MAX_BLOCK_SIZE" -> "1000",

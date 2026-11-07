@@ -366,6 +366,44 @@
       "modelVersion": null
     }
   },
+  "GraphNode.Community": {
+    "schemaVersion": "graph-node-v1",
+    "nodeId": "comm-bf6d9db42012407674c1997bfc2b8749",
+    "label": "Community",
+    "properties": {
+      "window": "all-years",
+      "communitySize": "2",
+      "communityLabel": "orcid:0000-0002-1825-0097"
+    },
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "DERIVED",
+      "sourceRecordId": "comm-bf6d9db42012407674c1997bfc2b8749",
+      "snapshot": "2026-10-03",
+      "runId": "run-78764f1e9c70e21f34ef30d82b71089b",
+      "policyVersion": "graph-v1",
+      "modelVersion": null
+    }
+  },
+  "GraphEdge.MEMBER_OF": {
+    "schemaVersion": "graph-edge-v1",
+    "edgeId": "ge-b83f0384b807eae6d553a4c6b7fbf7b8",
+    "edgeType": "MEMBER_OF",
+    "fromId": "scr:er-v1:7a47f03bb657358ae076e68ca43dab88",
+    "toId": "comm-bf6d9db42012407674c1997bfc2b8749",
+    "properties": {
+      "window": "all-years"
+    },
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "DERIVED",
+      "sourceRecordId": "ge-b83f0384b807eae6d553a4c6b7fbf7b8",
+      "snapshot": "2026-10-03",
+      "runId": "run-78764f1e9c70e21f34ef30d82b71089b",
+      "policyVersion": "graph-v1",
+      "modelVersion": null
+    }
+  },
   "EvidenceItem": {
     "schemaVersion": "evidence-v1",
     "evidenceId": "ev-53344ff0d3e40fb09029d37bdf4fb9b8",

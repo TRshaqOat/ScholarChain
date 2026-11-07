@@ -68,16 +68,22 @@ enum VerificationStatus:
 object VerificationStatus:
   given ReadWriter[VerificationStatus] = enumRW(values, _.toString)
 
-/** Node classes of the research graph model; the wire form is the class name. */
+/** Node classes of the research graph model; the wire form is the class name. Community is a
+  * per-window collaboration community (ID: [[StableIds.communityId]]), a Neptune vertex since Phase
+  * 7 (modules/storage/STORAGE.md).
+  */
 enum NodeLabel:
-  case Researcher, AuthorMention, Work, Venue, Institution, Topic, TextChunk, DatasetSnapshot
+  case Researcher, AuthorMention, Work, Venue, Institution, Topic, TextChunk, DatasetSnapshot,
+    Community
 object NodeLabel:
   given ReadWriter[NodeLabel] = enumRW(values, _.toString)
 
-/** Edge classes of the research graph model. */
+/** Edge classes of the research graph model. MEMBER_OF is directed Researcher -> Community; the
+  * community ID encodes the window, so there is one edge per researcher per window.
+  */
 enum EdgeType:
   case AUTHORED, RESOLVES_TO, COAUTHORED_WITH, PUBLISHED_IN, AFFILIATED_WITH, HAS_TOPIC,
-    DERIVED_FROM, SUPPORTED_BY
+    DERIVED_FROM, SUPPORTED_BY, MEMBER_OF
 
   /** COAUTHORED_WITH is logically undirected, so its endpoints are stored in canonical order. */
   def undirected: Boolean = this == COAUTHORED_WITH

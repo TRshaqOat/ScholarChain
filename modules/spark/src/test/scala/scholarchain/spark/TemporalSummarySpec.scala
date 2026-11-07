@@ -5,7 +5,7 @@ import org.apache.spark.sql.types.StructType
 import org.apache.spark.sql.{DataFrame, Row}
 import org.scalatest.funsuite.AnyFunSuite
 import scholarchain.core.StableIds
-import scholarchain.core.config.{ConfigLoader, TimeWindow}
+import scholarchain.core.config.TimeWindow
 
 import java.nio.charset.StandardCharsets.UTF_8
 import java.nio.file.{Files, Path}
@@ -291,34 +291,8 @@ class TemporalSummarySpec extends AnyFunSuite:
   test(
     "the pipeline runs jobs 1 to 11, and the load manifest lists every table with checked counts"
   ) {
-    val tmp = Files.createTempDirectory("sc-spark-pipeline")
-    val cfg = ConfigLoader.load(Map.empty).toOption.get
-    val base = SparkSettings
-      .parse(
-        Seq(
-          "--input",
-          Fixture.writeRun(tmp.resolve("hadoop")).toString,
-          "--out",
-          tmp.resolve("out").toString,
-          "--code-version",
-          "test",
-          "--master",
-          "local[2]",
-          "--shuffle-partitions",
-          "2",
-          "--checkpoint-dir",
-          tmp.resolve("ck").toString,
-          "--min-free-disk-gib",
-          "0",
-          "--cc-max-iterations",
-          "30",
-          "--sample-seed",
-          "1"
-        )
-      )
-      .toOption
-      .get
-    val r = PipelineJob.run(spark, base, cfg)
+    val (base, cfg) = (PipelineFixture.base, PipelineFixture.cfg)
+    val r = PipelineFixture.result
     val m = r.manifest
     assert(m("stage").str == PipelineJob.Stage)
     val stages = m("stages").arr.map(_("stage").str).toSeq

@@ -221,6 +221,7 @@ object Validator:
       case NodeLabel.Work          => IdFormat.isWorkId
       case NodeLabel.AuthorMention => IdFormat.isMentionId
       case NodeLabel.TextChunk     => IdFormat.isChunkId
+      case NodeLabel.Community     => IdFormat.isCommunityId
       case _                       => IdFormat.isNamespacedId
     schemaVersion(n.schemaVersion, SchemaVersions.GraphNode) ++ id(
       "nodeId",
@@ -235,6 +236,10 @@ object Validator:
       (if e.edgeType.undirected then
          ids("researcherId", Seq(e.fromId, e.toId), IdFormat.isResearcherId) ++
            canonicalPair(e.edgeType.toString, e.fromId, e.toId)
+       else Nil) ++
+      (if e.edgeType == EdgeType.MEMBER_OF then
+         id("researcherId", e.fromId, IdFormat.isResearcherId) ++
+           id("communityId", e.toId, IdFormat.isCommunityId)
        else Nil) ++
       provenance(e.provenance)
 

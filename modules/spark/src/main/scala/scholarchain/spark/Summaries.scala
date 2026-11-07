@@ -413,9 +413,15 @@ object Summaries:
     )
 
   /** Path summaries: one per path-evidence row (the selected pairs). */
-  def paths(in: In): DataFrame =
-    val names = in.researchers.select("researcherId", "displayName")
-    val hops = in.paths
+  def paths(in: In): DataFrame = paths(in.researchers, in.works, in.paths)
+
+  /** Path summaries from researchers (researcherId, displayName), works (workId, title), and
+    * path-evidence rows. The facts carry `sourceName` and `targetName` (display name, or the ID
+    * when the name is null), which rendering-v1 needs (modules/rag/SELECTION.md).
+    */
+  def paths(researchers: DataFrame, works: DataFrame, pathRows: DataFrame): DataFrame =
+    val names = researchers.select("researcherId", "displayName")
+    val hops = pathRows
       .select(col("pairId"), explode(col("hops")).as("h"))
       .select(
         col("pairId"),
@@ -428,7 +434,7 @@ object Summaries:
         element_at(col("h.supportingWorkIds"), 1).as("workId")
       )
       .join(names, Seq("researcherId"), "left")
-      .join(in.works.select("workId", "title"), Seq("workId"), "left")
+      .join(works.select("workId", "title"), Seq("workId"), "left")
       .groupBy("pairId")
       .agg(
         array_sort(
@@ -449,7 +455,7 @@ object Summaries:
       )
     def nameOf(c: String, as: String) =
       names.select(col("researcherId").as(c), col("displayName").as(as))
-    val all = in.paths
+    val all = pathRows
       .drop("hops")
       .join(hops, Seq("pairId"), "left")
       .join(nameOf("sourceResearcherId", "sourceName"), Seq("sourceResearcherId"), "left")
@@ -528,6 +534,8 @@ object Summaries:
           col("componentId"),
           col("sourceResearcherId"),
           col("targetResearcherId"),
+          col("source").as("sourceName"),
+          col("target").as("targetName"),
           col("hopList").as("hops")
         ).as("facts"),
         flatten(

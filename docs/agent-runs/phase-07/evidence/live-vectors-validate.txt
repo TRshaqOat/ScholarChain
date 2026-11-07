@@ -1,0 +1,18 @@
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] running scholarchain.storage.cli.ValidateCli --kind vectors --dir scratch/stores/s3/vectors/backup/snapshot=2026-10-03/run=run-b28edbd40f932f0342c05d5b6f57b46c
+kind vectors
+dir scratch/stores/s3/vectors/backup/snapshot=2026-10-03/run=run-b28edbd40f932f0342c05d5b6f57b46c
+count collaboration-community-v1 4000
+count collaboration-path-v1 54
+count paper-abstract-v1 1000
+count researcher-profile-v1 5000
+count topic-institution-summary-v1 2969
+count total 13023
+violations 0
+OK
+[success] Total time: 4 s, completed Nov 6, 2026, 12:38:44 PM

@@ -113,6 +113,13 @@ class ValidationSpec extends AnyFunSuite:
     assert(validate(authored).isRight)
   }
 
+  test("Community nodes need comm- IDs; MEMBER_OF runs from a researcher to a community") {
+    rejected(communityNode.copy(nodeId = "openalex:T1"), "malformed nodeId")
+    rejected(memberOfEdge.copy(fromId = workId), "malformed researcherId")
+    rejected(memberOfEdge.copy(toId = researcherA), "malformed communityId")
+    rejected(memberOfEdge.copy(fromId = communityIdA, toId = researcherB), "malformed")
+  }
+
   test("a pair candidate's mentions must belong to its work") {
     rejected(pairCandidate.copy(authorB = "dblp:conf/ics/Other09#2"), "malformed author mention ID")
   }

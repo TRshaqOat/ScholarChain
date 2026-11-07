@@ -225,6 +225,31 @@ object Fixtures:
     prov(SourceType.DERIVED, graphEdgeIdAB, policy = Some("graph-v1"))
   )
 
+  val communityIdA: String = StableIds.communityId("graph-v1", "all-years", 2000, 2026, researcherA)
+
+  val communityNode: GraphNode = GraphNode(
+    SchemaVersions.GraphNode,
+    communityIdA,
+    NodeLabel.Community,
+    Map("window" -> "all-years", "communitySize" -> "2", "communityLabel" -> researcherA),
+    prov(SourceType.DERIVED, communityIdA, policy = Some("graph-v1"))
+  )
+
+  val memberOfEdgeId: String = StableIds
+    .graphEdgeId(EdgeType.MEMBER_OF, researcherB, communityIdA, "graph-v1", Nil)
+    .toOption
+    .get
+
+  val memberOfEdge: GraphEdge = GraphEdge(
+    SchemaVersions.GraphEdge,
+    memberOfEdgeId,
+    EdgeType.MEMBER_OF,
+    researcherB,
+    communityIdA,
+    Map("window" -> "all-years"),
+    prov(SourceType.DERIVED, memberOfEdgeId, policy = Some("graph-v1"))
+  )
+
   val metricEvidence: EvidenceItem = EvidenceItem(
     SchemaVersions.EvidenceItem,
     StableIds.evidenceId(EvidenceType.METRIC_RECORD, Seq(researcherA), fixtureRunId),
@@ -342,6 +367,8 @@ object Fixtures:
     Example("MatchDecision", matchDecision),
     Example("GraphNode", graphNode),
     Example("GraphEdge", graphEdge),
+    Example("GraphNode.Community", communityNode),
+    Example("GraphEdge.MEMBER_OF", memberOfEdge),
     Example("EvidenceItem", metricEvidence),
     Example("EvidenceBundle", bundle),
     Example("QueryPlan", queryPlan),

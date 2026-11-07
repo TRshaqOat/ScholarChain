@@ -117,3 +117,15 @@ object SparkSettings:
             s"bad canonical-policy-version ${r.canonicalPolicyVersion}"
           )
         yield r
+
+/** Job-specific flags that SparkSettings does not know (BenchmarkPathJob, StoreConversionJob). */
+object JobArgs:
+  /** Splits the `--name value` pairs whose name is in `names` from the rest, which go to
+    * SparkSettings.parse unchanged.
+    */
+  def split(args: Seq[String], names: Set[String]): (Map[String, String], Seq[String]) =
+    val (mine, rest) = args
+      .grouped(2)
+      .toSeq
+      .partition(p => p.size == 2 && p(0).startsWith("--") && names(p(0).drop(2)))
+    (mine.map(p => p(0).drop(2) -> p(1)).toMap, rest.flatten)

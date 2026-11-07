@@ -1,0 +1,534 @@
+{
+  "schemaVersion": "spark-run-manifest-v1",
+  "stage": "spark-benchmark-paths",
+  "runId": "run-ee4ffd21aa20dbe4c078a4be96fe8c9f",
+  "attempt": 1,
+  "runDir": "scratch/stores/spark/snapshot=2026-10-03/run=run-ee4ffd21aa20dbe4c078a4be96fe8c9f",
+  "snapshot": "2026-10-03",
+  "codeVersion": "src-ddfbf2a7583b",
+  "configVersion": "config-v1",
+  "input": {
+    "path": "scratch/spark/snapshot=2026-10-03/run=run-83b496169099a614ec519133077a1993",
+    "communityPathRunId": "run-83b496169099a614ec519133077a1993",
+    "researcherAnalyticsPath": "scratch/spark/snapshot=2026-10-03/run=run-d7865ad3f5f8195546c1dab817328ee5",
+    "researcherAnalyticsRunId": "run-d7865ad3f5f8195546c1dab817328ee5",
+    "canonicalGraphPath": "scratch/spark/snapshot=2026-10-03/run=run-10ceed31b3f602bb998eae7c00929ae9",
+    "canonicalGraphRunId": "run-10ceed31b3f602bb998eae7c00929ae9",
+    "benchmarkFile": "experiments/benchmark/benchmark-questions-v1.csv",
+    "benchmarkTextHash": "sha256:7e265d5caed9fb97af7447b54070e687edc18e2eff9a92bba83a0a37bf09fe10"
+  },
+  "lineage": {
+    "inputHadoopRunId": "run-035e75abfa6798c938cbd534273dbd8d",
+    "matchPolicyVersion": "er-v2"
+  },
+  "settings": {
+    "master": "local[*]",
+    "shufflePartitions": 40,
+    "checkpointDir": "scratch/stores/checkpoints/run-ee4ffd21aa20dbe4c078a4be96fe8c9f",
+    "graphPolicy": "graph-v1",
+    "windows": [
+      "all-years",
+      "2000-2014",
+      "2015-2026"
+    ],
+    "pathAlgorithm": "bounded multi-source BFS, smallest-parent tie-break (job 5)",
+    "pathMaxDepth": 6,
+    "resolutionRule": "dominant-name-v1: candidates are the researchers whose displayName equals the trimmed name; the top candidate (works desc, researcherId) is RESOLVED_DOMINANT when it holds >= share of the candidates' AUTHORED works and >= min-works works, else AMBIGUOUS; no candidate UNKNOWN_RESEARCHER; window 'all' = all-years",
+    "dominantShare": 0.9,
+    "dominantMinWorks": 5,
+    "summaryTemplateVersion": "summary-template-v1",
+    "minFreeDiskGiB": 5,
+    "driverMaxHeapBytes": 6442450944
+  },
+  "fingerprints": [
+    "community-path-run=run-83b496169099a614ec519133077a1993",
+    "input:community-path=scratch/spark/snapshot=2026-10-03/run=run-83b496169099a614ec519133077a1993:104280613",
+    "input:researcher-analytics=scratch/spark/snapshot=2026-10-03/run=run-d7865ad3f5f8195546c1dab817328ee5:44764160",
+    "input:canonical-graph=scratch/spark/snapshot=2026-10-03/run=run-10ceed31b3f602bb998eae7c00929ae9:460248464",
+    "config:graph-policy=graph-v1",
+    "config:windows=all-years:2000-2026,2000-2014:2000-2014,2015-2026:2015-2026",
+    "config:path-max-depth=6",
+    "config:summary-template=summary-template-v1",
+    "benchmark=sha256:7e265d5caed9fb97af7447b54070e687edc18e2eff9a92bba83a0a37bf09fe10",
+    "resolution-rule=dominant-name-v1:share=0.9:min-works=5"
+  ],
+  "startedAt": "2026-11-06T01:41:49.113079Z",
+  "inputs": [
+    {
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-d7865ad3f5f8195546c1dab817328ee5/analytics/researcher-metrics",
+      "exists": true,
+      "rows": 397100
+    },
+    {
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-10ceed31b3f602bb998eae7c00929ae9/graph/coauthor-edges",
+      "exists": true,
+      "rows": 1590754
+    },
+    {
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-10ceed31b3f602bb998eae7c00929ae9/canonical/researchers",
+      "exists": true,
+      "rows": 259057
+    },
+    {
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-10ceed31b3f602bb998eae7c00929ae9/canonical/authored",
+      "exists": true,
+      "rows": 535898
+    },
+    {
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-10ceed31b3f602bb998eae7c00929ae9/canonical/works",
+      "exists": true,
+      "rows": 113205
+    },
+    {
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-83b496169099a614ec519133077a1993/paths/path-evidence",
+      "exists": true,
+      "rows": 50
+    }
+  ],
+  "tables": [
+    {
+      "name": "paths/benchmark-pairs",
+      "schemaVersion": "spark-paths-benchmark-pairs-v1",
+      "path": "scratch/stores/spark/snapshot=2026-10-03/run=run-ee4ffd21aa20dbe4c078a4be96fe8c9f/paths/benchmark-pairs",
+      "format": "parquet",
+      "partitionColumns": [],
+      "hashPartitionKey": null,
+      "writePartitions": 1,
+      "schema": "questionId STRING,window STRING,researcherAName STRING,researcherBName STRING,researcherAStatus STRING,researcherBStatus STRING,researcherAId STRING,researcherBId STRING,researcherACandidates BIGINT,researcherBCandidates BIGINT,researcherATopShare DOUBLE,researcherBTopShare DOUBLE,researcherATopWorks BIGINT,researcherBTopWorks BIGINT,researcherATotalWorks BIGINT,researcherBTotalWorks BIGINT,researcherASample ARRAY<STRING>,researcherBSample ARRAY<STRING>,resolutionRule STRING,status STRING,pairId STRING,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING",
+      "rowCount": 8,
+      "intendedTargets": [
+        "s3"
+      ],
+      "fileCount": 1,
+      "totalBytes": 15189,
+      "minFileBytes": 15189,
+      "maxFileBytes": 15189
+    },
+    {
+      "name": "paths/path-evidence",
+      "schemaVersion": "spark-paths-path-evidence-v1",
+      "path": "scratch/stores/spark/snapshot=2026-10-03/run=run-ee4ffd21aa20dbe4c078a4be96fe8c9f/paths/path-evidence",
+      "format": "parquet",
+      "partitionColumns": [
+        "window"
+      ],
+      "hashPartitionKey": null,
+      "writePartitions": 1,
+      "schema": "pairId STRING,windowStartYear INT,windowEndYear INT,sourceResearcherId STRING,targetResearcherId STRING,status STRING,pathLength INT,maxDepth INT,componentId STRING,researcherIds ARRAY<STRING>,hops ARRAY<STRUCT<hop: INT, fromResearcherId: STRING, toResearcherId: STRING, edgeId: STRING, jointPublicationCount: BIGINT, firstCollaborationYear: INT, lastCollaborationYear: INT, supportingWorkIds: ARRAY<STRING>>>,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING,window STRING",
+      "rowCount": 54,
+      "intendedTargets": [
+        "neptune",
+        "dynamodb",
+        "s3"
+      ],
+      "fileCount": 1,
+      "totalBytes": 54513,
+      "minFileBytes": 54513,
+      "maxFileBytes": 54513
+    },
+    {
+      "name": "summaries/path-summaries",
+      "schemaVersion": "spark-summaries-path-summaries-v1",
+      "path": "scratch/stores/spark/snapshot=2026-10-03/run=run-ee4ffd21aa20dbe4c078a4be96fe8c9f/summaries/path-summaries",
+      "format": "parquet",
+      "partitionColumns": [
+        "documentType",
+        "window"
+      ],
+      "hashPartitionKey": "subjectId",
+      "writePartitions": 1,
+      "schema": "subjectId STRING,windowStartYear INT,windowEndYear INT,text STRING,textHash STRING,templateVersion STRING,facts STRING,supportingIds ARRAY<STRING>,summaryId STRING,vectorIndex STRING,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING,documentType STRING,window STRING",
+      "rowCount": 54,
+      "intendedTargets": [
+        "s3vectors",
+        "s3"
+      ],
+      "fileCount": 1,
+      "totalBytes": 97385,
+      "minFileBytes": 97385,
+      "maxFileBytes": 97385
+    },
+    {
+      "name": "paths/benchmark-path-violations",
+      "schemaVersion": "spark-paths-benchmark-path-violations-v1",
+      "path": "scratch/stores/spark/snapshot=2026-10-03/run=run-ee4ffd21aa20dbe4c078a4be96fe8c9f/paths/benchmark-path-violations",
+      "format": "parquet",
+      "partitionColumns": [],
+      "hashPartitionKey": null,
+      "writePartitions": 1,
+      "schema": "check STRING,subjectId STRING,relatedId STRING,detail STRING,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING",
+      "rowCount": 0,
+      "intendedTargets": [
+        "s3"
+      ],
+      "fileCount": 1,
+      "totalBytes": 1469,
+      "minFileBytes": 1469,
+      "maxFileBytes": 1469
+    }
+  ],
+  "selectedPairsFile": "scratch/stores/spark/snapshot=2026-10-03/run=run-ee4ffd21aa20dbe4c078a4be96fe8c9f/paths/selected-pairs.csv",
+  "counts": {
+    "seededPairs": 50,
+    "benchmarkQuestionsWithTwoResearchers": 8,
+    "benchmarkPairsResolved": 4,
+    "selectedPairs": 54,
+    "benchmarkResolutions": [
+      {
+        "questionId": "B07",
+        "researcherAName": "Jack J. Dongarra",
+        "researcherAStatus": "RESOLVED_DOMINANT",
+        "researcherACandidates": 17,
+        "researcherATopShare": 0.9575596816976127,
+        "researcherAId": "scr:canon-v1.er-v2:6de4012bbe8608f1d49d18cf9a40a763",
+        "researcherBName": "Yves Robert",
+        "researcherBStatus": "RESOLVED_DOMINANT",
+        "researcherBCandidates": 6,
+        "researcherBTopShare": 0.9774774774774775,
+        "researcherBId": "scr:canon-v1.er-v2:da6e3bdff14745638f3f5425f0133388",
+        "status": "RESOLVED_DOMINANT",
+        "pairId": "pair-aa312aafdd94772942bde0a8cc65e4a3"
+      },
+      {
+        "questionId": "B08",
+        "researcherAName": "Rajkumar Buyya",
+        "researcherAStatus": "RESOLVED_DOMINANT",
+        "researcherACandidates": 11,
+        "researcherATopShare": 0.964516129032258,
+        "researcherAId": "scr:canon-v1.er-v2:bede83f65bedfab8f7fc802f295ee293",
+        "researcherBName": "Albert Y. Zomaya",
+        "researcherBStatus": "RESOLVED_DOMINANT",
+        "researcherBCandidates": 4,
+        "researcherBTopShare": 0.9901639344262295,
+        "researcherBId": "scr:canon-v1.er-v2:9c35232fa374c48fdc67309bfedd5f7c",
+        "status": "RESOLVED_DOMINANT",
+        "pairId": "pair-35cbdd57c9457ad92b07a74ee687564a"
+      },
+      {
+        "questionId": "B09",
+        "researcherAName": "Lei Zhang",
+        "researcherAStatus": "AMBIGUOUS",
+        "researcherACandidates": 101,
+        "researcherATopShare": 0.02727272727272727,
+        "researcherAId": null,
+        "researcherBName": "Wei Wang",
+        "researcherBStatus": "AMBIGUOUS",
+        "researcherBCandidates": 307,
+        "researcherBTopShare": 0.01282051282051282,
+        "researcherBId": null,
+        "status": "AMBIGUOUS",
+        "pairId": null
+      },
+      {
+        "questionId": "B10",
+        "researcherAName": "Rajkumar Buyya",
+        "researcherAStatus": "RESOLVED_DOMINANT",
+        "researcherACandidates": 11,
+        "researcherATopShare": 0.964516129032258,
+        "researcherAId": "scr:canon-v1.er-v2:bede83f65bedfab8f7fc802f295ee293",
+        "researcherBName": "Rachid Guerraoui",
+        "researcherBStatus": "RESOLVED_DOMINANT",
+        "researcherBCandidates": 11,
+        "researcherBTopShare": 0.9615384615384616,
+        "researcherBId": "scr:canon-v1.er-v2:ba10a85f922c075c3cfdbf5a040332b8",
+        "status": "RESOLVED_DOMINANT",
+        "pairId": "pair-851e3ff461485d7dfe4d64b1919d5c39"
+      },
+      {
+        "questionId": "B11",
+        "researcherAName": "Ian T. Foster",
+        "researcherAStatus": "RESOLVED_DOMINANT",
+        "researcherACandidates": 10,
+        "researcherATopShare": 0.9679715302491103,
+        "researcherAId": "scr:canon-v1.er-v2:8c41e7402418b6a74ad89d1b987f6f44",
+        "researcherBName": "José Duato",
+        "researcherBStatus": "RESOLVED_DOMINANT",
+        "researcherBCandidates": 3,
+        "researcherBTopShare": 0.9870689655172413,
+        "researcherBId": "scr:canon-v1.er-v2:410e0336ad1b7732771b1c91b8be2bed",
+        "status": "RESOLVED_DOMINANT",
+        "pairId": "pair-2641198768ada6b4487f82b908029195"
+      },
+      {
+        "questionId": "B12",
+        "researcherAName": "Jack J. Dongarra",
+        "researcherAStatus": "RESOLVED_DOMINANT",
+        "researcherACandidates": 17,
+        "researcherATopShare": 0.9575596816976127,
+        "researcherAId": "scr:canon-v1.er-v2:6de4012bbe8608f1d49d18cf9a40a763",
+        "researcherBName": "Elena Vasquez-Marlowe",
+        "researcherBStatus": "UNKNOWN_RESEARCHER",
+        "researcherBCandidates": 0,
+        "researcherBTopShare": null,
+        "researcherBId": null,
+        "status": "UNKNOWN_RESEARCHER",
+        "pairId": null
+      },
+      {
+        "questionId": "B29",
+        "researcherAName": "Jack J. Dongarra",
+        "researcherAStatus": "RESOLVED_DOMINANT",
+        "researcherACandidates": 17,
+        "researcherATopShare": 0.9575596816976127,
+        "researcherAId": "scr:canon-v1.er-v2:6de4012bbe8608f1d49d18cf9a40a763",
+        "researcherBName": "Yves Robert",
+        "researcherBStatus": "RESOLVED_DOMINANT",
+        "researcherBCandidates": 6,
+        "researcherBTopShare": 0.9774774774774775,
+        "researcherBId": "scr:canon-v1.er-v2:da6e3bdff14745638f3f5425f0133388",
+        "status": "RESOLVED_DOMINANT",
+        "pairId": "pair-aa312aafdd94772942bde0a8cc65e4a3"
+      },
+      {
+        "questionId": "B30",
+        "researcherAName": "Ian T. Foster",
+        "researcherAStatus": "RESOLVED_DOMINANT",
+        "researcherACandidates": 10,
+        "researcherATopShare": 0.9679715302491103,
+        "researcherAId": "scr:canon-v1.er-v2:8c41e7402418b6a74ad89d1b987f6f44",
+        "researcherBName": "José Duato",
+        "researcherBStatus": "RESOLVED_DOMINANT",
+        "researcherBCandidates": 3,
+        "researcherBTopShare": 0.9870689655172413,
+        "researcherBId": "scr:canon-v1.er-v2:410e0336ad1b7732771b1c91b8be2bed",
+        "status": "RESOLVED_DOMINANT",
+        "pairId": "pair-2641198768ada6b4487f82b908029195"
+      }
+    ],
+    "benchmarkPathResults": [
+      {
+        "pairId": "pair-aa312aafdd94772942bde0a8cc65e4a3",
+        "questionId": "B07",
+        "status": "FOUND",
+        "pathLength": 1,
+        "researcherIds": [
+          "scr:canon-v1.er-v2:6de4012bbe8608f1d49d18cf9a40a763",
+          "scr:canon-v1.er-v2:da6e3bdff14745638f3f5425f0133388"
+        ]
+      },
+      {
+        "pairId": "pair-35cbdd57c9457ad92b07a74ee687564a",
+        "questionId": "B08",
+        "status": "FOUND",
+        "pathLength": 1,
+        "researcherIds": [
+          "scr:canon-v1.er-v2:bede83f65bedfab8f7fc802f295ee293",
+          "scr:canon-v1.er-v2:9c35232fa374c48fdc67309bfedd5f7c"
+        ]
+      },
+      {
+        "pairId": "pair-851e3ff461485d7dfe4d64b1919d5c39",
+        "questionId": "B10",
+        "status": "FOUND",
+        "pathLength": 3,
+        "researcherIds": [
+          "scr:canon-v1.er-v2:bede83f65bedfab8f7fc802f295ee293",
+          "scr:canon-v1.er-v2:579c60649a1eaa5276061729c159fa5d",
+          "scr:canon-v1.er-v2:26367611b6aa01309f3b27e3bbc344bb",
+          "scr:canon-v1.er-v2:ba10a85f922c075c3cfdbf5a040332b8"
+        ]
+      },
+      {
+        "pairId": "pair-2641198768ada6b4487f82b908029195",
+        "questionId": "B11",
+        "status": "FOUND",
+        "pathLength": 3,
+        "researcherIds": [
+          "scr:canon-v1.er-v2:8c41e7402418b6a74ad89d1b987f6f44",
+          "scr:canon-v1.er-v2:307614e27ad0f759657614a1ae217028",
+          "scr:canon-v1.er-v2:20094eb76eac4f180b035ed097da573f",
+          "scr:canon-v1.er-v2:410e0336ad1b7732771b1c91b8be2bed"
+        ]
+      },
+      {
+        "pairId": "pair-aa312aafdd94772942bde0a8cc65e4a3",
+        "questionId": "B29",
+        "status": "FOUND",
+        "pathLength": 1,
+        "researcherIds": [
+          "scr:canon-v1.er-v2:6de4012bbe8608f1d49d18cf9a40a763",
+          "scr:canon-v1.er-v2:da6e3bdff14745638f3f5425f0133388"
+        ]
+      },
+      {
+        "pairId": "pair-2641198768ada6b4487f82b908029195",
+        "questionId": "B30",
+        "status": "FOUND",
+        "pathLength": 3,
+        "researcherIds": [
+          "scr:canon-v1.er-v2:8c41e7402418b6a74ad89d1b987f6f44",
+          "scr:canon-v1.er-v2:307614e27ad0f759657614a1ae217028",
+          "scr:canon-v1.er-v2:20094eb76eac4f180b035ed097da573f",
+          "scr:canon-v1.er-v2:410e0336ad1b7732771b1c91b8be2bed"
+        ]
+      }
+    ],
+    "pathStatusCounts": [
+      {
+        "window": "all-years",
+        "status": "BEYOND_DEPTH",
+        "count": 13
+      },
+      {
+        "window": "all-years",
+        "status": "FOUND",
+        "count": 41
+      }
+    ],
+    "pathLengthHistogram": [
+      {
+        "window": "all-years",
+        "pathLength": 1,
+        "count": 2
+      },
+      {
+        "window": "all-years",
+        "pathLength": 3,
+        "count": 3
+      },
+      {
+        "window": "all-years",
+        "pathLength": 4,
+        "count": 2
+      },
+      {
+        "window": "all-years",
+        "pathLength": 5,
+        "count": 21
+      },
+      {
+        "window": "all-years",
+        "pathLength": 6,
+        "count": 13
+      }
+    ],
+    "pathBfsNodesReachedPerRound": [
+      2151,
+      27243,
+      220837,
+      817599,
+      1911603,
+      1124271
+    ],
+    "pathSummaries": 54,
+    "splitIdentities": [
+      {
+        "distinctDisplayNames": 161077,
+        "researchers": 259057,
+        "mentions": 1273265,
+        "authoredRows": 535898,
+        "namesWithSeveralResearchers": 18055,
+        "researchersUnderSharedNames": 116035,
+        "namesWithDominantCandidate": 1080,
+        "nonDominantResearchers": 1893,
+        "nonDominantMentions": 2350,
+        "nonDominantAuthoredRows": 1970,
+        "dominantMentions": 107374,
+        "dominantAuthoredRows": 39704,
+        "namesStillAmbiguous": 16975,
+        "maxCandidatesUnderDominantName": 17
+      }
+    ],
+    "integrityViolationsByCheck": []
+  },
+  "stepSeconds": {
+    "read inputs": 3.633560041,
+    "resolve benchmark names": 1.339172083,
+    "write paths/benchmark-pairs": 0.249589333,
+    "bounded paths": 36.822108916,
+    "write paths/path-evidence": 4.27488125,
+    "summaries": 0.02557025,
+    "write summaries/path-summaries": 0.8373905,
+    "write paths/benchmark-path-violations": 0.215874375,
+    "report": 1.122649459
+  },
+  "stagesByStep": [
+    {
+      "step": "read inputs",
+      "stages": 24,
+      "tasks": 102,
+      "maxTasksInAStage": 10,
+      "shuffleReadBytes": 2654,
+      "shuffleWriteBytes": 2654,
+      "spillDiskBytes": 0,
+      "stageMs": 2602
+    },
+    {
+      "step": "resolve benchmark names",
+      "stages": 10,
+      "tasks": 51,
+      "maxTasksInAStage": 10,
+      "shuffleReadBytes": 9327084,
+      "shuffleWriteBytes": 9327084,
+      "spillDiskBytes": 0,
+      "stageMs": 1005
+    },
+    {
+      "step": "write paths/benchmark-pairs",
+      "stages": 5,
+      "tasks": 12,
+      "maxTasksInAStage": 8,
+      "shuffleReadBytes": 9247,
+      "shuffleWriteBytes": 9247,
+      "spillDiskBytes": 0,
+      "stageMs": 126
+    },
+    {
+      "step": "bounded paths",
+      "stages": 90,
+      "tasks": 1159,
+      "maxTasksInAStage": 56,
+      "shuffleReadBytes": 4252280674,
+      "shuffleWriteBytes": 4252280674,
+      "spillDiskBytes": 0,
+      "stageMs": 48657
+    },
+    {
+      "step": "write paths/path-evidence",
+      "stages": 21,
+      "tasks": 671,
+      "maxTasksInAStage": 56,
+      "shuffleReadBytes": 245378425,
+      "shuffleWriteBytes": 245378425,
+      "spillDiskBytes": 0,
+      "stageMs": 5923
+    },
+    {
+      "step": "write summaries/path-summaries",
+      "stages": 16,
+      "tasks": 82,
+      "maxTasksInAStage": 12,
+      "shuffleReadBytes": 49443556,
+      "shuffleWriteBytes": 49443556,
+      "spillDiskBytes": 0,
+      "stageMs": 1059
+    },
+    {
+      "step": "write paths/benchmark-path-violations",
+      "stages": 8,
+      "tasks": 20,
+      "maxTasksInAStage": 10,
+      "shuffleReadBytes": 56,
+      "shuffleWriteBytes": 56,
+      "spillDiskBytes": 0,
+      "stageMs": 88
+    },
+    {
+      "step": "report",
+      "stages": 23,
+      "tasks": 56,
+      "maxTasksInAStage": 11,
+      "shuffleReadBytes": 38877549,
+      "shuffleWriteBytes": 38876937,
+      "spillDiskBytes": 0,
+      "stageMs": 916
+    }
+  ],
+  "stageCount": 197,
+  "disk": {
+    "freeBeforeBytes": 24855822336,
+    "freeAfterBytes": 24466903040
+  },
+  "wallSeconds": 48.712597417,
+  "finishedAt": "2026-11-06T01:42:37.825749Z"
+}

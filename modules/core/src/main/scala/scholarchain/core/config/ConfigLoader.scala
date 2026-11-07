@@ -10,12 +10,22 @@ import scala.util.Try
 /** A named inclusive year window. */
 final case class TimeWindow(name: String, startYear: Int, endYear: Int)
 
-final case class StorageConfig(
-    rawBucket: String,
-    curatedBucket: String,
-    graphBucket: String,
-    ragBucket: String
-)
+/** The top-level key prefixes of the environment bucket (Phase 7 ruling 7), each ending in "/". */
+final case class StoragePrefixes(
+    raw: String,
+    curated: String,
+    graph: String,
+    semanticContext: String,
+    vectors: String,
+    reports: String,
+    logs: String,
+    runs: String
+):
+  def all: Vector[String] =
+    Vector(raw, curated, graph, semanticContext, vectors, reports, logs, runs)
+
+/** One S3 bucket per environment; data is separated by [[StoragePrefixes]], not by bucket. */
+final case class StorageConfig(bucket: String, prefixes: StoragePrefixes)
 final case class NeptuneConfig(endpoint: String, port: Int, queryTimeoutMs: Int)
 final case class S3VectorsConfig(vectorBucket: String, indexes: Map[String, String])
 final case class EntityResolutionConfig(
@@ -92,10 +102,7 @@ object ConfigLoader:
     "SCHOLARCHAIN_ENVIRONMENT" -> "application.environment",
     "SCHOLARCHAIN_AWS_REGION" -> "application.region",
     "SCHOLARCHAIN_AWS_ACCOUNT_ID" -> "application.aws-account-id",
-    "SCHOLARCHAIN_RAW_BUCKET" -> "storage.raw-bucket",
-    "SCHOLARCHAIN_CURATED_BUCKET" -> "storage.curated-bucket",
-    "SCHOLARCHAIN_GRAPH_BUCKET" -> "storage.graph-bucket",
-    "SCHOLARCHAIN_RAG_BUCKET" -> "storage.rag-bucket",
+    "SCHOLARCHAIN_BUCKET" -> "storage.bucket",
     "SCHOLARCHAIN_NEPTUNE_ENDPOINT" -> "neptune.endpoint",
     "SCHOLARCHAIN_NEPTUNE_PORT" -> "neptune.port",
     "SCHOLARCHAIN_NEPTUNE_QUERY_TIMEOUT_MS" -> "neptune.query-timeout-ms",
@@ -110,9 +117,24 @@ object ConfigLoader:
     "SCHOLARCHAIN_ADJUDICATION_MODEL_ID" -> "models.adjudication-model"
   )
 
+  /** Keys removed by the one-bucket change (Phase 7 ruling 20). A layer that still sets one is an
+    * error, not a silently ignored value.
+    */
+  val RemovedKeys: Vector[String] = Vector(
+    "storage.raw-bucket",
+    "storage.curated-bucket",
+    "storage.graph-bucket",
+    "storage.rag-bucket"
+  )
+
   def load(env: Map[String, String] = sys.env): Either[List[String], ScholarChainConfig] =
     Try(merged(env)).toEither.left
       .map(e => List(s"configuration error: ${e.getMessage}"))
+      .flatMap(c =>
+        RemovedKeys.filter(c.hasPath) match
+          case Seq() => Right(c)
+          case ks => Left(ks.map(k => s"removed configuration key '$k': use storage.bucket").toList)
+      )
       .flatMap(c =>
         Try(typed(c)).toEither.left.map(e => List(s"configuration error: ${e.getMessage}"))
       )
@@ -146,10 +168,17 @@ object ConfigLoader:
       region = str("application.region"),
       awsAccountId = str("application.aws-account-id"),
       storage = StorageConfig(
-        str("storage.raw-bucket"),
-        str("storage.curated-bucket"),
-        str("storage.graph-bucket"),
-        str("storage.rag-bucket")
+        str("storage.bucket"),
+        StoragePrefixes(
+          str("storage.prefixes.raw"),
+          str("storage.prefixes.curated"),
+          str("storage.prefixes.graph"),
+          str("storage.prefixes.semantic-context"),
+          str("storage.prefixes.vectors"),
+          str("storage.prefixes.reports"),
+          str("storage.prefixes.logs"),
+          str("storage.prefixes.runs")
+        )
       ),
       neptune = NeptuneConfig(
         str("neptune.endpoint"),
@@ -211,16 +240,17 @@ object ConfigLoader:
       )
     )
 
+  // S3 general purpose bucket naming: 3 to 63 of a-z 0-9 . -, starting and ending alphanumeric.
+  private val BucketName = "[a-z0-9][a-z0-9.-]{1,61}[a-z0-9]".r
+  private val PrefixShape = "[a-z0-9][a-z0-9-]*/".r
+
   /** Rule violations of a loaded configuration; empty means valid. */
   def validate(c: ScholarChainConfig): List[String] =
     def check(ok: Boolean, msg: String) = if ok then Nil else List(msg)
     val er = c.entityResolution
     val placeholders = Seq(
       c.awsAccountId,
-      c.storage.rawBucket,
-      c.storage.curatedBucket,
-      c.storage.graphBucket,
-      c.storage.ragBucket,
+      c.storage.bucket,
       c.neptune.endpoint,
       c.s3Vectors.vectorBucket,
       c.models.embeddingModel,
@@ -240,6 +270,20 @@ object ConfigLoader:
       check(
         er.maxBlockSize >= 1 && er.maxConflictGroupSize >= 1,
         "entity-resolution.max-block-size and entity-resolution.max-conflict-group-size must be positive"
+      ) ++
+      check(
+        BucketName.matches(c.storage.bucket),
+        s"storage.bucket '${c.storage.bucket}' is not a valid S3 bucket name"
+      ) ++
+      c.storage.prefixes.all.toList.flatMap(p =>
+        check(
+          PrefixShape.matches(p),
+          s"storage prefix '$p' must be one lower-case segment ending in '/'"
+        )
+      ) ++
+      check(
+        c.storage.prefixes.all.distinct.size == c.storage.prefixes.all.size,
+        "storage prefixes must be distinct"
       ) ++
       check(c.graph.windows.nonEmpty, "graph.windows must not be empty") ++
       c.graph.windows.toList.flatMap(w =>

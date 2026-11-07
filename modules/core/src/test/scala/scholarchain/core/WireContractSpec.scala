@@ -85,6 +85,8 @@ class WireContractSpec extends AnyFunSuite:
       "MatchDecision" -> SchemaVersions.MatchDecision,
       "GraphNode" -> SchemaVersions.GraphNode,
       "GraphEdge" -> SchemaVersions.GraphEdge,
+      "GraphNode.Community" -> SchemaVersions.GraphNode,
+      "GraphEdge.MEMBER_OF" -> SchemaVersions.GraphEdge,
       "EvidenceItem" -> SchemaVersions.EvidenceItem,
       "EvidenceBundle" -> SchemaVersions.EvidenceBundle,
       "QueryPlan" -> SchemaVersions.QueryPlan,

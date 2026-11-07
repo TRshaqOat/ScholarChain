@@ -1,0 +1,20 @@
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] running scholarchain.rag.cli.SmokeCli --candidates scratch/stores/s3/semantic-context/candidates/snapshot=2026-10-03/run=run-1d6a86491812ff94887270c1ab885e69 --vectors scratch/stores-live/s3vectors --live --profile scholarchain-sdk --region us-east-2
+LIVE: Bedrock amazon.titan-embed-text-v2:0 in us-east-2, profile scholarchain-sdk, 300 query embeddings at most 50 per minute
+SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+SLF4J: Defaulting to no-operation (NOP) logger implementation
+SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+PASS profile-self@1 49/50 rate 0.980 threshold 0.90
+    chunk-01e0867b7b25b08988ba9a12626d6c09: own document not in the top 1 (top: chunk-fc3d6c6c1bfe267b4c3cf54372c66d18)
+PASS community-self@5 50/50 rate 1.000 threshold 0.90
+PASS path-self@1 50/50 rate 1.000 threshold 0.90
+PASS topic-self@1 50/50 rate 1.000 threshold 0.90
+PASS paper-self@1 49/50 rate 0.980 threshold 0.90
+    chunk-0ad901cdcbdfe28ddbb3ff05eaec8d9f: own document not in the top 1 (top: chunk-7060f19c0f3e5f36a67c5247fa409035)
+PASS profile-community-filter 50/50 rate 1.000 threshold 1.00
+[success] Total time: 380 s (0:06:20.0), completed Nov 6, 2026, 12:55:07 PM

@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "store-run-manifest-v1",
+  "stage": "rag-render",
+  "runId": "run-b6343d09bb981330d78f56fb8c3b94d0",
+  "snapshot": "2026-10-03",
+  "entries": [
+    {
+      "key": "semantic-context/rendered/snapshot=2026-10-03/run=run-b6343d09bb981330d78f56fb8c3b94d0/collaboration-community-v1/part-00000.jsonl",
+      "sha256": "sha256:b81a3a506a15c3a0e1fe06786249eafdd49ec930a6ed076987758a1964192ac4",
+      "bytes": 7281486,
+      "sourceRef": "candidates:scratch/stores/s3/semantic-context/candidates/snapshot=2026-10-03/run=run-1d6a86491812ff94887270c1ab885e69:collaboration-community-v1/part-00000.jsonl,collaboration-path-v1/part-00000.jsonl,paper-abstract-v1/part-00000.jsonl,researcher-profile-v1/part-00000.jsonl,topic-institution-summary-v1/part-00000.jsonl"
+    },
+    {
+      "key": "semantic-context/rendered/snapshot=2026-10-03/run=run-b6343d09bb981330d78f56fb8c3b94d0/collaboration-path-v1/part-00000.jsonl",
+      "sha256": "sha256:5f5fc0adb32bc22a9f3204a6d1b62b977cadc48895fd05803555f2324946e006",
+      "bytes": 114366,
+      "sourceRef": "candidates:scratch/stores/s3/semantic-context/candidates/snapshot=2026-10-03/run=run-1d6a86491812ff94887270c1ab885e69:collaboration-community-v1/part-00000.jsonl,collaboration-path-v1/part-00000.jsonl,paper-abstract-v1/part-00000.jsonl,researcher-profile-v1/part-00000.jsonl,topic-institution-summary-v1/part-00000.jsonl"
+    },
+    {
+      "key": "semantic-context/rendered/snapshot=2026-10-03/run=run-b6343d09bb981330d78f56fb8c3b94d0/paper-abstract-v1/part-00000.jsonl",
+      "sha256": "sha256:66da175faf91c8ec52a07df38d90b33a7167b8a618846327c1816a3a6bb95ec2",
+      "bytes": 1477258,
+      "sourceRef": "candidates:scratch/stores/s3/semantic-context/candidates/snapshot=2026-10-03/run=run-1d6a86491812ff94887270c1ab885e69:collaboration-community-v1/part-00000.jsonl,collaboration-path-v1/part-00000.jsonl,paper-abstract-v1/part-00000.jsonl,researcher-profile-v1/part-00000.jsonl,topic-institution-summary-v1/part-00000.jsonl"
+    },
+    {
+      "key": "semantic-context/rendered/snapshot=2026-10-03/run=run-b6343d09bb981330d78f56fb8c3b94d0/researcher-profile-v1/part-00000.jsonl",
+      "sha256": "sha256:e6f90b323b4b2a663484056eec588eda67560aca42bfa0d821e2d2407a54f828",
+      "bytes": 12987467,
+      "sourceRef": "candidates:scratch/stores/s3/semantic-context/candidates/snapshot=2026-10-03/run=run-1d6a86491812ff94887270c1ab885e69:collaboration-community-v1/part-00000.jsonl,collaboration-path-v1/part-00000.jsonl,paper-abstract-v1/part-00000.jsonl,researcher-profile-v1/part-00000.jsonl,topic-institution-summary-v1/part-00000.jsonl"
+    },
+    {
+      "key": "semantic-context/rendered/snapshot=2026-10-03/run=run-b6343d09bb981330d78f56fb8c3b94d0/topic-institution-summary-v1/part-00000.jsonl",
+      "sha256": "sha256:2659041febc5f3eb74eb670b52faa481b77da32e8c6a1b5bad37b5dadf9d9b04",
+      "bytes": 4622045,
+      "sourceRef": "candidates:scratch/stores/s3/semantic-context/candidates/snapshot=2026-10-03/run=run-1d6a86491812ff94887270c1ab885e69:collaboration-community-v1/part-00000.jsonl,collaboration-path-v1/part-00000.jsonl,paper-abstract-v1/part-00000.jsonl,researcher-profile-v1/part-00000.jsonl,topic-institution-summary-v1/part-00000.jsonl"
+    }
+  ]
+}

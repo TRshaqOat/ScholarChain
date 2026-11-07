@@ -86,6 +86,19 @@ class StableIdsSpec extends AnyFunSuite:
     )
   }
 
+  test("community ID: frozen value (JOBS.md job 6 formula), shape, and window sensitivity") {
+    val c = communityId("graph-v1", "all-years", 2000, 2026, researcherA)
+    assert(researcherA == "orcid:0000-0002-1825-0097")
+    assert(c == "comm-bf6d9db42012407674c1997bfc2b8749")
+    assert(IdFormat.isCommunityId(c) && !IdFormat.isNamespacedId(c))
+    assert(communityId("graph-v1", "2015-2026", 2015, 2026, researcherA) != c)
+    assert(communityId("graph-v2", "all-years", 2000, 2026, researcherA) != c)
+    assert(communityId("graph-v1", "all-years", 2000, 2026, researcherB) != c)
+    assert(
+      !IdFormat.isCommunityId("comm-" + "A" * 32) && !IdFormat.isCommunityId("comp-" + "a" * 32)
+    )
+  }
+
   test("chunk ID changes with any of its inputs") {
     val base = chunkId("e", "v1", "abstract", Some(1), "sha256:x")
     assert(chunkId("e", "v1", "abstract", Some(2), "sha256:x") != base)

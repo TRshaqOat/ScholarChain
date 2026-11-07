@@ -1,0 +1,658 @@
+{
+  "schemaVersion": "spark-run-manifest-v1",
+  "stage": "store-conversion",
+  "runId": "run-1d6a86491812ff94887270c1ab885e69",
+  "attempt": 1,
+  "runDir": "scratch/stores/spark/snapshot=2026-10-03/run=run-1d6a86491812ff94887270c1ab885e69",
+  "snapshot": "2026-10-03",
+  "codeVersion": "src-ddfbf2a7583b",
+  "configVersion": "config-v1",
+  "input": {
+    "path": "scratch/spark/snapshot=2026-10-03/run=run-0375535e0174b7330b18a78988c07211",
+    "loadManifest": "scratch/spark/snapshot=2026-10-03/run=run-0375535e0174b7330b18a78988c07211/export/load-manifest.json",
+    "exportRunId": "run-0375535e0174b7330b18a78988c07211",
+    "chain": {
+      "canonicalGraphRunId": "run-10ceed31b3f602bb998eae7c00929ae9",
+      "researcherAnalyticsRunId": "run-d7865ad3f5f8195546c1dab817328ee5",
+      "communityPathRunId": "run-83b496169099a614ec519133077a1993",
+      "temporalSummaryExportRunId": "run-0375535e0174b7330b18a78988c07211"
+    },
+    "pathRunDir": "scratch/stores/spark/snapshot=2026-10-03/run=run-ee4ffd21aa20dbe4c078a4be96fe8c9f",
+    "pathRunId": "run-ee4ffd21aa20dbe4c078a4be96fe8c9f",
+    "storesRoot": "scratch/stores/s3"
+  },
+  "lineage": {
+    "inputHadoopRunId": "run-035e75abfa6798c938cbd534273dbd8d",
+    "matchPolicyVersion": "er-v2"
+  },
+  "settings": {
+    "master": "local[*]",
+    "shufflePartitions": 40,
+    "rowsPerPart": 250000,
+    "inlineEvidenceMax": 20,
+    "maxInlineIds": 50,
+    "rankingMax": 50,
+    "selectionPolicy": "selection-v1",
+    "selectionSeed": "20261003",
+    "minFreeDiskGiB": 5,
+    "driverMaxHeapBytes": 6442450944
+  },
+  "fingerprints": [
+    "export-run=run-0375535e0174b7330b18a78988c07211",
+    "path-run=run-ee4ffd21aa20dbe4c078a4be96fe8c9f",
+    "input:path-run=scratch/stores/spark/snapshot=2026-10-03/run=run-ee4ffd21aa20dbe4c078a4be96fe8c9f:277832",
+    "config:windows=all-years:2000-2026,2000-2014:2000-2014,2015-2026:2015-2026",
+    "selection=selection-v1:20261003",
+    "evidence-inline-max=20",
+    "ranking-max=50",
+    "input:canonical/mention-map=run-10ceed31b3f602bb998eae7c00929ae9:1273265",
+    "input:canonical/researcher-refusals=run-10ceed31b3f602bb998eae7c00929ae9:5110",
+    "input:canonical/work-map=run-10ceed31b3f602bb998eae7c00929ae9:325029",
+    "input:canonical/work-refusals=run-10ceed31b3f602bb998eae7c00929ae9:334",
+    "input:canonical/researchers=run-10ceed31b3f602bb998eae7c00929ae9:259057",
+    "input:canonical/works=run-10ceed31b3f602bb998eae7c00929ae9:113205",
+    "input:canonical/authored=run-10ceed31b3f602bb998eae7c00929ae9:535898",
+    "input:canonical/venues=run-10ceed31b3f602bb998eae7c00929ae9:288",
+    "input:canonical/topics=run-10ceed31b3f602bb998eae7c00929ae9:1226",
+    "input:canonical/institutions=run-10ceed31b3f602bb998eae7c00929ae9:58404",
+    "input:canonical/work-topics=run-10ceed31b3f602bb998eae7c00929ae9:106682",
+    "input:canonical/researcher-institutions=run-10ceed31b3f602bb998eae7c00929ae9:379708",
+    "input:graph/coauthor-edges=run-10ceed31b3f602bb998eae7c00929ae9:1590754",
+    "input:graph/self-pairs=run-10ceed31b3f602bb998eae7c00929ae9:95",
+    "input:integrity-violations=run-10ceed31b3f602bb998eae7c00929ae9:0",
+    "input:analytics/components=run-d7865ad3f5f8195546c1dab817328ee5:34546",
+    "input:analytics/researcher-metrics=run-d7865ad3f5f8195546c1dab817328ee5:397100",
+    "input:analytics/integrity-violations=run-d7865ad3f5f8195546c1dab817328ee5:21",
+    "input:paths/path-evidence=run-83b496169099a614ec519133077a1993:50",
+    "input:paths/path-length-estimate=run-83b496169099a614ec519133077a1993:3",
+    "input:analytics/communities=run-83b496169099a614ec519133077a1993:79740",
+    "input:analytics/cross-community-edges=run-83b496169099a614ec519133077a1993:509683",
+    "input:analytics/researcher-communities=run-83b496169099a614ec519133077a1993:397100",
+    "input:analytics/community-path-violations=run-83b496169099a614ec519133077a1993:0",
+    "input:temporal/window-summary=run-0375535e0174b7330b18a78988c07211:3",
+    "input:temporal/researcher-changes=run-0375535e0174b7330b18a78988c07211:191318",
+    "input:temporal/community-transitions=run-0375535e0174b7330b18a78988c07211:11140",
+    "input:temporal/window-comparison=run-0375535e0174b7330b18a78988c07211:1",
+    "input:summaries/semantic-summaries=run-0375535e0174b7330b18a78988c07211:107979",
+    "input:summary-export-violations=run-0375535e0174b7330b18a78988c07211:0"
+  ],
+  "startedAt": "2026-11-06T01:43:01.710924Z",
+  "inputs": [
+    {
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-10ceed31b3f602bb998eae7c00929ae9/canonical/researchers",
+      "exists": true,
+      "rows": 259057
+    },
+    {
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-10ceed31b3f602bb998eae7c00929ae9/canonical/works",
+      "exists": true,
+      "rows": 113205
+    },
+    {
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-10ceed31b3f602bb998eae7c00929ae9/canonical/authored",
+      "exists": true,
+      "rows": 535898
+    },
+    {
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-10ceed31b3f602bb998eae7c00929ae9/canonical/venues",
+      "exists": true,
+      "rows": 288
+    },
+    {
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-10ceed31b3f602bb998eae7c00929ae9/canonical/institutions",
+      "exists": true,
+      "rows": 58404
+    },
+    {
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-10ceed31b3f602bb998eae7c00929ae9/canonical/topics",
+      "exists": true,
+      "rows": 1226
+    },
+    {
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-10ceed31b3f602bb998eae7c00929ae9/canonical/work-topics",
+      "exists": true,
+      "rows": 106682
+    },
+    {
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-10ceed31b3f602bb998eae7c00929ae9/canonical/researcher-institutions",
+      "exists": true,
+      "rows": 379708
+    },
+    {
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-10ceed31b3f602bb998eae7c00929ae9/graph/coauthor-edges",
+      "exists": true,
+      "rows": 1590754
+    },
+    {
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-d7865ad3f5f8195546c1dab817328ee5/analytics/researcher-metrics",
+      "exists": true,
+      "rows": 397100
+    },
+    {
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-83b496169099a614ec519133077a1993/analytics/communities",
+      "exists": true,
+      "rows": 79740
+    },
+    {
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-83b496169099a614ec519133077a1993/analytics/researcher-communities",
+      "exists": true,
+      "rows": 397100
+    },
+    {
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-0375535e0174b7330b18a78988c07211/temporal/researcher-changes",
+      "exists": true,
+      "rows": 191318
+    },
+    {
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-0375535e0174b7330b18a78988c07211/summaries/semantic-summaries",
+      "exists": true,
+      "rows": 107979
+    },
+    {
+      "path": "scratch/stores/spark/snapshot=2026-10-03/run=run-ee4ffd21aa20dbe4c078a4be96fe8c9f/paths/path-evidence",
+      "exists": true,
+      "rows": 54
+    },
+    {
+      "path": "scratch/stores/spark/snapshot=2026-10-03/run=run-ee4ffd21aa20dbe4c078a4be96fe8c9f/summaries/path-summaries",
+      "exists": true,
+      "rows": 54
+    }
+  ],
+  "tables": [
+    {
+      "name": "rankings/researcher-rankings",
+      "schemaVersion": "spark-rankings-researcher-rankings-v1",
+      "path": "scratch/stores/spark/snapshot=2026-10-03/run=run-1d6a86491812ff94887270c1ab885e69/rankings/researcher-rankings",
+      "format": "parquet",
+      "partitionColumns": [],
+      "hashPartitionKey": null,
+      "writePartitions": 1,
+      "schema": "window STRING,metric STRING,researcherId STRING,value DOUBLE,valueText STRING,rank INT,windowStartYear INT,windowEndYear INT,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING",
+      "rowCount": 1050,
+      "intendedTargets": [
+        "dynamodb"
+      ],
+      "fileCount": 1,
+      "totalBytes": 31362,
+      "minFileBytes": 31362,
+      "maxFileBytes": 31362
+    }
+  ],
+  "storeManifestKey": "runs/store-conversion/snapshot=2026-10-03/run=run-1d6a86491812ff94887270c1ab885e69/manifest.json",
+  "counts": {
+    "rowsPerFamily": {
+      "neptune-vertices-researcher": 259057,
+      "neptune-vertices-work": 113205,
+      "neptune-vertices-venue": 288,
+      "neptune-vertices-institution": 58404,
+      "neptune-vertices-topic": 1226,
+      "neptune-vertices-community": 79740,
+      "neptune-edges-authored": 535898,
+      "neptune-edges-coauthored-with": 1590754,
+      "neptune-edges-published-in": 113169,
+      "neptune-edges-affiliated-with": 379708,
+      "neptune-edges-has-topic": 106682,
+      "neptune-edges-member-of": 397100,
+      "coauthor-evidence": 574,
+      "dynamodb-ResearcherMetricCache": 588439,
+      "dynamodb-EntityLinkCache": 287780,
+      "candidates-collaboration-path-v1": 54,
+      "candidates-researcher-profile-v1": 5000,
+      "candidates-collaboration-community-v1": 4000,
+      "candidates-topic-institution-summary-v1": 2969,
+      "candidates-paper-abstract-v1": 1000,
+      "dynamodb-ArtifactRegistry": 9
+    },
+    "objects": 608,
+    "objectBytes": 1740290945,
+    "filesPerFamily": {
+      "graph/neptune/snapshot=2026-10-03/run=run-1d6a86491812ff94887270c1ab885e69": 23,
+      "curated/dynamodb/snapshot=2026-10-03/run=run-1d6a86491812ff94887270c1ab885e69": 6,
+      "curated/coauthor-evidence/snapshot=2026-10-03/run=run-1d6a86491812ff94887270c1ab885e69": 574,
+      "semantic-context/candidates/snapshot=2026-10-03/run=run-1d6a86491812ff94887270c1ab885e69": 5
+    },
+    "candidatesPerIndex": {
+      "collaboration-path-v1": 54,
+      "researcher-profile-v1": 5000,
+      "collaboration-community-v1": 4000,
+      "topic-institution-summary-v1": 2969,
+      "paper-abstract-v1": 1000
+    },
+    "selectionTiers": {
+      "profiles": [
+        {
+          "tier": 1,
+          "count": 192
+        },
+        {
+          "tier": 2,
+          "count": 92
+        },
+        {
+          "tier": 3,
+          "count": 4716
+        }
+      ],
+      "communities": [
+        {
+          "window": "2000-2014",
+          "tier": 2,
+          "count": 1000
+        },
+        {
+          "window": "2015-2026",
+          "tier": 2,
+          "count": 1000
+        },
+        {
+          "window": "all-years",
+          "tier": 1,
+          "count": 211
+        },
+        {
+          "window": "all-years",
+          "tier": 2,
+          "count": 1789
+        }
+      ],
+      "papers": [
+        {
+          "tier": 1,
+          "count": 199
+        },
+        {
+          "tier": 2,
+          "count": 801
+        }
+      ]
+    },
+    "rankingsTop1": [
+      {
+        "metric": "communitiesConnected",
+        "window": "2000-2014",
+        "researcherId": "scr:canon-v1.er-v2:8c41e7402418b6a74ad89d1b987f6f44",
+        "valueText": "78"
+      },
+      {
+        "metric": "communitiesConnected",
+        "window": "2015-2026",
+        "researcherId": "scr:canon-v1.er-v2:9c35232fa374c48fdc67309bfedd5f7c",
+        "valueText": "118"
+      },
+      {
+        "metric": "communitiesConnected",
+        "window": "all-years",
+        "researcherId": "scr:canon-v1.er-v2:bede83f65bedfab8f7fc802f295ee293",
+        "valueText": "184"
+      },
+      {
+        "metric": "coreness",
+        "window": "2000-2014",
+        "researcherId": "scr:canon-v1.er-v2:00eacf75fa0970a14129c0f6e0cdbecf",
+        "valueText": "114"
+      },
+      {
+        "metric": "coreness",
+        "window": "2015-2026",
+        "researcherId": "scr:canon-v1.er-v2:00081c1918dc4d7f9fbe9bf0ff3a429b",
+        "valueText": "286"
+      },
+      {
+        "metric": "coreness",
+        "window": "all-years",
+        "researcherId": "scr:canon-v1.er-v2:00081c1918dc4d7f9fbe9bf0ff3a429b",
+        "valueText": "286"
+      },
+      {
+        "metric": "crossCommunityDegree",
+        "window": "2000-2014",
+        "researcherId": "scr:canon-v1.er-v2:8c41e7402418b6a74ad89d1b987f6f44",
+        "valueText": "298"
+      },
+      {
+        "metric": "crossCommunityDegree",
+        "window": "2015-2026",
+        "researcherId": "scr:canon-v1.er-v2:db196f186e6cbe459c544f331a9a5f58",
+        "valueText": "341"
+      },
+      {
+        "metric": "crossCommunityDegree",
+        "window": "all-years",
+        "researcherId": "scr:canon-v1.er-v2:8c41e7402418b6a74ad89d1b987f6f44",
+        "valueText": "705"
+      },
+      {
+        "metric": "distinctCoauthorCount",
+        "window": "2000-2014",
+        "researcherId": "scr:canon-v1.er-v2:8c41e7402418b6a74ad89d1b987f6f44",
+        "valueText": "349"
+      },
+      {
+        "metric": "distinctCoauthorCount",
+        "window": "2015-2026",
+        "researcherId": "scr:canon-v1.er-v2:110ec38e39367e47da67835ca2ce45cc",
+        "valueText": "555"
+      },
+      {
+        "metric": "distinctCoauthorCount",
+        "window": "all-years",
+        "researcherId": "scr:canon-v1.er-v2:8c41e7402418b6a74ad89d1b987f6f44",
+        "valueText": "770"
+      },
+      {
+        "metric": "maximumCoauthorsOnOnePaper",
+        "window": "2000-2014",
+        "researcherId": "scr:canon-v1.er-v2:00eacf75fa0970a14129c0f6e0cdbecf",
+        "valueText": "114"
+      },
+      {
+        "metric": "maximumCoauthorsOnOnePaper",
+        "window": "2015-2026",
+        "researcherId": "scr:canon-v1.er-v2:00081c1918dc4d7f9fbe9bf0ff3a429b",
+        "valueText": "286"
+      },
+      {
+        "metric": "maximumCoauthorsOnOnePaper",
+        "window": "all-years",
+        "researcherId": "scr:canon-v1.er-v2:00081c1918dc4d7f9fbe9bf0ff3a429b",
+        "valueText": "286"
+      },
+      {
+        "metric": "participationCoefficient",
+        "window": "2000-2014",
+        "researcherId": "scr:canon-v1.er-v2:7bf5dea7bb0b5ad1b5d78b99da30453b",
+        "valueText": "0.9531445231153686"
+      },
+      {
+        "metric": "participationCoefficient",
+        "window": "2015-2026",
+        "researcherId": "scr:canon-v1.er-v2:a4dd056e421b905484f5e314c6f9efb2",
+        "valueText": "0.9762011406730569"
+      },
+      {
+        "metric": "participationCoefficient",
+        "window": "all-years",
+        "researcherId": "scr:canon-v1.er-v2:a4dd056e421b905484f5e314c6f9efb2",
+        "valueText": "0.9813094530321046"
+      },
+      {
+        "metric": "publicationCount",
+        "window": "2000-2014",
+        "researcherId": "scr:canon-v1.er-v2:6c5fc452ebb56826c254a79b5bdae377",
+        "valueText": "213"
+      },
+      {
+        "metric": "publicationCount",
+        "window": "2015-2026",
+        "researcherId": "scr:canon-v1.er-v2:110ec38e39367e47da67835ca2ce45cc",
+        "valueText": "165"
+      },
+      {
+        "metric": "publicationCount",
+        "window": "all-years",
+        "researcherId": "scr:canon-v1.er-v2:6c5fc452ebb56826c254a79b5bdae377",
+        "valueText": "359"
+      }
+    ],
+    "rankingItems": 21,
+    "storeManifestKey": "runs/store-conversion/snapshot=2026-10-03/run=run-1d6a86491812ff94887270c1ab885e69/manifest.json"
+  },
+  "stepSeconds": {
+    "read inputs": 7.312679789999999,
+    "publish neptune-vertices-researcher": 1.3421085,
+    "publish neptune-vertices-work": 0.509606167,
+    "publish neptune-vertices-venue": 0.118778208,
+    "publish neptune-vertices-institution": 0.309621667,
+    "publish neptune-vertices-topic": 0.122888333,
+    "publish neptune-vertices-community": 0.376919208,
+    "publish neptune-edges-authored": 1.525908125,
+    "publish neptune-edges-coauthored-with": 4.488615917,
+    "publish neptune-edges-published-in": 0.438418833,
+    "publish neptune-edges-affiliated-with": 1.206330875,
+    "publish neptune-edges-has-topic": 0.502163584,
+    "publish neptune-edges-member-of": 1.0266835,
+    "neptune": 13.892809333,
+    "write rankings/researcher-rankings": 1.824695333,
+    "publish dynamodb-ResearcherMetricCache": 5.931771916,
+    "publish dynamodb-EntityLinkCache": 2.103302791,
+    "dynamodb": 8.07956225,
+    "selection": 0.110529083,
+    "publish candidates-collaboration-path-v1": 0.194046542,
+    "publish candidates-researcher-profile-v1": 1.294068708,
+    "publish candidates-collaboration-community-v1": 0.82807225,
+    "publish candidates-topic-institution-summary-v1": 0.317772542,
+    "publish candidates-paper-abstract-v1": 2.032506959,
+    "candidates": 4.729969666,
+    "report": 0.554025959
+  },
+  "stagesByStep": [
+    {
+      "step": "read inputs",
+      "stages": 64,
+      "tasks": 220,
+      "maxTasksInAStage": 11,
+      "shuffleReadBytes": 5506,
+      "shuffleWriteBytes": 5506,
+      "spillDiskBytes": 0,
+      "stageMs": 5798
+    },
+    {
+      "step": "publish neptune-vertices-researcher",
+      "stages": 5,
+      "tasks": 15,
+      "maxTasksInAStage": 8,
+      "shuffleReadBytes": 20001068,
+      "shuffleWriteBytes": 20001068,
+      "spillDiskBytes": 0,
+      "stageMs": 975
+    },
+    {
+      "step": "publish neptune-vertices-work",
+      "stages": 4,
+      "tasks": 11,
+      "maxTasksInAStage": 8,
+      "shuffleReadBytes": 11493022,
+      "shuffleWriteBytes": 11493022,
+      "spillDiskBytes": 0,
+      "stageMs": 336
+    },
+    {
+      "step": "publish neptune-vertices-venue",
+      "stages": 4,
+      "tasks": 4,
+      "maxTasksInAStage": 1,
+      "shuffleReadBytes": 16108,
+      "shuffleWriteBytes": 16108,
+      "spillDiskBytes": 0,
+      "stageMs": 55
+    },
+    {
+      "step": "publish neptune-vertices-institution",
+      "stages": 4,
+      "tasks": 5,
+      "maxTasksInAStage": 2,
+      "shuffleReadBytes": 4749510,
+      "shuffleWriteBytes": 4749510,
+      "spillDiskBytes": 0,
+      "stageMs": 209
+    },
+    {
+      "step": "publish neptune-vertices-topic",
+      "stages": 4,
+      "tasks": 4,
+      "maxTasksInAStage": 1,
+      "shuffleReadBytes": 69245,
+      "shuffleWriteBytes": 69245,
+      "spillDiskBytes": 0,
+      "stageMs": 60
+    },
+    {
+      "step": "publish neptune-vertices-community",
+      "stages": 4,
+      "tasks": 6,
+      "maxTasksInAStage": 3,
+      "shuffleReadBytes": 6858506,
+      "shuffleWriteBytes": 6858506,
+      "spillDiskBytes": 0,
+      "stageMs": 256
+    },
+    {
+      "step": "publish neptune-edges-authored",
+      "stages": 5,
+      "tasks": 18,
+      "maxTasksInAStage": 8,
+      "shuffleReadBytes": 55147207,
+      "shuffleWriteBytes": 55147207,
+      "spillDiskBytes": 0,
+      "stageMs": 1077
+    },
+    {
+      "step": "publish neptune-edges-coauthored-with",
+      "stages": 5,
+      "tasks": 32,
+      "maxTasksInAStage": 10,
+      "shuffleReadBytes": 232458638,
+      "shuffleWriteBytes": 232458638,
+      "spillDiskBytes": 0,
+      "stageMs": 2774
+    },
+    {
+      "step": "publish neptune-edges-published-in",
+      "stages": 4,
+      "tasks": 11,
+      "maxTasksInAStage": 8,
+      "shuffleReadBytes": 7163128,
+      "shuffleWriteBytes": 7163128,
+      "spillDiskBytes": 0,
+      "stageMs": 290
+    },
+    {
+      "step": "publish neptune-edges-affiliated-with",
+      "stages": 5,
+      "tasks": 17,
+      "maxTasksInAStage": 10,
+      "shuffleReadBytes": 38754790,
+      "shuffleWriteBytes": 38754790,
+      "spillDiskBytes": 0,
+      "stageMs": 853
+    },
+    {
+      "step": "publish neptune-edges-has-topic",
+      "stages": 4,
+      "tasks": 5,
+      "maxTasksInAStage": 2,
+      "shuffleReadBytes": 6737230,
+      "shuffleWriteBytes": 6737230,
+      "spillDiskBytes": 0,
+      "stageMs": 384
+    },
+    {
+      "step": "publish neptune-edges-member-of",
+      "stages": 7,
+      "tasks": 28,
+      "maxTasksInAStage": 10,
+      "shuffleReadBytes": 43932815,
+      "shuffleWriteBytes": 43932815,
+      "spillDiskBytes": 0,
+      "stageMs": 922
+    },
+    {
+      "step": "write rankings/researcher-rankings",
+      "stages": 9,
+      "tasks": 89,
+      "maxTasksInAStage": 70,
+      "shuffleReadBytes": 252200,
+      "shuffleWriteBytes": 252200,
+      "spillDiskBytes": 0,
+      "stageMs": 1608
+    },
+    {
+      "step": "publish dynamodb-ResearcherMetricCache",
+      "stages": 8,
+      "tasks": 51,
+      "maxTasksInAStage": 20,
+      "shuffleReadBytes": 209018660,
+      "shuffleWriteBytes": 209018660,
+      "spillDiskBytes": 0,
+      "stageMs": 3738
+    },
+    {
+      "step": "publish dynamodb-EntityLinkCache",
+      "stages": 6,
+      "tasks": 27,
+      "maxTasksInAStage": 12,
+      "shuffleReadBytes": 65653572,
+      "shuffleWriteBytes": 65653572,
+      "spillDiskBytes": 0,
+      "stageMs": 1553
+    },
+    {
+      "step": "publish candidates-collaboration-path-v1",
+      "stages": 6,
+      "tasks": 6,
+      "maxTasksInAStage": 1,
+      "shuffleReadBytes": 151359,
+      "shuffleWriteBytes": 151359,
+      "spillDiskBytes": 0,
+      "stageMs": 118
+    },
+    {
+      "step": "publish candidates-researcher-profile-v1",
+      "stages": 9,
+      "tasks": 19,
+      "maxTasksInAStage": 11,
+      "shuffleReadBytes": 26904053,
+      "shuffleWriteBytes": 26904053,
+      "spillDiskBytes": 0,
+      "stageMs": 1123
+    },
+    {
+      "step": "publish candidates-collaboration-community-v1",
+      "stages": 7,
+      "tasks": 19,
+      "maxTasksInAStage": 11,
+      "shuffleReadBytes": 44863574,
+      "shuffleWriteBytes": 44863574,
+      "spillDiskBytes": 0,
+      "stageMs": 638
+    },
+    {
+      "step": "publish candidates-topic-institution-summary-v1",
+      "stages": 5,
+      "tasks": 15,
+      "maxTasksInAStage": 11,
+      "shuffleReadBytes": 3387295,
+      "shuffleWriteBytes": 3387295,
+      "spillDiskBytes": 0,
+      "stageMs": 217
+    },
+    {
+      "step": "publish candidates-paper-abstract-v1",
+      "stages": 32,
+      "tasks": 151,
+      "maxTasksInAStage": 40,
+      "shuffleReadBytes": 43287954,
+      "shuffleWriteBytes": 43287954,
+      "spillDiskBytes": 0,
+      "stageMs": 3655
+    },
+    {
+      "step": "report",
+      "stages": 13,
+      "tasks": 25,
+      "maxTasksInAStage": 11,
+      "shuffleReadBytes": 6882186,
+      "shuffleWriteBytes": 3444170,
+      "spillDiskBytes": 0,
+      "stageMs": 369
+    }
+  ],
+  "stageCount": 214,
+  "disk": {
+    "freeBeforeBytes": 24838320128,
+    "freeAfterBytes": 20971372544
+  },
+  "wallSeconds": 36.92045975,
+  "finishedAt": "2026-11-06T01:43:38.631437Z"
+}

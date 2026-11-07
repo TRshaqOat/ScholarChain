@@ -170,6 +170,26 @@ object StableIds:
       )
     )
 
+  /** "comm-" + H("community", graphPolicyVersion, window, windowStartYear, windowEndYear,
+    * finalLabel): a per-window community, where finalLabel is the researcher ID whose label won
+    * label propagation (modules/spark/JOBS.md job 6). Stable across reruns of the same input.
+    */
+  def communityId(
+      graphPolicyVersion: String,
+      window: String,
+      windowStartYear: Int,
+      windowEndYear: Int,
+      finalLabel: String
+  ): String =
+    "comm-" + hash(
+      "community",
+      graphPolicyVersion,
+      window,
+      s"$windowStartYear",
+      s"$windowEndYear",
+      finalLabel
+    )
+
   /** Chunk or profile ID: "chunk-" + H("chunk", entityId, sourceVersion, documentType, ordinal or
     * "", textHash). documentType distinguishes profiles from chunks.
     */
@@ -232,6 +252,7 @@ object IdFormat:
   private val Namespaced = s"[a-z][a-z0-9-]*:$Ascii+".r
   private val CoauthorEdge = s"cae-$Hex32".r
   private val GraphEdge = s"ge-$Hex32".r
+  private val Community = s"comm-$Hex32".r
   private val Chunk = s"chunk-$Hex32".r
   private val Evidence = s"ev-$Hex32".r
   private val Run = s"run-$Hex32".r
@@ -247,6 +268,7 @@ object IdFormat:
   def isAffiliationNameId(s: String): Boolean = AffiliationName.matches(s)
   def isCoauthorEdgeId(s: String): Boolean = CoauthorEdge.matches(s)
   def isGraphEdgeId(s: String): Boolean = GraphEdge.matches(s)
+  def isCommunityId(s: String): Boolean = Community.matches(s)
   def isChunkId(s: String): Boolean = Chunk.matches(s)
   def isEvidenceId(s: String): Boolean = Evidence.matches(s)
   def isRunId(s: String): Boolean = Run.matches(s)

@@ -56,6 +56,82 @@ object CommunityPathJob:
       (f(0), f(1), f(2))
     }.distinct
 
+  /** The pairs as (window, source, target, window years, pairId). `pairId` = "pair-" +
+    * H("path-pair", graph policy, window, start, end, source, target).
+    */
+  def pairFrame(
+      spark: SparkSession,
+      pairList: Seq[(String, String, String)],
+      windows: DataFrame,
+      graphPolicy: String
+  ): DataFrame =
+    spark
+      .createDataFrame(
+        java.util.Arrays.asList(pairList.map((a, b, c) => Row(a, b, c))*),
+        StructType.fromDDL("window STRING, source STRING, target STRING")
+      )
+      .join(broadcast(windows), "window")
+      .withColumn(
+        "pairId",
+        concat(
+          lit("pair-"),
+          Ids.hash(
+            lit("path-pair"),
+            lit(graphPolicy),
+            col("window"),
+            col("windowStartYear").cast("string"),
+            col("windowEndYear").cast("string"),
+            col("source"),
+            col("target")
+          )
+        )
+      )
+
+  /** The `paths/path-evidence` columns of ShortestPaths.paths rows. */
+  def evidenceRows(pathRows: DataFrame, windows: DataFrame, ctx: Ctx, graphPolicy: String) =
+    pathRows
+      .join(broadcast(windows), "window")
+      .select(
+        col("pairId"),
+        col("window"),
+        col("windowStartYear"),
+        col("windowEndYear"),
+        col("sourceResearcherId"),
+        col("targetResearcherId"),
+        col("status"),
+        col("pathLength"),
+        col("maxDepth"),
+        col("componentId"),
+        col("researcherIds"),
+        col("hops"),
+        ctx.provenance(col("pairId"), graphPolicy).as("provenance")
+      )
+
+  /** PATH_HOP_EDGE_MISSING and PATH_LENGTH_MISMATCH over written path evidence. */
+  def pathViolations(pathEvidence: DataFrame): DataFrame =
+    Violations(
+      "PATH_HOP_EDGE_MISSING",
+      pathEvidence
+        .select(col("pairId"), col("window"), explode(col("hops")).as("h"))
+        .where(col("h.edgeId").isNull),
+      col("pairId"),
+      col("window"),
+      concat_ws("|", col("h.fromResearcherId"), col("h.toResearcherId"))
+    ).union(
+      Violations(
+        "PATH_LENGTH_MISMATCH",
+        pathEvidence.where(
+          col("status") === ShortestPaths.Found &&
+            (size(col("hops")) =!= col("pathLength") ||
+              size(col("researcherIds")) =!= col("pathLength") + 1 ||
+              col("pathLength") > col("maxDepth"))
+        ),
+        col("pairId"),
+        col("window"),
+        col("pathLength")
+      )
+    )
+
   def run(spark: SparkSession, s: SparkSettings, cfg: ScholarChainConfig): RunResult =
     val hconf = spark.sparkContext.hadoopConfiguration
     val inPath = new Path(s.input)
@@ -222,27 +298,7 @@ object CommunityPathJob:
     val pairsFile = new Path(jr.runDir, "paths/selected-pairs.csv")
     JobRun.writeText(jr.ofs, pairsFile, pairsCsv)
     val pairList = parsePairs(pairsCsv, windows.map(_.name).toSet)
-    val pairs = spark
-      .createDataFrame(
-        java.util.Arrays.asList(pairList.map((a, b, c) => Row(a, b, c))*),
-        StructType.fromDDL("window STRING, source STRING, target STRING")
-      )
-      .join(broadcast(w), "window")
-      .withColumn(
-        "pairId",
-        concat(
-          lit("pair-"),
-          Ids.hash(
-            lit("path-pair"),
-            lit(graphPolicy),
-            col("window"),
-            col("windowStartYear").cast("string"),
-            col("windowEndYear").cast("string"),
-            col("source"),
-            col("target")
-          )
-        )
-      )
+    val pairs = pairFrame(spark, pairList, w, graphPolicy)
     val membership =
       metrics.select(col("window"), col("researcherId").as("node"), col("componentId"))
     val (pathRows, bfsReached) = step("bounded paths") {
@@ -251,21 +307,7 @@ object CommunityPathJob:
     }
     val pathEvidence = write(
       "paths/path-evidence",
-      withWindow(pathRows).select(
-        col("pairId"),
-        col("window"),
-        col("windowStartYear"),
-        col("windowEndYear"),
-        col("sourceResearcherId"),
-        col("targetResearcherId"),
-        col("status"),
-        col("pathLength"),
-        col("maxDepth"),
-        col("componentId"),
-        col("researcherIds"),
-        col("hops"),
-        ctx.provenance(col("pairId"), graphPolicy).as("provenance")
-      ),
+      evidenceRows(pathRows, w, ctx, graphPolicy),
       Seq("neptune", "dynamodb", "s3"),
       1,
       None,
@@ -465,30 +507,7 @@ object CommunityPathJob:
               )
             )
           )
-        ).union(
-          Violations(
-            "PATH_HOP_EDGE_MISSING",
-            pathEvidence
-              .select(col("pairId"), col("window"), explode(col("hops")).as("h"))
-              .where(col("h.edgeId").isNull),
-            col("pairId"),
-            col("window"),
-            concat_ws("|", col("h.fromResearcherId"), col("h.toResearcherId"))
-          )
-        ).union(
-          Violations(
-            "PATH_LENGTH_MISMATCH",
-            pathEvidence.where(
-              col("status") === ShortestPaths.Found &&
-                (size(col("hops")) =!= col("pathLength") ||
-                  size(col("researcherIds")) =!= col("pathLength") + 1 ||
-                  col("pathLength") > col("maxDepth"))
-            ),
-            col("pairId"),
-            col("window"),
-            col("pathLength")
-          )
-        )
+        ).union(pathViolations(pathEvidence))
       ),
       Seq("s3"),
       1
