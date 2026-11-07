@@ -208,3 +208,11 @@ Review the Phase 09 change set again; the orchestrator supplies it as for review
     - Check that each answer is appended to cache.jsonl as soon as it returns, and add a test that a run stopped partway resumes from the partial cache without repeating answered pairs.
     - Report the cause with file and line, and give the Terminal command for the human's rerun (unchanged, or corrected if flags changed). The human reruns the live adjudication after review 2; agents never run it.
     - Review 2 checks this ruling together with rulings 17 to 25.
+
+## Human rulings after repair 1C (binding)
+
+27. Fenced model replies and the live adjudication result.
+    - Repair 1C's diagnosis replaces the cause suspected in ruling 26: the throttle worked; every reply failed validation and was neither cached nor reported. Accepting exactly one Markdown code fence that wraps the whole reply is a response-format fix, not a match-policy change, and the reversal of the Phase 5 test expectation is accepted. Prose around the JSON, two objects, and an unclosed fence stay rejected.
+    - The human reran the live adjudication after repair 1C: COMPLETE, 200 pairs decided, 213 requests, 259,255 tokens, 187 answers cached, 13 schema failures (12 "cited field not in the input", 1 fabricated identifier). Every rejected reply began and ended with a backtick, which confirms that Haiku wraps its JSON in a code fence. Evidence (read-only): docs/agent-runs/phase-09/evidence/live-adjudication.txt, live-adjudication-summary.json, live-adjudication-failures.jsonl. No further adjudication rerun is needed unless review 2 changes modules/entity-resolution.
+    - Part B (ruling 23, Haiku output validation): this is the likely cause of the planner and synthesis failures too. Apply the same rule within modules/rag (strip one enclosing fence; prose stays rejected), without a dependency on modules/entity-resolution, and record each rejected output's shape (length, first and last character class, stop reason, never text). Confirm or rule out the fence against the rag code and the 2-question evidence, and fix any other cause found.
+    - Gate item, no repair: the live summary shows 66 RESEARCHER UNRESOLVED, while the progress lines show 24 model abstentions. The human reviews at the gate why the decision rules overrode the model's answer for the other pairs.
