@@ -216,3 +216,13 @@ Review the Phase 09 change set again; the orchestrator supplies it as for review
     - The human reran the live adjudication after repair 1C: COMPLETE, 200 pairs decided, 213 requests, 259,255 tokens, 187 answers cached, 13 schema failures (12 "cited field not in the input", 1 fabricated identifier). Every rejected reply began and ended with a backtick, which confirms that Haiku wraps its JSON in a code fence. Evidence (read-only): docs/agent-runs/phase-09/evidence/live-adjudication.txt, live-adjudication-summary.json, live-adjudication-failures.jsonl. No further adjudication rerun is needed unless review 2 changes modules/entity-resolution.
     - Part B (ruling 23, Haiku output validation): this is the likely cause of the planner and synthesis failures too. Apply the same rule within modules/rag (strip one enclosing fence; prose stays rejected), without a dependency on modules/entity-resolution, and record each rejected output's shape (length, first and last character class, stop reason, never text). Confirm or rule out the fence against the rag code and the 2-question evidence, and fix any other cause found.
     - Gate item, no repair: the live summary shows 66 RESEARCHER UNRESOLVED, while the progress lines show 24 model abstentions. The human reviews at the gate why the decision rules overrode the model's answer for the other pairs.
+
+## Human rulings after repair 1B (binding)
+
+28. Synthesis prompt default and part D (found by repair 1B).
+    - Repair 1B added prompts/synthesis/synthesis-v2.md and prompts/synthesis/synthesis-output-v2.schema.json, but the default runtime.synthesis.prompt-version in modules/core/src/main/resources/scholarchain.conf (line 154) still selects synthesis-v1, and that file is domain-engineer's.
+    - Repair 1 part D (domain-engineer): edit only modules/core/**. Change the default to "synthesis-v2", and any matching schema-version default if one exists (see modules/rag/RUNTIME.md section 20). Update ConfigLoaderSpec or any contract test that pins the old default. Report every downstream reference without editing it. Change config-version only if the work order 2 rule requires it, and say why. No other change.
+    - Accepted from repair 1B: rag accepts both synthesis-output-v1 and -v2 and enforces the non-empty values rule for both. Whether v1 support is removed is a Phase 10 question, not part D.
+    - Agent sbt runs may set SPARK_LOCAL_IP=127.0.0.1 in the environment (the Spark driver cannot bind the hostname address in the agent shell). Environment only, no code or build change.
+    - Process note: repair 1A ran one read-only git status and disclosed it. This deviates from ruling 15 and is recorded at the gate; no repair.
+    - Review 2 covers rulings 17 to 28, including part D.
