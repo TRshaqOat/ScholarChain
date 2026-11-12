@@ -1,0 +1,101 @@
+{
+  "schemaVersion": "rag-answer-v1",
+  "response": {
+    "schemaVersion": "answer-response-v1",
+    "queryId": "qry-2adde1a12cad2e843fd35335602f8afd",
+    "summary": "No drafted answer passed validation within the model call and token budget; no claim is made.",
+    "claims": [],
+    "abstained": true,
+    "uncertainty": "Filtered from the stored top 50; researchers outside it are not considered.",
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "RUNTIME",
+      "sourceRecordId": "qry-2adde1a12cad2e843fd35335602f8afd",
+      "snapshot": "2026-10-03",
+      "runId": "run-80e436dea5587ed42c03f98d66a05bb2",
+      "policyVersion": "fusion-v1",
+      "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+    }
+  },
+  "plan": {
+    "schemaVersion": "rag-query-plan-v1",
+    "queryId": "qry-2adde1a12cad2e843fd35335602f8afd",
+    "operations": [
+      {
+        "operation": "RESEARCHER_RANKING",
+        "scope": "CORPUS",
+        "researchers": [],
+        "metric": "PUBLICATION_COUNT",
+        "topN": null
+      },
+      {
+        "operation": "TOPIC_FILTER",
+        "scope": "CORPUS",
+        "researchers": [],
+        "metric": null,
+        "topN": null
+      }
+    ],
+    "researcherNames": [],
+    "metrics": [],
+    "window": {
+      "requested": {
+        "kind": "DEFAULT",
+        "name": null,
+        "yearFrom": null,
+        "yearTo": null
+      },
+      "window": "all-years",
+      "startYear": 2000,
+      "endYear": 2026,
+      "exact": true,
+      "note": null
+    },
+    "comparison": null,
+    "topics": [
+      "cloud computing"
+    ],
+    "venues": [],
+    "institutions": [],
+    "semanticIndexes": [
+      "topic-institution-summary-v1"
+    ],
+    "limits": {
+      "graphLimit": 100,
+      "vectorLimit": 50,
+      "maxPathDepth": 6,
+      "topK": 5
+    },
+    "source": "MODEL",
+    "overriddenFields": [],
+    "rejectedItems": [],
+    "promptVersion": "planner-v2",
+    "modelId": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "RUNTIME",
+      "sourceRecordId": "qry-2adde1a12cad2e843fd35335602f8afd",
+      "snapshot": "2026-10-03",
+      "runId": "run-80e436dea5587ed42c03f98d66a05bb2",
+      "policyVersion": null,
+      "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+    }
+  },
+  "resolutions": [],
+  "verification": {
+    "schemaVersion": "claim-verification-v1",
+    "queryId": "qry-2adde1a12cad2e843fd35335602f8afd",
+    "checks": [],
+    "counts": {
+      "verified": 0,
+      "partiallySupported": 0,
+      "unsupported": 0,
+      "conflicting": 0
+    }
+  },
+  "abstention": {
+    "reason": "BUDGET_EXHAUSTED",
+    "detail": "No drafted answer passed validation within the model call and token budget; no claim is made."
+  },
+  "answerHash": "sha256:ec5ab28f141dacd6bb0be62f413ccf612e0e903250d13b13b4aa78ef89ebc68c"
+}

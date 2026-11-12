@@ -1,0 +1,147 @@
+{
+  "schemaVersion": "rag-benchmark-result-v2",
+  "questionId": "B26",
+  "category": "topics",
+  "mode": "LIVE",
+  "runtimeRunId": "run-80e436dea5587ed42c03f98d66a05bb2",
+  "queryId": "qry-2adde1a12cad2e843fd35335602f8afd",
+  "planSource": "MODEL",
+  "operations": [
+    "RESEARCHER_RANKING/CORPUS",
+    "TOPIC_FILTER/CORPUS"
+  ],
+  "metrics": [
+    "PUBLICATION_COUNT"
+  ],
+  "window": "all-years",
+  "resolutions": [],
+  "abstained": true,
+  "abstentionReason": "BUDGET_EXHAUSTED",
+  "verification": {
+    "verified": 0,
+    "partiallySupported": 0,
+    "unsupported": 0,
+    "conflicting": 0
+  },
+  "claims": 0,
+  "graph": {
+    "reads": 6,
+    "readsByTemplate": {
+      "graph.lookup": 2,
+      "kv.ranking": 1,
+      "graph.vertices": 1,
+      "graph.topic-researchers": 1,
+      "graph.researcher-facets": 1
+    },
+    "rows": 75,
+    "truncatedReads": 1,
+    "evidenceItems": 2,
+    "tokens": 1139,
+    "omittedItems": 0,
+    "latencyMs": 495,
+    "pathStatuses": []
+  },
+  "semantic": {
+    "embeddingCalls": 1,
+    "embeddingInputTokens": 0,
+    "indexes": [
+      "topic-institution-summary-v1"
+    ],
+    "hits": 5,
+    "tokens": 1273,
+    "omittedItems": 0,
+    "latencyMs": 174,
+    "outcome": "OK"
+  },
+  "llm": {
+    "attempts": 3,
+    "requests": 3,
+    "attemptsByStage": {
+      "QUERY_PLANNING": 1,
+      "ANSWER_SYNTHESIS": 2
+    },
+    "outcomes": {
+      "INVALID_OUTPUT": 2,
+      "OK": 1
+    },
+    "inputTokens": 11852,
+    "outputTokens": 4222,
+    "throttleWaitMs": 9065
+  },
+  "latencyMs": 28701,
+  "stageLatencyMs": {
+    "COLLABORATION_METRICS": 336,
+    "PATH_FINDING": 0,
+    "EVIDENCE_BUILDING": 1,
+    "AUDIT": 0,
+    "QUERY_PLANNING": 4634,
+    "SEMANTIC_CONTEXT": 174,
+    "COMMUNITY_ANALYSIS": 159,
+    "CLAIM_VERIFICATION": 0,
+    "RESEARCHER_RESOLUTION": 0,
+    "ANSWER_SYNTHESIS": 23389
+  },
+  "checks": [
+    {
+      "name": "plan-operations",
+      "outcome": "PASS",
+      "detail": "needs TOPIC_FILTER; plan [RESEARCHER_RANKING/CORPUS, TOPIC_FILTER/CORPUS]"
+    },
+    {
+      "name": "researcher-names",
+      "outcome": "PASS",
+      "detail": "expected [], extracted []"
+    },
+    {
+      "name": "resolution",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no named researcher"
+    },
+    {
+      "name": "abstention",
+      "outcome": "FAIL",
+      "detail": "expected answer, got abstain (BUDGET_EXHAUSTED)"
+    },
+    {
+      "name": "claim-evidence",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no claim"
+    },
+    {
+      "name": "verification",
+      "outcome": "PASS",
+      "detail": "abstained with no verified claim kept; counts 0/0/0/0; final claims 0 verified of 0"
+    },
+    {
+      "name": "bundle-budget",
+      "outcome": "PASS",
+      "detail": "graph 1139/8000 tokens, semantic 1273/3000, items 7/300"
+    },
+    {
+      "name": "llm-budget",
+      "outcome": "PASS",
+      "detail": "3 attempts, 3 requests (ANSWER_SYNTHESIS 2, QUERY_PLANNING 1), tokens in 11852 out 4222"
+    },
+    {
+      "name": "embedding-budget",
+      "outcome": "PASS",
+      "detail": "1 embedding calls for 1 indexes queried"
+    },
+    {
+      "name": "path-hops",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no path evidence in the bundle"
+    },
+    {
+      "name": "pair-edges",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no bundle edge has stored path evidence"
+    },
+    {
+      "name": "deadline",
+      "outcome": "PASS",
+      "detail": "28701 ms of 180000"
+    }
+  ],
+  "answerHash": "sha256:ec5ab28f141dacd6bb0be62f413ccf612e0e903250d13b13b4aa78ef89ebc68c"
+}

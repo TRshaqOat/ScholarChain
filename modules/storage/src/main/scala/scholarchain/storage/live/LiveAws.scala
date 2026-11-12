@@ -40,6 +40,10 @@ final class RefreshingCredentials(build: () => AwsCredentialsProvider)
     extends AwsCredentialsProvider
     with SdkAutoCloseable:
   private var current: Option[AwsCredentialsProvider] = None
+  @volatile private var gen = 0L
+
+  /** Increases with every refresh; a caller notes it before a request (N5). */
+  def generation: Long = gen
 
   private def delegate(): AwsCredentialsProvider = synchronized {
     current.getOrElse {
@@ -52,14 +56,26 @@ final class RefreshingCredentials(build: () => AwsCredentialsProvider)
   def resolveCredentials(): AwsCredentials = delegate().resolveCredentials()
 
   // The old delegate is dropped, not closed: another thread may still be resolving through it.
-  def refresh(): Unit = synchronized { current = None }
+  def refresh(): Unit = synchronized {
+    current = None
+    gen += 1
+  }
+
+  /** Refreshes only if nobody has since the caller noted seen, so requests that failed together on
+    * one expiry rerun credential_process once, not once per thread (N5).
+    */
+  def refreshIfCurrent(seen: Long): Unit = synchronized {
+    if gen == seen then refresh()
+  }
 
   def close(): Unit = refresh()
 
 /** SDK clients and error mapping for the live adapters. Clients are built only from a LiveTarget,
   * share one RefreshingCredentials per profile, and have SDK retries off: the storage RetryPolicy
-  * is the one bounded retry layer, and every Bedrock attempt passes the throttle. An expired-token
-  * error refreshes the credentials and retries the call once (ruling 35).
+  * is the one bounded retry layer. An expired-token error refreshes the credentials and retries the
+  * call once (ruling 35). That retry is a second request, so a throttled caller passes its throttle
+  * as beforeRetry (guardedWith): then every attempt, retries included, passes the throttle (Phase 7
+  * review 2 N1). BedrockTitanEmbedder does this when EmbedCli gives it the runner's throttle.
   */
 object LiveAws:
   def overrides: ClientOverrideConfiguration = ClientOverrideConfiguration
@@ -122,21 +138,46 @@ object LiveAws:
     Option(e.awsErrorDetails).flatMap(d => Option(d.errorCode)).exists(ExpiredTokenCodes) ||
       Option(e.getMessage).exists(_.contains("security token included in the request is expired"))
 
-  /** Runs op; on an expired-token error, refresh and run it once more. AWS rejects such a request
-    * before acting on it, so the second attempt cannot repeat an effect.
+  /** S3 HEAD error responses have no body, so an expired token there carries neither the code nor
+    * the message; any 403 on HEAD is therefore treated as a possible expiry and gets the one
+    * refresh-and-retry (N2). A real denial fails again on the retry and propagates as before.
     */
-  def retryOnExpiredToken[A](refresh: () => Unit)(op: => A): A =
+  def isHeadExpiredToken(e: AwsServiceException): Boolean = isExpiredToken(e) || e.statusCode == 403
+
+  /** Runs op; on an expired-token error (expired), refresh, call beforeRetry, and run it once more.
+    * AWS rejects such a request before acting on it, so the second attempt cannot repeat an effect.
+    */
+  def retryOnExpiredToken[A](
+      refresh: () => Unit,
+      beforeRetry: () => Unit = () => (),
+      expired: AwsServiceException => Boolean = isExpiredToken
+  )(op: => A): A =
     try op
     catch
-      case e: AwsServiceException if isExpiredToken(e) =>
+      case e: AwsServiceException if expired(e) =>
         refresh()
+        beforeRetry()
         op
 
   /** Runs op with one refresh-and-retry on an expired token, turning a retryable SDK failure into
     * TransientStoreException.
     */
-  def guarded[A](op: => A): A =
-    try retryOnExpiredToken(() => profiles.values.foreach(_.refresh()))(op)
+  def guarded[A](op: => A): A = guardedWith()(op)
+
+  /** guarded with a hook run before the retry (the caller's throttle, N1) and the expiry test. Each
+    * profile is refreshed only if no other request refreshed it since this one started (N5).
+    */
+  def guardedWith[A](
+      beforeRetry: () => Unit = () => (),
+      expired: AwsServiceException => Boolean = isExpiredToken
+  )(op: => A): A =
+    val seen = profiles.values.toVector.map(p => p -> p.generation)
+    try
+      retryOnExpiredToken(
+        () => seen.foreach((p, g) => p.refreshIfCurrent(g)),
+        beforeRetry,
+        expired
+      )(op)
     catch
       case e: Exception if isTransient(e) =>
         throw TransientStoreException(s"${e.getClass.getSimpleName}: ${e.getMessage}")

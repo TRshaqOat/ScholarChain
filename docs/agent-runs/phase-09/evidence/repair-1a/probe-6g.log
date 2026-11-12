@@ -1,0 +1,33 @@
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] compiling 1 Scala source to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/storage/target/scala-3.3.7/test-classes ...
+[info] done compiling
+[info] running scholarchain.storage.ItemFileReaderProbe scratch/stores/s3/graph/neptune/snapshot=2026-10-03/run=run-1d6a86491812ff94887270c1ab885e69 scratch/stores/s3/curated/dynamodb/snapshot=2026-10-03/run=run-1d6a86491812ff94887270c1ab885e69 scratch/stores/s3
+max heap 6144 MiB; in use at start 116 MiB
+graph: 511920 vertices, 3123311 edges in 32066 ms; in use 3797 MiB; peak sampled 5148 MiB, pool-peak sum 5644 MiB
+items: 876228 indexed (RunLedger 0, EntityLinkCache 287780, QuerySession 0, EvidenceBundle 0, ArtifactRegistry 9, ResearcherMetricCache 588439) in 18492 ms; in use 3942 MiB; peak sampled 5448 MiB, pool-peak sum 5733 MiB
+lookups: 21 of 21 ranking items; 200 metric items for the 50 researchers of the first ranking; name candidates Wei Wang 420, Lei Zhang 134, Jack J. Dongarra 17; 56 ms
+final: in use 3942 MiB; peak sampled 5448 MiB, pool-peak sum 5734 MiB; max 6144 MiB
+[success] Total time: 56 s, completed Nov 11, 2026, 3:46:02 PM
+       58.45 real       129.78 user        25.58 sys
+          5340397568  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+             5719356  page reclaims
+                  18  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   8  messages sent
+                   8  messages received
+                  31  signals received
+                2898  voluntary context switches
+              396455  involuntary context switches
+       1748377027009  instructions retired
+        574715588759  cycles elapsed
+          6801725224  peak memory footprint

@@ -75,7 +75,11 @@ final class S3ObjectStore(client: S3Client, bucket: String):
   def sha256(objectKey: String): Option[String] =
     try
       S3Requests.sha256Of(
-        LiveAws.guarded(client.headObject(S3Requests.head(bucket, objectKey))).checksumSHA256
+        LiveAws
+          .guardedWith(expired = LiveAws.isHeadExpiredToken)(
+            client.headObject(S3Requests.head(bucket, objectKey))
+          )
+          .checksumSHA256
       )
     catch
       case _: NoSuchKeyException                 => None

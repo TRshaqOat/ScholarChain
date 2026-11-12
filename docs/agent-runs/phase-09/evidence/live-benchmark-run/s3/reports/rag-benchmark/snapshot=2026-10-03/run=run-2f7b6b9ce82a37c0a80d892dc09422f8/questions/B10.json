@@ -1,0 +1,163 @@
+{
+  "schemaVersion": "rag-benchmark-result-v2",
+  "questionId": "B10",
+  "category": "shortest_path",
+  "mode": "LIVE",
+  "runtimeRunId": "run-80e436dea5587ed42c03f98d66a05bb2",
+  "queryId": "qry-4a976029436fe924165c8cfa6bb8802d",
+  "planSource": "MODEL",
+  "operations": [
+    "SHORTEST_PATH/PAIR"
+  ],
+  "metrics": [],
+  "window": "all-years",
+  "resolutions": [
+    {
+      "name": "Rajkumar Buyya",
+      "decision": "RESOLVED_DOMINANT",
+      "researcherId": "scr:canon-v1.er-v2:bede83f65bedfab8f7fc802f295ee293",
+      "topShare": 0.964516129032258,
+      "candidateCount": 11
+    },
+    {
+      "name": "Rachid Guerraoui",
+      "decision": "RESOLVED_DOMINANT",
+      "researcherId": "scr:canon-v1.er-v2:ba10a85f922c075c3cfdbf5a040332b8",
+      "topShare": 0.9615384615384616,
+      "candidateCount": 11
+    }
+  ],
+  "abstained": false,
+  "abstentionReason": null,
+  "verification": {
+    "verified": 1,
+    "partiallySupported": 0,
+    "unsupported": 3,
+    "conflicting": 0
+  },
+  "claims": 1,
+  "graph": {
+    "reads": 35,
+    "readsByTemplate": {
+      "kv.metrics.window": 2,
+      "graph.shortest-path": 1,
+      "graph.vertices": 4,
+      "graph.authored-counts": 2,
+      "graph.coauthors": 22,
+      "kv.entity-link": 2,
+      "graph.researcher-institutions": 2
+    },
+    "rows": 92,
+    "truncatedReads": 2,
+    "evidenceItems": 13,
+    "tokens": 2306,
+    "omittedItems": 0,
+    "latencyMs": 98,
+    "pathStatuses": [
+      "FOUND"
+    ]
+  },
+  "semantic": {
+    "embeddingCalls": 1,
+    "embeddingInputTokens": 0,
+    "indexes": [
+      "researcher-profile-v1",
+      "collaboration-path-v1"
+    ],
+    "hits": 3,
+    "tokens": 1561,
+    "omittedItems": 0,
+    "latencyMs": 203,
+    "outcome": "OK"
+  },
+  "llm": {
+    "attempts": 2,
+    "requests": 2,
+    "attemptsByStage": {
+      "QUERY_PLANNING": 1,
+      "ANSWER_SYNTHESIS": 1
+    },
+    "outcomes": {
+      "OK": 2
+    },
+    "inputTokens": 9285,
+    "outputTokens": 1670,
+    "throttleWaitMs": 12261
+  },
+  "latencyMs": 19251,
+  "stageLatencyMs": {
+    "COLLABORATION_METRICS": 2,
+    "PATH_FINDING": 96,
+    "EVIDENCE_BUILDING": 2,
+    "AUDIT": 0,
+    "QUERY_PLANNING": 7396,
+    "SEMANTIC_CONTEXT": 203,
+    "COMMUNITY_ANALYSIS": 0,
+    "CLAIM_VERIFICATION": 16,
+    "RESEARCHER_RESOLUTION": 20,
+    "ANSWER_SYNTHESIS": 11505
+  },
+  "checks": [
+    {
+      "name": "plan-operations",
+      "outcome": "PASS",
+      "detail": "needs SHORTEST_PATH; plan [SHORTEST_PATH/PAIR]"
+    },
+    {
+      "name": "researcher-names",
+      "outcome": "PASS",
+      "detail": "expected [Rajkumar Buyya; Rachid Guerraoui], extracted [Rachid Guerraoui; Rajkumar Buyya]"
+    },
+    {
+      "name": "resolution",
+      "outcome": "PASS",
+      "detail": "Rajkumar Buyya: expected RESOLVED_DOMINANT, got RESOLVED_DOMINANT; Rachid Guerraoui: expected RESOLVED_DOMINANT, got RESOLVED_DOMINANT"
+    },
+    {
+      "name": "abstention",
+      "outcome": "PASS",
+      "detail": "expected answer, got answer"
+    },
+    {
+      "name": "claim-evidence",
+      "outcome": "PASS",
+      "detail": "1 claims cite bundle IDs; 1 material claims each cite a graph item; 0 descriptive"
+    },
+    {
+      "name": "verification",
+      "outcome": "PASS",
+      "detail": "answer has a verified claim; counts 1/0/3/0; final claims 1 verified of 1"
+    },
+    {
+      "name": "bundle-budget",
+      "outcome": "PASS",
+      "detail": "graph 2306/8000 tokens, semantic 1561/3000, items 16/300"
+    },
+    {
+      "name": "llm-budget",
+      "outcome": "PASS",
+      "detail": "2 attempts, 2 requests (ANSWER_SYNTHESIS 1, QUERY_PLANNING 1), tokens in 9285 out 1670"
+    },
+    {
+      "name": "embedding-budget",
+      "outcome": "PASS",
+      "detail": "1 embedding calls for 2 indexes queried"
+    },
+    {
+      "name": "path-hops",
+      "outcome": "PASS",
+      "detail": "scr:canon-v1.er-v2:bede83f65bedfab8f7fc802f295ee293-scr:canon-v1.er-v2:ba10a85f922c075c3cfdbf5a040332b8: runtime FOUND 3 hops, stored 3 hops, same researchers"
+    },
+    {
+      "name": "pair-edges",
+      "outcome": "PASS",
+      "detail": "3 of 3 edges equal the stored hop"
+    },
+    {
+      "name": "deadline",
+      "outcome": "PASS",
+      "detail": "19251 ms of 180000"
+    }
+  ],
+  "answerHash": "sha256:0a50ff8866f7c33514ea700e7fd3dce43db5ba893641f9dc94399a0846d80822"
+}

@@ -1,0 +1,44 @@
+{
+  "runId": "run-70a26cef3256da28ef1257cb4498d0bb",
+  "session": 1,
+  "outcomesMatchSummary": true,
+  "breakdown": {
+    "RESEARCHER": {
+      "unresolved": 66,
+      "LLM_ABSTAIN": 25,
+      "LLM_LOW_CONFIDENCE": 41,
+      "other": 0,
+      "reasonCodeCounts": {
+        "LLM_ABSTAIN": 25,
+        "LLM_AFFILIATION_MATCH": 21,
+        "LLM_COAUTHOR_OVERLAP": 21,
+        "LLM_INITIALS_COMPATIBLE": 1,
+        "LLM_INSUFFICIENT_EVIDENCE": 12,
+        "LLM_LOW_CONFIDENCE": 41,
+        "LLM_NAME_MATCH": 53,
+        "LLM_NO_COAUTHOR_OVERLAP": 12,
+        "LLM_TOPIC_CONSISTENT": 31,
+        "LLM_TOPIC_INCONSISTENT": 4,
+        "LLM_VENUE_COMPATIBLE": 19,
+        "LLM_VENUE_INCOMPATIBLE": 1,
+        "LLM_YEAR_COMPATIBLE": 27,
+        "LLM_YEAR_INCOMPATIBLE": 9,
+        "SCORE_IN_LLM_BAND": 66
+      }
+    },
+    "WORK": {
+      "unresolved": 7,
+      "LLM_ABSTAIN": 0,
+      "LLM_LOW_CONFIDENCE": 7,
+      "other": 0,
+      "reasonCodeCounts": {
+        "LLM_COAUTHOR_OVERLAP": 3,
+        "LLM_LOW_CONFIDENCE": 7,
+        "LLM_TITLE_MATCH": 7,
+        "LLM_VENUE_COMPATIBLE": 7,
+        "LLM_YEAR_COMPATIBLE": 7,
+        "SCORE_IN_LLM_BAND": 7
+      }
+    }
+  }
+}

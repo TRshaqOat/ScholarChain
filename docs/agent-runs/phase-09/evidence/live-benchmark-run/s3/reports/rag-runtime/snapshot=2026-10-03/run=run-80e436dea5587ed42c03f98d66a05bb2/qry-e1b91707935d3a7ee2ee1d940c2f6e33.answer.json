@@ -1,0 +1,125 @@
+{
+  "schemaVersion": "rag-answer-v1",
+  "response": {
+    "schemaVersion": "answer-response-v1",
+    "queryId": "qry-e1b91707935d3a7ee2ee1d940c2f6e33",
+    "summary": "No claim of the drafted answer could be verified against the evidence, so the answer abstains.",
+    "claims": [],
+    "abstained": true,
+    "uncertainty": "1 drafted uncertainty line(s) were left out because they failed verification.",
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "RUNTIME",
+      "sourceRecordId": "qry-e1b91707935d3a7ee2ee1d940c2f6e33",
+      "snapshot": "2026-10-03",
+      "runId": "run-80e436dea5587ed42c03f98d66a05bb2",
+      "policyVersion": "fusion-v1",
+      "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+    }
+  },
+  "plan": {
+    "schemaVersion": "rag-query-plan-v1",
+    "queryId": "qry-e1b91707935d3a7ee2ee1d940c2f6e33",
+    "operations": [
+      {
+        "operation": "RESEARCHER_RANKING",
+        "scope": "CORPUS",
+        "researchers": [],
+        "metric": "DISTINCT_COAUTHOR_COUNT",
+        "topN": null
+      }
+    ],
+    "researcherNames": [],
+    "metrics": [],
+    "window": {
+      "requested": {
+        "kind": "DEFAULT",
+        "name": null,
+        "yearFrom": null,
+        "yearTo": null
+      },
+      "window": "all-years",
+      "startYear": 2000,
+      "endYear": 2026,
+      "exact": true,
+      "note": null
+    },
+    "comparison": null,
+    "topics": [],
+    "venues": [],
+    "institutions": [],
+    "semanticIndexes": [
+      "topic-institution-summary-v1"
+    ],
+    "limits": {
+      "graphLimit": 100,
+      "vectorLimit": 50,
+      "maxPathDepth": 6,
+      "topK": 5
+    },
+    "source": "MODEL",
+    "overriddenFields": [],
+    "rejectedItems": [],
+    "promptVersion": "planner-v2",
+    "modelId": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "RUNTIME",
+      "sourceRecordId": "qry-e1b91707935d3a7ee2ee1d940c2f6e33",
+      "snapshot": "2026-10-03",
+      "runId": "run-80e436dea5587ed42c03f98d66a05bb2",
+      "policyVersion": null,
+      "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+    }
+  },
+  "resolutions": [],
+  "verification": {
+    "schemaVersion": "claim-verification-v1",
+    "queryId": "qry-e1b91707935d3a7ee2ee1d940c2f6e33",
+    "checks": [
+      {
+        "claimId": "claim-1",
+        "status": "CONFLICTING",
+        "checks": [
+          {
+            "rule": "evidence-exists",
+            "outcome": "PASS",
+            "detail": "all cited items are in the bundle"
+          },
+          {
+            "rule": "numbers-in-text",
+            "outcome": "FAIL",
+            "detail": "50 is not an asserted fact of a cited item"
+          },
+          {
+            "rule": "window",
+            "outcome": "CONFLICT",
+            "detail": "the text names the window all-years; names 2000-2026, which is not the window (none)"
+          },
+          {
+            "rule": "identity",
+            "outcome": "PASS",
+            "detail": "every subject and name is resolved or cited"
+          },
+          {
+            "rule": "context-only",
+            "outcome": "FAIL",
+            "detail": "semantic context may name at most one researcher and state no count, relationship, path, component, community, or bridge measure"
+          }
+        ],
+        "action": "REMOVED"
+      }
+    ],
+    "counts": {
+      "verified": 0,
+      "partiallySupported": 0,
+      "unsupported": 0,
+      "conflicting": 1
+    }
+  },
+  "abstention": {
+    "reason": "NO_VERIFIED_CLAIM",
+    "detail": "No claim of the drafted answer could be verified against the evidence, so the answer abstains."
+  },
+  "answerHash": "sha256:0bc1b702573c5892abc47de92fa00b54d9dcc4ce3136157503b2371d53d77748"
+}

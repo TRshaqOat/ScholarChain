@@ -288,3 +288,45 @@ class CliSpec extends AnyFunSuite:
     val head = scholarchain.storage.live.S3Requests.head("bkt", a)
     assert(head.checksumModeAsString == "ENABLED" && head.bucket == "bkt")
   }
+
+  test("N6: validator exits 1 when evidence objects are left untraced (no --evidence-root)") {
+    import NeptuneContract.*
+    val works = (1 to 21).map(i => f"dblp:conf/test/L$i%02d").toVector
+    val inline = coauthor(ra, rb, works)
+    val ref = S3Layout.coauthorEvidence(snapshot, runId, "all-years", inline.id)
+    val e =
+      inline.copy(props = inline.props - "supportingWorkIds" + ("supportingWorkIdsRef" -> ref))
+    val g = graph
+      .updated(Work, graph(Work) ++ works.map(w => vertex(Work, w, "dblpAnchored" -> true)))
+      .updated(
+        Authored,
+        graph(Authored) ++ (for r <- Vector(ra, rb); w <- works
+        yield edge(Authored, r, w, "position" -> 1))
+      )
+      .updated(CoauthoredWith, Vector(e))
+    withTemp { root =>
+      writeGraph(root.resolve("g"), g)
+      val objects = FileObjectStore(root.resolve("s3"))
+      val ev = CoauthorEvidence(EvidenceSchemaVersion, e.id, "all-years", works, runId, snapshot)
+      objects.loader.putNew(ref, upickle.default.write(ev).getBytes(UTF_8))
+      val args = Seq("--kind", "neptune", "--dir", root.resolve("g").toString)
+      val (untraced, out) = capture(ValidateCli.run(args, _, localEnv))
+      assert(untraced == 1 && out.contains("evidence edges-object-not-opened 1"))
+      assert(out.exists(_.startsWith("INCOMPLETE: 1 edges")) && !out.contains("OK"))
+      val (traced, out2) = capture(
+        ValidateCli.run(args ++ Seq("--evidence-root", root.resolve("s3").toString), _, localEnv)
+      )
+      assert(traced == 0 && out2.contains("evidence edges-object 1") && out2.contains("OK"))
+    }
+  }
+
+  test("M10: the live table prefix and loader role default to configuration; flags override") {
+    val none = Args(Map.empty, Set.empty)
+    assert(LoadDynamoCli.tablePrefix(none, config) == config.dynamoDb.tablePrefix)
+    assert(LoadDynamoCli.tablePrefix(Args(Map("table-prefix" -> "p-"), Set.empty), config) == "p-")
+    assert(LoadNeptuneCli.loaderRoleArn(none, config) == config.neptune.loaderRoleArn)
+    val arn = "arn:aws:iam::123456789012:role/loader"
+    assert(
+      LoadNeptuneCli.loaderRoleArn(Args(Map("loader-role-arn" -> arn), Set.empty), config) == arn
+    )
+  }

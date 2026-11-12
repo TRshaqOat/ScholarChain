@@ -41,7 +41,7 @@ class DynamoSpec extends AnyFunSuite:
     "queryId" -> s("q-1"),
     "createdAt" -> s("2026-11-05T10:00:00Z"),
     "expiresAt" -> num(expiresAt),
-    "schemaVersion" -> s("query-session-v1")
+    "schemaVersion" -> s("rag-query-session-v1")
   )
 
   private var now = 1000L
@@ -287,4 +287,229 @@ class DynamoSpec extends AnyFunSuite:
     assert(db.loader.putNew(t, item) == Right(LoadOutcome.Unchanged))
     storedText = Some(item + ("weightedDegree" -> N("5")))
     assert(db.loader.putNew(t, item) == Right(LoadOutcome.Conflict))
+  }
+
+  test("N4: numbers outside the DynamoDB range or with invalid text are refused, never thrown") {
+    Seq("0", "-0.0", "1E-130", "-1E-130", "9.9999999999999999999999999999999999999E+125", "4.0")
+      .foreach(n => assert(numberOk(n), n))
+    Seq("1E+126", "-1E+126", "1E-131", "1E+999999999", "1E+9999999999", "abc", "", "NaN")
+      .foreach(n => assert(!numberOk(n), n))
+    assert(DynamoItemFile.parseLine("""{"Item": {"x": {"N": "1E+999999999"}}}""").isLeft)
+    val db = store()
+    // Items built in code reach the put without parsing: invalid text is a Left, not an exception.
+    val bad = metricItem(ra) + ("coreness" -> N("three")) + ("deep" -> L(
+      Vector(M(Map("n" -> N("1E+200"))))
+    ))
+    val problems = db.loader.putNew(TableName.ResearcherMetricCache, bad).left.getOrElse(Nil)
+    assert(problems.exists(_.contains("coreness")) && problems.exists(_.contains("deep")))
+    assert(
+      db.runtimeWriter
+        .create(TableName.QuerySession, sessionItem(2000) + ("expiresAt" -> N("x")))
+        .isLeft
+    )
+    assert(db.itemCount(TableName.ResearcherMetricCache) == 0)
+  }
+
+  test(
+    "runtime item schema versions are fixed: rag-query-session-v1, rag-evidence-bundle-item-v1"
+  ) {
+    val db = store()
+    val bundle: Item = Map(
+      "queryId" -> s("qry-0123456789abcdef0123456789abcdef"),
+      "itemKey" -> s("BUNDLE"),
+      "expiresAt" -> num(2000L),
+      "schemaVersion" -> s("rag-evidence-bundle-item-v1"),
+      "payload" -> s("{}")
+    )
+    assert(db.runtimeWriter.create(TableName.EvidenceBundle, bundle) == Right(LoadOutcome.Inserted))
+    val wrong = bundle + ("itemKey" -> s("EV#x")) + ("schemaVersion" -> s("evidence-bundle-v1"))
+    assert(db.runtimeWriter.create(TableName.EvidenceBundle, wrong).isLeft)
+    assert(
+      db.runtimeWriter
+        .create(TableName.QuerySession, sessionItem(2000) + ("schemaVersion" -> s("other")))
+        .isLeft
+    )
+  }
+
+  test("item files load read-only into the fake; violations and conflicts load nothing") {
+    withTemp { root =>
+      val dir = root.resolve(s"curated/dynamodb/snapshot=$snapshot/run=$runId")
+      def write(t: TableName, items: Item*) =
+        val d = dir.resolve(t.toString)
+        Files.createDirectories(d)
+        Files.writeString(
+          d.resolve("part-00000.jsonl"),
+          items.map(DynamoItemFile.renderLine).mkString("", "\n", "\n"),
+          UTF_8
+        )
+      write(TableName.ResearcherMetricCache, metricItem(ra), rankingItem(Seq(ra -> 3L)))
+      val files = DynamoItemFile.files(dir)
+      val bytes = files.map(Files.readAllBytes(_).toVector)
+      val db = store()
+      assert(db.loadItemFiles(dir) == Right(Map(TableName.ResearcherMetricCache -> 2L)))
+      assert(db.reader.get(TableName.ResearcherMetricCache, ra, "WINDOW#all-years").nonEmpty)
+      assert(
+        db.loadItemFiles(dir) == Right(Map(TableName.ResearcherMetricCache -> 2L))
+      ) // unchanged
+      assert(files.map(Files.readAllBytes(_).toVector) == bytes) // read only
+      write(TableName.ResearcherMetricCache, metricItem(ra, coreness = 9))
+      assert(db.loadItemFiles(dir).left.toOption.get.map(_.code) == Vector("CONFLICT"))
+      write(TableName.ResearcherMetricCache, metricItem(rb) - "runId")
+      val fresh = store()
+      assert(
+        fresh.loadItemFiles(dir).isLeft && fresh.itemCount(TableName.ResearcherMetricCache) == 0
+      )
+      Files.createDirectories(dir.resolve("QuerySession"))
+      assert(fresh.loadItemFiles(dir).left.toOption.get.map(_.code) == Vector("BAD_INPUT"))
+    }
+  }
+
+  test("file-backed runtime records: create-only, replayed on open, partial last line cut") {
+    withTemp { root =>
+      val dir = root.resolve("dynamodb")
+      val recs = FileRuntimeRecords(dir, windows, () => now)
+      val item = sessionItem(2000)
+      assert(recs.writer.create(TableName.QuerySession, item) == Right(LoadOutcome.Inserted))
+      assert(recs.writer.create(TableName.QuerySession, item) == Right(LoadOutcome.Unchanged))
+      val other = item + ("queryId" -> s("q-1")) + ("createdAt" -> s("2026-11-05T10:00:00Z"))
+      assert(
+        recs.writer.create(TableName.QuerySession, other + ("expiresAt" -> num(3000L))) ==
+          Right(LoadOutcome.Conflict)
+      )
+      assert(recs.writer.create(TableName.RunLedger, item).isLeft)
+      val log = dir.resolve("QuerySession.jsonl")
+      assert(Files.readAllLines(log).size == 1)
+      Files.writeString(log, """{"Item": {"sessi""", UTF_8, java.nio.file.StandardOpenOption.APPEND)
+      val reopened = FileRuntimeRecords(dir, windows, () => now)
+      assert(reopened.itemCount(TableName.QuerySession) == 1)
+      assert(reopened.reader.query(TableName.QuerySession, "session-1", "", 10) == Vector(item))
+      assert(Files.readString(log).endsWith("\n")) // the partial line was cut
+      assert(reopened.writer.create(TableName.QuerySession, item) == Right(LoadOutcome.Unchanged))
+      Files.writeString(log, "not json\n", UTF_8, java.nio.file.StandardOpenOption.APPEND)
+      assertThrows[IllegalStateException](FileRuntimeRecords(dir, windows, () => now))
+    }
+  }
+
+  // ---- Indexed item-file reader (Phase 9 F6, ruling 22) ---------------------------------------
+
+  private def linkItem(name: String, id: String): Item = Map(
+    "nameKey" -> s(DynamoContract.nameKey(name).get),
+    "researcherId" -> s(id),
+    "displayName" -> s(name),
+    "matchedName" -> s(name),
+    "identityConfidence" -> N("0.90"),
+    "mentionCount" -> num(4L),
+    "dblpAnchored" -> Bool(true),
+    "runId" -> s(runId),
+    "snapshot" -> s(snapshot),
+    "schemaVersion" -> s("entity-link-v1")
+  )
+
+  private def writeItems(dir: java.nio.file.Path, t: TableName, part: Int, items: Item*) =
+    val d = dir.resolve(t.toString)
+    Files.createDirectories(d)
+    val f = d.resolve(f"part-$part%05d.jsonl")
+    Files.writeString(f, items.map(DynamoItemFile.renderLine).mkString("\n"), UTF_8) // no final \n
+    f
+
+  test("item-file reader: get and query equal the in-memory fake, from files it never writes") {
+    withTemp { root =>
+      val dir = root.resolve(s"curated/dynamodb/snapshot=$snapshot/run=$runId")
+      val metrics = TableName.ResearcherMetricCache
+      val links = TableName.EntityLinkCache
+      writeItems(dir, metrics, 0, spark(metricItem(rb)), rankingItem(Seq(ra -> 3L)))
+      writeItems(dir, metrics, 1, spark(metricItem(ra)))
+      writeItems(dir, links, 0, linkItem("Wei Wang 0002", rb), linkItem("Wei Wang 0001", ra))
+      val files = DynamoItemFile.files(dir)
+      val bytes = files.map(Files.readAllBytes(_).toVector)
+      val kv = ItemFileReader.open(dir, windows).fold(v => fail(v.mkString("\n")), identity)
+      val mem = store()
+      assert(mem.loadItemFiles(dir).isRight)
+      assert(kv.itemCount == 5 && kv.itemCount(metrics) == 3 && kv.itemCount(links) == 2)
+      val keys = Seq(
+        (metrics, ra, "WINDOW#all-years"),
+        (metrics, rb, "WINDOW#all-years"),
+        (metrics, "RANKING#publicationCount", "TOP#all-years"),
+        (links, "name-v1:wei wang", ra),
+        (links, "name-v1:wei wang", rb)
+      )
+      for (t, pk, sk) <- keys do
+        assert(kv.reader.get(t, pk, sk).nonEmpty, s"$t $pk $sk")
+        assert(kv.reader.get(t, pk, sk) == mem.reader.get(t, pk, sk))
+        for prefix <- Seq("", "WINDOW#", "TOP#", "scr:", "none"); limit <- Seq(1, 10) do
+          assert(kv.reader.query(t, pk, prefix, limit) == mem.reader.query(t, pk, prefix, limit))
+      // canonical numbers, as DynamoDB returns them; sort-key order across lines and files
+      assert(kv.reader.get(metrics, ra, "WINDOW#all-years").get("weightedDegree") == N("4"))
+      assert(
+        kv.reader.query(links, "name-v1:wei wang", "", 10).map(_("researcherId")) ==
+          Vector(s(ra), s(rb))
+      )
+      assert(kv.reader.get(metrics, ra, "WINDOW#2000-2014").isEmpty)
+      assert(kv.reader.query(metrics, "scr:nobody", "", 10).isEmpty)
+      assert(kv.reader.get(TableName.QuerySession, "session-1", "x").isEmpty)
+      assertThrows[IllegalArgumentException](kv.reader.query(metrics, ra, "", 0))
+      assertThrows[IllegalArgumentException](
+        kv.reader.query(metrics, ra, "", DynamoContract.QueryMaxLimit + 1)
+      )
+      assert(files.map(Files.readAllBytes(_).toVector) == bytes) // read only
+    }
+  }
+
+  test("item-file reader: malformed, invalid, or duplicate items and bad directories fail open") {
+    withTemp { root =>
+      val dir = root.resolve(s"curated/dynamodb/snapshot=$snapshot/run=$runId")
+      val metrics = TableName.ResearcherMetricCache
+      def codes = ItemFileReader.open(dir, windows).left.toOption.get.map(v => (v.line, v.code))
+      assert(codes == Vector(0L -> "BAD_INPUT")) // missing directory
+      val f = writeItems(dir, metrics, 0, metricItem(ra))
+      Files.writeString(
+        f,
+        Seq(
+          "",
+          "{oops",
+          """{"Item":{"researcherId":{"S":"x"}}}""",
+          DynamoItemFile.renderLine(metricItem(rb) - "snapshot"),
+          DynamoItemFile.renderLine(metricItem(ra))
+        ).mkString("\n", "\n", "\n"),
+        UTF_8,
+        java.nio.file.StandardOpenOption.APPEND
+      )
+      // line 1 is the good item, line 2 is blank (skipped, still counted)
+      assert(
+        codes == Vector(3L -> "BAD_ITEM", 4L -> "BAD_ITEM", 5L -> "BAD_ITEM", 6L -> "DUPLICATE_KEY")
+      )
+      writeItems(dir, metrics, 0, metricItem(ra))
+      writeItems(dir, metrics, 1, metricItem(ra)) // duplicate across files
+      assert(codes == Vector(1L -> "DUPLICATE_KEY"))
+      Files.writeString(f, Seq.fill(150)("{oops").mkString("\n"), UTF_8)
+      val many = ItemFileReader.open(dir, windows).left.toOption.get
+      assert(many.size == ItemFileReader.MaxViolations + 1 && many.last.code == "TRUNCATED")
+      assert(many.last.detail == "150 violations in total")
+      writeItems(dir, metrics, 0, metricItem(rb))
+      assert(ItemFileReader.open(dir, windows).isRight)
+      Files.createDirectories(dir.resolve("QuerySession")) // runtime tables are never loaded
+      assert(codes == Vector(0L -> "BAD_INPUT"))
+    }
+  }
+
+  test("item-file reader: a file changed after open is refused, never misread") {
+    withTemp { root =>
+      val dir = root.resolve(s"curated/dynamodb/snapshot=$snapshot/run=$runId")
+      val metrics = TableName.ResearcherMetricCache
+      val f = writeItems(dir, metrics, 0, metricItem(ra), metricItem(rb))
+      val kv = ItemFileReader.open(dir, windows).fold(v => fail(v.mkString), identity)
+      assert(kv.reader.get(metrics, rb, "WINDOW#all-years") == Some(metricItem(rb)))
+      // Same size and modification time, lines swapped: the key check catches it.
+      val stamp = Files.getLastModifiedTime(f)
+      writeItems(dir, metrics, 0, metricItem(rb), metricItem(ra))
+      Files.setLastModifiedTime(f, stamp)
+      assertThrows[IllegalStateException](kv.reader.get(metrics, rb, "WINDOW#all-years"))
+      // A different size: the file stamp catches it before reading.
+      writeItems(dir, metrics, 0, metricItem(ra))
+      Files.setLastModifiedTime(f, stamp)
+      val e = intercept[IllegalStateException](kv.reader.query(metrics, ra, "", 10))
+      assert(e.getMessage.contains("the file changed"))
+      Files.delete(f)
+      assertThrows[IllegalStateException](kv.reader.get(metrics, ra, "WINDOW#all-years"))
+    }
   }

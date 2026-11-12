@@ -1,0 +1,337 @@
+{
+  "schemaVersion": "rag-audit-v2",
+  "queryId": "qry-0bb4ac28640a74df63bdb32d249abe76",
+  "sessionId": null,
+  "runId": "run-80e436dea5587ed42c03f98d66a05bb2",
+  "createdAt": "2026-11-12T03:42:15.154440Z",
+  "mode": "LIVE",
+  "questionHash": "sha256:0ac7cde2ed66300ff81c0d1821554be7a38180b30e829a27cd878611d10d96f4",
+  "questionChars": 90,
+  "plan": {
+    "schemaVersion": "rag-query-plan-v1",
+    "queryId": "qry-0bb4ac28640a74df63bdb32d249abe76",
+    "operations": [
+      {
+        "operation": "SHORTEST_PATH",
+        "scope": "PAIR",
+        "researchers": [
+          0,
+          1
+        ],
+        "metric": null,
+        "topN": null
+      }
+    ],
+    "researcherNames": [
+      {
+        "name": "Jack J. Dongarra",
+        "offset": 47
+      },
+      {
+        "name": "Elena Vasquez-Marlowe",
+        "offset": 68
+      }
+    ],
+    "metrics": [],
+    "window": {
+      "requested": {
+        "kind": "DEFAULT",
+        "name": null,
+        "yearFrom": null,
+        "yearTo": null
+      },
+      "window": "all-years",
+      "startYear": 2000,
+      "endYear": 2026,
+      "exact": true,
+      "note": null
+    },
+    "comparison": null,
+    "topics": [],
+    "venues": [],
+    "institutions": [],
+    "semanticIndexes": [
+      "researcher-profile-v1",
+      "collaboration-path-v1"
+    ],
+    "limits": {
+      "graphLimit": 100,
+      "vectorLimit": 50,
+      "maxPathDepth": 6,
+      "topK": 5
+    },
+    "source": "MODEL",
+    "overriddenFields": [],
+    "rejectedItems": [],
+    "promptVersion": "planner-v2",
+    "modelId": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "RUNTIME",
+      "sourceRecordId": "qry-0bb4ac28640a74df63bdb32d249abe76",
+      "snapshot": "2026-10-03",
+      "runId": "run-80e436dea5587ed42c03f98d66a05bb2",
+      "policyVersion": null,
+      "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+    }
+  },
+  "resolutions": [
+    {
+      "name": "Jack J. Dongarra",
+      "decision": "RESOLVED_DOMINANT",
+      "researcherId": "scr:canon-v1.er-v2:6de4012bbe8608f1d49d18cf9a40a763",
+      "topShare": 0.9575596816976127,
+      "candidateCount": 17
+    },
+    {
+      "name": "Elena Vasquez-Marlowe",
+      "decision": "UNKNOWN_RESEARCHER",
+      "researcherId": null,
+      "topShare": null,
+      "candidateCount": 0
+    }
+  ],
+  "graphEvidenceIds": [],
+  "semanticEvidenceIds": [],
+  "metricVersions": [],
+  "graphRunId": "run-1d6a86491812ff94887270c1ab885e69",
+  "vectorIndexes": [],
+  "embeddingModelVersion": null,
+  "promptVersions": {
+    "planner.schema": "planner-output-v1",
+    "synthesis.schema": "synthesis-output-v2",
+    "synthesis": "synthesis-v2",
+    "planner.schema.sha256": "sha256:3ff40901f3f625204eaaa3ddc525b844c96178ad36629666ebc96f9fe91c1368",
+    "synthesis.schema.sha256": "sha256:2d930e0f580ca9b66e234b91a0c5e75fb27f2bc59e84b005208dbee382ad3c16",
+    "planner.sha256": "sha256:c7354f86ece47e7aa01481f6c893a9721a9f13e3d24716bc73942ef49e81e655",
+    "planner": "planner-v2",
+    "synthesis.sha256": "sha256:1a535dc3d5992d3538b4aa0e13403998d5d1e3235e4c21d3256e0c15dc76f46e"
+  },
+  "modelIds": {
+    "planner": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "synthesis": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "embedding": "amazon.titan-embed-text-v2:0|1024|normalized|rendering-v1"
+  },
+  "llmCalls": [
+    {
+      "stage": "QUERY_PLANNING",
+      "modelId": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+      "promptVersion": "planner-v2",
+      "schemaVersion": "planner-output-v1",
+      "attempt": 1,
+      "outcome": "OK",
+      "requests": 1,
+      "inputTokens": 2529,
+      "outputTokens": 191,
+      "latencyMs": 1096,
+      "throttleWaitMs": 1974,
+      "failure": null
+    }
+  ],
+  "embeddingCalls": [],
+  "templateCalls": [
+    {
+      "templateId": "kv.entity-link",
+      "latencyMs": 5,
+      "resultCount": 17,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.authored-counts",
+      "latencyMs": 10,
+      "resultCount": 17,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.researcher-institutions",
+      "latencyMs": 2,
+      "resultCount": 17,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 1,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 1,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 4,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 1,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "kv.entity-link",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    }
+  ],
+  "stages": [
+    {
+      "stage": "QUERY_PLANNING",
+      "outcome": "OK",
+      "latencyMs": 3070
+    },
+    {
+      "stage": "RESEARCHER_RESOLUTION",
+      "outcome": "ABSTAINED",
+      "latencyMs": 21
+    },
+    {
+      "stage": "COLLABORATION_METRICS",
+      "outcome": "SKIPPED",
+      "latencyMs": 0
+    },
+    {
+      "stage": "PATH_FINDING",
+      "outcome": "SKIPPED",
+      "latencyMs": 0
+    },
+    {
+      "stage": "COMMUNITY_ANALYSIS",
+      "outcome": "SKIPPED",
+      "latencyMs": 0
+    },
+    {
+      "stage": "SEMANTIC_CONTEXT",
+      "outcome": "SKIPPED",
+      "latencyMs": 0
+    },
+    {
+      "stage": "EVIDENCE_BUILDING",
+      "outcome": "SKIPPED",
+      "latencyMs": 0
+    },
+    {
+      "stage": "ANSWER_SYNTHESIS",
+      "outcome": "SKIPPED",
+      "latencyMs": 0
+    },
+    {
+      "stage": "CLAIM_VERIFICATION",
+      "outcome": "SKIPPED",
+      "latencyMs": 0
+    },
+    {
+      "stage": "AUDIT",
+      "outcome": "OK",
+      "latencyMs": 0
+    }
+  ],
+  "budget": {
+    "tokenBudget": 0,
+    "graphTokens": 0,
+    "semanticTokens": 0,
+    "omittedGraphItems": 0,
+    "omittedSemanticItems": 0
+  },
+  "verification": {
+    "verified": 0,
+    "partiallySupported": 0,
+    "unsupported": 0,
+    "conflicting": 0
+  },
+  "abstained": true,
+  "abstentionReason": "UNKNOWN_RESEARCHER",
+  "answerHash": "sha256:1aa935ce49df0112309c0b91a8bfbf23b154356a24936a6dd0648c8b6e95a10e",
+  "provenance": {
+    "schemaVersion": "provenance-v1",
+    "sourceDataset": "RUNTIME",
+    "sourceRecordId": "qry-0bb4ac28640a74df63bdb32d249abe76",
+    "snapshot": "2026-10-03",
+    "runId": "run-80e436dea5587ed42c03f98d66a05bb2",
+    "policyVersion": "fusion-v1",
+    "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+  }
+}

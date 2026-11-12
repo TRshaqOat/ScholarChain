@@ -6,6 +6,7 @@ import scholarchain.core.{IdFormat, StableIds}
 import java.nio.charset.StandardCharsets.UTF_8
 import java.nio.file.Path
 import scala.collection.mutable
+import scala.jdk.CollectionConverters.*
 import scala.util.Try
 
 /** A DynamoDB attribute value. The JSON form is DynamoDB JSON ({"S": "..."}, {"N": "1"}, ...), the
@@ -76,8 +77,27 @@ object AttributeValue:
         case (t, _) => Left(s"unsupported attribute type '$t'")
     case other => Left(s"not a DynamoDB JSON attribute value: ${other.render().take(80)}")
 
-  private def numberOk(n: String): Boolean =
-    Try(BigDecimal(n)).toOption.exists(_ => significantDigits(n) <= 38)
+  private val MinMagnitude = java.math.BigDecimal("1E-130")
+  private val MaxMagnitude = java.math.BigDecimal("1E+126")
+
+  /** A Number DynamoDB stores: valid text, at most 38 significant digits, and 0 or a magnitude from
+    * 1E-130 to below 1E+126 (HowItWorks.NamingRulesDataTypes.html, "Number", accessed 2026-11-06).
+    * The range check also keeps canonicalNumber from expanding an exponent such as 1E+999999999
+    * (N4).
+    */
+  def numberOk(n: String): Boolean =
+    Try(java.math.BigDecimal(n)).toOption.exists { d =>
+      val a = d.abs
+      significantDigits(n) <= 38 &&
+      (a.signum == 0 || (a.compareTo(MinMagnitude) >= 0 && a.compareTo(MaxMagnitude) < 0))
+    }
+
+  /** Every number at any depth whose text numberOk refuses. */
+  def badNumbers(v: AttributeValue): List[String] = v match
+    case N(n) if !numberOk(n) => List(n)
+    case L(vs)                => vs.toList.flatMap(badNumbers)
+    case M(m)                 => m.values.toList.flatMap(badNumbers)
+    case _                    => Nil
 
   def significantDigits(n: String): Int =
     val mantissa = n.takeWhile(c => c != 'e' && c != 'E').filter(_.isDigit)
@@ -131,7 +151,7 @@ object DynamoContract:
   val QueryMaxLimit = 1000
 
   /** Item schemaVersion names (STORAGE.md, "Item schema versions"), by table and sort-key prefix.
-    * None where no name is fixed yet (the runtime tables QuerySession and EvidenceBundle).
+    * The runtime tables use the rag runtime schema names (modules/rag/RUNTIME.md, section 14).
     */
   def itemSchemaVersion(table: TableName, item: Item): Option[String] = table match
     case TableName.RunLedger             => Some("run-ledger-v1")
@@ -143,7 +163,8 @@ object DynamoContract:
         case k if k.startsWith("CHANGE#") => "researcher-change-v1"
         case k if k.startsWith("TOP#")    => "researcher-ranking-v1"
       }
-    case _ => None
+    case TableName.QuerySession   => Some("rag-query-session-v1")
+    case TableName.EvidenceBundle => Some("rag-evidence-bundle-item-v1")
 
   /** EntityLinkCache key of a name (rule name-v1): drop a trailing DBLP homonym number (" 0001"),
     * then the canonical form of StableIds.canonicalAffiliationName (NFKD, marks removed,
@@ -156,7 +177,7 @@ object DynamoContract:
   private def s(item: collection.Map[String, AttributeValue], k: String): Option[String] =
     item.get(k).collect { case AttributeValue.S(v) => v }
   private def n(item: collection.Map[String, AttributeValue], k: String): Option[BigDecimal] =
-    item.get(k).collect { case AttributeValue.N(v) => BigDecimal(v) }
+    item.get(k).collect { case AttributeValue.N(v) => Try(BigDecimal(v)).toOption }.flatten
   private def check(ok: Boolean, msg: => String): List[String] = if ok then Nil else List(msg)
 
   private def windowKey(key: String, windows: Map[String, TimeWindow]): Option[TimeWindow] =
@@ -415,21 +436,32 @@ object DynamoContract:
     val schema = itemSchemaVersion(spec.name, item).toList.flatMap(v =>
       check(s(item, "schemaVersion").contains(v), s"schemaVersion is not $v")
     )
-    val size = ItemSize.of(item)
-    keyIssues(spec.partitionKey, PartitionKeyMaxBytes) ++ keyIssues(
+    val numbers = item.toList
+      .sortBy(_._1)
+      .flatMap((a, v) =>
+        AttributeValue
+          .badNumbers(v)
+          .map(x => s"attribute $a holds an invalid number '${x.take(40)}'")
+      )
+    val size = if numbers.isEmpty then ItemSize.of(item) else 0
+    numbers ++ keyIssues(spec.partitionKey, PartitionKeyMaxBytes) ++ keyIssues(
       spec.sortKey,
       SortKeyMaxBytes
     ) ++
       required ++ ttl ++ provenance ++ schema ++
       check(size <= ItemBudgetBytes, s"item is $size bytes, budget $ItemBudgetBytes") ++
-      (if required.isEmpty then spec.checks(item, windows) else Nil)
+      (if required.isEmpty && numbers.isEmpty then spec.checks(item, windows) else Nil)
 
   /** False for an item whose TTL has passed; DynamoDB deletes those only within days, so every read
     * filters them.
     */
   def unexpired(spec: TableSpec, item: Item, nowEpochSeconds: Long): Boolean =
     spec.ttlAttribute.forall(a =>
-      item.get(a).collect { case AttributeValue.N(v) => BigDecimal(v) }.forall(_ > nowEpochSeconds)
+      item
+        .get(a)
+        .collect { case AttributeValue.N(v) => Try(BigDecimal(v)).toOption }
+        .flatten
+        .forall(_ > nowEpochSeconds)
     )
 
   /** RunLedger entries and ArtifactRegistry RUN# entries are never replaced. */
@@ -455,6 +487,37 @@ object DynamoItemFile:
         }
       case _ => Left("line is not {\"Item\": {...}}")
     }
+
+  /** The .jsonl files under dir, sorted by path. */
+  def files(dir: Path): Vector[Path] =
+    if !java.nio.file.Files.isDirectory(dir) then Vector.empty
+    else
+      scala.util.Using.resource(java.nio.file.Files.walk(dir))(
+        _.iterator.asScala
+          .filter(p =>
+            java.nio.file.Files.isRegularFile(p) && p.getFileName.toString.endsWith(".jsonl")
+          )
+          .toVector
+          .sortBy(_.toString)
+      )
+
+  /** The table directories of a curated/dynamodb/snapshot=<d>/run=<r> directory: only loader-owned
+    * table names, at least one.
+    */
+  def tableDirs(dir: Path): Either[String, Vector[(TableName, Path)]] =
+    if !java.nio.file.Files.isDirectory(dir) then Left(s"$dir is not a directory")
+    else
+      val ds = scala.util.Using.resource(java.nio.file.Files.list(dir))(
+        _.iterator.asScala.filter(java.nio.file.Files.isDirectory(_)).toVector.sortBy(_.toString)
+      )
+      val named = ds.map(d => d -> TableName.values.find(_.toString == d.getFileName.toString))
+      named.collectFirst { case (d, None) => d } match
+        case Some(d) => Left(s"$d is not a table name")
+        case None    =>
+          val ts = named.collect { case (d, Some(t)) => t -> d }
+          ts.collectFirst { case (t, _) if !DynamoContract.LoadTables(t) => t } match
+            case Some(t) => Left(s"$t is written at runtime only and is not loaded")
+            case None    => Either.cond(ts.nonEmpty, ts, s"no table directories under $dir")
 
   /** Validates every line of the files for one table; returns violations and the item count. */
   def validate(
@@ -603,3 +666,102 @@ final class InMemoryDynamo(windows: Seq[TimeWindow], nowEpochSeconds: () => Long
   val runtimeWriter: RuntimeRecordPort = new RuntimeRecordPort:
     def create(table: TableName, item: Item): Either[List[String], LoadOutcome] =
       putNewIn(DynamoContract.RuntimeTables)(table, item)
+
+  /** Loads DynamoDB item files into the loader-owned tables, reading the files only. dir is a
+    * `curated/dynamodb/snapshot=<d>/run=<r>` directory of table directories. Every file is
+    * validated first and nothing is loaded on a violation; an item that conflicts with one already
+    * loaded is a CONFLICT violation. Returns the items per table (inserted or unchanged).
+    */
+  def loadItemFiles(dir: Path): Either[Vector[Violation], Map[TableName, Long]] =
+    DynamoItemFile
+      .tableDirs(dir)
+      .left
+      .map(e => Vector(Violation(dir.toString, 0, "BAD_INPUT", e)))
+      .flatMap { tables =>
+        val files = tables.map((t, d) => t -> DynamoItemFile.files(d))
+        val invalid = files.flatMap((t, fs) => DynamoItemFile.validate(t, fs, windows)._1)
+        if invalid.nonEmpty then Left(invalid)
+        else
+          val conflicts = Vector.newBuilder[Violation]
+          val counts = files.map { (t, fs) =>
+            var n = 0L
+            fs.foreach { f =>
+              scala.util.Using.resource(java.nio.file.Files.lines(f, UTF_8)) { lines =>
+                lines.iterator.asScala.zipWithIndex.filter(_._1.trim.nonEmpty).foreach { (l, k) =>
+                  n += 1
+                  DynamoItemFile
+                    .parseLine(l)
+                    .flatMap(i => loader.putNew(t, i).left.map(_.mkString("; "))) match
+                    case Right(LoadOutcome.Conflict) =>
+                      conflicts += Violation(
+                        f.toString,
+                        k + 1L,
+                        "CONFLICT",
+                        "differs from a loaded item"
+                      )
+                    case Left(e)  => conflicts += Violation(f.toString, k + 1L, "BAD_ITEM", e)
+                    case Right(_) => ()
+                }
+              }
+            }
+            t -> n
+          }
+          val found = conflicts.result()
+          Either.cond(found.isEmpty, counts.toMap, found)
+      }
+
+/** File-backed runtime record store for local runs (Phase 9 ruling 2): create-only QuerySession and
+  * EvidenceBundle items, one append-only JSON Lines log per table (`root/<Table>.jsonl`, the item
+  * file format), replayed into an in-memory table on open, like FileVectorStore. A partial last
+  * line left by a crash was never acknowledged and is cut on open; any other unreadable line stops
+  * the open. Reads hide expired items like the live tables.
+  */
+final class FileRuntimeRecords(root: Path, windows: Seq[TimeWindow], nowEpochSeconds: () => Long):
+  private val db = InMemoryDynamo(windows, nowEpochSeconds)
+  private def log(t: TableName) = root.resolve(s"$t.jsonl")
+
+  DynamoContract.RuntimeTables.toVector.sortBy(_.ordinal).foreach { t =>
+    val f = log(t)
+    if java.nio.file.Files.exists(f) then
+      val bytes = java.nio.file.Files.readAllBytes(f)
+      val complete = bytes.lastIndexOf('\n'.toByte) + 1
+      if complete < bytes.length then
+        scala.util.Using.resource(
+          java.nio.channels.FileChannel.open(f, java.nio.file.StandardOpenOption.WRITE)
+        )(
+          _.truncate(complete.toLong)
+        )
+      new String(bytes, 0, complete, UTF_8)
+        .split('\n')
+        .iterator
+        .filter(_.nonEmpty)
+        .zipWithIndex
+        .foreach { (l, k) =>
+          DynamoItemFile
+            .parseLine(l)
+            .flatMap(i => db.runtimeWriter.create(t, i).left.map(_.mkString("; "))) match
+            case Right(LoadOutcome.Inserted) => ()
+            case other => throw IllegalStateException(s"$f line ${k + 1}: cannot replay ($other)")
+        }
+  }
+
+  def itemCount(t: TableName): Int = db.itemCount(t)
+
+  /** Query and get on the runtime tables (the loader tables are empty here). */
+  val reader: KeyValueReadPort = db.reader
+
+  val writer: RuntimeRecordPort = new RuntimeRecordPort:
+    def create(table: TableName, item: Item): Either[List[String], LoadOutcome] =
+      FileRuntimeRecords.this.synchronized {
+        val r = db.runtimeWriter.create(table, item)
+        if r == Right(LoadOutcome.Inserted) then
+          java.nio.file.Files.createDirectories(root)
+          java.nio.file.Files.writeString(
+            log(table),
+            DynamoItemFile.renderLine(item) + "\n",
+            UTF_8,
+            java.nio.file.StandardOpenOption.CREATE,
+            java.nio.file.StandardOpenOption.APPEND
+          )
+        r
+      }

@@ -1,0 +1,157 @@
+{
+  "schemaVersion": "rag-benchmark-result-v2",
+  "questionId": "B23",
+  "category": "temporal",
+  "mode": "LIVE",
+  "runtimeRunId": "run-80e436dea5587ed42c03f98d66a05bb2",
+  "queryId": "qry-eba2fe4db7bc449a4f3a3da4dc40fef7",
+  "planSource": "MODEL",
+  "operations": [
+    "COMMUNITY_COMPARISON/RESEARCHER"
+  ],
+  "metrics": [],
+  "window": "2000-2014",
+  "resolutions": [
+    {
+      "name": "Minyi Guo",
+      "decision": "RESOLVED_DOMINANT",
+      "researcherId": "scr:canon-v1.er-v2:110ec38e39367e47da67835ca2ce45cc",
+      "topShare": 0.9722222222222222,
+      "candidateCount": 8
+    }
+  ],
+  "abstained": true,
+  "abstentionReason": "BUDGET_EXHAUSTED",
+  "verification": {
+    "verified": 0,
+    "partiallySupported": 0,
+    "unsupported": 0,
+    "conflicting": 0
+  },
+  "claims": 0,
+  "graph": {
+    "reads": 18,
+    "readsByTemplate": {
+      "kv.metrics.window": 1,
+      "graph.community-facets": 1,
+      "graph.vertex": 1,
+      "graph.community-members": 1,
+      "graph.community-neighbors": 1,
+      "graph.authored-counts": 1,
+      "graph.coauthors": 9,
+      "kv.entity-link": 1,
+      "graph.researcher-institutions": 2
+    },
+    "rows": 114,
+    "truncatedReads": 3,
+    "evidenceItems": 4,
+    "tokens": 3380,
+    "omittedItems": 0,
+    "latencyMs": 85,
+    "pathStatuses": []
+  },
+  "semantic": {
+    "embeddingCalls": 1,
+    "embeddingInputTokens": 0,
+    "indexes": [
+      "researcher-profile-v1",
+      "collaboration-community-v1"
+    ],
+    "hits": 1,
+    "tokens": 614,
+    "omittedItems": 0,
+    "latencyMs": 193,
+    "outcome": "OK"
+  },
+  "llm": {
+    "attempts": 3,
+    "requests": 3,
+    "attemptsByStage": {
+      "QUERY_PLANNING": 1,
+      "ANSWER_SYNTHESIS": 2
+    },
+    "outcomes": {
+      "INVALID_OUTPUT": 2,
+      "OK": 1
+    },
+    "inputTokens": 17746,
+    "outputTokens": 1918,
+    "throttleWaitMs": 13034
+  },
+  "latencyMs": 23283,
+  "stageLatencyMs": {
+    "COLLABORATION_METRICS": 1,
+    "PATH_FINDING": 0,
+    "EVIDENCE_BUILDING": 2,
+    "AUDIT": 0,
+    "QUERY_PLANNING": 4450,
+    "SEMANTIC_CONTEXT": 193,
+    "COMMUNITY_ANALYSIS": 84,
+    "CLAIM_VERIFICATION": 0,
+    "RESEARCHER_RESOLUTION": 39,
+    "ANSWER_SYNTHESIS": 18507
+  },
+  "checks": [
+    {
+      "name": "plan-operations",
+      "outcome": "FAIL",
+      "detail": "needs TEMPORAL_COMPARISON; plan [COMMUNITY_COMPARISON/RESEARCHER]"
+    },
+    {
+      "name": "researcher-names",
+      "outcome": "PASS",
+      "detail": "expected [Minyi Guo], extracted [Minyi Guo]"
+    },
+    {
+      "name": "resolution",
+      "outcome": "PASS",
+      "detail": "Minyi Guo: expected RESOLVED_DOMINANT, got RESOLVED_DOMINANT"
+    },
+    {
+      "name": "abstention",
+      "outcome": "FAIL",
+      "detail": "expected answer, got abstain (BUDGET_EXHAUSTED)"
+    },
+    {
+      "name": "claim-evidence",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no claim"
+    },
+    {
+      "name": "verification",
+      "outcome": "PASS",
+      "detail": "abstained with no verified claim kept; counts 0/0/0/0; final claims 0 verified of 0"
+    },
+    {
+      "name": "bundle-budget",
+      "outcome": "PASS",
+      "detail": "graph 3380/8000 tokens, semantic 614/3000, items 5/300"
+    },
+    {
+      "name": "llm-budget",
+      "outcome": "PASS",
+      "detail": "3 attempts, 3 requests (ANSWER_SYNTHESIS 2, QUERY_PLANNING 1), tokens in 17746 out 1918"
+    },
+    {
+      "name": "embedding-budget",
+      "outcome": "PASS",
+      "detail": "1 embedding calls for 2 indexes queried"
+    },
+    {
+      "name": "path-hops",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no path evidence in the bundle"
+    },
+    {
+      "name": "pair-edges",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no bundle edge has stored path evidence"
+    },
+    {
+      "name": "deadline",
+      "outcome": "PASS",
+      "detail": "23283 ms of 180000"
+    }
+  ],
+  "answerHash": "sha256:4be66487ab445fd7a14ec5bbb24561f3471f5c867358ac4a997d358fd423f15d"
+}

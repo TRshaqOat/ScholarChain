@@ -139,6 +139,22 @@ class StableIdsSpec extends AnyFunSuite:
     assert(CanonicalPair.isCanonical(mentionId(workId, 10), mentionId(workId, 2)))
   }
 
+  test("query ID: frozen value (RUNTIME.md audit formula), shape, input sensitivity, and guards") {
+    val q = StableIds.queryId(fixtureRunId, "sha256:question", "sha256:request", 1)
+    assert(q == "qry-e605c59cdcfda782444ceae12233ca77")
+    assert(IdFormat.isQueryId(q) && !IdFormat.isRunId(q) && !IdFormat.isEvidenceId(q))
+    assert(StableIds.queryId(fixtureRunId, "sha256:question", "sha256:request", 2) != q)
+    assert(StableIds.queryId(fixtureRunId, "sha256:other", "sha256:request", 1) != q)
+    assert(StableIds.queryId(fixtureRunId, "sha256:question", "sha256:other", 1) != q)
+    assert(
+      StableIds.queryId(runId("s", "c", "v", Nil, 1), "sha256:question", "sha256:request", 1) != q
+    )
+    assertThrows[IllegalArgumentException](StableIds.queryId("run-x", "h", "r", 1))
+    assertThrows[IllegalArgumentException](StableIds.queryId(fixtureRunId, " ", "r", 1))
+    assertThrows[IllegalArgumentException](StableIds.queryId(fixtureRunId, "h", "r", 0))
+    assert(!IdFormat.isQueryId("qry-" + "A" * 32) && !IdFormat.isQueryId("qry-123"))
+  }
+
   test("ID format checks accept well-formed and reject malformed IDs") {
     assert(IdFormat.isWorkId(workId))
     assert(IdFormat.isWorkId("doi:10.1145/1542275.1542359"))

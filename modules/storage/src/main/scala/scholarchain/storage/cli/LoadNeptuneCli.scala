@@ -21,9 +21,15 @@ object LoadNeptuneCli:
   val UsageText =
     "storage/runMain scholarchain.storage.cli.LoadNeptuneCli --dir <out>/s3/graph/neptune/snapshot=<d>/run=<r> " +
       "[--out scratch/stores] [--passes n] [--expect-coauthor <csv>] " +
-      "[--live --profile <name> [--region <r>] (--loader-role-arn <arn> | --status <loadId>)]"
+      "[--live --profile <name> [--region <r>] ([--loader-role-arn <arn>] | --status <loadId>)]"
 
   def main(args: Array[String]): Unit = Cli.main("LoadNeptuneCli", args)(run(_, _))
+
+  /** --loader-role-arn, else the configured neptune.loader-role-arn (M10). A live run needs a
+    * non-local configuration, which has already refused the placeholder ARN.
+    */
+  def loaderRoleArn(a: Args, cfg: scholarchain.core.config.ScholarChainConfig): String =
+    a.get("loader-role-arn").getOrElse(cfg.neptune.loaderRoleArn)
 
   def run(args: Seq[String], out: String => Unit, env: Map[String, String] = sys.env): Int =
     Cli.withArgs(
@@ -95,64 +101,60 @@ object LoadNeptuneCli:
                     val expect = a.get("expect-coauthor").map(Paths.get(_))
                     dryRun(dir, cfg, s3root, runId, passes, ledger, expect, out)
                   case Some(t) =>
-                    a.req("loader-role-arn") match
-                      case Left(e) =>
-                        out(s"error: $e")
-                        Cli.Usage
-                      case Right(role) =>
-                        val prefix = s3root.toAbsolutePath.normalize
-                          .relativize(dir.toAbsolutePath.normalize)
-                          .toString
-                          .replace('\\', '/') + "/"
-                        val localStore = FileObjectStore(s3root).reader
-                        val manifestKey =
-                          S3Layout.runManifest("store-conversion", snapshot, sourceRun)
-                        val remote = S3ObjectStore(LiveAws.s3(t), cfg.storage.bucket)
-                        val problems = localStore.get(manifestKey) match
-                          case None    => Vector(s"no run manifest at $manifestKey")
-                          case Some(b) =>
-                            preloadProblems(
-                              prefix,
-                              sourceRun,
-                              RunManifest.fromJson(b),
-                              localStore
-                                .list(prefix)
-                                .map(k => k -> localStore.get(k).fold("")(Hashing.sha256))
-                                .toMap,
-                              remote.reader.list(prefix),
-                              remote.sha256
-                            )
-                        if problems.nonEmpty then
-                          problems.take(20).foreach(p => out(s"pre-load: $p"))
-                          out(
-                            s"pre-load check failed (${problems.size} problems); upload with LoadS3Cli --manifest $manifestKey first"
-                          )
+                    val role = loaderRoleArn(a, cfg)
+                    val prefix = s3root.toAbsolutePath.normalize
+                      .relativize(dir.toAbsolutePath.normalize)
+                      .toString
+                      .replace('\\', '/') + "/"
+                    val localStore = FileObjectStore(s3root).reader
+                    val manifestKey =
+                      S3Layout.runManifest("store-conversion", snapshot, sourceRun)
+                    val remote = S3ObjectStore(LiveAws.s3(t), cfg.storage.bucket)
+                    val problems = localStore.get(manifestKey) match
+                      case None    => Vector(s"no run manifest at $manifestKey")
+                      case Some(b) =>
+                        preloadProblems(
+                          prefix,
+                          sourceRun,
+                          RunManifest.fromJson(b),
+                          localStore
+                            .list(prefix)
+                            .map(k => k -> localStore.get(k).fold("")(Hashing.sha256))
+                            .toMap,
+                          remote.reader.list(prefix),
+                          remote.sha256
+                        )
+                    if problems.nonEmpty then
+                      problems.take(20).foreach(p => out(s"pre-load: $p"))
+                      out(
+                        s"pre-load check failed (${problems.size} problems); upload with LoadS3Cli --manifest $manifestKey first"
+                      )
+                      1
+                    else
+                      out(
+                        s"LIVE: Neptune ${cfg.neptune.endpoint} loads s3://${cfg.storage.bucket}/$prefix"
+                      )
+                      NeptuneBulkLoader(
+                        LiveAws.neptune(t, cfg.neptune.endpoint, cfg.neptune.port)
+                      )
+                        .start(cfg.storage.bucket, prefix, role, t.region) match
+                        case Left(e) =>
+                          out(s"error: $e")
                           1
-                        else
+                        case Right(loadId) =>
+                          ledger.append(
+                            LedgerEntry(
+                              runId,
+                              s"neptune#load#$loadId",
+                              "NEPTUNE_LOAD",
+                              Cli.now(),
+                              Map("source" -> prefix)
+                            )
+                          )
                           out(
-                            s"LIVE: Neptune ${cfg.neptune.endpoint} loads s3://${cfg.storage.bucket}/$prefix"
+                            s"started load $loadId; check it with --live --profile ${t.profile} --status $loadId"
                           )
-                          NeptuneBulkLoader(
-                            LiveAws.neptune(t, cfg.neptune.endpoint, cfg.neptune.port)
-                          )
-                            .start(cfg.storage.bucket, prefix, role, t.region) match
-                            case Left(e) =>
-                              out(s"error: $e")
-                              1
-                            case Right(loadId) =>
-                              ledger.append(
-                                LedgerEntry(
-                                  runId,
-                                  s"neptune#load#$loadId",
-                                  "NEPTUNE_LOAD",
-                                  Cli.now(),
-                                  Map("source" -> prefix)
-                                )
-                              )
-                              out(
-                                s"started load $loadId; check it with --live --profile ${t.profile} --status $loadId"
-                              )
-                              0
+                          0
       yield result
     }
 
@@ -228,7 +230,9 @@ object LoadNeptuneCli:
           )
           false
     }
-    val misses = if bad == 0 then expect.fold(0)(checkCoauthors(_, g.reader, out)) else 0
+    val misses = if bad == 0 then
+      expect.fold(0)(checkCoauthors(_, g.reader(GraphReadLimits.from(cfg)), out))
+    else 0
     if bad == 0 && misses == 0 then 0 else 1
 
   val ExpectHeader = Vector(
@@ -253,7 +257,8 @@ object LoadNeptuneCli:
       else
         row match
           case Vector(w, x, y, n, first, last) =>
-            val found = g.coauthorEdge(x, y, w)
+            val found =
+              scala.util.Try(g.coauthorEdge(x, y, w)).toOption.flatten // unknown window: MISSING
             val got =
               found.map(e => ExpectHeader.drop(3).map(k => e.props.get(k).fold("")(_.toString)))
             val status =

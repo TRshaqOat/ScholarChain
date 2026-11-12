@@ -326,7 +326,9 @@ final case class EvidenceItem(
     provenance: Provenance
 ) derives ReadWriter
 
-/** Evidence for one query. Deterministic graph evidence and semantic context are separate lists. */
+/** Evidence for one query. Deterministic graph evidence and semantic context are separate lists.
+  * The Phase 9 runtime uses its own rag-evidence-bundle-v1 (modules/rag), not this record.
+  */
 final case class EvidenceBundle(
     schemaVersion: String,
     queryId: String,
@@ -335,7 +337,9 @@ final case class EvidenceBundle(
     provenance: Provenance
 ) derives ReadWriter
 
-/** Typed plan for one question. Years are inclusive; None means unbounded on that side. */
+/** Typed plan for one question. Years are inclusive; None means unbounded on that side. The Phase 9
+  * runtime uses its own rag-query-plan-v1 (modules/rag), not this record.
+  */
 final case class QueryPlan(
     schemaVersion: String,
     queryId: String,

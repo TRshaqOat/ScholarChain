@@ -246,3 +246,125 @@ class LiveRequestSpec extends AnyFunSuite:
       assert(f.builds == 0) // building a client resolves nothing
     finally clients.foreach(_.close())
   }
+
+  // ---- Phase 7 review 2 minors (N1, N2, N3, N5) -----------------------------------------------
+
+  test("N1: the expired-token retry of a Titan call passes the caller's throttle first") {
+    import software.amazon.awssdk.core.SdkBytes
+    import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient
+    import software.amazon.awssdk.services.bedrockruntime.model.{
+      InvokeModelRequest,
+      InvokeModelResponse
+    }
+    val body = ujson.Obj("embedding" -> ujson.Arr.from(Seq.fill(1024)(ujson.Num(0.03125)))).render()
+    var calls = 0
+    val client = new BedrockRuntimeClient:
+      def serviceName(): String = "bedrock-runtime"
+      def close(): Unit = ()
+      override def invokeModel(r: InvokeModelRequest): InvokeModelResponse =
+        calls += 1
+        if calls % 2 == 1 then throw expired("ExpiredTokenException")
+        InvokeModelResponse.builder().body(SdkBytes.fromUtf8String(body)).build()
+    var paced = 0
+    assert(
+      BedrockTitanEmbedder(client, TitanV2.ModelId, () => paced += 1).embed("x").length == 1024
+    )
+    assert(calls == 2 && paced == 1)
+    // With the runner's throttle: the first attempt and the retry start one interval apart.
+    var now = 0L
+    val sleeps = scala.collection.mutable.ArrayBuffer.empty[Long]
+    val throttle = Throttle(50, () => now, ms => { sleeps += ms; now += ms })
+    throttle.acquire() // the runner's acquire before embed
+    BedrockTitanEmbedder(client, TitanV2.ModelId, () => throttle.acquire()).embed("x")
+    assert(calls == 4 && sleeps.toVector == Vector(throttle.intervalMs))
+  }
+
+  test("N2: a 403 on HeadObject gets one refresh and retry; a second 403 propagates") {
+    import software.amazon.awssdk.services.s3.S3Client
+    import software.amazon.awssdk.services.s3.model.{HeadObjectRequest, HeadObjectResponse}
+    val digest = MessageDigest.getInstance("SHA-256").digest("text".getBytes(UTF_8))
+    var calls = 0
+    var failures = 1
+    val client = new S3Client:
+      def serviceName(): String = "s3"
+      def close(): Unit = ()
+      override def headObject(r: HeadObjectRequest): HeadObjectResponse =
+        calls += 1
+        if failures > 0 then
+          failures -= 1
+          throw S3Exception.builder().statusCode(403).build() // HEAD errors have no body or code
+        HeadObjectResponse
+          .builder()
+          .checksumSHA256(Base64.getEncoder.encodeToString(digest))
+          .build()
+    val store = S3ObjectStore(client, "b")
+    assert(store.sha256("k").contains(Hashing.sha256("text")) && calls == 2)
+    calls = 0
+    failures = 2
+    assertThrows[S3Exception](store.sha256("k"))
+    assert(calls == 2)
+    // Only HEAD widens the rule: elsewhere a bare 403 is still not an expiry.
+    assert(
+      !LiveAws.isExpiredToken(
+        S3Exception.builder().statusCode(403).build().asInstanceOf[S3Exception]
+      )
+    )
+  }
+
+  test("N3: an expired token is detected by its error code alone") {
+    def coded(code: String) = AwsServiceException
+      .builder()
+      .statusCode(400)
+      .message("The provided token has expired.") // the S3 text: not the JSON-service phrase
+      .awsErrorDetails(
+        AwsErrorDetails
+          .builder()
+          .errorCode(code)
+          .errorMessage("The provided token has expired.")
+          .build()
+      )
+      .build()
+    assert(!coded("ExpiredToken").getMessage.contains("security token included"))
+    assert(LiveAws.isExpiredToken(coded("ExpiredToken")))
+    assert(LiveAws.isExpiredToken(coded("ExpiredTokenException")))
+    assert(!LiveAws.isExpiredToken(coded("ExpiredTokn")))
+    assert(!LiveAws.isExpiredToken(coded("AccessDenied")))
+  }
+
+  test("N5: requests that fail on one expiry rerun credential_process once") {
+    val f = Factory()
+    val c = RefreshingCredentials(() => f())
+    c.resolveCredentials()
+    val seen = c.generation
+    val pool = java.util.concurrent.Executors.newFixedThreadPool(8)
+    val start = java.util.concurrent.CountDownLatch(1)
+    try
+      val tasks = (1 to 16).map { _ =>
+        val t: Runnable = () =>
+          start.await()
+          c.refreshIfCurrent(seen)
+        pool.submit(t)
+      }
+      start.countDown()
+      tasks.foreach(_.get())
+    finally pool.shutdown()
+    assert(c.generation == seen + 1)
+    c.resolveCredentials()
+    assert(f.builds == 2)
+    // guarded: a request that started before another request's refresh does not refresh again.
+    val g = Factory()
+    val p = LiveAws.credentials(LiveTarget("unit-test-n5", "us-east-2"), Some(() => g()))
+    p.resolveCredentials()
+    val before = p.generation
+    var calls = 0
+    val r = LiveAws.guarded {
+      calls += 1
+      if calls == 1 then
+        p.refresh() // another request saw the expiry first
+        throw expired("ExpiredToken")
+      p.resolveCredentials()
+    }
+    assert(
+      calls == 2 && p.generation == before + 1 && g.builds == 2 && r.accessKeyId == "AKIDTEST2"
+    )
+  }

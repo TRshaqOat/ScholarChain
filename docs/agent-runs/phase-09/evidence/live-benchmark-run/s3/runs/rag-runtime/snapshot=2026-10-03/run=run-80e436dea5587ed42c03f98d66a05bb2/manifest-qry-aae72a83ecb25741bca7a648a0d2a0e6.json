@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "store-run-manifest-v1",
+  "stage": "rag-runtime",
+  "runId": "run-80e436dea5587ed42c03f98d66a05bb2",
+  "snapshot": "2026-10-03",
+  "entries": [
+    {
+      "key": "logs/rag-runtime/snapshot=2026-10-03/run=run-80e436dea5587ed42c03f98d66a05bb2/qry-aae72a83ecb25741bca7a648a0d2a0e6.json",
+      "sha256": "sha256:4e99c0444301f32c0e07bedceeca0aa126d71a60db1594c04d29c41e47932017",
+      "bytes": 6286,
+      "sourceRef": "audit qry-aae72a83ecb25741bca7a648a0d2a0e6"
+    },
+    {
+      "key": "reports/rag-runtime/snapshot=2026-10-03/run=run-80e436dea5587ed42c03f98d66a05bb2/qry-aae72a83ecb25741bca7a648a0d2a0e6.answer.json",
+      "sha256": "sha256:c20937c6852279d3afd63277ea585dad6fa6f05bdd5621ec28f9b0a94da3c880",
+      "bytes": 17547,
+      "sourceRef": "answer qry-aae72a83ecb25741bca7a648a0d2a0e6"
+    }
+  ]
+}

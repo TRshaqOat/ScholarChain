@@ -109,6 +109,57 @@ class WireContractSpec extends AnyFunSuite:
     assert(WireCodec.decode[MatchDecision](json.render()).isLeft)
   }
 
+  test("evidence-v1 EvidenceType names are frozen; only TEXT_CHUNK and PROFILE are semantic") {
+    // Appending a value keeps evidence-v1 (every stored record still decodes); renaming or removing
+    // one is a schema-version bump.
+    assert(
+      EvidenceType.values.map(_.toString).toVector == Vector(
+        "WORK_RECORD",
+        "AUTHORSHIP",
+        "COAUTHOR_EDGE",
+        "GRAPH_PATH",
+        "METRIC_RECORD",
+        "COMPONENT_RECORD",
+        "COMMUNITY_RECORD",
+        "MATCH_DECISION",
+        "TEXT_CHUNK",
+        "PROFILE",
+        "IDENTITY_RESOLUTION",
+        "RANKING_RECORD",
+        "TEMPORAL_CHANGE",
+        "FACET_RECORD"
+      )
+    )
+    assert(
+      EvidenceType.values.filter(_.isSemantic).toSet ==
+        Set(EvidenceType.TEXT_CHUNK, EvidenceType.PROFILE)
+    )
+  }
+
+  test("the Phase 9 evidence types round-trip as evidence-v1 and are graph evidence only") {
+    for t <- Seq(
+        EvidenceType.IDENTITY_RESOLUTION,
+        EvidenceType.RANKING_RECORD,
+        EvidenceType.TEMPORAL_CHANGE,
+        EvidenceType.FACET_RECORD
+      )
+    do
+      val item = metricEvidence.copy(evidenceType = t)
+      val json = WireCodec.encode(item)
+      assert(ujson.read(json)("evidenceType") == ujson.Str(t.toString))
+      assert(ujson.read(json)("schemaVersion") == ujson.Str("evidence-v1"))
+      assert(WireCodec.decode[EvidenceItem](json) == Right(item))
+      assert(Validation.validate(bundle.copy(graphEvidence = Vector(item))).isRight)
+      assert(
+        Validation
+          .validate(bundle.copy(semanticEvidence = Vector(item)))
+          .left
+          .toOption
+          .get
+          .exists(_.contains("semanticEvidence must hold only semantic evidence"))
+      )
+  }
+
   test("malformed JSON is rejected, not thrown") {
     assert(WireCodec.decode[WorkRecord]("{not json").isLeft)
   }

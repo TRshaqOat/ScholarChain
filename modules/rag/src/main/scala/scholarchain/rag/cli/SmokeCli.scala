@@ -69,17 +69,18 @@ object SmokeCli:
               live.fold(EmbeddingModels.fakeLabel(version))(_ => version),
               perTest
             )
+            val throttle = Throttle(perMinute, nowMs, sleep)
             val embedder: Embedder = live match
               case Some(t) =>
                 out(
                   s"LIVE: Bedrock ${model.modelId} in ${t.region}, profile ${t.profile}, " +
                     s"${cases.size} query embeddings at most $perMinute per minute"
                 )
-                BedrockTitanEmbedder(LiveAws.bedrock(t), model.modelId)
+                // The expired-token retry is a second request: it passes the throttle too (N1).
+                BedrockTitanEmbedder(LiveAws.bedrock(t), model.modelId, () => throttle.acquire())
               case None =>
                 out("dry run: fake embedder (no AWS call)")
                 HashingEmbedder()
-            val throttle = Throttle(perMinute, nowMs, sleep)
             val embed = (q: String) =>
               if !embedder.isFake then throttle.acquire()
               embedder.embed(q)

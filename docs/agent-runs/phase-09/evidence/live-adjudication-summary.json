@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "er-adjudication-session-v1",
+  "runId": "run-70a26cef3256da28ef1257cb4498d0bb",
+  "session": 1,
+  "status": "COMPLETE",
+  "startedAt": "2026-11-07T22:07:28.956496Z",
+  "endedAt": "2026-11-07T22:34:01.376425Z",
+  "profile": "scholarchain-sdk",
+  "region": "us-east-2",
+  "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+  "promptVersion": "er-adjudication-v1",
+  "policyVersion": "er-v2",
+  "perMinute": 8,
+  "max": 200,
+  "tokenBudget": 600000,
+  "sampled": 200,
+  "decided": 200,
+  "cached": 0,
+  "newAdjudications": 200,
+  "requests": 213,
+  "tokensUsed": 259255,
+  "failures": 13,
+  "pending": 0,
+  "halted": null,
+  "outcomes": {
+    "RESEARCHER|ACCEPTED": 33,
+    "RESEARCHER|REJECTED": 81,
+    "RESEARCHER|UNRESOLVED": 66,
+    "WORK|ACCEPTED": 2,
+    "WORK|REJECTED": 11,
+    "WORK|UNRESOLVED": 7
+  }
+}

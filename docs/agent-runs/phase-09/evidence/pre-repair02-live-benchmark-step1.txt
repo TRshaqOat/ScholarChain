@@ -1,0 +1,40 @@
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] running scholarchain.rag.cli.BenchmarkCli --questions experiments/benchmark/benchmark-questions-v1.csv --path-evidence scratch/stores/work/neptune-check/snapshot=2026-10-03/run=run-ee4ffd21aa20dbe4c078a4be96fe8c9f/expect-benchmark.csv --graph scratch/stores/s3/graph/neptune/snapshot=2026-10-03/run=run-1d6a86491812ff94887270c1ab885e69 --items scratch/stores/s3/curated/dynamodb/snapshot=2026-10-03/run=run-1d6a86491812ff94887270c1ab885e69 --objects scratch/stores/s3 --vectors scratch/stores-live/s3vectors --out scratch/runtime --live --profile scholarchain-sdk --region us-east-2 --per-minute 8 --max 2
+runtime run run-d18aa34eee7633bd7f5caaf33933ff20 (live mode), snapshot 2026-10-03
+graph loaded: 511920 vertices, 3123311 edges in 33576 ms; heap in use 3768 MiB
+items indexed: 876228 in 20459 ms; heap in use 3915 MiB
+LIVE: Bedrock us.anthropic.claude-haiku-4-5-20251001-v1:0 (at most 8 requests per minute) and amazon.titan-embed-text-v2:0 in us-east-2, profile scholarchain-sdk
+SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+SLF4J: Defaulting to no-operation (NOP) logger implementation
+SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+benchmark run run-8cc2f0485347bfb0c7081bc6b280208f: 30 questions, 0 already done, answering 2 now
+B01 answered; 4 verified; graph 22 reads, 12 items; semantic 1 hits; llm 3 attempts 3 requests; 20819 ms; checks pass
+B02 answered; 1 verified; graph 15 reads, 2 items; semantic 1 hits; llm 3 attempts 3 requests; 20558 ms; checks pass
+done 2 of 30 (live mode)
+not done: B03 B04 B05 B06 B07 B08 B09 B10 B11 B12 B13 B14 B15 B16 B17 B18 B19 B20 B21 B22 B23 B24 B25 B26 B27 B28 B29 B30
+  check abstention: 2 pass, 0 fail, 0 n/a
+  check bundle-budget: 2 pass, 0 fail, 0 n/a
+  check claim-evidence: 2 pass, 0 fail, 0 n/a
+  check deadline: 2 pass, 0 fail, 0 n/a
+  check embedding-budget: 2 pass, 0 fail, 0 n/a
+  check llm-budget: 2 pass, 0 fail, 0 n/a
+  check pair-edges: 1 pass, 0 fail, 1 n/a
+  check path-hops: 0 pass, 0 fail, 2 n/a
+  check plan-operations: 2 pass, 0 fail, 0 n/a
+  check researcher-names: 2 pass, 0 fail, 0 n/a
+  check resolution: 2 pass, 0 fail, 0 n/a
+  check verification: 2 pass, 0 fail, 0 n/a
+plan sources: FALLBACK_RULES 1, MODEL 1; outcomes: ANSWERED 2
+resolutions: RESOLVED_DOMINANT 2
+verification: 5 verified, 0 partial, 0 unsupported, 0 conflicting; 5 final claims
+graph retrieval: 37 reads in 2 questions, 108 rows, 3 truncated, 14 evidence items, 7275 tokens; paths ; p50 1 ms, p95 9 ms, max 9 ms
+semantic retrieval: 2 embedding calls in 2 questions, 2 hits in 2 questions, 1207 tokens; indexes researcher-profile-v1 2; p50 242 ms, p95 2957 ms, max 2957 ms
+llm: 6 attempts, 6 requests (ANSWER_SYNTHESIS 2, QUERY_PLANNING 4), outcomes INVALID_OUTPUT 3, OK 3, tokens in 25827 out 2250, throttle wait 21036 ms
+question latency: p50 20558 ms, p95 20819 ms, max 20819 ms, total 41377 ms
+summary: scratch/runtime/s3/reports/rag-benchmark/snapshot=2026-10-03/run=run-8cc2f0485347bfb0c7081bc6b280208f/summary-002.json
+[success] Total time: 103 s (0:01:43.0), completed Nov 11, 2026, 6:04:40 PM

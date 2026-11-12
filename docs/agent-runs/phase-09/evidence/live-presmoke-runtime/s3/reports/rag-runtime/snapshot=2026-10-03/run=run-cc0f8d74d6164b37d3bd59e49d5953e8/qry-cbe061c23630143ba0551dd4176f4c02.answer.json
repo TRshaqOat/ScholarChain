@@ -1,0 +1,94 @@
+{
+  "schemaVersion": "rag-answer-v1",
+  "response": {
+    "schemaVersion": "answer-response-v1",
+    "queryId": "qry-cbe061c23630143ba0551dd4176f4c02",
+    "summary": "The answer could not be written within the model call and token budget; no claim is made.",
+    "claims": [],
+    "abstained": true,
+    "uncertainty": null,
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "RUNTIME",
+      "sourceRecordId": "qry-cbe061c23630143ba0551dd4176f4c02",
+      "snapshot": "2026-10-03",
+      "runId": "run-cc0f8d74d6164b37d3bd59e49d5953e8",
+      "policyVersion": "fusion-v1",
+      "modelVersion": null
+    }
+  },
+  "plan": {
+    "schemaVersion": "rag-query-plan-v1",
+    "queryId": "qry-cbe061c23630143ba0551dd4176f4c02",
+    "operations": [
+      {
+        "operation": "MAXIMUM_TEAM_SIZE",
+        "scope": "CORPUS",
+        "researchers": [],
+        "metric": null,
+        "topN": null
+      }
+    ],
+    "researcherNames": [],
+    "metrics": [],
+    "window": {
+      "requested": {
+        "kind": "DEFAULT",
+        "name": null,
+        "yearFrom": null,
+        "yearTo": null
+      },
+      "window": "all-years",
+      "startYear": 2000,
+      "endYear": 2026,
+      "exact": true,
+      "note": null
+    },
+    "comparison": null,
+    "topics": [],
+    "venues": [],
+    "institutions": [],
+    "semanticIndexes": [
+      "paper-abstract-v1"
+    ],
+    "limits": {
+      "graphLimit": 100,
+      "vectorLimit": 50,
+      "maxPathDepth": 6,
+      "topK": 5
+    },
+    "source": "FALLBACK_RULES",
+    "overriddenFields": [],
+    "rejectedItems": [
+      "output-is-json"
+    ],
+    "promptVersion": "planner-v1",
+    "modelId": null,
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "RUNTIME",
+      "sourceRecordId": "qry-cbe061c23630143ba0551dd4176f4c02",
+      "snapshot": "2026-10-03",
+      "runId": "run-cc0f8d74d6164b37d3bd59e49d5953e8",
+      "policyVersion": null,
+      "modelVersion": null
+    }
+  },
+  "resolutions": [],
+  "verification": {
+    "schemaVersion": "claim-verification-v1",
+    "queryId": "qry-cbe061c23630143ba0551dd4176f4c02",
+    "checks": [],
+    "counts": {
+      "verified": 0,
+      "partiallySupported": 0,
+      "unsupported": 0,
+      "conflicting": 0
+    }
+  },
+  "abstention": {
+    "reason": "BUDGET_EXHAUSTED",
+    "detail": "The answer could not be written within the model call and token budget; no claim is made."
+  },
+  "answerHash": "sha256:5adf164954c2f85d089f3ad2b7b3e0fb067725bd5f4efbc9d466b478583276c6"
+}

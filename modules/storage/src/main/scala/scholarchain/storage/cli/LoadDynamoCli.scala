@@ -14,10 +14,10 @@ import scala.util.Using
 /** Loads DynamoDB item files (curated/dynamodb/snapshot=<d>/run=<r>/<Table>/part-*.jsonl).
   *
   * Dry run (default): the in-memory fake, --passes times in one process, ledger under <out>/ledger.
-  * Live (--live --profile, --table-prefix): conditional PutItem per item, --concurrency threads,
-  * RunLedger table. Every file is validated first; any violation stops before a write. A table
-  * whose content hash ArtifactRegistry already records for this source run is skipped unless
-  * --recheck.
+  * Live (--live --profile; --table-prefix defaults to dynamodb.table-prefix): conditional PutItem
+  * per item, --concurrency threads, RunLedger table. Every file is validated first; any violation
+  * stops before a write. A table whose content hash ArtifactRegistry already records for this
+  * source run is skipped unless --recheck.
   */
 object LoadDynamoCli:
   val Stage = "load-dynamodb"
@@ -25,11 +25,15 @@ object LoadDynamoCli:
   val UsageText =
     "storage/runMain scholarchain.storage.cli.LoadDynamoCli --dir <.../curated/dynamodb/snapshot=<d>/run=<r>> " +
       "[--out scratch/stores] [--passes n] [--recheck] " +
-      "[--live --profile <name> [--region <r>] --table-prefix <p> [--concurrency n]]"
+      "[--live --profile <name> [--region <r>] [--table-prefix <p>] [--concurrency n]]"
 
   def main(args: Array[String]): Unit = Cli.main("LoadDynamoCli", args)(run(_, _))
 
   def registryKey(t: TableName): String = s"loaded/dynamodb/$t"
+
+  /** --table-prefix, else the configured dynamodb.table-prefix (M10). */
+  def tablePrefix(a: Args, cfg: scholarchain.core.config.ScholarChainConfig): String =
+    a.get("table-prefix").getOrElse(cfg.dynamoDb.tablePrefix)
 
   def run(args: Seq[String], out: String => Unit, env: Map[String, String] = sys.env): Int =
     Cli.withArgs(
@@ -48,7 +52,7 @@ object LoadDynamoCli:
         (snapshot, sourceRun) = seg
         live <- Cli.liveTarget(a, cfg.region)
         _ <- if live.nonEmpty then Cli.liveConfig(cfg) else Right(())
-        prefix <- if live.nonEmpty then a.req("table-prefix") else Right("")
+        prefix = tablePrefix(a, cfg)
         passes <- a
           .int("passes", Some(1))
           .filterOrElse(
@@ -58,7 +62,7 @@ object LoadDynamoCli:
         conc <- a
           .int("concurrency", Some(8))
           .filterOrElse(c => c >= 1 && c <= 32, "--concurrency 1 to 32")
-        tables <- tableDirs(dir)
+        tables <- DynamoItemFile.tableDirs(dir)
       yield
         val root = Paths.get(a.get("out").getOrElse("scratch/stores"))
         val windows = cfg.graph.windows
@@ -138,21 +142,6 @@ object LoadDynamoCli:
                 if bad == 0 then 0 else 1
               finally pool.shutdown()
     }
-
-  private def tableDirs(dir: Path): Either[String, Vector[(TableName, Path)]] =
-    if !Files.isDirectory(dir) then Left(s"$dir is not a directory")
-    else
-      val ds = Using.resource(Files.list(dir))(
-        _.iterator.asScala.filter(Files.isDirectory(_)).toVector.sortBy(_.toString)
-      )
-      val named = ds.map(d => d -> TableName.values.find(_.toString == d.getFileName.toString))
-      named.collectFirst { case (d, None) => d } match
-        case Some(d) => Left(s"$d is not a table name")
-        case None    =>
-          val ts = named.collect { case (d, Some(t)) => t -> d }
-          ts.collectFirst { case (t, _) if !DynamoContract.LoadTables(t) => t } match
-            case Some(t) => Left(s"$t is written at runtime only and is not loaded")
-            case None    => Either.cond(ts.nonEmpty, ts, s"no table directories under $dir")
 
   final case class TableResult(
       inserted: Int,

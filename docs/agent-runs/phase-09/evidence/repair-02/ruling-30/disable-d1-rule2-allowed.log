@@ -1,0 +1,50 @@
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] compiling 1 Scala source to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/rag/target/scala-3.3.7/classes ...
+[info] done compiling
+[info] PlannerSpec:
+[info] - the rule planner extracts names, windows, and operations of benchmark-style questions
+[info] - validation enforces the operation allowlist: scopes, researcher indexes, metrics, topN
+[info] - a researcher name or filter term that does not occur in the question is rejected
+[info] - window selection: stored windows exact, other ranges widen with a note, no corpus year abstains
+[info] - request fields override the model; retrieval limits are clamped to configuration
+[info] - output schemas: exact keys, enums equal the Scala enums, only the supported keywords
+[info] - the model planner retries once with the failed rule names, then falls back to the rules
+[info] - every model attempt passes the throttle, and an attempt over the token budget is not sent
+[info] - ruling 30: the recorded rule-2 and rule-7 failures name what is allowed; the corrections validate *** FAILED ***
+[info]   Left(Vector("rule-2 RESEARCHER_RANKING: scope RESEARCHER not allowed")) did not equal Left(Vector("rule-2 RESEARCHER_RANKING: scope RESEARCHER not allowed; allowed: scope CORPUS")) (PlannerSpec.scala:490)
+[info]   Analysis:
+[info]   Left(value: Vector1(0: "rule-2 RESEARCHER_RANKING: scope RESEARCHER not allowed" -> "rule-2 RESEARCHER_RANKING: scope RESEARCHER not allowed; allowed: scope CORPUS"))
+[info] - ruling 30: the retry prompt and the audit carry the allowed values, never the model's text *** FAILED ***
+[info]   "<question>
+[info]   How many distinct coauthors did Ada Lovelace have in 2015-2026?
+[info]   </question>
+[info]   
+[info]   Your previous output did not pass validation. The failed rules, each with what it allows, were:
+[info]   - rule-2 RESEARCHER_RANKING: scope RESEARCHER not allowed
+[info]   - rule-7 window: NAMED with a year; allowed: DEFAULT (name, yearFrom, yearTo null), NAMED (name one of all-years, 2000-2014, 2015-2026; yearFrom, yearTo null), or RANGE (name null; yearFrom and yearTo years, at most one null; yearFrom <= yearTo)
+[info]   Return one corrected JSON object that follows every rule." did not contain "- rule-2 RESEARCHER_RANKING: scope RESEARCHER not allowed; allowed: scope CORPUS
+[info]   " <question>
+[info]   How many distinct coauthors did Ada Lovelace have in 2015-2026?
+[info]   </question>
+[info]   
+[info]   Your previous output did not pass validation. The failed rules, each with what it allows, were:
+[info]   - rule-2 RESEARCHER_RANKING: scope RESEARCHER not allowed
+[info]   - rule-7 window: NAMED with a year; allowed: DEFAULT (name, yearFrom, yearTo null), NAMED (name one of all-years, 2000-2014, 2015-2026; yearFrom, yearTo null), or RANGE (name null; yearFrom and yearTo years, at most one null; yearFrom <= yearTo)
+[info]   Return one corrected JSON object that follows every rule. (PlannerSpec.scala:532)
+[info] - ruling 30: planner-v2 states each operation's scopes and metrics from the allowlist
+[info] - ruling 30: every planner rule failure names what is allowed *** FAILED ***
+[info]   "rule-2 SHORTEST_PATH: scope RESEARCHER not allowed" did not contain "; allowed: " rule-2 SHORTEST_PATH: scope RESEARCHER not allowed (PlannerSpec.scala:593)
+[info] Run completed in 574 milliseconds.
+[info] Total number of tests run: 12
+[info] Suites: completed 1, aborted 0
+[info] Tests: succeeded 9, failed 3, canceled 0, ignored 0, pending 0
+[info] *** 3 TESTS FAILED ***
+[error] Failed tests:
+[error] 	scholarchain.rag.runtime.PlannerSpec
+[error] (rag / Test / testOnly) sbt.TestsFailedException: Tests unsuccessful
+[error] Total time: 3 s, completed Nov 11, 2026, 8:49:53 PM

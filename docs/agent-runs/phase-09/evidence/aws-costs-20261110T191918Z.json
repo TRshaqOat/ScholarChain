@@ -1,0 +1,817 @@
+{
+    "GroupDefinitions": [
+        {
+            "Type": "DIMENSION",
+            "Key": "SERVICE"
+        },
+        {
+            "Type": "DIMENSION",
+            "Key": "USAGE_TYPE"
+        }
+    ],
+    "ResultsByTime": [
+        {
+            "TimePeriod": {
+                "Start": "2026-11-01",
+                "End": "2026-11-02"
+            },
+            "Total": {
+                "UnblendedCost": {
+                    "Amount": "0",
+                    "Unit": "USD"
+                }
+            },
+            "Groups": [],
+            "Estimated": true
+        },
+        {
+            "TimePeriod": {
+                "Start": "2026-11-02",
+                "End": "2026-11-03"
+            },
+            "Total": {},
+            "Groups": [
+                {
+                    "Keys": [
+                        "AWS Secrets Manager",
+                        "USE2-AWSSecretsManagerAPIRequest"
+                    ],
+                    "Metrics": {
+                        "UnblendedCost": {
+                            "Amount": "0.000005",
+                            "Unit": "USD"
+                        }
+                    }
+                },
+                {
+                    "Keys": [
+                        "Amazon Simple Queue Service",
+                        "USE2-Requests-Tier1"
+                    ],
+                    "Metrics": {
+                        "UnblendedCost": {
+                            "Amount": "0",
+                            "Unit": "USD"
+                        }
+                    }
+                },
+                {
+                    "Keys": [
+                        "Amazon Simple Storage Service",
+                        "USE2-DataTransfer-Out-Bytes"
+                    ],
+                    "Metrics": {
+                        "UnblendedCost": {
+                            "Amount": "0",
+                            "Unit": "USD"
+                        }
+                    }
+                },
+                {
+                    "Keys": [
+                        "Amazon Simple Storage Service",
+                        "USE2-Requests-Tier1"
+                    ],
+                    "Metrics": {
+                        "UnblendedCost": {
+                            "Amount": "0.000005",
+                            "Unit": "USD"
+                        }
+                    }
+                },
+                {
+                    "Keys": [
+                        "Amazon Simple Storage Service",
+                        "USE2-Vectors-Request-Tier1"
+                    ],
+                    "Metrics": {
+                        "UnblendedCost": {
+                            "Amount": "0.000055",
+                            "Unit": "USD"
+                        }
+                    }
+                }
+            ],
+            "Estimated": true
+        },
+        {
+            "TimePeriod": {
+                "Start": "2026-11-03",
+                "End": "2026-11-04"
+            },
+            "Total": {},
+            "Groups": [
+                {
+                    "Keys": [
+                        "AWS Glue",
+                        "USE2-Catalog-Request"
+                    ],
+                    "Metrics": {
+                        "UnblendedCost": {
+                            "Amount": "0",
+                            "Unit": "USD"
+                        }
+                    }
+                },
+                {
+                    "Keys": [
+                        "AWS Key Management Service",
+                        "us-east-2-KMS-Requests"
+                    ],
+                    "Metrics": {
+                        "UnblendedCost": {
+                            "Amount": "0",
+                            "Unit": "USD"
+                        }
+                    }
+                },
+                {
+                    "Keys": [
+                        "AWS Lambda",
+                        "USE2-Lambda-GB-Second"
+                    ],
+                    "Metrics": {
+                        "UnblendedCost": {
+                            "Amount": "0",
+                            "Unit": "USD"
+                        }
+                    }
+                },
+                {
+                    "Keys": [
+                        "AWS Lambda",
+                        "USE2-Request"
+                    ],
+                    "Metrics": {
+                        "UnblendedCost": {
+                            "Amount": "0",
+                            "Unit": "USD"
+                        }
+                    }
+                },
+                {
+                    "Keys": [
+                        "AWS Secrets Manager",
+                        "USE2-AWSSecretsManagerAPIRequest"
+                    ],
+                    "Metrics": {
+                        "UnblendedCost": {
+                            "Amount": "0.000035",
+                            "Unit": "USD"
+                        }
+                    }
+                },
+                {
+                    "Keys": [
+                        "EC2 - Other",
+                        "USE2-CPUCredits:t3"
+                    ],
+                    "Metrics": {
+                        "UnblendedCost": {
+                            "Amount": "0.0000975",
+                            "Unit": "USD"
+                        }
+                    }
+                },
+                {
+                    "Keys": [
+                        "EC2 - Other",
+                        "USE2-EBS:VolumeUsage.gp3"
+                    ],
+                    "Metrics": {
+                        "UnblendedCost": {
+                            "Amount": "0.0010614815",
+                            "Unit": "USD"
+                        }
+                    }
+                },
+                {
+                    "Keys": [
+                        "EC2 - Other",
+                        "USE2-EBSOptimized:t3.micro"
+                    ],
+                    "Metrics": {
+                        "UnblendedCost": {
+                            "Amount": "0",
+                            "Unit": "USD"
+                        }
+                    }
+                },
+                {
+                    "Keys": [
+                        "EC2 - Other",
+                        "USE2-USE1-AWS-In-Bytes"
+                    ],
+                    "Metrics": {
+                        "UnblendedCost": {
+                            "Amount": "0",
+                            "Unit": "USD"
+                        }
+                    }
+                },
+                {
+                    "Keys": [
+                        "EC2 - Other",
+                        "USE2-USE1-AWS-Out-Bytes"
+                    ],
+                    "Metrics": {
+                        "UnblendedCost": {
+                            "Amount": "0.0000001097",
+                            "Unit": "USD"
+                        }
+                    }
+                },
+                {
+                    "Keys": [
+                        "Amazon Elastic Compute Cloud - Compute",
+                        "USE2-BoxUsage:t3.micro"
+                    ],
+                    "Metrics": {
+                        "UnblendedCost": {
+                            "Amount": "0.0122922176",
+                            "Unit": "USD"
+                        }
+                    }
+                },
+                {
+                    "Keys": [
+                        "Amazon Elastic Compute Cloud - Compute",
+                        "USE2-DataTransfer-In-Bytes"
+                    ],
+                    "Metrics": {
+                        "UnblendedCost": {
+                            "Amount": "0",
+                            "Unit": "USD"
+                        }
+                    }
+                },
+                {
+                    "Keys": [
+                        "Amazon Elastic Compute Cloud - Compute",
+                        "USE2-DataTransfer-Out-Bytes"
+                    ],
+                    "Metrics": {
+                        "UnblendedCost": {
+                            "Amount": "0",
+                            "Unit": "USD"
+                        }
+                    }
+                },
+                {
+                    "Keys": [
+                        "Amazon Relational Database Service",
+                        "USE2-InstanceUsage:db.t4g.micro"
+                    ],
+                    "Metrics": {
+                        "UnblendedCost": {
+                            "Amount": "0.002666656",
+                            "Unit": "USD"
+                        }
+                    }
+                },
+                {
+                    "Keys": [
+                        "Amazon Relational Database Service",
+                        "USE2-RDS:GP2-Storage"
+                    ],
+                    "Metrics": {
+                        "UnblendedCost": {
+                            "Amount": "0.0005324052",
+                            "Unit": "USD"
+                        }
+                    }
+                },
+                {
+                    "Keys": [
+                        "Amazon Relational Database Service",
+                        "USE2-USE1-AWS-In-Bytes"
+                    ],
+                    "Metrics": {
+                        "UnblendedCost": {
+                            "Amount": "0",
+                            "Unit": "USD"
+                        }
+                    }
+                },
+                {
+                    "Keys": [
+                        "Amazon Relational Database Service",
+                        "USE2-USE1-AWS-Out-Bytes"
+                    ],
+                    "Metrics": {
+                        "UnblendedCost": {
+                            "Amount": "0.0000000559",
+                            "Unit": "USD"
+                        }
+                    }
+                },
+                {
+                    "Keys": [
+                        "Amazon Simple Notification Service",
+                        "USE2-Requests-Tier1"
+                    ],
+                    "Metrics": {
+                        "UnblendedCost": {
+                            "Amount": "0",
+                            "Unit": "USD"
+                        }
+                    }
+                },
+                {
+                    "Keys": [
+                        "Amazon Simple Queue Service",
+                        "USE2-Requests-Tier1"
+                    ],
+                    "Metrics": {
+                        "UnblendedCost": {
+                            "Amount": "0",
+                            "Unit": "USD"
+                        }
+                    }
+                },
+                {
+                    "Keys": [
+                        "Amazon Simple Storage Service",
+                        "USE2-DataTransfer-In-Bytes"
+                    ],
+                    "Metrics": {
+                        "UnblendedCost": {
+                            "Amount": "0",
+                            "Unit": "USD"
+                        }
+                    }
+                },
+                {
+                    "Keys": [
+                        "Amazon Simple Storage Service",
+                        "USE2-DataTransfer-Out-Bytes"
+                    ],
+                    "Metrics": {
+                        "UnblendedCost": {
+                            "Amount": "0",
+                            "Unit": "USD"
+                        }
+                    }
+                },
+                {
+                    "Keys": [
+                        "Amazon Simple Storage Service",
+                        "USE2-Requests-Tier1"
+                    ],
+                    "Metrics": {
+                        "UnblendedCost": {
+                            "Amount": "0.000135",
+                            "Unit": "USD"
+                        }
+                    }
+                },
+                {
+                    "Keys": [
+                        "Amazon Simple Storage Service",
+                        "USE2-Requests-Tier2"
+                    ],
+                    "Metrics": {
+                        "UnblendedCost": {
+                            "Amount": "0.0000024",
+                            "Unit": "USD"
+                        }
+                    }
+                },
+                {
+                    "Keys": [
+                        "Amazon Virtual Private Cloud",
+                        "USE2-PublicIPv4:InUseAddress"
+                    ],
+                    "Metrics": {
+                        "UnblendedCost": {
+                            "Amount": "0.005956945",
+                            "Unit": "USD"
+                        }
+                    }
+                },
+                {
+                    "Keys": [
+                        "AmazonCloudWatch",
+                        "USE2-DataProcessing-Bytes"
+                    ],
+                    "Metrics": {
+                        "UnblendedCost": {
+                            "Amount": "0",
+                            "Unit": "USD"
+                        }
+                    }
+                },
+                {
+                    "Keys": [
+                        "AmazonCloudWatch",
+                        "USE2-VendedLog-Bytes"
+                    ],
+                    "Metrics": {
+                        "UnblendedCost": {
+                            "Amount": "0",
+                            "Unit": "USD"
+                        }
+                    }
+                }
+            ],
+            "Estimated": true
+        },
+        {
+            "TimePeriod": {
+                "Start": "2026-11-04",
+                "End": "2026-11-05"
+            },
+            "Total": {},
+            "Groups": [
+                {
+                    "Keys": [
+                        "AWS Glue",
+                        "USE2-Catalog-Request"
+                    ],
+                    "Metrics": {
+                        "UnblendedCost": {
+                            "Amount": "0",
+                            "Unit": "USD"
+                        }
+                    }
+                },
+                {
+                    "Keys": [
+                        "AWS Key Management Service",
+                        "us-east-2-KMS-Requests"
+                    ],
+                    "Metrics": {
+                        "UnblendedCost": {
+                            "Amount": "0",
+                            "Unit": "USD"
+                        }
+                    }
+                },
+                {
+                    "Keys": [
+                        "AWS Secrets Manager",
+                        "USE2-AWSSecretsManagerAPIRequest"
+                    ],
+                    "Metrics": {
+                        "UnblendedCost": {
+                            "Amount": "0.000005",
+                            "Unit": "USD"
+                        }
+                    }
+                },
+                {
+                    "Keys": [
+                        "Amazon Simple Storage Service",
+                        "USE2-Requests-Tier1"
+                    ],
+                    "Metrics": {
+                        "UnblendedCost": {
+                            "Amount": "0.000005",
+                            "Unit": "USD"
+                        }
+                    }
+                },
+                {
+                    "Keys": [
+                        "AmazonCloudWatch",
+                        "USE2-TimedStorage-ByteHrs"
+                    ],
+                    "Metrics": {
+                        "UnblendedCost": {
+                            "Amount": "0",
+                            "Unit": "USD"
+                        }
+                    }
+                }
+            ],
+            "Estimated": true
+        },
+        {
+            "TimePeriod": {
+                "Start": "2026-11-05",
+                "End": "2026-11-06"
+            },
+            "Total": {},
+            "Groups": [
+                {
+                    "Keys": [
+                        "AWS Glue",
+                        "USE2-Catalog-Request"
+                    ],
+                    "Metrics": {
+                        "UnblendedCost": {
+                            "Amount": "0",
+                            "Unit": "USD"
+                        }
+                    }
+                },
+                {
+                    "Keys": [
+                        "Amazon Bedrock",
+                        "USE2-TitanEmbeddingV2-Text-input-tokens"
+                    ],
+                    "Metrics": {
+                        "UnblendedCost": {
+                            "Amount": "0.00000004",
+                            "Unit": "USD"
+                        }
+                    }
+                },
+                {
+                    "Keys": [
+                        "AmazonCloudWatch",
+                        "USE2-TimedStorage-ByteHrs"
+                    ],
+                    "Metrics": {
+                        "UnblendedCost": {
+                            "Amount": "0",
+                            "Unit": "USD"
+                        }
+                    }
+                },
+                {
+                    "Keys": [
+                        "Claude Haiku 4.5 (Amazon Bedrock Edition)",
+                        "USE2-MP:USE2_InputTokenCount-Units"
+                    ],
+                    "Metrics": {
+                        "UnblendedCost": {
+                            "Amount": "0.0000121",
+                            "Unit": "USD"
+                        }
+                    }
+                },
+                {
+                    "Keys": [
+                        "Claude Haiku 4.5 (Amazon Bedrock Edition)",
+                        "USE2-MP:USE2_OutputTokenCount-Units"
+                    ],
+                    "Metrics": {
+                        "UnblendedCost": {
+                            "Amount": "0.0000275",
+                            "Unit": "USD"
+                        }
+                    }
+                }
+            ],
+            "Estimated": true
+        },
+        {
+            "TimePeriod": {
+                "Start": "2026-11-06",
+                "End": "2026-11-07"
+            },
+            "Total": {},
+            "Groups": [
+                {
+                    "Keys": [
+                        "AWS Glue",
+                        "USE2-Catalog-Request"
+                    ],
+                    "Metrics": {
+                        "UnblendedCost": {
+                            "Amount": "0",
+                            "Unit": "USD"
+                        }
+                    }
+                },
+                {
+                    "Keys": [
+                        "Amazon Bedrock",
+                        "USE2-TitanEmbeddingV2-Text-input-tokens"
+                    ],
+                    "Metrics": {
+                        "UnblendedCost": {
+                            "Amount": "0.049768",
+                            "Unit": "USD"
+                        }
+                    }
+                },
+                {
+                    "Keys": [
+                        "AmazonCloudWatch",
+                        "USE2-TimedStorage-ByteHrs"
+                    ],
+                    "Metrics": {
+                        "UnblendedCost": {
+                            "Amount": "0",
+                            "Unit": "USD"
+                        }
+                    }
+                }
+            ],
+            "Estimated": true
+        },
+        {
+            "TimePeriod": {
+                "Start": "2026-11-07",
+                "End": "2026-11-08"
+            },
+            "Total": {},
+            "Groups": [
+                {
+                    "Keys": [
+                        "AWS Glue",
+                        "USE2-Catalog-Request"
+                    ],
+                    "Metrics": {
+                        "UnblendedCost": {
+                            "Amount": "0",
+                            "Unit": "USD"
+                        }
+                    }
+                },
+                {
+                    "Keys": [
+                        "Amazon Bedrock",
+                        "USE2-TitanEmbeddingV2-Text-input-tokens"
+                    ],
+                    "Metrics": {
+                        "UnblendedCost": {
+                            "Amount": "0.00000112",
+                            "Unit": "USD"
+                        }
+                    }
+                },
+                {
+                    "Keys": [
+                        "AmazonCloudWatch",
+                        "USE2-TimedStorage-ByteHrs"
+                    ],
+                    "Metrics": {
+                        "UnblendedCost": {
+                            "Amount": "0",
+                            "Unit": "USD"
+                        }
+                    }
+                },
+                {
+                    "Keys": [
+                        "Claude Haiku 4.5 (Amazon Bedrock Edition)",
+                        "USE2-MP:USE2_InputTokenCount-Units"
+                    ],
+                    "Metrics": {
+                        "UnblendedCost": {
+                            "Amount": "1.174118",
+                            "Unit": "USD"
+                        }
+                    }
+                },
+                {
+                    "Keys": [
+                        "Claude Haiku 4.5 (Amazon Bedrock Edition)",
+                        "USE2-MP:USE2_OutputTokenCount-Units"
+                    ],
+                    "Metrics": {
+                        "UnblendedCost": {
+                            "Amount": "0.993036",
+                            "Unit": "USD"
+                        }
+                    }
+                }
+            ],
+            "Estimated": true
+        },
+        {
+            "TimePeriod": {
+                "Start": "2026-11-08",
+                "End": "2026-11-09"
+            },
+            "Total": {},
+            "Groups": [
+                {
+                    "Keys": [
+                        "AWS Glue",
+                        "USE2-Catalog-Request"
+                    ],
+                    "Metrics": {
+                        "UnblendedCost": {
+                            "Amount": "0",
+                            "Unit": "USD"
+                        }
+                    }
+                },
+                {
+                    "Keys": [
+                        "Amazon Simple Notification Service",
+                        "USE2-Requests-Tier1"
+                    ],
+                    "Metrics": {
+                        "UnblendedCost": {
+                            "Amount": "0",
+                            "Unit": "USD"
+                        }
+                    }
+                },
+                {
+                    "Keys": [
+                        "Amazon Simple Queue Service",
+                        "USE2-Requests-Tier1"
+                    ],
+                    "Metrics": {
+                        "UnblendedCost": {
+                            "Amount": "0",
+                            "Unit": "USD"
+                        }
+                    }
+                },
+                {
+                    "Keys": [
+                        "Amazon Simple Storage Service",
+                        "USE2-Requests-Tier1"
+                    ],
+                    "Metrics": {
+                        "UnblendedCost": {
+                            "Amount": "0.000015",
+                            "Unit": "USD"
+                        }
+                    }
+                },
+                {
+                    "Keys": [
+                        "AmazonCloudWatch",
+                        "USE2-TimedStorage-ByteHrs"
+                    ],
+                    "Metrics": {
+                        "UnblendedCost": {
+                            "Amount": "0",
+                            "Unit": "USD"
+                        }
+                    }
+                }
+            ],
+            "Estimated": true
+        },
+        {
+            "TimePeriod": {
+                "Start": "2026-11-09",
+                "End": "2026-11-10"
+            },
+            "Total": {},
+            "Groups": [
+                {
+                    "Keys": [
+                        "AWS Glue",
+                        "USE2-Catalog-Request"
+                    ],
+                    "Metrics": {
+                        "UnblendedCost": {
+                            "Amount": "0",
+                            "Unit": "USD"
+                        }
+                    }
+                },
+                {
+                    "Keys": [
+                        "AWS Key Management Service",
+                        "us-east-2-KMS-Requests"
+                    ],
+                    "Metrics": {
+                        "UnblendedCost": {
+                            "Amount": "0",
+                            "Unit": "USD"
+                        }
+                    }
+                },
+                {
+                    "Keys": [
+                        "AWS Secrets Manager",
+                        "USE2-AWSSecretsManagerAPIRequest"
+                    ],
+                    "Metrics": {
+                        "UnblendedCost": {
+                            "Amount": "0.000005",
+                            "Unit": "USD"
+                        }
+                    }
+                },
+                {
+                    "Keys": [
+                        "Amazon Simple Storage Service",
+                        "USE2-Requests-Tier1"
+                    ],
+                    "Metrics": {
+                        "UnblendedCost": {
+                            "Amount": "0.000005",
+                            "Unit": "USD"
+                        }
+                    }
+                },
+                {
+                    "Keys": [
+                        "AmazonCloudWatch",
+                        "USE2-TimedStorage-ByteHrs"
+                    ],
+                    "Metrics": {
+                        "UnblendedCost": {
+                            "Amount": "0",
+                            "Unit": "USD"
+                        }
+                    }
+                }
+            ],
+            "Estimated": true
+        }
+    ],
+    "DimensionValueAttributes": []
+}

@@ -1,7 +1,7 @@
 package scholarchain.core.config
 
 import com.typesafe.config.{Config, ConfigFactory, ConfigParseOptions, ConfigResolveOptions}
-import scholarchain.core.CollaborationMetric
+import scholarchain.core.{CollaborationMetric, IdFormat}
 
 import java.io.File
 import scala.jdk.CollectionConverters.*
@@ -26,7 +26,15 @@ final case class StoragePrefixes(
 
 /** One S3 bucket per environment; data is separated by [[StoragePrefixes]], not by bucket. */
 final case class StorageConfig(bucket: String, prefixes: StoragePrefixes)
-final case class NeptuneConfig(endpoint: String, port: Int, queryTimeoutMs: Int)
+final case class NeptuneConfig(
+    endpoint: String,
+    port: Int,
+    queryTimeoutMs: Int,
+    loaderRoleArn: String
+)
+
+/** Physical DynamoDB table name = tablePrefix + logical table name (modules/storage/STORAGE.md). */
+final case class DynamoDbConfig(tablePrefix: String)
 final case class S3VectorsConfig(vectorBucket: String, indexes: Map[String, String])
 final case class EntityResolutionConfig(
     policyVersion: String,
@@ -47,7 +55,8 @@ final case class AnalyticsConfig(
     communityMaxIterations: Int,
     kcoreMaxIterations: Int,
     checkpointInterval: Int,
-    bridgeMeasures: Vector[CollaborationMetric]
+    bridgeMeasures: Vector[CollaborationMetric],
+    rankingSize: Int
 )
 final case class RetrievalConfig(
     graphLimit: Int,
@@ -58,6 +67,7 @@ final case class RetrievalConfig(
 )
 final case class ModelsConfig(
     embeddingModel: String,
+    plannerModel: String,
     synthesisModel: String,
     verificationModel: String,
     adjudicationModel: String
@@ -68,6 +78,105 @@ final case class OperationsConfig(
     maxConcurrentLlmCalls: Int
 )
 
+// ---- Graph-RAG runtime (Phase 9, `runtime.*`; meanings in modules/rag/RUNTIME.md section 20) --
+final case class QuestionConfig(maxChars: Int, deadlineMs: Int)
+final case class PlannerConfig(
+    promptVersion: String,
+    maxOutputTokens: Int,
+    maxOperations: Int,
+    maxResearcherNames: Int,
+    maxTermChars: Int,
+    maxFilterTerms: Int
+)
+final case class SynthesisConfig(promptVersion: String, maxOutputTokens: Int, maxClaims: Int)
+final case class LlmCallConfig(
+    requestsPerMinute: Int,
+    maxAttemptsPerCall: Int,
+    timeoutMs: Int,
+    temperature: Double
+)
+final case class EmbeddingCallConfig(requestsPerMinute: Int, timeoutMs: Int)
+final case class ResolverConfig(
+    policyVersion: String,
+    dominantShare: Double,
+    dominantMinWorks: Int,
+    maxCandidates: Int,
+    candidateCoauthors: Int,
+    candidateInstitutions: Int
+)
+final case class RankingsConfig(defaultTopN: Int, maxTopN: Int)
+final case class SemanticConfig(topK: Int, maxIndexes: Int)
+final case class BudgetConfig(
+    graphEvidenceTokens: Int,
+    semanticContextTokens: Int,
+    maxEvidenceItems: Int,
+    charsPerToken: Int,
+    maxInputTokensPerQuestion: Int,
+    maxOutputTokensPerQuestion: Int
+)
+final case class AuditConfig(ttlDays: Int)
+final case class RuntimeConfig(
+    promptsDir: String,
+    question: QuestionConfig,
+    planner: PlannerConfig,
+    synthesis: SynthesisConfig,
+    llm: LlmCallConfig,
+    embedding: EmbeddingCallConfig,
+    resolver: ResolverConfig,
+    rankings: RankingsConfig,
+    semantic: SemanticConfig,
+    budget: BudgetConfig,
+    audit: AuditConfig
+):
+  def positiveInts: Seq[Int] = Seq(
+    question.maxChars,
+    question.deadlineMs,
+    planner.maxOutputTokens,
+    planner.maxOperations,
+    planner.maxResearcherNames,
+    planner.maxTermChars,
+    planner.maxFilterTerms,
+    synthesis.maxOutputTokens,
+    synthesis.maxClaims,
+    llm.requestsPerMinute,
+    llm.maxAttemptsPerCall,
+    llm.timeoutMs,
+    embedding.requestsPerMinute,
+    embedding.timeoutMs,
+    resolver.dominantMinWorks,
+    resolver.maxCandidates,
+    resolver.candidateCoauthors,
+    resolver.candidateInstitutions,
+    rankings.defaultTopN,
+    rankings.maxTopN,
+    semantic.topK,
+    semantic.maxIndexes,
+    budget.graphEvidenceTokens,
+    budget.semanticContextTokens,
+    budget.maxEvidenceItems,
+    budget.charsPerToken,
+    budget.maxInputTokensPerQuestion,
+    budget.maxOutputTokensPerQuestion,
+    audit.ttlDays
+  )
+
+/** Bounds of the storage graph read templates (`graph-read.*`, Phase 9 ruling 7). */
+final case class GraphReadConfig(
+    maxResults: Int,
+    idBatchSize: Int,
+    pathMaxFrontier: Int,
+    pathTimeoutMs: Int,
+    communityMembersLimit: Int,
+    communityNeighborsLimit: Int,
+    communityFacetMemberCap: Int,
+    facetLimit: Int,
+    lookupLimit: Int,
+    maxLookupIds: Int,
+    neighborsMaxDepth: Int,
+    neighborsMaxLimit: Int
+):
+  def all: Seq[Int] = productIterator.collect { case i: Int => i }.toSeq
+
 /** Typed view of the `scholarchain` configuration tree (see scholarchain.conf). */
 final case class ScholarChainConfig(
     configVersion: String,
@@ -76,13 +185,16 @@ final case class ScholarChainConfig(
     awsAccountId: String,
     storage: StorageConfig,
     neptune: NeptuneConfig,
+    dynamoDb: DynamoDbConfig,
     s3Vectors: S3VectorsConfig,
     entityResolution: EntityResolutionConfig,
     graph: GraphConfig,
     analytics: AnalyticsConfig,
     retrieval: RetrievalConfig,
     models: ModelsConfig,
-    operations: OperationsConfig
+    operations: OperationsConfig,
+    runtime: RuntimeConfig,
+    graphRead: GraphReadConfig
 )
 
 /** Loads configuration. Precedence, highest first:
@@ -106,15 +218,19 @@ object ConfigLoader:
     "SCHOLARCHAIN_NEPTUNE_ENDPOINT" -> "neptune.endpoint",
     "SCHOLARCHAIN_NEPTUNE_PORT" -> "neptune.port",
     "SCHOLARCHAIN_NEPTUNE_QUERY_TIMEOUT_MS" -> "neptune.query-timeout-ms",
+    "SCHOLARCHAIN_NEPTUNE_LOADER_ROLE_ARN" -> "neptune.loader-role-arn",
+    "SCHOLARCHAIN_DYNAMODB_TABLE_PREFIX" -> "dynamodb.table-prefix",
     "SCHOLARCHAIN_VECTOR_BUCKET" -> "s3-vectors.vector-bucket",
     "SCHOLARCHAIN_ER_POLICY_VERSION" -> "entity-resolution.policy-version",
     "SCHOLARCHAIN_ER_MAX_BLOCK_SIZE" -> "entity-resolution.max-block-size",
     "SCHOLARCHAIN_ER_MAX_CONFLICT_GROUP_SIZE" -> "entity-resolution.max-conflict-group-size",
     "SCHOLARCHAIN_GRAPH_POLICY_VERSION" -> "graph.policy-version",
     "SCHOLARCHAIN_EMBEDDING_MODEL_ID" -> "models.embedding-model",
+    "SCHOLARCHAIN_PLANNER_MODEL_ID" -> "models.planner-model",
     "SCHOLARCHAIN_SYNTHESIS_MODEL_ID" -> "models.synthesis-model",
     "SCHOLARCHAIN_VERIFICATION_MODEL_ID" -> "models.verification-model",
-    "SCHOLARCHAIN_ADJUDICATION_MODEL_ID" -> "models.adjudication-model"
+    "SCHOLARCHAIN_ADJUDICATION_MODEL_ID" -> "models.adjudication-model",
+    "SCHOLARCHAIN_PROMPTS_DIR" -> "runtime.prompts-dir"
   )
 
   /** Keys removed by the one-bucket change (Phase 7 ruling 20). A layer that still sets one is an
@@ -183,8 +299,10 @@ object ConfigLoader:
       neptune = NeptuneConfig(
         str("neptune.endpoint"),
         int("neptune.port"),
-        int("neptune.query-timeout-ms")
+        int("neptune.query-timeout-ms"),
+        str("neptune.loader-role-arn")
       ),
+      dynamoDb = DynamoDbConfig(str("dynamodb.table-prefix")),
       s3Vectors = S3VectorsConfig(
         str("s3-vectors.vector-bucket"),
         c.getConfig("s3-vectors.indexes")
@@ -218,7 +336,8 @@ object ConfigLoader:
         c.getStringList("analytics.bridge-measures")
           .asScala
           .map(CollaborationMetric.valueOf)
-          .toVector
+          .toVector,
+        int("analytics.ranking-size")
       ),
       retrieval = RetrievalConfig(
         int("retrieval.graph-limit"),
@@ -229,6 +348,7 @@ object ConfigLoader:
       ),
       models = ModelsConfig(
         str("models.embedding-model"),
+        str("models.planner-model"),
         str("models.synthesis-model"),
         str("models.verification-model"),
         str("models.adjudication-model")
@@ -237,27 +357,97 @@ object ConfigLoader:
         int("operations.synchronous-deadline-ms"),
         int("operations.max-workflow-retries"),
         int("operations.max-concurrent-llm-calls")
+      ),
+      runtime = RuntimeConfig(
+        str("runtime.prompts-dir"),
+        QuestionConfig(int("runtime.question.max-chars"), int("runtime.question.deadline-ms")),
+        PlannerConfig(
+          str("runtime.planner.prompt-version"),
+          int("runtime.planner.max-output-tokens"),
+          int("runtime.planner.max-operations"),
+          int("runtime.planner.max-researcher-names"),
+          int("runtime.planner.max-term-chars"),
+          int("runtime.planner.max-filter-terms")
+        ),
+        SynthesisConfig(
+          str("runtime.synthesis.prompt-version"),
+          int("runtime.synthesis.max-output-tokens"),
+          int("runtime.synthesis.max-claims")
+        ),
+        LlmCallConfig(
+          int("runtime.llm.requests-per-minute"),
+          int("runtime.llm.max-attempts-per-call"),
+          int("runtime.llm.timeout-ms"),
+          dbl("runtime.llm.temperature")
+        ),
+        EmbeddingCallConfig(
+          int("runtime.embedding.requests-per-minute"),
+          int("runtime.embedding.timeout-ms")
+        ),
+        ResolverConfig(
+          str("runtime.resolver.policy-version"),
+          dbl("runtime.resolver.dominant-share"),
+          int("runtime.resolver.dominant-min-works"),
+          int("runtime.resolver.max-candidates"),
+          int("runtime.resolver.candidate-coauthors"),
+          int("runtime.resolver.candidate-institutions")
+        ),
+        RankingsConfig(int("runtime.rankings.default-top-n"), int("runtime.rankings.max-top-n")),
+        SemanticConfig(int("runtime.semantic.top-k"), int("runtime.semantic.max-indexes")),
+        BudgetConfig(
+          int("runtime.budget.graph-evidence-tokens"),
+          int("runtime.budget.semantic-context-tokens"),
+          int("runtime.budget.max-evidence-items"),
+          int("runtime.budget.chars-per-token"),
+          int("runtime.budget.max-input-tokens-per-question"),
+          int("runtime.budget.max-output-tokens-per-question")
+        ),
+        AuditConfig(int("runtime.audit.ttl-days"))
+      ),
+      graphRead = GraphReadConfig(
+        int("graph-read.max-results"),
+        int("graph-read.id-batch-size"),
+        int("graph-read.path-max-frontier"),
+        int("graph-read.path-timeout-ms"),
+        int("graph-read.community-members-limit"),
+        int("graph-read.community-neighbors-limit"),
+        int("graph-read.community-facet-member-cap"),
+        int("graph-read.facet-limit"),
+        int("graph-read.lookup-limit"),
+        int("graph-read.max-lookup-ids"),
+        int("graph-read.neighbors-max-depth"),
+        int("graph-read.neighbors-max-limit")
       )
     )
 
   // S3 general purpose bucket naming: 3 to 63 of a-z 0-9 . -, starting and ending alphanumeric.
   private val BucketName = "[a-z0-9][a-z0-9.-]{1,61}[a-z0-9]".r
   private val PrefixShape = "[a-z0-9][a-z0-9-]*/".r
+  // DynamoDB table names allow A-Z a-z 0-9 _ . - (3 to 255); 200 leaves room for the logical name.
+  private val TablePrefix = "[A-Za-z0-9_.-]{1,200}".r
+  private val IamRoleArn = "arn:aws[a-z-]*:iam::\\d{12}:role/[A-Za-z0-9+=,.@_/-]+".r
 
   /** Rule violations of a loaded configuration; empty means valid. */
   def validate(c: ScholarChainConfig): List[String] =
     def check(ok: Boolean, msg: String) = if ok then Nil else List(msg)
     val er = c.entityResolution
+    val rt = c.runtime
     val placeholders = Seq(
       c.awsAccountId,
       c.storage.bucket,
       c.neptune.endpoint,
+      c.neptune.loaderRoleArn,
+      c.dynamoDb.tablePrefix,
       c.s3Vectors.vectorBucket,
       c.models.embeddingModel,
+      c.models.plannerModel,
       c.models.synthesisModel,
       c.models.verificationModel,
       c.models.adjudicationModel
-    ).filter(v => v.startsWith("example-") || v.endsWith(".invalid") || v == "000000000000")
+    ).filter(v =>
+      v.startsWith("example-") || v.endsWith(".invalid") || v == "000000000000" ||
+        v.contains(":000000000000:") || v.contains("/example-")
+    )
     check(
       c.configVersion == SupportedConfigVersion,
       s"unsupported config-version '${c.configVersion}'"
@@ -316,6 +506,61 @@ object ConfigLoader:
         ).forall(_ >= 1) && c.operations.maxWorkflowRetries >= 0,
         "limits, timeouts, and iteration counts must be positive"
       ) ++
+      check(
+        TablePrefix.matches(c.dynamoDb.tablePrefix),
+        s"dynamodb.table-prefix '${c.dynamoDb.tablePrefix}' must be 1 to 200 of A-Z a-z 0-9 _ . -"
+      ) ++
+      check(
+        IamRoleArn.matches(c.neptune.loaderRoleArn),
+        s"neptune.loader-role-arn '${c.neptune.loaderRoleArn}' is not an IAM role ARN"
+      ) ++
+      check(c.analytics.rankingSize >= 1, "analytics.ranking-size must be positive") ++
+      check(rt.promptsDir.trim.nonEmpty, "runtime.prompts-dir must not be blank") ++
+      Seq(
+        "runtime.planner.prompt-version" -> rt.planner.promptVersion,
+        "runtime.synthesis.prompt-version" -> rt.synthesis.promptVersion,
+        "runtime.resolver.policy-version" -> rt.resolver.policyVersion
+      ).toList.flatMap((k, v) => check(IdFormat.Version.matches(v), s"$k '$v' is malformed")) ++
+      check(
+        rt.positiveInts.forall(_ >= 1) && c.graphRead.all.forall(_ >= 1),
+        "runtime and graph-read limits, budgets, rates, and timeouts must be positive"
+      ) ++
+      // Phase 9 rulings 3 and 11: Haiku at most 8 requests per minute (quota 10), one retry per
+      // call; Titan at most 50 per minute.
+      check(rt.llm.requestsPerMinute <= 8, "runtime.llm.requests-per-minute must be at most 8") ++
+      check(
+        rt.llm.maxAttemptsPerCall <= 2,
+        "runtime.llm.max-attempts-per-call must be at most 2"
+      ) ++
+      check(
+        rt.embedding.requestsPerMinute <= 50,
+        "runtime.embedding.requests-per-minute must be at most 50"
+      ) ++
+      check(
+        rt.llm.temperature >= 0 && rt.llm.temperature <= 1,
+        "runtime.llm.temperature must be within [0, 1]"
+      ) ++
+      // Above 0.5, so at most one candidate can be dominant.
+      check(
+        rt.resolver.dominantShare > 0.5 && rt.resolver.dominantShare <= 1,
+        "runtime.resolver.dominant-share must be above 0.5 and at most 1"
+      ) ++
+      check(
+        rt.resolver.maxCandidates <= 1000,
+        "runtime.resolver.max-candidates must be at most 1000"
+      ) ++
+      check(
+        rt.budget.graphEvidenceTokens + rt.budget.semanticContextTokens <=
+          c.retrieval.contextTokenBudget,
+        "runtime.budget graph-evidence-tokens + semantic-context-tokens must be at most " +
+          "retrieval.context-token-budget"
+      ) ++
+      check(
+        rt.rankings.defaultTopN <= c.analytics.rankingSize &&
+          rt.rankings.defaultTopN <= rt.rankings.maxTopN,
+        "runtime.rankings.default-top-n must be at most analytics.ranking-size and max-top-n"
+      ) ++
+      check(c.retrieval.maxPathDepth <= 6, "retrieval.max-path-depth must be at most 6") ++
       check(
         c.environment == "local" || placeholders.isEmpty,
         s"environment '${c.environment}' still uses placeholder values: ${placeholders.mkString(", ")}"

@@ -1,0 +1,3643 @@
+{
+  "schemaVersion": "rag-audit-v2",
+  "queryId": "qry-871f268ba855aa302663c17114398861",
+  "sessionId": null,
+  "runId": "run-80e436dea5587ed42c03f98d66a05bb2",
+  "createdAt": "2026-11-12T03:41:34.695803Z",
+  "mode": "LIVE",
+  "questionHash": "sha256:d81fe26227baff61d0cf0c96ffe0aabbb8bcec79be330a144ff68fd9eca1f9d2",
+  "questionChars": 47,
+  "plan": {
+    "schemaVersion": "rag-query-plan-v1",
+    "queryId": "qry-871f268ba855aa302663c17114398861",
+    "operations": [
+      {
+        "operation": "DIRECT_COAUTHORS",
+        "scope": "PAIR",
+        "researchers": [
+          0,
+          1
+        ],
+        "metric": null,
+        "topN": null
+      }
+    ],
+    "researcherNames": [
+      {
+        "name": "Lei Zhang",
+        "offset": 5
+      },
+      {
+        "name": "Wei Wang",
+        "offset": 19
+      }
+    ],
+    "metrics": [],
+    "window": {
+      "requested": {
+        "kind": "DEFAULT",
+        "name": null,
+        "yearFrom": null,
+        "yearTo": null
+      },
+      "window": "all-years",
+      "startYear": 2000,
+      "endYear": 2026,
+      "exact": true,
+      "note": null
+    },
+    "comparison": null,
+    "topics": [],
+    "venues": [],
+    "institutions": [],
+    "semanticIndexes": [
+      "researcher-profile-v1",
+      "paper-abstract-v1"
+    ],
+    "limits": {
+      "graphLimit": 100,
+      "vectorLimit": 50,
+      "maxPathDepth": 6,
+      "topK": 5
+    },
+    "source": "MODEL",
+    "overriddenFields": [],
+    "rejectedItems": [],
+    "promptVersion": "planner-v2",
+    "modelId": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "RUNTIME",
+      "sourceRecordId": "qry-871f268ba855aa302663c17114398861",
+      "snapshot": "2026-10-03",
+      "runId": "run-80e436dea5587ed42c03f98d66a05bb2",
+      "policyVersion": null,
+      "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+    }
+  },
+  "resolutions": [
+    {
+      "name": "Lei Zhang",
+      "decision": "AMBIGUOUS",
+      "researcherId": null,
+      "topShare": 0.02727272727272727,
+      "candidateCount": 101
+    },
+    {
+      "name": "Wei Wang",
+      "decision": "AMBIGUOUS",
+      "researcherId": null,
+      "topShare": 0.01282051282051282,
+      "candidateCount": 307
+    }
+  ],
+  "graphEvidenceIds": [],
+  "semanticEvidenceIds": [],
+  "metricVersions": [],
+  "graphRunId": "run-1d6a86491812ff94887270c1ab885e69",
+  "vectorIndexes": [],
+  "embeddingModelVersion": null,
+  "promptVersions": {
+    "planner.schema": "planner-output-v1",
+    "synthesis.schema": "synthesis-output-v2",
+    "synthesis": "synthesis-v2",
+    "planner.schema.sha256": "sha256:3ff40901f3f625204eaaa3ddc525b844c96178ad36629666ebc96f9fe91c1368",
+    "synthesis.schema.sha256": "sha256:2d930e0f580ca9b66e234b91a0c5e75fb27f2bc59e84b005208dbee382ad3c16",
+    "planner.sha256": "sha256:c7354f86ece47e7aa01481f6c893a9721a9f13e3d24716bc73942ef49e81e655",
+    "planner": "planner-v2",
+    "synthesis.sha256": "sha256:1a535dc3d5992d3538b4aa0e13403998d5d1e3235e4c21d3256e0c15dc76f46e"
+  },
+  "modelIds": {
+    "planner": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "synthesis": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "embedding": "amazon.titan-embed-text-v2:0|1024|normalized|rendering-v1"
+  },
+  "llmCalls": [
+    {
+      "stage": "QUERY_PLANNING",
+      "modelId": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+      "promptVersion": "planner-v2",
+      "schemaVersion": "planner-output-v1",
+      "attempt": 1,
+      "outcome": "OK",
+      "requests": 1,
+      "inputTokens": 2516,
+      "outputTokens": 184,
+      "latencyMs": 1143,
+      "throttleWaitMs": 4932,
+      "failure": null
+    }
+  ],
+  "embeddingCalls": [],
+  "templateCalls": [
+    {
+      "templateId": "kv.entity-link",
+      "latencyMs": 15,
+      "resultCount": 134,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.authored-counts",
+      "latencyMs": 6,
+      "resultCount": 100,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.authored-counts",
+      "latencyMs": 1,
+      "resultCount": 34,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.researcher-institutions",
+      "latencyMs": 1,
+      "resultCount": 100,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.researcher-institutions",
+      "latencyMs": 0,
+      "resultCount": 1,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 1,
+      "resultCount": 1,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 1,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 1,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 2,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 1,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 2,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 2,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 1,
+      "resultCount": 1,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 2,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 1,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.researcher-institutions",
+      "latencyMs": 0,
+      "resultCount": 33,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 1,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 2,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 1,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 1,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 1,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "kv.entity-link",
+      "latencyMs": 21,
+      "resultCount": 420,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.authored-counts",
+      "latencyMs": 4,
+      "resultCount": 100,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.authored-counts",
+      "latencyMs": 4,
+      "resultCount": 100,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.authored-counts",
+      "latencyMs": 3,
+      "resultCount": 100,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.authored-counts",
+      "latencyMs": 2,
+      "resultCount": 100,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.authored-counts",
+      "latencyMs": 0,
+      "resultCount": 20,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.researcher-institutions",
+      "latencyMs": 0,
+      "resultCount": 100,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.researcher-institutions",
+      "latencyMs": 0,
+      "resultCount": 100,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.researcher-institutions",
+      "latencyMs": 1,
+      "resultCount": 100,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.researcher-institutions",
+      "latencyMs": 0,
+      "resultCount": 7,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 2,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 2,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 2,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 1,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 2,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 1,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 1,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 2,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 1,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 2,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.researcher-institutions",
+      "latencyMs": 2,
+      "resultCount": 100,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.researcher-institutions",
+      "latencyMs": 0,
+      "resultCount": 13,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 2,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 1,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 2,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 2,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 2,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 2,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 1,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 1,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 2,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 2,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 2,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 2,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 1,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 2,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 2,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 2,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 2,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 2,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 1,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 2,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 2,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 1,
+      "resultCount": 2,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 2,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": true
+    }
+  ],
+  "stages": [
+    {
+      "stage": "QUERY_PLANNING",
+      "outcome": "OK",
+      "latencyMs": 6077
+    },
+    {
+      "stage": "RESEARCHER_RESOLUTION",
+      "outcome": "ABSTAINED",
+      "latencyMs": 85
+    },
+    {
+      "stage": "COLLABORATION_METRICS",
+      "outcome": "SKIPPED",
+      "latencyMs": 0
+    },
+    {
+      "stage": "PATH_FINDING",
+      "outcome": "SKIPPED",
+      "latencyMs": 0
+    },
+    {
+      "stage": "COMMUNITY_ANALYSIS",
+      "outcome": "SKIPPED",
+      "latencyMs": 0
+    },
+    {
+      "stage": "SEMANTIC_CONTEXT",
+      "outcome": "SKIPPED",
+      "latencyMs": 0
+    },
+    {
+      "stage": "EVIDENCE_BUILDING",
+      "outcome": "SKIPPED",
+      "latencyMs": 0
+    },
+    {
+      "stage": "ANSWER_SYNTHESIS",
+      "outcome": "SKIPPED",
+      "latencyMs": 0
+    },
+    {
+      "stage": "CLAIM_VERIFICATION",
+      "outcome": "SKIPPED",
+      "latencyMs": 0
+    },
+    {
+      "stage": "AUDIT",
+      "outcome": "OK",
+      "latencyMs": 0
+    }
+  ],
+  "budget": {
+    "tokenBudget": 0,
+    "graphTokens": 0,
+    "semanticTokens": 0,
+    "omittedGraphItems": 0,
+    "omittedSemanticItems": 0
+  },
+  "verification": {
+    "verified": 0,
+    "partiallySupported": 0,
+    "unsupported": 0,
+    "conflicting": 0
+  },
+  "abstained": true,
+  "abstentionReason": "AMBIGUOUS_RESEARCHER",
+  "answerHash": "sha256:52c03f4bd7b3b4a1cbdd059741b1ed072c360604167b041e0f15d18470b54201",
+  "provenance": {
+    "schemaVersion": "provenance-v1",
+    "sourceDataset": "RUNTIME",
+    "sourceRecordId": "qry-871f268ba855aa302663c17114398861",
+    "snapshot": "2026-10-03",
+    "runId": "run-80e436dea5587ed42c03f98d66a05bb2",
+    "policyVersion": "fusion-v1",
+    "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+  }
+}

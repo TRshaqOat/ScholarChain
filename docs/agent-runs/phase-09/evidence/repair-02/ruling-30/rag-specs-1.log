@@ -1,0 +1,52 @@
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] compiling 1 Scala source to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/rag/target/scala-3.3.7/classes ...
+[info] done compiling
+[info] compiling 4 Scala sources to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/rag/target/scala-3.3.7/test-classes ...
+[info] done compiling
+[info] InjectionSpec:
+[info] - planner prompt: one <question> block, holding the injected question only escaped
+[info] - synthesis prompt: one block per delimiter; question, title, name, and document escaped
+[info] - the injected question changes no plan operation, store call, or claim
+[info] LlmSpec:
+[info] - one enclosing code fence is accepted; prose, two objects, or an unclosed fence are not
+[info] - a recorded Haiku body with a fenced, pretty-printed plan parses and validates
+[info] - a rejected output records its failed rules and shape, never its text; the retry names them
+[info] - every Bedrock request is counted, the expired-token retry included (m5)
+[info] PlannerSpec:
+[info] - the rule planner extracts names, windows, and operations of benchmark-style questions
+[info] - validation enforces the operation allowlist: scopes, researcher indexes, metrics, topN
+[info] - a researcher name or filter term that does not occur in the question is rejected
+[info] - window selection: stored windows exact, other ranges widen with a note, no corpus year abstains
+[info] - request fields override the model; retrieval limits are clamped to configuration
+[info] - output schemas: exact keys, enums equal the Scala enums, only the supported keywords
+[info] - the model planner retries once with the failed rule names, then falls back to the rules
+[info] - every model attempt passes the throttle, and an attempt over the token budget is not sent
+[info] - ruling 30: the recorded rule-2 and rule-7 failures name what is allowed; the corrections validate
+[info] - ruling 30: the retry prompt and the audit carry the allowed values, never the model's text
+[info] - ruling 30: planner-v2 states each operation's scopes and metrics from the allowlist
+[info] - ruling 30: every planner rule failure names what is allowed
+[info] WorkflowSpec:
+[info] - a dominant name resolves with its share; every material claim cites bundle evidence and verifies
+[info] - a shortest path: the PATH and PATH_HOP claims equal the path evidence hop by hop
+[info] - an ambiguous name abstains with every candidate and makes no synthesis call
+[info] - unsupported requests and missing evidence abstain or are stated, never filled in
+[info] - verification statuses: VERIFIED kept, PARTIALLY_SUPPORTED labelled, UNSUPPORTED and CONFLICTING removed
+[info] - model synthesis: bad claims are removed, and with no verified claim the answer abstains
+[info] - prompt injection in the question, a name, a retrieved document, or a title changes no operation, store call, or claim
+[info] - the evidence token budget cuts whole groups, lists the omissions, and cited omitted items fail
+[info] - the audit record, QuerySession, and EvidenceBundle items hold the run facts and no question text
+[info] - m1: stages 3 to 5 are timed separately; a stage the plan gives nothing to do is SKIPPED
+[info] - m2: a candidate list cut at its limit is AMBIGUOUS with a truncation note, never unknown
+[info] - m7: the question deadline is checked before every stage and before every store read
+[info] - m8: request years with yearFrom after yearTo are an invalid plan, stated as reversed
+[info] Run completed in 880 milliseconds.
+[info] Total number of tests run: 32
+[info] Suites: completed 4, aborted 0
+[info] Tests: succeeded 32, failed 0, canceled 0, ignored 0, pending 0
+[info] All tests passed.
+[success] Total time: 6 s, completed Nov 11, 2026, 8:49:38 PM

@@ -1,0 +1,246 @@
+{
+  "schemaVersion": "rag-audit-v2",
+  "queryId": "qry-070e37cb3b14cd24cf10ae0ab084d149",
+  "sessionId": null,
+  "runId": "run-80e436dea5587ed42c03f98d66a05bb2",
+  "createdAt": "2026-11-12T03:46:27.161008Z",
+  "mode": "LIVE",
+  "questionHash": "sha256:6fd2c7006ded1ac72d7d3da6a90443e12e226c6102734b2709f461f5a8112dcc",
+  "questionChars": 46,
+  "plan": {
+    "schemaVersion": "rag-query-plan-v1",
+    "queryId": "qry-070e37cb3b14cd24cf10ae0ab084d149",
+    "operations": [
+      {
+        "operation": "INSTITUTION_FILTER",
+        "scope": "RESEARCHER",
+        "researchers": [
+          0
+        ],
+        "metric": null,
+        "topN": null
+      }
+    ],
+    "researcherNames": [
+      {
+        "name": "Albert Y. Zomaya",
+        "offset": 10
+      }
+    ],
+    "metrics": [],
+    "window": {
+      "requested": {
+        "kind": "RANGE",
+        "name": null,
+        "yearFrom": 2005,
+        "yearTo": 2005
+      },
+      "window": "2000-2014",
+      "startYear": 2000,
+      "endYear": 2014,
+      "exact": false,
+      "note": "Requested 2005-2005; the stored window 2000-2014 (2000-2014) is the smallest that contains it, so values cover 2000-2014."
+    },
+    "comparison": null,
+    "topics": [],
+    "venues": [],
+    "institutions": [],
+    "semanticIndexes": [
+      "researcher-profile-v1"
+    ],
+    "limits": {
+      "graphLimit": 100,
+      "vectorLimit": 50,
+      "maxPathDepth": 6,
+      "topK": 5
+    },
+    "source": "MODEL",
+    "overriddenFields": [],
+    "rejectedItems": [],
+    "promptVersion": "planner-v2",
+    "modelId": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "RUNTIME",
+      "sourceRecordId": "qry-070e37cb3b14cd24cf10ae0ab084d149",
+      "snapshot": "2026-10-03",
+      "runId": "run-80e436dea5587ed42c03f98d66a05bb2",
+      "policyVersion": null,
+      "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+    }
+  },
+  "resolutions": [
+    {
+      "name": "Albert Y. Zomaya",
+      "decision": "RESOLVED_DOMINANT",
+      "researcherId": "scr:canon-v1.er-v2:9c35232fa374c48fdc67309bfedd5f7c",
+      "topShare": 0.9901639344262295,
+      "candidateCount": 4
+    }
+  ],
+  "graphEvidenceIds": [],
+  "semanticEvidenceIds": [],
+  "metricVersions": [],
+  "graphRunId": "run-1d6a86491812ff94887270c1ab885e69",
+  "vectorIndexes": [],
+  "embeddingModelVersion": null,
+  "promptVersions": {
+    "planner.schema": "planner-output-v1",
+    "synthesis.schema": "synthesis-output-v2",
+    "synthesis": "synthesis-v2",
+    "planner.schema.sha256": "sha256:3ff40901f3f625204eaaa3ddc525b844c96178ad36629666ebc96f9fe91c1368",
+    "synthesis.schema.sha256": "sha256:2d930e0f580ca9b66e234b91a0c5e75fb27f2bc59e84b005208dbee382ad3c16",
+    "planner.sha256": "sha256:c7354f86ece47e7aa01481f6c893a9721a9f13e3d24716bc73942ef49e81e655",
+    "planner": "planner-v2",
+    "synthesis.sha256": "sha256:1a535dc3d5992d3538b4aa0e13403998d5d1e3235e4c21d3256e0c15dc76f46e"
+  },
+  "modelIds": {
+    "planner": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "synthesis": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "embedding": "amazon.titan-embed-text-v2:0|1024|normalized|rendering-v1"
+  },
+  "llmCalls": [
+    {
+      "stage": "QUERY_PLANNING",
+      "modelId": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+      "promptVersion": "planner-v2",
+      "schemaVersion": "planner-output-v1",
+      "attempt": 1,
+      "outcome": "OK",
+      "requests": 1,
+      "inputTokens": 2519,
+      "outputTokens": 183,
+      "latencyMs": 1122,
+      "throttleWaitMs": 4122,
+      "failure": null
+    }
+  ],
+  "embeddingCalls": [],
+  "templateCalls": [
+    {
+      "templateId": "kv.entity-link",
+      "latencyMs": 2,
+      "resultCount": 4,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.authored-counts",
+      "latencyMs": 9,
+      "resultCount": 4,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.researcher-institutions",
+      "latencyMs": 1,
+      "resultCount": 4,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 1,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 13,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "kv.metrics.window",
+      "latencyMs": 1,
+      "resultCount": 1,
+      "truncated": false
+    }
+  ],
+  "stages": [
+    {
+      "stage": "QUERY_PLANNING",
+      "outcome": "OK",
+      "latencyMs": 5256
+    },
+    {
+      "stage": "RESEARCHER_RESOLUTION",
+      "outcome": "OK",
+      "latencyMs": 26
+    },
+    {
+      "stage": "COLLABORATION_METRICS",
+      "outcome": "OK",
+      "latencyMs": 1
+    },
+    {
+      "stage": "PATH_FINDING",
+      "outcome": "SKIPPED",
+      "latencyMs": 0
+    },
+    {
+      "stage": "COMMUNITY_ANALYSIS",
+      "outcome": "OK",
+      "latencyMs": 1
+    },
+    {
+      "stage": "SEMANTIC_CONTEXT",
+      "outcome": "SKIPPED",
+      "latencyMs": 0
+    },
+    {
+      "stage": "EVIDENCE_BUILDING",
+      "outcome": "SKIPPED",
+      "latencyMs": 0
+    },
+    {
+      "stage": "ANSWER_SYNTHESIS",
+      "outcome": "SKIPPED",
+      "latencyMs": 0
+    },
+    {
+      "stage": "CLAIM_VERIFICATION",
+      "outcome": "SKIPPED",
+      "latencyMs": 0
+    },
+    {
+      "stage": "AUDIT",
+      "outcome": "OK",
+      "latencyMs": 0
+    }
+  ],
+  "budget": {
+    "tokenBudget": 0,
+    "graphTokens": 0,
+    "semanticTokens": 0,
+    "omittedGraphItems": 0,
+    "omittedSemanticItems": 0
+  },
+  "verification": {
+    "verified": 0,
+    "partiallySupported": 0,
+    "unsupported": 0,
+    "conflicting": 0
+  },
+  "abstained": true,
+  "abstentionReason": "UNSUPPORTED_REQUEST",
+  "answerHash": "sha256:f34db6bd57cf44eae0d10caaaab3cec3e8ea4a4a9097aa9479ba05f058b4b53f",
+  "provenance": {
+    "schemaVersion": "provenance-v1",
+    "sourceDataset": "RUNTIME",
+    "sourceRecordId": "qry-070e37cb3b14cd24cf10ae0ab084d149",
+    "snapshot": "2026-10-03",
+    "runId": "run-80e436dea5587ed42c03f98d66a05bb2",
+    "policyVersion": "fusion-v1",
+    "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+  }
+}

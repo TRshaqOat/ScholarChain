@@ -113,16 +113,27 @@ object AdjudicationPrompt:
   def user(req: AdjudicationRequest): String =
     userTemplate.replace("{{CANDIDATE_JSON}}", req.canonicalJson)
 
+  /** One Markdown code fence around the whole reply (```json ... ``` or ``` ... ```), which Claude
+    * models often add despite the prompt's "no code fence" rule.
+    */
+  private val Fence = """(?s)\A\s*```(?:json|JSON)?[ \t]*\r?\n(.*?)\s*```\s*\z""".r
+
+  /** The reply without one enclosing code fence; any other reply unchanged. */
+  def unfence(reply: String): String = reply match
+    case Fence(body) => body
+    case _           => reply
+
   /** Strict validation of a model reply. The reply must be exactly one JSON object (surrounding
-    * whitespace allowed) with exactly the schema's keys; IDs must equal the request's; cited fields
-    * must be request field names; reason codes must be in [[AllowedReasonCodes]]; confidence must
-    * be finite and in [0, 1]; ACCEPT and REJECT must cite at least one field.
+    * whitespace and one enclosing Markdown code fence allowed, nothing else) with exactly the
+    * schema's keys; IDs must equal the request's; cited fields must be request field names; reason
+    * codes must be in [[AllowedReasonCodes]]; confidence must be finite and in [0, 1]; ACCEPT and
+    * REJECT must cite at least one field.
     */
   def validate(req: AdjudicationRequest, reply: String): Either[String, AdjudicationResponse] =
     val keys =
       Set("sourceId", "targetId", "decision", "confidence", "citedFields", "reasonCodes")
     for
-      json <- Try(ujson.read(reply.trim)).toEither.left.map(_ => "malformed JSON")
+      json <- Try(ujson.read(unfence(reply).trim)).toEither.left.map(_ => "malformed JSON")
       obj <- json.objOpt.toRight("reply is not a JSON object")
       _ <- Either.cond(obj.keySet == keys, (), s"keys ${obj.keySet.toVector.sorted} != schema")
       r <- Try(read[AdjudicationResponse](json)).toEither.left.map(_ => "schema type mismatch")
@@ -153,8 +164,26 @@ object AdjudicationPrompt:
       )
     yield r
 
-/** A model reply with its token usage. */
-final case class LlmReply(text: String, inputTokens: Long, outputTokens: Long)
+  /** The shape of a rejected reply for diagnosis: length, first and last character class, and the
+    * model's stop reason. Never the reply text, which may echo candidate data.
+    */
+  def shape(reply: LlmReply): String =
+    val t = reply.text.trim
+    def kind(c: Option[Char]) = c.fold("nothing") { c =>
+      if "{}`[]\"".contains(c) then s"'$c'" else if c.isLetter then "a letter" else "other"
+    }
+    s"(reply ${t.length} chars, starts with ${kind(t.headOption)}, ends with " +
+      s"${kind(t.lastOption)}, stop reason ${reply.stopReason.getOrElse("unknown")})"
+
+/** A model reply with its token usage and the model's stop reason (for example `end_turn` or
+  * `max_tokens`) when the client reports one.
+  */
+final case class LlmReply(
+    text: String,
+    inputTokens: Long,
+    outputTokens: Long,
+    stopReason: Option[String] = None
+)
 
 /** LLM client port. Tests use a fake; [[BedrockLlmClient]] is the live adapter. */
 trait LlmClient:
@@ -297,5 +326,5 @@ final class Adjudicator(
                         CacheEntry(key, req.inputHash, pv, client.modelVersion, policyVersion, r)
                       )
                       from(r, cached = false)
-                    case Left(err) => attempt(n + 1, err)
+                    case Left(err) => attempt(n + 1, s"$err ${AdjudicationPrompt.shape(reply)}")
           Some(attempt(1, "not attempted"))

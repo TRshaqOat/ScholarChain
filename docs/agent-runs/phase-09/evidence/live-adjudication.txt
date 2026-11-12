@@ -1,0 +1,324 @@
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] running scholarchain.entityresolution.tools.AdjudicateSample --run scratch/hadoop/wo5-v2b/snapshot=2026-10-03/run=run-035e75abfa6798c938cbd534273dbd8d --out scratch/er/adjudication-live --live --profile scholarchain-sdk --region us-east-2 --max 200 --token-budget 600000 --per-minute 8
+run run-70a26cef3256da28ef1257cb4498d0bb -> scratch/er/adjudication-live/run=run-70a26cef3256da28ef1257cb4498d0bb
+policy er-v2, thresholds Thresholds(0.93,0.35,0.65,0.93), prompt er-adjudication-v1, model us.anthropic.claude-haiku-4-5-20251001-v1:0
+RESEARCHER: 180 sampled (target 180)
+WORK: 20 sampled (target 20)
+not yet cached: 200; estimated input tokens per call: mean 913, max 1022
+expected requests: 200 (one per pair); bound: 800 (2 attempts x 1 expired-token retry); at 8 per minute (7500 ms apart) about 26 min
+SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+SLF4J: Defaulting to no-operation (NOP) logger implementation
+SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+
+[warn] Canceling execution...
+Cancelled: entityResolution/runMain scholarchain.entityresolution.tools.AdjudicateSample --run scratch/hadoop/wo5-v2b/snapshot=2026-10-03/run=run-035e75abfa6798c938cbd534273dbd8d --out scratch/er/adjudication-live --live --profile scholarchain-sdk --region us-east-2 --max 200 --token-budget 600000 --per-minute 8
+Exception in thread "sbt-bg-threads-1" java.lang.InterruptedException: sleep interrupted
+	at java.base/java.lang.Thread.sleep(Native Method)
+	at scholarchain.entityresolution.tools.AdjudicateSample$.$anonfun$18(AdjudicateSample.scala:217)
+	at scholarchain.entityresolution.Throttle.acquire(BedrockLlmClient.scala:148)
+	at scholarchain.entityresolution.tools.AdjudicateSample$.$anonfun$21(AdjudicateSample.scala:272)
+	at scholarchain.entityresolution.BedrockLlmClient.send$1(BedrockLlmClient.scala:60)
+	at scholarchain.entityresolution.BedrockLlmClient.complete$$anonfun$1(BedrockLlmClient.scala:64)
+	at scala.util.Try$.apply(Try.scala:217)
+	at scholarchain.entityresolution.BedrockLlmClient.complete(BedrockLlmClient.scala:71)
+	at scholarchain.entityresolution.Adjudicator.attempt$1(Adjudication.scala:289)
+	at scholarchain.entityresolution.Adjudicator.adjudicate(Adjudication.scala:301)
+	at scholarchain.entityresolution.tools.AdjudicateSample$.session$$anonfun$1(AdjudicateSample.scala:123)
+	at scala.collection.immutable.VectorStatics$.foreachRec(Vector.scala:2125)
+	at scala.collection.immutable.Vector.foreach(Vector.scala:2131)
+	at scholarchain.entityresolution.tools.AdjudicateSample$.session(AdjudicateSample.scala:120)
+	at scholarchain.entityresolution.tools.AdjudicateSample$.main(AdjudicateSample.scala:284)
+	at scholarchain.entityresolution.tools.AdjudicateSample.main(AdjudicateSample.scala)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at sbt.Run.invokeMain(Run.scala:139)
+	at sbt.Run.execute$1(Run.scala:85)
+	at sbt.Run.$anonfun$runWithLoader$5(Run.scala:112)
+	at sbt.Run$.executeSuccess(Run.scala:227)
+	at sbt.Run.runWithLoader(Run.scala:112)
+	at sbt.Defaults$.$anonfun$bgRunMainTask$7(Defaults.scala:1923)
+	at sbt.Defaults$.$anonfun$termWrapper$2(Defaults.scala:1894)
+	at scala.runtime.java8.JFunction0$mcV$sp.apply(JFunction0$mcV$sp.java:23)
+	at scala.util.Try$.apply(Try.scala:213)
+	at sbt.internal.BackgroundThreadPool$BackgroundRunnable.run(DefaultBackgroundJobService.scala:378)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+[error] Cancelled: entityResolution/runMain scholarchain.entityresolution.tools.AdjudicateSample --run scratch/hadoop/wo5-v2b/snapshot=2026-10-03/run=run-035e75abfa6798c938cbd534273dbd8d --out scratch/er/adjudication-live --live --profile scholarchain-sdk --region us-east-2 --max 200 --token-budget 600000 --per-minute 8
+[error] Use 'last' for the full log.
+=== resume Sat Nov  7 14:43:54 CST 2026 ===
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] running scholarchain.entityresolution.tools.AdjudicateSample --run scratch/hadoop/wo5-v2b/snapshot=2026-10-03/run=run-035e75abfa6798c938cbd534273dbd8d --out scratch/er/adjudication-live --live --profile scholarchain-sdk --region us-east-2 --max 200 --token-budget 600000 --per-minute 8
+run run-70a26cef3256da28ef1257cb4498d0bb -> scratch/er/adjudication-live/run=run-70a26cef3256da28ef1257cb4498d0bb
+policy er-v2, thresholds Thresholds(0.93,0.35,0.65,0.93), prompt er-adjudication-v1, model us.anthropic.claude-haiku-4-5-20251001-v1:0
+RESEARCHER: 180 sampled (target 180)
+WORK: 20 sampled (target 20)
+not yet cached: 200; estimated input tokens per call: mean 913, max 1022
+expected requests: 200 (one per pair); bound: 800 (2 attempts x 1 expired-token retry); at 8 per minute (7500 ms apart) about 26 min
+SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+SLF4J: Defaulting to no-operation (NOP) logger implementation
+SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+=== stopped by human Sat Nov  7 15:22:36 CST 2026: hung in Throttle.acquire before the first request; thread dump in live-adjudication-threads-9341.txt ===
+=== rerun after repair 1C Sat Nov  7 16:07:25 CST 2026 ===
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] running scholarchain.entityresolution.tools.AdjudicateSample --run scratch/hadoop/wo5-v2b/snapshot=2026-10-03/run=run-035e75abfa6798c938cbd534273dbd8d --out scratch/er/adjudication-live --live --profile scholarchain-sdk --region us-east-2 --max 200 --token-budget 600000 --per-minute 8
+run run-70a26cef3256da28ef1257cb4498d0bb -> scratch/er/adjudication-live/run=run-70a26cef3256da28ef1257cb4498d0bb
+policy er-v2, thresholds Thresholds(0.93,0.35,0.65,0.93), prompt er-adjudication-v1, model us.anthropic.claude-haiku-4-5-20251001-v1:0
+RESEARCHER: 180 sampled (target 180)
+WORK: 20 sampled (target 20)
+not yet cached: 200; estimated input tokens per call: mean 913, max 1022
+expected requests: 200 (one per pair); bound: 800 (2 attempts x 1 expired-token retry); at 8 per minute (7500 ms apart) about 26 min
+SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+SLF4J: Defaulting to no-operation (NOP) logger implementation
+SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+pair 1/200 RESEARCHER: ACCEPT
+pair 2/200 RESEARCHER: ACCEPT
+pair 3/200 RESEARCHER: ACCEPT
+pair 4/200 RESEARCHER: REJECT
+pair 5/200 RESEARCHER: REJECT
+pair 6/200 RESEARCHER: ACCEPT
+pair 7/200 RESEARCHER: ABSTAIN
+pair 8/200 RESEARCHER: REJECT
+pair 9/200 RESEARCHER: REJECT
+pair 10/200 RESEARCHER: ACCEPT
+pair 11/200 RESEARCHER: ABSTAIN FAILED cited field not in the input (reply 317 chars, starts with '`', ends with '`', stop reason end_turn)
+pair 12/200 RESEARCHER: REJECT
+pair 13/200 RESEARCHER: ACCEPT
+pair 14/200 RESEARCHER: ACCEPT
+pair 15/200 RESEARCHER: ACCEPT
+pair 16/200 RESEARCHER: REJECT
+pair 17/200 RESEARCHER: ACCEPT
+pair 18/200 RESEARCHER: REJECT
+pair 19/200 RESEARCHER: REJECT
+pair 20/200 RESEARCHER: REJECT
+pair 21/200 RESEARCHER: REJECT
+pair 22/200 RESEARCHER: ACCEPT
+pair 23/200 RESEARCHER: ACCEPT
+pair 24/200 RESEARCHER: REJECT
+pair 25/200 RESEARCHER: ACCEPT
+pair 26/200 RESEARCHER: REJECT
+pair 27/200 RESEARCHER: ACCEPT
+pair 28/200 RESEARCHER: REJECT
+pair 29/200 RESEARCHER: REJECT
+pair 30/200 RESEARCHER: ACCEPT
+pair 31/200 RESEARCHER: REJECT
+pair 32/200 RESEARCHER: ACCEPT
+pair 33/200 RESEARCHER: ACCEPT
+pair 34/200 RESEARCHER: ABSTAIN
+pair 35/200 RESEARCHER: REJECT
+pair 36/200 RESEARCHER: ABSTAIN FAILED cited field not in the input (reply 444 chars, starts with '`', ends with '`', stop reason end_turn)
+pair 37/200 RESEARCHER: ABSTAIN
+pair 38/200 RESEARCHER: REJECT
+pair 39/200 RESEARCHER: REJECT
+pair 40/200 RESEARCHER: REJECT
+pair 41/200 RESEARCHER: ACCEPT
+pair 42/200 RESEARCHER: ACCEPT
+pair 43/200 RESEARCHER: ACCEPT
+pair 44/200 RESEARCHER: ACCEPT
+pair 45/200 RESEARCHER: REJECT
+pair 46/200 RESEARCHER: ACCEPT
+pair 47/200 RESEARCHER: ACCEPT
+pair 48/200 RESEARCHER: REJECT
+pair 49/200 RESEARCHER: REJECT
+pair 50/200 RESEARCHER: REJECT
+pair 51/200 RESEARCHER: REJECT
+pair 52/200 RESEARCHER: ACCEPT
+pair 53/200 RESEARCHER: REJECT
+pair 54/200 RESEARCHER: REJECT
+pair 55/200 RESEARCHER: REJECT
+pair 56/200 RESEARCHER: REJECT
+pair 57/200 RESEARCHER: ACCEPT
+pair 58/200 RESEARCHER: ABSTAIN FAILED cited field not in the input (reply 429 chars, starts with '`', ends with '`', stop reason end_turn)
+pair 59/200 RESEARCHER: REJECT
+pair 60/200 RESEARCHER: ACCEPT
+pair 61/200 RESEARCHER: ACCEPT
+pair 62/200 RESEARCHER: REJECT
+pair 63/200 RESEARCHER: ABSTAIN
+pair 64/200 RESEARCHER: ACCEPT
+pair 65/200 RESEARCHER: REJECT
+pair 66/200 RESEARCHER: REJECT
+pair 67/200 RESEARCHER: ABSTAIN FAILED cited field not in the input (reply 404 chars, starts with '`', ends with '`', stop reason end_turn)
+pair 68/200 RESEARCHER: REJECT
+pair 69/200 RESEARCHER: REJECT
+pair 70/200 RESEARCHER: REJECT
+pair 71/200 RESEARCHER: ACCEPT
+pair 72/200 RESEARCHER: ACCEPT
+pair 73/200 RESEARCHER: ABSTAIN
+pair 74/200 RESEARCHER: ABSTAIN
+pair 75/200 RESEARCHER: ABSTAIN FAILED cited field not in the input (reply 324 chars, starts with '`', ends with '`', stop reason end_turn)
+pair 76/200 RESEARCHER: ACCEPT
+pair 77/200 RESEARCHER: REJECT
+pair 78/200 RESEARCHER: REJECT
+pair 79/200 RESEARCHER: ACCEPT
+pair 80/200 RESEARCHER: ABSTAIN FAILED cited field not in the input (reply 390 chars, starts with '`', ends with '`', stop reason end_turn)
+pair 81/200 RESEARCHER: REJECT
+pair 82/200 RESEARCHER: ACCEPT
+pair 83/200 RESEARCHER: ACCEPT
+pair 84/200 RESEARCHER: ACCEPT
+pair 85/200 RESEARCHER: ACCEPT
+pair 86/200 RESEARCHER: ACCEPT
+pair 87/200 RESEARCHER: ACCEPT
+pair 88/200 RESEARCHER: REJECT
+pair 89/200 RESEARCHER: REJECT
+pair 90/200 RESEARCHER: REJECT
+pair 91/200 RESEARCHER: REJECT
+pair 92/200 RESEARCHER: ABSTAIN FAILED cited field not in the input (reply 334 chars, starts with '`', ends with '`', stop reason end_turn)
+pair 93/200 RESEARCHER: ACCEPT
+pair 94/200 RESEARCHER: ABSTAIN FAILED cited field not in the input (reply 420 chars, starts with '`', ends with '`', stop reason end_turn)
+pair 95/200 RESEARCHER: REJECT
+pair 96/200 RESEARCHER: ACCEPT
+pair 97/200 RESEARCHER: REJECT
+pair 98/200 RESEARCHER: ACCEPT
+pair 99/200 RESEARCHER: REJECT
+pair 100/200 RESEARCHER: ACCEPT
+pair 101/200 RESEARCHER: ACCEPT
+pair 102/200 RESEARCHER: REJECT
+pair 103/200 RESEARCHER: ACCEPT
+pair 104/200 RESEARCHER: ABSTAIN
+pair 105/200 RESEARCHER: REJECT
+pair 106/200 RESEARCHER: ACCEPT
+pair 107/200 RESEARCHER: ABSTAIN
+pair 108/200 RESEARCHER: ACCEPT
+pair 109/200 RESEARCHER: REJECT
+pair 110/200 RESEARCHER: ABSTAIN
+pair 111/200 RESEARCHER: ACCEPT
+pair 112/200 RESEARCHER: REJECT
+pair 113/200 RESEARCHER: ACCEPT
+pair 114/200 RESEARCHER: ABSTAIN FAILED cited field not in the input (reply 461 chars, starts with '`', ends with '`', stop reason end_turn)
+pair 115/200 RESEARCHER: ACCEPT
+pair 116/200 RESEARCHER: ABSTAIN FAILED cited field not in the input (reply 431 chars, starts with '`', ends with '`', stop reason end_turn)
+pair 117/200 RESEARCHER: ABSTAIN FAILED cited field not in the input (reply 420 chars, starts with '`', ends with '`', stop reason end_turn)
+pair 118/200 RESEARCHER: ACCEPT
+pair 119/200 RESEARCHER: ABSTAIN
+pair 120/200 RESEARCHER: ACCEPT
+pair 121/200 RESEARCHER: REJECT
+pair 122/200 RESEARCHER: REJECT
+pair 123/200 RESEARCHER: REJECT
+pair 124/200 RESEARCHER: REJECT
+pair 125/200 RESEARCHER: REJECT
+pair 126/200 RESEARCHER: REJECT
+pair 127/200 RESEARCHER: REJECT
+pair 128/200 RESEARCHER: REJECT
+pair 129/200 RESEARCHER: REJECT
+pair 130/200 RESEARCHER: ACCEPT
+pair 131/200 RESEARCHER: ABSTAIN
+pair 132/200 RESEARCHER: ACCEPT
+pair 133/200 RESEARCHER: ACCEPT
+pair 134/200 RESEARCHER: ACCEPT
+pair 135/200 RESEARCHER: REJECT
+pair 136/200 RESEARCHER: REJECT
+pair 137/200 RESEARCHER: REJECT
+pair 138/200 RESEARCHER: ACCEPT
+pair 139/200 RESEARCHER: REJECT
+pair 140/200 RESEARCHER: ACCEPT
+pair 141/200 RESEARCHER: REJECT
+pair 142/200 RESEARCHER: ACCEPT
+pair 143/200 RESEARCHER: ACCEPT
+pair 144/200 RESEARCHER: REJECT
+pair 145/200 RESEARCHER: REJECT
+pair 146/200 RESEARCHER: ABSTAIN FAILED echoed IDs differ from the input IDs (fabricated identifier) (reply 382 chars, starts with '`', ends with '`', stop reason end_turn)
+pair 147/200 RESEARCHER: ACCEPT
+pair 148/200 RESEARCHER: ACCEPT
+pair 149/200 RESEARCHER: REJECT
+pair 150/200 RESEARCHER: ACCEPT
+pair 151/200 RESEARCHER: ACCEPT
+pair 152/200 RESEARCHER: ACCEPT
+pair 153/200 RESEARCHER: REJECT
+pair 154/200 RESEARCHER: REJECT
+pair 155/200 RESEARCHER: REJECT
+pair 156/200 RESEARCHER: ACCEPT
+pair 157/200 RESEARCHER: ACCEPT
+pair 158/200 RESEARCHER: ACCEPT
+pair 159/200 RESEARCHER: ACCEPT
+pair 160/200 RESEARCHER: REJECT
+pair 161/200 RESEARCHER: ACCEPT
+pair 162/200 RESEARCHER: ACCEPT
+pair 163/200 RESEARCHER: ABSTAIN FAILED cited field not in the input (reply 389 chars, starts with '`', ends with '`', stop reason end_turn)
+pair 164/200 RESEARCHER: REJECT
+pair 165/200 RESEARCHER: REJECT
+pair 166/200 RESEARCHER: REJECT
+pair 167/200 RESEARCHER: ABSTAIN
+pair 168/200 RESEARCHER: REJECT
+pair 169/200 RESEARCHER: ACCEPT
+pair 170/200 RESEARCHER: ACCEPT
+pair 171/200 RESEARCHER: REJECT
+pair 172/200 RESEARCHER: REJECT
+pair 173/200 RESEARCHER: ACCEPT
+pair 174/200 RESEARCHER: ACCEPT
+pair 175/200 RESEARCHER: REJECT
+pair 176/200 RESEARCHER: REJECT
+pair 177/200 RESEARCHER: REJECT
+pair 178/200 RESEARCHER: REJECT
+pair 179/200 RESEARCHER: ACCEPT
+pair 180/200 RESEARCHER: REJECT
+pair 181/200 WORK: ACCEPT
+pair 182/200 WORK: ACCEPT
+pair 183/200 WORK: REJECT
+pair 184/200 WORK: REJECT
+pair 185/200 WORK: ACCEPT
+pair 186/200 WORK: ACCEPT
+pair 187/200 WORK: ACCEPT
+pair 188/200 WORK: REJECT
+pair 189/200 WORK: REJECT
+pair 190/200 WORK: REJECT
+pair 191/200 WORK: REJECT
+pair 192/200 WORK: REJECT
+pair 193/200 WORK: ACCEPT
+pair 194/200 WORK: REJECT
+pair 195/200 WORK: REJECT
+pair 196/200 WORK: ACCEPT
+pair 197/200 WORK: ACCEPT
+pair 198/200 WORK: REJECT
+pair 199/200 WORK: REJECT
+pair 200/200 WORK: ACCEPT
+{
+  "schemaVersion": "er-adjudication-session-v1",
+  "runId": "run-70a26cef3256da28ef1257cb4498d0bb",
+  "session": 1,
+  "status": "COMPLETE",
+  "startedAt": "2026-11-07T22:07:28.956496Z",
+  "endedAt": "2026-11-07T22:34:01.376425Z",
+  "profile": "scholarchain-sdk",
+  "region": "us-east-2",
+  "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+  "promptVersion": "er-adjudication-v1",
+  "policyVersion": "er-v2",
+  "perMinute": 8,
+  "max": 200,
+  "tokenBudget": 600000,
+  "sampled": 200,
+  "decided": 200,
+  "cached": 0,
+  "newAdjudications": 200,
+  "requests": 213,
+  "tokensUsed": 259255,
+  "failures": 13,
+  "pending": 0,
+  "halted": null,
+  "outcomes": {
+    "RESEARCHER|ACCEPTED": 33,
+    "RESEARCHER|REJECTED": 81,
+    "RESEARCHER|UNRESOLVED": 66,
+    "WORK|ACCEPTED": 2,
+    "WORK|REJECTED": 11,
+    "WORK|UNRESOLVED": 7
+  }
+}
+[success] Total time: 1593 s (0:26:33.0), completed Nov 7, 2026, 4:34:01 PM

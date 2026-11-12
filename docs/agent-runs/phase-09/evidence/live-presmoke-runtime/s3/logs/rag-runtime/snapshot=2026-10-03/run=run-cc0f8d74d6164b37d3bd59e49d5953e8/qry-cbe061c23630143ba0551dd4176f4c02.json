@@ -1,0 +1,235 @@
+{
+  "schemaVersion": "rag-audit-v1",
+  "queryId": "qry-cbe061c23630143ba0551dd4176f4c02",
+  "sessionId": null,
+  "runId": "run-cc0f8d74d6164b37d3bd59e49d5953e8",
+  "createdAt": "2026-11-07T08:37:01.841104Z",
+  "mode": "LIVE",
+  "questionHash": "sha256:9aa7b9ff85a4fa9dd27c3a490bc132452018b1bd304ec2793143b4c2e798fb72",
+  "questionChars": 70,
+  "plan": {
+    "schemaVersion": "rag-query-plan-v1",
+    "queryId": "qry-cbe061c23630143ba0551dd4176f4c02",
+    "operations": [
+      {
+        "operation": "MAXIMUM_TEAM_SIZE",
+        "scope": "CORPUS",
+        "researchers": [],
+        "metric": null,
+        "topN": null
+      }
+    ],
+    "researcherNames": [],
+    "metrics": [],
+    "window": {
+      "requested": {
+        "kind": "DEFAULT",
+        "name": null,
+        "yearFrom": null,
+        "yearTo": null
+      },
+      "window": "all-years",
+      "startYear": 2000,
+      "endYear": 2026,
+      "exact": true,
+      "note": null
+    },
+    "comparison": null,
+    "topics": [],
+    "venues": [],
+    "institutions": [],
+    "semanticIndexes": [
+      "paper-abstract-v1"
+    ],
+    "limits": {
+      "graphLimit": 100,
+      "vectorLimit": 50,
+      "maxPathDepth": 6,
+      "topK": 5
+    },
+    "source": "FALLBACK_RULES",
+    "overriddenFields": [],
+    "rejectedItems": [
+      "output-is-json"
+    ],
+    "promptVersion": "planner-v1",
+    "modelId": null,
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "RUNTIME",
+      "sourceRecordId": "qry-cbe061c23630143ba0551dd4176f4c02",
+      "snapshot": "2026-10-03",
+      "runId": "run-cc0f8d74d6164b37d3bd59e49d5953e8",
+      "policyVersion": null,
+      "modelVersion": null
+    }
+  },
+  "resolutions": [],
+  "graphEvidenceIds": [
+    "ev-9fda43919a96c476b1b70190ce2fd60f"
+  ],
+  "semanticEvidenceIds": [],
+  "metricVersions": [
+    "researcher-ranking-v1@run-1d6a86491812ff94887270c1ab885e69"
+  ],
+  "graphRunId": "run-1d6a86491812ff94887270c1ab885e69",
+  "vectorIndexes": [],
+  "embeddingModelVersion": null,
+  "promptVersions": {
+    "planner.schema": "planner-output-v1",
+    "synthesis.schema": "synthesis-output-v1",
+    "synthesis": "synthesis-v1",
+    "planner.schema.sha256": "sha256:3ff40901f3f625204eaaa3ddc525b844c96178ad36629666ebc96f9fe91c1368",
+    "synthesis.schema.sha256": "sha256:3e0502c1088bbaee0e55216b7dbebd0b18c3af27b55909b1e21a0531668798af",
+    "planner.sha256": "sha256:5aa02fe7fb059e54c191e8a06268d072597c9138e77c992f0c51941e55e78f2e",
+    "planner": "planner-v1",
+    "synthesis.sha256": "sha256:56ff714c5c08e54f07f845fc8e32ed10726d1a688587478c2fe85b30e01c6a36"
+  },
+  "modelIds": {
+    "planner": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "synthesis": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "embedding": "amazon.titan-embed-text-v2:0|1024|normalized|rendering-v1"
+  },
+  "llmCalls": [
+    {
+      "stage": "QUERY_PLANNING",
+      "modelId": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+      "promptVersion": "planner-v1",
+      "schemaVersion": "planner-output-v1",
+      "attempt": 1,
+      "outcome": "INVALID_OUTPUT",
+      "inputTokens": 2228,
+      "outputTokens": 198,
+      "latencyMs": 1249,
+      "throttleWaitMs": 2887
+    },
+    {
+      "stage": "QUERY_PLANNING",
+      "modelId": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+      "promptVersion": "planner-v1",
+      "schemaVersion": "planner-output-v1",
+      "attempt": 2,
+      "outcome": "INVALID_OUTPUT",
+      "inputTokens": 2261,
+      "outputTokens": 198,
+      "latencyMs": 1329,
+      "throttleWaitMs": 6246
+    },
+    {
+      "stage": "ANSWER_SYNTHESIS",
+      "modelId": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+      "promptVersion": "synthesis-v1",
+      "schemaVersion": "synthesis-output-v1",
+      "attempt": 1,
+      "outcome": "INVALID_OUTPUT",
+      "inputTokens": 2556,
+      "outputTokens": 244,
+      "latencyMs": 2255,
+      "throttleWaitMs": 6162
+    },
+    {
+      "stage": "ANSWER_SYNTHESIS",
+      "modelId": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+      "promptVersion": "synthesis-v1",
+      "schemaVersion": "synthesis-output-v1",
+      "attempt": 2,
+      "outcome": "INVALID_OUTPUT",
+      "inputTokens": 2589,
+      "outputTokens": 231,
+      "latencyMs": 2117,
+      "throttleWaitMs": 5244
+    }
+  ],
+  "embeddingCalls": [],
+  "templateCalls": [
+    {
+      "templateId": "kv.ranking",
+      "latencyMs": 3,
+      "resultCount": 1,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.vertices",
+      "latencyMs": 0,
+      "resultCount": 10,
+      "truncated": false
+    }
+  ],
+  "stages": [
+    {
+      "stage": "QUERY_PLANNING",
+      "outcome": "OK",
+      "latencyMs": 11716
+    },
+    {
+      "stage": "RESEARCHER_RESOLUTION",
+      "outcome": "OK",
+      "latencyMs": 1
+    },
+    {
+      "stage": "COLLABORATION_METRICS",
+      "outcome": "OK",
+      "latencyMs": 5
+    },
+    {
+      "stage": "PATH_FINDING",
+      "outcome": "OK",
+      "latencyMs": 0
+    },
+    {
+      "stage": "COMMUNITY_ANALYSIS",
+      "outcome": "OK",
+      "latencyMs": 0
+    },
+    {
+      "stage": "SEMANTIC_CONTEXT",
+      "outcome": "SKIPPED",
+      "latencyMs": 1
+    },
+    {
+      "stage": "EVIDENCE_BUILDING",
+      "outcome": "OK",
+      "latencyMs": 2
+    },
+    {
+      "stage": "ANSWER_SYNTHESIS",
+      "outcome": "ABSTAINED",
+      "latencyMs": 15780
+    },
+    {
+      "stage": "CLAIM_VERIFICATION",
+      "outcome": "SKIPPED",
+      "latencyMs": 0
+    },
+    {
+      "stage": "AUDIT",
+      "outcome": "OK",
+      "latencyMs": 0
+    }
+  ],
+  "budget": {
+    "tokenBudget": 11000,
+    "graphTokens": 703,
+    "semanticTokens": 0,
+    "omittedGraphItems": 0,
+    "omittedSemanticItems": 0
+  },
+  "verification": {
+    "verified": 0,
+    "partiallySupported": 0,
+    "unsupported": 0,
+    "conflicting": 0
+  },
+  "abstained": true,
+  "abstentionReason": "BUDGET_EXHAUSTED",
+  "answerHash": "sha256:5adf164954c2f85d089f3ad2b7b3e0fb067725bd5f4efbc9d466b478583276c6",
+  "provenance": {
+    "schemaVersion": "provenance-v1",
+    "sourceDataset": "RUNTIME",
+    "sourceRecordId": "qry-cbe061c23630143ba0551dd4176f4c02",
+    "snapshot": "2026-10-03",
+    "runId": "run-cc0f8d74d6164b37d3bd59e49d5953e8",
+    "policyVersion": "fusion-v1",
+    "modelVersion": null
+  }
+}

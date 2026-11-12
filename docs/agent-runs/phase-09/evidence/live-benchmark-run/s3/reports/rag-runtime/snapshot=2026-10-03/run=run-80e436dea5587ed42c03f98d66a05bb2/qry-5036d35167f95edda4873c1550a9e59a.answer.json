@@ -1,0 +1,751 @@
+{
+  "schemaVersion": "rag-answer-v1",
+  "response": {
+    "schemaVersion": "answer-response-v1",
+    "queryId": "qry-5036d35167f95edda4873c1550a9e59a",
+    "summary": "Yes, Jack J. Dongarra and Yves Robert have coauthored papers. They collaborated on 23 joint publications between 2007 and 2021, including works such as \"Implementing a Systolic Algorithm for QR Factorization on Multicore Clusters with PaRSEC\" (2013) and \"Optimal Cooperative Checkpointing for Shared High-Performance Computing Platforms\" (2018).",
+    "claims": [
+      {
+        "schemaVersion": "answer-claim-v1",
+        "claimId": "claim-1",
+        "text": "Jack J. Dongarra and Yves Robert coauthored 23 joint publications between 2007 and 2021.",
+        "evidenceIds": [
+          "ev-927665f3bbac87eb60685e50cfeb8f9b"
+        ],
+        "verificationStatus": "VERIFIED",
+        "uncertainty": null,
+        "provenance": {
+          "schemaVersion": "provenance-v1",
+          "sourceDataset": "RUNTIME",
+          "sourceRecordId": "qry-5036d35167f95edda4873c1550a9e59a",
+          "snapshot": "2026-10-03",
+          "runId": "run-80e436dea5587ed42c03f98d66a05bb2",
+          "policyVersion": null,
+          "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+        }
+      },
+      {
+        "schemaVersion": "answer-claim-v1",
+        "claimId": "claim-2",
+        "text": "One of their coauthored papers is \"Implementing a Systolic Algorithm for QR Factorization on Multicore Clusters with PaRSEC\" (2013).",
+        "evidenceIds": [
+          "ev-413a0b4516f445ef97c5d12561733b61"
+        ],
+        "verificationStatus": "VERIFIED",
+        "uncertainty": null,
+        "provenance": {
+          "schemaVersion": "provenance-v1",
+          "sourceDataset": "RUNTIME",
+          "sourceRecordId": "qry-5036d35167f95edda4873c1550a9e59a",
+          "snapshot": "2026-10-03",
+          "runId": "run-80e436dea5587ed42c03f98d66a05bb2",
+          "policyVersion": null,
+          "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+        }
+      },
+      {
+        "schemaVersion": "answer-claim-v1",
+        "claimId": "claim-3",
+        "text": "Another coauthored paper is \"Optimal Cooperative Checkpointing for Shared High-Performance Computing Platforms\" (2018).",
+        "evidenceIds": [
+          "ev-481dea864a37257a39b80f710b81ce72"
+        ],
+        "verificationStatus": "VERIFIED",
+        "uncertainty": null,
+        "provenance": {
+          "schemaVersion": "provenance-v1",
+          "sourceDataset": "RUNTIME",
+          "sourceRecordId": "qry-5036d35167f95edda4873c1550a9e59a",
+          "snapshot": "2026-10-03",
+          "runId": "run-80e436dea5587ed42c03f98d66a05bb2",
+          "policyVersion": null,
+          "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+        }
+      }
+    ],
+    "abstained": false,
+    "uncertainty": "Jack J. Dongarra was linked to scr:canon-v1.er-v2:6de4012bbe8608f1d49d18cf9a40a763 by dominant-name-v1: 0.9576 of 377 works among 17 researchers with this display name. Yves Robert was linked to scr:canon-v1.er-v2:da6e3bdff14745638f3f5425f0133388 by dominant-name-v1: 0.9775 of 222 works among 6 researchers with this display name. Jack J. Dongarra identity resolved with 0.9576 confidence among 17 researchers with this display name. Yves Robert identity resolved with 0.9775 confidence among 6 researchers with this display name.",
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "RUNTIME",
+      "sourceRecordId": "qry-5036d35167f95edda4873c1550a9e59a",
+      "snapshot": "2026-10-03",
+      "runId": "run-80e436dea5587ed42c03f98d66a05bb2",
+      "policyVersion": "fusion-v1",
+      "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+    }
+  },
+  "plan": {
+    "schemaVersion": "rag-query-plan-v1",
+    "queryId": "qry-5036d35167f95edda4873c1550a9e59a",
+    "operations": [
+      {
+        "operation": "DIRECT_COAUTHORS",
+        "scope": "PAIR",
+        "researchers": [
+          0,
+          1
+        ],
+        "metric": null,
+        "topN": null
+      }
+    ],
+    "researcherNames": [
+      {
+        "name": "Jack J. Dongarra",
+        "offset": 5
+      },
+      {
+        "name": "Yves Robert",
+        "offset": 26
+      }
+    ],
+    "metrics": [],
+    "window": {
+      "requested": {
+        "kind": "DEFAULT",
+        "name": null,
+        "yearFrom": null,
+        "yearTo": null
+      },
+      "window": "all-years",
+      "startYear": 2000,
+      "endYear": 2026,
+      "exact": true,
+      "note": null
+    },
+    "comparison": null,
+    "topics": [],
+    "venues": [],
+    "institutions": [],
+    "semanticIndexes": [
+      "researcher-profile-v1",
+      "paper-abstract-v1"
+    ],
+    "limits": {
+      "graphLimit": 100,
+      "vectorLimit": 50,
+      "maxPathDepth": 6,
+      "topK": 5
+    },
+    "source": "MODEL",
+    "overriddenFields": [],
+    "rejectedItems": [],
+    "promptVersion": "planner-v2",
+    "modelId": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "RUNTIME",
+      "sourceRecordId": "qry-5036d35167f95edda4873c1550a9e59a",
+      "snapshot": "2026-10-03",
+      "runId": "run-80e436dea5587ed42c03f98d66a05bb2",
+      "policyVersion": null,
+      "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+    }
+  },
+  "resolutions": [
+    {
+      "schemaVersion": "researcher-resolution-v1",
+      "name": "Jack J. Dongarra",
+      "nameKey": "name-v1:jack j dongarra",
+      "policyVersion": "dominant-name-v1",
+      "dominantShare": 0.9,
+      "minWorks": 5,
+      "decision": "RESOLVED_DOMINANT",
+      "researcherId": "scr:canon-v1.er-v2:6de4012bbe8608f1d49d18cf9a40a763",
+      "topShare": 0.9575596816976127,
+      "totalWorks": 377,
+      "candidateCount": 17,
+      "candidates": [
+        {
+          "researcherId": "scr:canon-v1.er-v2:6de4012bbe8608f1d49d18cf9a40a763",
+          "displayName": "Jack J. Dongarra",
+          "matchedName": "Jack J. Dongarra",
+          "works": 361,
+          "share": 0.9575596816976127,
+          "identityConfidence": 0.9300527553067827,
+          "mentionCount": 1035,
+          "dblpAnchored": true,
+          "orcid": "0000-0003-3247-1782",
+          "institutions": [
+            {
+              "id": "ringgold:4292",
+              "name": "University of Tennessee Knoxville",
+              "count": null
+            },
+            {
+              "id": "ringgold:5292",
+              "name": "University of Manchester",
+              "count": null
+            },
+            {
+              "id": "ror:00xzqjh13",
+              "name": "University of Tennessee System",
+              "count": null
+            }
+          ],
+          "topCoauthors": [
+            {
+              "id": "scr:canon-v1.er-v2:d6da0e3328e77af813dc4fef5d8e8e00",
+              "name": "Stanimire Tomov",
+              "count": 72
+            },
+            {
+              "id": "scr:canon-v1.er-v2:f8de7c4d37009549208e5498ffe88dce",
+              "name": "George Bosilca",
+              "count": 67
+            },
+            {
+              "id": "scr:canon-v1.er-v2:8c0c29d950518d7da8d7f8bdefc479e5",
+              "name": "Piotr Luszczek",
+              "count": 54
+            }
+          ],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:2bf5d8b97aab7d968e5d2e785c2f7086",
+          "displayName": "Jack J. Dongarra",
+          "matchedName": "Jack J. Dongarra",
+          "works": 1,
+          "share": 0.002652519893899204,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:34a3b3c10852f70ed6619d769476a84d",
+          "displayName": "Jack J. Dongarra",
+          "matchedName": "Jack J. Dongarra",
+          "works": 1,
+          "share": 0.002652519893899204,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:525fad5d910f3af5b8331e32d91c4998",
+          "displayName": "Jack J. Dongarra",
+          "matchedName": "Jack J. Dongarra",
+          "works": 1,
+          "share": 0.002652519893899204,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [
+            {
+              "id": "scr:canon-v1.er-v2:8dfdcbb93e2345f735c1623fe255d01f",
+              "name": "Piotr Luszczek",
+              "count": 1
+            }
+          ],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:5e1a412b01bb28f6501c871441470cb2",
+          "displayName": "Jack J. Dongarra",
+          "matchedName": "Jack J. Dongarra",
+          "works": 1,
+          "share": 0.002652519893899204,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:5f2d012b575ad00e9553855ade57d53c",
+          "displayName": "Jack J. Dongarra",
+          "matchedName": "Jack J. Dongarra",
+          "works": 1,
+          "share": 0.002652519893899204,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [
+            {
+              "id": "scr:canon-v1.er-v2:e7bd3167292a646bea5ffb1bfa945894",
+              "name": "James B. White",
+              "count": 1
+            }
+          ],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:67862e17097d5d22251a6ee0c3e1f792",
+          "displayName": "Jack J. Dongarra",
+          "matchedName": "Jack J. Dongarra",
+          "works": 1,
+          "share": 0.002652519893899204,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:6c0891b0da94fdad65cf09ce1aa5ea7a",
+          "displayName": "Jack J. Dongarra",
+          "matchedName": "Jack J. Dongarra",
+          "works": 1,
+          "share": 0.002652519893899204,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:7e9a08a98aac5b3eb92c1c643aba7141",
+          "displayName": "Jack J. Dongarra",
+          "matchedName": "Jack J. Dongarra",
+          "works": 1,
+          "share": 0.002652519893899204,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:8776b4a0b3008c8e13f19962f9ddd062",
+          "displayName": "Jack J. Dongarra",
+          "matchedName": "Jack J. Dongarra",
+          "works": 1,
+          "share": 0.002652519893899204,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:916cb35b7e9585553223e1f2f340066d",
+          "displayName": "Jack J. Dongarra",
+          "matchedName": "Jack J. Dongarra",
+          "works": 1,
+          "share": 0.002652519893899204,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:9cbe4a9c87eb2771d05989fefa6f0138",
+          "displayName": "Jack J. Dongarra",
+          "matchedName": "Jack J. Dongarra",
+          "works": 1,
+          "share": 0.002652519893899204,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:9e43bc2f235d48b379aaf0c6b3fed66d",
+          "displayName": "Jack J. Dongarra",
+          "matchedName": "Jack J. Dongarra",
+          "works": 1,
+          "share": 0.002652519893899204,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [
+            {
+              "id": "scr:canon-v1.er-v2:8c0c29d950518d7da8d7f8bdefc479e5",
+              "name": "Piotr Luszczek",
+              "count": 1
+            }
+          ],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:c9a87b36fe3da4eb17f3ea06300ed96f",
+          "displayName": "Jack J. Dongarra",
+          "matchedName": "Jack J. Dongarra",
+          "works": 1,
+          "share": 0.002652519893899204,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:e4d8b979f53fd6d64edb885bf46f6652",
+          "displayName": "Jack J. Dongarra",
+          "matchedName": "Jack J. Dongarra",
+          "works": 1,
+          "share": 0.002652519893899204,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:f578e74edba96473b74dbb6a04ae7c07",
+          "displayName": "Jack J. Dongarra",
+          "matchedName": "Jack J. Dongarra",
+          "works": 1,
+          "share": 0.002652519893899204,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:f7dd3af14fdaf64efe379d3aaf9e93c1",
+          "displayName": "Jack J. Dongarra",
+          "matchedName": "Jack J. Dongarra",
+          "works": 1,
+          "share": 0.002652519893899204,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        }
+      ],
+      "otherNameMatches": [],
+      "truncated": false,
+      "evidenceId": "ev-f77b0f57600fbe72e769edddb227902e"
+    },
+    {
+      "schemaVersion": "researcher-resolution-v1",
+      "name": "Yves Robert",
+      "nameKey": "name-v1:yves robert",
+      "policyVersion": "dominant-name-v1",
+      "dominantShare": 0.9,
+      "minWorks": 5,
+      "decision": "RESOLVED_DOMINANT",
+      "researcherId": "scr:canon-v1.er-v2:da6e3bdff14745638f3f5425f0133388",
+      "topShare": 0.9774774774774775,
+      "totalWorks": 222,
+      "candidateCount": 6,
+      "candidates": [
+        {
+          "researcherId": "scr:canon-v1.er-v2:da6e3bdff14745638f3f5425f0133388",
+          "displayName": "Yves Robert",
+          "matchedName": "Yves Robert",
+          "works": 217,
+          "share": 0.9774774774774775,
+          "identityConfidence": 0.9307361010669598,
+          "mentionCount": 644,
+          "dblpAnchored": true,
+          "orcid": "0000-0003-2361-055X",
+          "institutions": [
+            {
+              "id": "ror:00r4sry34",
+              "name": "Murdoch University",
+              "count": null
+            },
+            {
+              "id": "ror:017ef8252",
+              "name": "Institute for System Programming",
+              "count": null
+            },
+            {
+              "id": "ror:01n002310",
+              "name": "Institute of Electrical and Electronics Engineers",
+              "count": null
+            }
+          ],
+          "topCoauthors": [
+            {
+              "id": "scr:canon-v1.er-v2:a723f93c13eac6b3500b626f784e3b55",
+              "name": "Anne Benoit",
+              "count": 83
+            },
+            {
+              "id": "scr:canon-v1.er-v2:21c3307d42d21da14a4a91653cb2bc1f",
+              "name": "Frédéric Vivien",
+              "count": 53
+            },
+            {
+              "id": "scr:canon-v1.er-v2:3aae6ff01de2082cd583020341676d25",
+              "name": "Loris Marchal",
+              "count": 33
+            }
+          ],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:14f3f866afc6a377d175ea5d11fe8c0b",
+          "displayName": "Yves Robert",
+          "matchedName": "Yves Robert",
+          "works": 1,
+          "share": 0.0045045045045045045,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": false,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:21288dea23644007cd1529fdb609ad1b",
+          "displayName": "Yves Robert",
+          "matchedName": "Yves Robert",
+          "works": 1,
+          "share": 0.0045045045045045045,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:69cbf3634034600a7c5be212f749544f",
+          "displayName": "Yves Robert",
+          "matchedName": "Yves Robert",
+          "works": 1,
+          "share": 0.0045045045045045045,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": false,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:82885257f16dc8c796eb25f7e99d02d3",
+          "displayName": "Yves Robert",
+          "matchedName": "Yves Robert",
+          "works": 1,
+          "share": 0.0045045045045045045,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": false,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:d65561423b9aad6e52331a930c8d2204",
+          "displayName": "Yves Robert",
+          "matchedName": "Yves Robert",
+          "works": 1,
+          "share": 0.0045045045045045045,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": false,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        }
+      ],
+      "otherNameMatches": [],
+      "truncated": false,
+      "evidenceId": "ev-c6affb275b51502c8c5032dd61502c75"
+    }
+  ],
+  "verification": {
+    "schemaVersion": "claim-verification-v1",
+    "queryId": "qry-5036d35167f95edda4873c1550a9e59a",
+    "checks": [
+      {
+        "claimId": "claim-1",
+        "status": "VERIFIED",
+        "checks": [
+          {
+            "rule": "evidence-exists",
+            "outcome": "PASS",
+            "detail": "all cited items are in the bundle"
+          },
+          {
+            "rule": "graph-evidence-required",
+            "outcome": "PASS",
+            "detail": "1 graph item(s) cited"
+          },
+          {
+            "rule": "kind-matches-type",
+            "outcome": "PASS",
+            "detail": "COAUTHORSHIP needs COAUTHOR_EDGE"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "firstCollaborationYear"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "jointPublicationCount"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "lastCollaborationYear"
+          },
+          {
+            "rule": "numbers-in-text",
+            "outcome": "PASS",
+            "detail": "every number is an asserted, named fact"
+          },
+          {
+            "rule": "window",
+            "outcome": "PASS",
+            "detail": "all-years"
+          },
+          {
+            "rule": "identity",
+            "outcome": "PASS",
+            "detail": "every subject and name is resolved or cited"
+          }
+        ],
+        "action": "KEPT"
+      },
+      {
+        "claimId": "claim-2",
+        "status": "VERIFIED",
+        "checks": [
+          {
+            "rule": "evidence-exists",
+            "outcome": "PASS",
+            "detail": "all cited items are in the bundle"
+          },
+          {
+            "rule": "graph-evidence-required",
+            "outcome": "PASS",
+            "detail": "1 graph item(s) cited"
+          },
+          {
+            "rule": "kind-matches-type",
+            "outcome": "PASS",
+            "detail": "PUBLICATION needs WORK_RECORD or COAUTHOR_EDGE or METRIC_RECORD"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "year"
+          },
+          {
+            "rule": "numbers-in-text",
+            "outcome": "PASS",
+            "detail": "every number is an asserted, named fact"
+          },
+          {
+            "rule": "identity",
+            "outcome": "PASS",
+            "detail": "every subject and name is resolved or cited"
+          }
+        ],
+        "action": "KEPT"
+      },
+      {
+        "claimId": "claim-3",
+        "status": "VERIFIED",
+        "checks": [
+          {
+            "rule": "evidence-exists",
+            "outcome": "PASS",
+            "detail": "all cited items are in the bundle"
+          },
+          {
+            "rule": "graph-evidence-required",
+            "outcome": "PASS",
+            "detail": "1 graph item(s) cited"
+          },
+          {
+            "rule": "kind-matches-type",
+            "outcome": "PASS",
+            "detail": "PUBLICATION needs WORK_RECORD or COAUTHOR_EDGE or METRIC_RECORD"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "year"
+          },
+          {
+            "rule": "numbers-in-text",
+            "outcome": "PASS",
+            "detail": "every number is an asserted, named fact"
+          },
+          {
+            "rule": "identity",
+            "outcome": "PASS",
+            "detail": "every subject and name is resolved or cited"
+          }
+        ],
+        "action": "KEPT"
+      }
+    ],
+    "counts": {
+      "verified": 3,
+      "partiallySupported": 0,
+      "unsupported": 0,
+      "conflicting": 0
+    }
+  },
+  "abstention": null,
+  "answerHash": "sha256:85ee4a2a6bc4478ec3db265baef06239716899e1e0bcb5fab01efe4fa2d1ea5c"
+}

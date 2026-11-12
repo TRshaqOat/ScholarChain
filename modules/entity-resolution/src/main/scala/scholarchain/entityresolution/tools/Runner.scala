@@ -53,11 +53,20 @@ object Runner:
         Io.required(o, "token-budget").toLong
       )
       val cache = JsonlFileCache(Paths.get(Io.required(o, "cache")))
-      (Adjudicator(BedrockLlmClient(model, cfg.region), cache, budget, policy), budget)
+      val throttle = Throttle.live(cfg.runtime.llm.requestsPerMinute)
+      val (client, sdk) = BedrockLlmClient.live(
+        model,
+        cfg.region,
+        None,
+        cfg.runtime.llm.timeoutMs,
+        () => throttle.acquire()
+      )
+      (Adjudicator(client, cache, budget, policy), budget, sdk)
     }
-    val idx = WorkIndex(run)
     val decidedAt = Instant.now().toString
-    val summary = execute(run, idx, t, policy, runId, decidedAt, dir, adjudicator.map(_._1))
+    val summary = closing(adjudicator.map(_._3)) {
+      execute(run, WorkIndex(run), t, policy, runId, decidedAt, dir, adjudicator.map(_._1))
+    }
     val manifest = ujson.Obj(
       "schemaVersion" -> "er-run-manifest-v1",
       "runId" -> runId,
@@ -83,6 +92,11 @@ object Runner:
     )
     Io.writeString(dir.resolve("summary.json"), ujson.write(manifest, indent = 2) + "\n")
     println(ujson.write(manifest, indent = 2))
+
+  /** Runs `body`, then closes `resource` (the live SDK client, if any), also when `body` throws. */
+  def closing[A](resource: Option[AutoCloseable])(body: => A): A =
+    try body
+    finally resource.foreach(_.close())
 
   /** Applies match policy `policy` to every candidate of the run and writes the decisions. Returns
     * counts keyed `<entityType>|<path>|<outcome>`, plus `<entityType>|LLM_ELIGIBLE`.

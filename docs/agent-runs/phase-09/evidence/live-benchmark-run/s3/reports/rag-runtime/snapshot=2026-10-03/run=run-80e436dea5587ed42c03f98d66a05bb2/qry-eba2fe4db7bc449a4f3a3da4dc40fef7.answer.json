@@ -1,0 +1,312 @@
+{
+  "schemaVersion": "rag-answer-v1",
+  "response": {
+    "schemaVersion": "answer-response-v1",
+    "queryId": "qry-eba2fe4db7bc449a4f3a3da4dc40fef7",
+    "summary": "No drafted answer passed validation within the model call and token budget; no claim is made.",
+    "claims": [],
+    "abstained": true,
+    "uncertainty": "Minyi Guo was linked to scr:canon-v1.er-v2:110ec38e39367e47da67835ca2ce45cc by dominant-name-v1: 0.9722 of 252 works among 8 researchers with this display name. No collaboration-community-v1 document matched the filters.",
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "RUNTIME",
+      "sourceRecordId": "qry-eba2fe4db7bc449a4f3a3da4dc40fef7",
+      "snapshot": "2026-10-03",
+      "runId": "run-80e436dea5587ed42c03f98d66a05bb2",
+      "policyVersion": "fusion-v1",
+      "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+    }
+  },
+  "plan": {
+    "schemaVersion": "rag-query-plan-v1",
+    "queryId": "qry-eba2fe4db7bc449a4f3a3da4dc40fef7",
+    "operations": [
+      {
+        "operation": "COMMUNITY_COMPARISON",
+        "scope": "RESEARCHER",
+        "researchers": [
+          0
+        ],
+        "metric": null,
+        "topN": null
+      }
+    ],
+    "researcherNames": [
+      {
+        "name": "Minyi Guo",
+        "offset": 4
+      }
+    ],
+    "metrics": [],
+    "window": {
+      "requested": {
+        "kind": "NAMED",
+        "name": "2000-2014",
+        "yearFrom": null,
+        "yearTo": null
+      },
+      "window": "2000-2014",
+      "startYear": 2000,
+      "endYear": 2014,
+      "exact": true,
+      "note": null
+    },
+    "comparison": {
+      "fromWindow": "2000-2014",
+      "toWindow": "2015-2026"
+    },
+    "topics": [],
+    "venues": [],
+    "institutions": [],
+    "semanticIndexes": [
+      "researcher-profile-v1",
+      "collaboration-community-v1"
+    ],
+    "limits": {
+      "graphLimit": 100,
+      "vectorLimit": 50,
+      "maxPathDepth": 6,
+      "topK": 5
+    },
+    "source": "MODEL",
+    "overriddenFields": [],
+    "rejectedItems": [],
+    "promptVersion": "planner-v2",
+    "modelId": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "RUNTIME",
+      "sourceRecordId": "qry-eba2fe4db7bc449a4f3a3da4dc40fef7",
+      "snapshot": "2026-10-03",
+      "runId": "run-80e436dea5587ed42c03f98d66a05bb2",
+      "policyVersion": null,
+      "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+    }
+  },
+  "resolutions": [
+    {
+      "schemaVersion": "researcher-resolution-v1",
+      "name": "Minyi Guo",
+      "nameKey": "name-v1:minyi guo",
+      "policyVersion": "dominant-name-v1",
+      "dominantShare": 0.9,
+      "minWorks": 5,
+      "decision": "RESOLVED_DOMINANT",
+      "researcherId": "scr:canon-v1.er-v2:110ec38e39367e47da67835ca2ce45cc",
+      "topShare": 0.9722222222222222,
+      "totalWorks": 252,
+      "candidateCount": 8,
+      "candidates": [
+        {
+          "researcherId": "scr:canon-v1.er-v2:110ec38e39367e47da67835ca2ce45cc",
+          "displayName": "Minyi Guo",
+          "matchedName": "Minyi Guo",
+          "works": 245,
+          "share": 0.9722222222222222,
+          "identityConfidence": 0.9300527553067827,
+          "mentionCount": 702,
+          "dblpAnchored": true,
+          "orcid": "0000-0003-0034-2302",
+          "institutions": [
+            {
+              "id": "ror:002b7nr53",
+              "name": "Dalian Maritime University",
+              "count": null
+            },
+            {
+              "id": "ror:019kgqr73",
+              "name": "The University of Texas at Arlington",
+              "count": null
+            },
+            {
+              "id": "ror:01jmxt844",
+              "name": "University of Otago",
+              "count": null
+            }
+          ],
+          "topCoauthors": [
+            {
+              "id": "scr:canon-v1.er-v2:bc5dd7bab4c24dbc9ae00a186defe83e",
+              "name": "Chao Li 0009",
+              "count": 45
+            },
+            {
+              "id": "scr:canon-v1.er-v2:44ef4799de911deddc98e092d9934439",
+              "name": "Jingwen Leng",
+              "count": 27
+            },
+            {
+              "id": "scr:canon-v1.er-v2:a18db8c50754e3acb05732d806921afc",
+              "name": "Chentao Wu",
+              "count": 26
+            }
+          ],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:0bb7441318f6a325599c378d0592105a",
+          "displayName": "Minyi Guo",
+          "matchedName": "Minyi Guo",
+          "works": 1,
+          "share": 0.003968253968253968,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:0e8e6b318f6396e087afed96928617c6",
+          "displayName": "Minyi Guo",
+          "matchedName": "Minyi Guo",
+          "works": 1,
+          "share": 0.003968253968253968,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [
+            {
+              "id": "scr:canon-v1.er-v2:614e8d9518713e468aac865e0fe5161d",
+              "name": "Lu Zhang 0049",
+              "count": 1
+            },
+            {
+              "id": "scr:canon-v1.er-v2:573dad863c1342180398056084222475",
+              "name": "Pengyu Wang 0003",
+              "count": 1
+            },
+            {
+              "id": "scr:canon-v1.er-v2:bc5dd7bab4c24dbc9ae00a186defe83e",
+              "name": "Chao Li 0009",
+              "count": 1
+            }
+          ],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:13f956530d514589d51011e05681d558",
+          "displayName": "Minyi Guo",
+          "matchedName": "Minyi Guo",
+          "works": 1,
+          "share": 0.003968253968253968,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:369cd754ae533309bb23108e67e2b40c",
+          "displayName": "Minyi Guo",
+          "matchedName": "Minyi Guo",
+          "works": 1,
+          "share": 0.003968253968253968,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": false,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:bde97dde2bbd6ac4689e45a0f2dec073",
+          "displayName": "Minyi Guo",
+          "matchedName": "Minyi Guo",
+          "works": 1,
+          "share": 0.003968253968253968,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": false,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:c727533dc588fbbe8dfd1588c63af467",
+          "displayName": "Minyi Guo",
+          "matchedName": "Minyi Guo",
+          "works": 1,
+          "share": 0.003968253968253968,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:f095a3433bfd69d1fb40c50f6df67b57",
+          "displayName": "Minyi Guo",
+          "matchedName": "Minyi Guo",
+          "works": 1,
+          "share": 0.003968253968253968,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": false,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        }
+      ],
+      "otherNameMatches": [
+        {
+          "researcherId": "scr:canon-v1.er-v2:7beb4899ac051301375d46215fc357e9",
+          "displayName": "MINYI GUO",
+          "matchedName": "MINYI GUO",
+          "works": 1,
+          "share": null,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": false,
+          "orcid": null,
+          "institutions": [
+            {
+              "id": "sci:affn-v1:5b04e354317569ed8518720b45a6546b",
+              "name": "Department of Computer Software, The University of Aizu, Aizu-Wakamatsu City, Fukushima 965-8580, Japan",
+              "count": null
+            }
+          ],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        }
+      ],
+      "truncated": false,
+      "evidenceId": "ev-ebbc0fc6b143079b7301a2820dbca322"
+    }
+  ],
+  "verification": {
+    "schemaVersion": "claim-verification-v1",
+    "queryId": "qry-eba2fe4db7bc449a4f3a3da4dc40fef7",
+    "checks": [],
+    "counts": {
+      "verified": 0,
+      "partiallySupported": 0,
+      "unsupported": 0,
+      "conflicting": 0
+    }
+  },
+  "abstention": {
+    "reason": "BUDGET_EXHAUSTED",
+    "detail": "No drafted answer passed validation within the model call and token budget; no claim is made."
+  },
+  "answerHash": "sha256:4be66487ab445fd7a14ec5bbb24561f3471f5c867358ac4a997d358fd423f15d"
+}

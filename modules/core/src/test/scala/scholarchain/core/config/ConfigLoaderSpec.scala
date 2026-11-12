@@ -136,9 +136,116 @@ class ConfigLoaderSpec extends AnyFunSuite:
       "SCHOLARCHAIN_ER_MAX_BLOCK_SIZE" -> "1000",
       "SCHOLARCHAIN_ER_MAX_CONFLICT_GROUP_SIZE" -> "100",
       "SCHOLARCHAIN_ER_POLICY_VERSION" -> "er-v1",
-      "SCHOLARCHAIN_GRAPH_POLICY_VERSION" -> "graph-v1"
+      "SCHOLARCHAIN_GRAPH_POLICY_VERSION" -> "graph-v1",
+      "SCHOLARCHAIN_NEPTUNE_LOADER_ROLE_ARN" ->
+        "arn:aws:iam::111111111111:role/scholarchain-dev-neptune-loader",
+      "SCHOLARCHAIN_DYNAMODB_TABLE_PREFIX" -> "scholarchain-dev-"
     )
     assert(ConfigLoader.load(env).map(_.environment) == Right("dev"))
+  }
+
+  test("M10: table prefix and Neptune loader role ARN are keys with env overrides") {
+    val c = load()
+    assert(c.dynamoDb.tablePrefix == "example-scholarchain-")
+    assert(c.neptune.loaderRoleArn == "arn:aws:iam::000000000000:role/example-neptune-loader")
+    val arn = "arn:aws:iam::111111111111:role/scholarchain-dev-neptune-loader"
+    val o = load(
+      "SCHOLARCHAIN_DYNAMODB_TABLE_PREFIX" -> "scholarchain-dev-",
+      "SCHOLARCHAIN_NEPTUNE_LOADER_ROLE_ARN" -> arn
+    )
+    assert(o.dynamoDb.tablePrefix == "scholarchain-dev-" && o.neptune.loaderRoleArn == arn)
+  }
+
+  test("M10: malformed prefixes and ARNs are rejected; placeholders are rejected outside local") {
+    def errors(vars: (String, String)*) = ConfigLoader.load(vars.toMap).left.toOption.get
+    for bad <- Seq("bad prefix", "a/b", "x" * 201) do
+      assert(
+        errors("SCHOLARCHAIN_DYNAMODB_TABLE_PREFIX" -> bad).exists(_.contains("table-prefix")),
+        bad
+      )
+    for bad <- Seq("scholarchain-loader", "arn:aws:iam::1234:role/x", "arn:aws:s3:::bucket") do
+      assert(
+        errors("SCHOLARCHAIN_NEPTUNE_LOADER_ROLE_ARN" -> bad).exists(_.contains("IAM role ARN")),
+        bad
+      )
+    val dev = errors("SCHOLARCHAIN_ENVIRONMENT" -> "dev").mkString
+    assert(dev.contains("role/example-neptune-loader, example-scholarchain-, "))
+    val keptRole = errors(
+      "SCHOLARCHAIN_ENVIRONMENT" -> "dev",
+      "SCHOLARCHAIN_NEPTUNE_LOADER_ROLE_ARN" ->
+        "arn:aws:iam::111111111111:role/example-neptune-loader"
+    ).mkString
+    assert(keptRole.contains("111111111111:role/example-neptune-loader"))
+  }
+
+  test("Phase 9: planner and synthesis models default to Haiku 4.5 and are env-overridable") {
+    val haiku = "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+    val m = load().models
+    assert(m.plannerModel == haiku && m.synthesisModel == haiku)
+    assert(load("SCHOLARCHAIN_PLANNER_MODEL_ID" -> "p").models.plannerModel == "p")
+    assert(load("SCHOLARCHAIN_PROMPTS_DIR" -> "/opt/prompts").runtime.promptsDir == "/opt/prompts")
+    val dev = ConfigLoader.load(Map("SCHOLARCHAIN_ENVIRONMENT" -> "dev")).left.toOption.get
+    assert(!dev.mkString.contains(haiku)) // a real model ID is not a placeholder
+    val ex = ConfigLoader.load(
+      Map("SCHOLARCHAIN_ENVIRONMENT" -> "dev", "SCHOLARCHAIN_PLANNER_MODEL_ID" -> "example-p")
+    )
+    assert(ex.left.toOption.get.mkString.contains("example-p"))
+  }
+
+  test("Phase 9: runtime, ranking, and graph-read defaults (RUNTIME.md section 20)") {
+    val c = load()
+    val r = c.runtime
+    assert(r.promptsDir == "prompts")
+    assert(r.question == QuestionConfig(2000, 180000))
+    assert(r.planner == PlannerConfig("planner-v2", 800, 6, 4, 200, 5))
+    assert(r.synthesis == SynthesisConfig("synthesis-v2", 2000, 20)) // ruling 28
+    assert(r.llm == LlmCallConfig(8, 2, 30000, 0.0))
+    assert(r.embedding == EmbeddingCallConfig(50, 10000))
+    assert(r.resolver == ResolverConfig("dominant-name-v1", 0.9, 5, 500, 3, 3))
+    assert(r.rankings == RankingsConfig(10, 1000))
+    assert(r.semantic == SemanticConfig(5, 3))
+    assert(r.budget == BudgetConfig(8000, 3000, 300, 3, 40000, 5600))
+    assert(r.audit == AuditConfig(30))
+    assert(c.analytics.rankingSize == 50)
+    assert(
+      c.graphRead == GraphReadConfig(1000, 100, 50000, 20000, 100, 20, 2000, 10, 20, 10, 3, 200)
+    )
+  }
+
+  test("Phase 9: runtime bounds and cross-key checks are enforced") {
+    def errors(hocon: String): String =
+      val f = file(hocon)
+      ConfigLoader.load(Map(ConfigLoader.ConfigFileEnv -> f.toString)).left.toOption.get.mkString
+    val cases = Seq(
+      "runtime.llm.requests-per-minute = 9" -> "requests-per-minute must be at most 8",
+      "runtime.llm.max-attempts-per-call = 3" -> "max-attempts-per-call must be at most 2",
+      "runtime.embedding.requests-per-minute = 51" -> "at most 50",
+      "runtime.llm.temperature = 1.5" -> "temperature must be within",
+      "runtime.resolver.dominant-share = 0.5" -> "dominant-share must be above 0.5",
+      "runtime.resolver.dominant-share = 1.01" -> "dominant-share must be above 0.5",
+      "runtime.resolver.max-candidates = 1001" -> "max-candidates must be at most 1000",
+      "runtime.budget.graph-evidence-tokens = 9001" -> "retrieval.context-token-budget",
+      "runtime.rankings.default-top-n = 51" -> "default-top-n must be at most",
+      "analytics.ranking-size = 0" -> "ranking-size must be positive",
+      "retrieval.max-path-depth = 7" -> "max-path-depth must be at most 6",
+      "runtime.audit.ttl-days = 0" -> "must be positive",
+      "graph-read.path-timeout-ms = 0" -> "must be positive",
+      "runtime.planner.prompt-version = \"planner v1\"" -> "prompt-version",
+      "runtime.prompts-dir = \" \"" -> "prompts-dir must not be blank"
+    )
+    for (hocon, msg) <- cases do assert(errors(s"scholarchain.$hocon").contains(msg), hocon)
+  }
+
+  test("every runtime and graph-read leaf in the reference is read by the loader") {
+    import scala.jdk.CollectionConverters.*
+    val reference = ConfigLoader.merged(Map.empty)
+    val leaves = Seq("runtime", "graph-read").flatMap(s =>
+      reference.getConfig(s).entrySet.asScala.map(e => s"$s.${e.getKey}")
+    )
+    val c = load()
+    // Typed fields: the Int lists, plus prompts-dir, three versions, temperature, dominant-share.
+    val typed = c.runtime.positiveInts.size + c.graphRead.all.size + 1 + 3 + 2
+    assert(leaves.size == typed, leaves.sorted.mkString(", "))
   }
 
   test("entity-resolution thresholds must be ordered within [0, 1]") {

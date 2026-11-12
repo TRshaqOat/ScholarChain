@@ -1,0 +1,663 @@
+{
+  "schemaVersion": "rag-answer-v1",
+  "response": {
+    "schemaVersion": "answer-response-v1",
+    "queryId": "qry-460555e8fc44b2b115bb455c25d0010f",
+    "summary": "Rajkumar Buyya has 293 publications and 419 distinct coauthors in the all-years window (2000-2026). Rajkumar Buyya belongs to a collaboration community of 617 researchers with a participation coefficient of 0.967, indicating strong engagement across 184 connected communities. Rajkumar Buyya has a cross-community degree of 362, connecting to researchers across 184 communities.",
+    "claims": [
+      {
+        "schemaVersion": "answer-claim-v1",
+        "claimId": "claim-2",
+        "text": "Rajkumar Buyya has 293 publications and 419 distinct coauthors in the all-years window (2000-2026).",
+        "evidenceIds": [
+          "ev-6f7925e0193b944e31b5c50bdc18b53c"
+        ],
+        "verificationStatus": "VERIFIED",
+        "uncertainty": null,
+        "provenance": {
+          "schemaVersion": "provenance-v1",
+          "sourceDataset": "RUNTIME",
+          "sourceRecordId": "qry-460555e8fc44b2b115bb455c25d0010f",
+          "snapshot": "2026-10-03",
+          "runId": "run-80e436dea5587ed42c03f98d66a05bb2",
+          "policyVersion": null,
+          "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+        }
+      },
+      {
+        "schemaVersion": "answer-claim-v1",
+        "claimId": "claim-4",
+        "text": "Rajkumar Buyya belongs to a collaboration community of 617 researchers with a participation coefficient of 0.967, indicating strong engagement across 184 connected communities.",
+        "evidenceIds": [
+          "ev-6f7925e0193b944e31b5c50bdc18b53c"
+        ],
+        "verificationStatus": "VERIFIED",
+        "uncertainty": null,
+        "provenance": {
+          "schemaVersion": "provenance-v1",
+          "sourceDataset": "RUNTIME",
+          "sourceRecordId": "qry-460555e8fc44b2b115bb455c25d0010f",
+          "snapshot": "2026-10-03",
+          "runId": "run-80e436dea5587ed42c03f98d66a05bb2",
+          "policyVersion": null,
+          "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+        }
+      },
+      {
+        "schemaVersion": "answer-claim-v1",
+        "claimId": "claim-5",
+        "text": "Rajkumar Buyya has a cross-community degree of 362, connecting to researchers across 184 communities.",
+        "evidenceIds": [
+          "ev-6f7925e0193b944e31b5c50bdc18b53c"
+        ],
+        "verificationStatus": "VERIFIED",
+        "uncertainty": null,
+        "provenance": {
+          "schemaVersion": "provenance-v1",
+          "sourceDataset": "RUNTIME",
+          "sourceRecordId": "qry-460555e8fc44b2b115bb455c25d0010f",
+          "snapshot": "2026-10-03",
+          "runId": "run-80e436dea5587ed42c03f98d66a05bb2",
+          "policyVersion": null,
+          "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+        }
+      }
+    ],
+    "abstained": false,
+    "uncertainty": "Rajkumar Buyya was linked to scr:canon-v1.er-v2:bede83f65bedfab8f7fc802f295ee293 by dominant-name-v1: 0.9645 of 310 works among 11 researchers with this display name. Whether Rajkumar Buyya is in the largest component of all-years is not stored in this version. No topic was named. Rajkumar Buyya was linked to scr:canon-v1.er-v2:bede83f65bedfab8f7fc802f295ee293 by dominant-name-v1: 0.9645 of 310 works among 11 researchers with this display name. Whether Rajkumar Buyya is in the largest component of all-years is not stored in this version. No topic was named in the graph evidence; topic characterization comes from semantic context only.",
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "RUNTIME",
+      "sourceRecordId": "qry-460555e8fc44b2b115bb455c25d0010f",
+      "snapshot": "2026-10-03",
+      "runId": "run-80e436dea5587ed42c03f98d66a05bb2",
+      "policyVersion": "fusion-v1",
+      "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+    }
+  },
+  "plan": {
+    "schemaVersion": "rag-query-plan-v1",
+    "queryId": "qry-460555e8fc44b2b115bb455c25d0010f",
+    "operations": [
+      {
+        "operation": "COMPONENT_LOOKUP",
+        "scope": "RESEARCHER",
+        "researchers": [
+          0
+        ],
+        "metric": null,
+        "topN": null
+      },
+      {
+        "operation": "TOPIC_FILTER",
+        "scope": "CORPUS",
+        "researchers": [],
+        "metric": null,
+        "topN": null
+      }
+    ],
+    "researcherNames": [
+      {
+        "name": "Rajkumar Buyya",
+        "offset": 67
+      }
+    ],
+    "metrics": [],
+    "window": {
+      "requested": {
+        "kind": "DEFAULT",
+        "name": null,
+        "yearFrom": null,
+        "yearTo": null
+      },
+      "window": "all-years",
+      "startYear": 2000,
+      "endYear": 2026,
+      "exact": true,
+      "note": null
+    },
+    "comparison": null,
+    "topics": [],
+    "venues": [],
+    "institutions": [],
+    "semanticIndexes": [
+      "researcher-profile-v1"
+    ],
+    "limits": {
+      "graphLimit": 100,
+      "vectorLimit": 50,
+      "maxPathDepth": 6,
+      "topK": 5
+    },
+    "source": "MODEL",
+    "overriddenFields": [],
+    "rejectedItems": [],
+    "promptVersion": "planner-v2",
+    "modelId": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "RUNTIME",
+      "sourceRecordId": "qry-460555e8fc44b2b115bb455c25d0010f",
+      "snapshot": "2026-10-03",
+      "runId": "run-80e436dea5587ed42c03f98d66a05bb2",
+      "policyVersion": null,
+      "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+    }
+  },
+  "resolutions": [
+    {
+      "schemaVersion": "researcher-resolution-v1",
+      "name": "Rajkumar Buyya",
+      "nameKey": "name-v1:rajkumar buyya",
+      "policyVersion": "dominant-name-v1",
+      "dominantShare": 0.9,
+      "minWorks": 5,
+      "decision": "RESOLVED_DOMINANT",
+      "researcherId": "scr:canon-v1.er-v2:bede83f65bedfab8f7fc802f295ee293",
+      "topShare": 0.964516129032258,
+      "totalWorks": 310,
+      "candidateCount": 11,
+      "candidates": [
+        {
+          "researcherId": "scr:canon-v1.er-v2:bede83f65bedfab8f7fc802f295ee293",
+          "displayName": "Rajkumar Buyya",
+          "matchedName": "Rajkumar Buyya",
+          "works": 299,
+          "share": 0.964516129032258,
+          "identityConfidence": 0.9300527553067827,
+          "mentionCount": 879,
+          "dblpAnchored": true,
+          "orcid": "0000-0001-9754-6496",
+          "institutions": [
+            {
+              "id": "ringgold:2281",
+              "name": "University of Melbourne",
+              "count": null
+            },
+            {
+              "id": "ror:01ej9dk98",
+              "name": "The University of Melbourne",
+              "count": null
+            },
+            {
+              "id": "ror:02bfwt286",
+              "name": "Monash University",
+              "count": null
+            }
+          ],
+          "topCoauthors": [
+            {
+              "id": "scr:canon-v1.er-v2:02db5d5eec978cfa13cb84323e03a65b",
+              "name": "Rajiv Ranjan 0001",
+              "count": 20
+            },
+            {
+              "id": "scr:canon-v1.er-v2:d14eeb7426138e1c728aad8ea3c8bc5c",
+              "name": "Rodrigo N. Calheiros",
+              "count": 20
+            },
+            {
+              "id": "scr:canon-v1.er-v2:de7dcf5224032c505f1a112beb2f1981",
+              "name": "Dawei Sun 0001",
+              "count": 17
+            }
+          ],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:123e4fdbece2f6388afe5ef635ec566c",
+          "displayName": "Rajkumar Buyya",
+          "matchedName": "Rajkumar Buyya",
+          "works": 2,
+          "share": 0.0064516129032258064,
+          "identityConfidence": 0.9999988200059715,
+          "mentionCount": 2,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [
+            {
+              "id": "scr:canon-v1.er-v2:167be8717578bcfc33014b7c1e447720",
+              "name": "Péter Kacsuk",
+              "count": 2
+            }
+          ],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:2f2b6a3387b537f49717ba2bc2a72db0",
+          "displayName": "Rajkumar Buyya",
+          "matchedName": "Rajkumar Buyya",
+          "works": 1,
+          "share": 0.0032258064516129032,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:3463e9be3a35b8da6a8f341f3dfa8468",
+          "displayName": "Rajkumar Buyya",
+          "matchedName": "Rajkumar Buyya",
+          "works": 1,
+          "share": 0.0032258064516129032,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:9c7b5af5238d4821facb51bf2f75c124",
+          "displayName": "Rajkumar Buyya",
+          "matchedName": "Rajkumar Buyya",
+          "works": 1,
+          "share": 0.0032258064516129032,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [
+            {
+              "id": "scr:canon-v1.er-v2:da7a6916df57fc4bd3087689e66efc5e",
+              "name": "Sudharshan Vazhkudai",
+              "count": 1
+            }
+          ],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:bace0d3ca66609da3793424d42984219",
+          "displayName": "Rajkumar Buyya",
+          "matchedName": "Rajkumar Buyya",
+          "works": 1,
+          "share": 0.0032258064516129032,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [
+            {
+              "id": "scr:canon-v1.er-v2:18457396eee0baeaf80bff3a1bb9c3fe",
+              "name": "Alexander Barmouta",
+              "count": 1
+            }
+          ],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:d2e36ddc9afb3ddad2d25626ed0fcebb",
+          "displayName": "Rajkumar Buyya",
+          "matchedName": "Rajkumar Buyya",
+          "works": 1,
+          "share": 0.0032258064516129032,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:e7b1825e4fc396bd00ed93b3b8b0bfa5",
+          "displayName": "Rajkumar Buyya",
+          "matchedName": "Rajkumar Buyya",
+          "works": 1,
+          "share": 0.0032258064516129032,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:eecdf880a6608a86ee0ef862a2536578",
+          "displayName": "Rajkumar Buyya",
+          "matchedName": "Rajkumar Buyya",
+          "works": 1,
+          "share": 0.0032258064516129032,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": false,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:effd8a455ffa53b4333c2fe22179bacd",
+          "displayName": "Rajkumar Buyya",
+          "matchedName": "Rajkumar Buyya",
+          "works": 1,
+          "share": 0.0032258064516129032,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": false,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:f089948daf7e10d05a0f02c3150c008d",
+          "displayName": "Rajkumar Buyya",
+          "matchedName": "Rajkumar Buyya",
+          "works": 1,
+          "share": 0.0032258064516129032,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": false,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        }
+      ],
+      "otherNameMatches": [],
+      "truncated": false,
+      "evidenceId": "ev-436bf9ecc38d5b21aa16fa7b8b3a97ed"
+    }
+  ],
+  "verification": {
+    "schemaVersion": "claim-verification-v1",
+    "queryId": "qry-460555e8fc44b2b115bb455c25d0010f",
+    "checks": [
+      {
+        "claimId": "claim-1",
+        "status": "CONFLICTING",
+        "checks": [
+          {
+            "rule": "evidence-exists",
+            "outcome": "PASS",
+            "detail": "all cited items are in the bundle"
+          },
+          {
+            "rule": "graph-evidence-required",
+            "outcome": "PASS",
+            "detail": "1 graph item(s) cited"
+          },
+          {
+            "rule": "kind-matches-type",
+            "outcome": "PASS",
+            "detail": "IDENTITY needs IDENTITY_RESOLUTION"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "CONFLICT",
+            "detail": "dominantShare: the claim says 0.964516129032258, the evidence says 0.9"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "identityConfidence"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "totalWorks"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "works"
+          },
+          {
+            "rule": "numbers-in-text",
+            "outcome": "FAIL",
+            "detail": "96.5 is not an asserted fact of a cited item"
+          },
+          {
+            "rule": "identity",
+            "outcome": "PASS",
+            "detail": "every subject and name is resolved or cited"
+          }
+        ],
+        "action": "REMOVED"
+      },
+      {
+        "claimId": "claim-2",
+        "status": "VERIFIED",
+        "checks": [
+          {
+            "rule": "evidence-exists",
+            "outcome": "PASS",
+            "detail": "all cited items are in the bundle"
+          },
+          {
+            "rule": "graph-evidence-required",
+            "outcome": "PASS",
+            "detail": "1 graph item(s) cited"
+          },
+          {
+            "rule": "kind-matches-type",
+            "outcome": "PASS",
+            "detail": "METRIC_VALUE needs METRIC_RECORD or RANKING_RECORD or TEMPORAL_CHANGE"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "distinctCoauthorCount"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "publicationCount"
+          },
+          {
+            "rule": "numbers-in-text",
+            "outcome": "PASS",
+            "detail": "every number is an asserted, named fact"
+          },
+          {
+            "rule": "window",
+            "outcome": "PASS",
+            "detail": "all-years"
+          },
+          {
+            "rule": "identity",
+            "outcome": "PASS",
+            "detail": "every subject and name is resolved or cited"
+          }
+        ],
+        "action": "KEPT"
+      },
+      {
+        "claimId": "claim-3",
+        "status": "UNSUPPORTED",
+        "checks": [
+          {
+            "rule": "evidence-exists",
+            "outcome": "PASS",
+            "detail": "all cited items are in the bundle"
+          },
+          {
+            "rule": "graph-evidence-required",
+            "outcome": "PASS",
+            "detail": "1 graph item(s) cited"
+          },
+          {
+            "rule": "kind-matches-type",
+            "outcome": "PASS",
+            "detail": "METRIC_VALUE needs METRIC_RECORD or RANKING_RECORD or TEMPORAL_CHANGE"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "averageCoauthorsPerPaper"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "weightedDegree"
+          },
+          {
+            "rule": "numbers-in-text",
+            "outcome": "FAIL",
+            "detail": "798 is not written next to the name of weightedDegree; 2.72 is not written next to the name of averageCoauthorsPerPaper"
+          },
+          {
+            "rule": "window",
+            "outcome": "PASS",
+            "detail": "all-years"
+          },
+          {
+            "rule": "identity",
+            "outcome": "PASS",
+            "detail": "every subject and name is resolved or cited"
+          }
+        ],
+        "action": "REMOVED"
+      },
+      {
+        "claimId": "claim-4",
+        "status": "VERIFIED",
+        "checks": [
+          {
+            "rule": "evidence-exists",
+            "outcome": "PASS",
+            "detail": "all cited items are in the bundle"
+          },
+          {
+            "rule": "graph-evidence-required",
+            "outcome": "PASS",
+            "detail": "1 graph item(s) cited"
+          },
+          {
+            "rule": "kind-matches-type",
+            "outcome": "PASS",
+            "detail": "COMMUNITY needs COMMUNITY_RECORD or METRIC_RECORD"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "communitiesConnected"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "communitySize"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "participationCoefficient"
+          },
+          {
+            "rule": "numbers-in-text",
+            "outcome": "PASS",
+            "detail": "every number is an asserted, named fact"
+          },
+          {
+            "rule": "window",
+            "outcome": "PASS",
+            "detail": "all-years"
+          },
+          {
+            "rule": "identity",
+            "outcome": "PASS",
+            "detail": "every subject and name is resolved or cited"
+          }
+        ],
+        "action": "KEPT"
+      },
+      {
+        "claimId": "claim-5",
+        "status": "VERIFIED",
+        "checks": [
+          {
+            "rule": "evidence-exists",
+            "outcome": "PASS",
+            "detail": "all cited items are in the bundle"
+          },
+          {
+            "rule": "graph-evidence-required",
+            "outcome": "PASS",
+            "detail": "1 graph item(s) cited"
+          },
+          {
+            "rule": "kind-matches-type",
+            "outcome": "PASS",
+            "detail": "BRIDGE needs METRIC_RECORD or RANKING_RECORD"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "communitiesConnected"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "crossCommunityDegree"
+          },
+          {
+            "rule": "numbers-in-text",
+            "outcome": "PASS",
+            "detail": "every number is an asserted, named fact"
+          },
+          {
+            "rule": "window",
+            "outcome": "PASS",
+            "detail": "all-years"
+          },
+          {
+            "rule": "identity",
+            "outcome": "PASS",
+            "detail": "every subject and name is resolved or cited"
+          }
+        ],
+        "action": "KEPT"
+      },
+      {
+        "claimId": "claim-6",
+        "status": "UNSUPPORTED",
+        "checks": [
+          {
+            "rule": "evidence-exists",
+            "outcome": "PASS",
+            "detail": "all cited items are in the bundle"
+          },
+          {
+            "rule": "identity",
+            "outcome": "FAIL",
+            "detail": "names 'Cloud Computing' (not a researcher, title, venue, topic, or institution of the evidence), 'Resource Management' (not a researcher, title, venue, topic, or institution of the evidence), 'Parallel Computing Systems' (not a researcher, title, venue, topic, or institution of the evidence)"
+          },
+          {
+            "rule": "context-only",
+            "outcome": "FAIL",
+            "detail": "semantic context may name at most one researcher and state no count, relationship, path, component, community, or bridge measure"
+          }
+        ],
+        "action": "REMOVED"
+      }
+    ],
+    "counts": {
+      "verified": 3,
+      "partiallySupported": 0,
+      "unsupported": 2,
+      "conflicting": 1
+    }
+  },
+  "abstention": null,
+  "answerHash": "sha256:b2e4b0f92e9ae7e4cf9745b34d33d5f185bd808541708e5cd0117d5f7effe807"
+}

@@ -1,0 +1,83 @@
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] running scholarchain.rag.cli.BenchmarkCli --questions experiments/benchmark/benchmark-questions-v1.csv --path-evidence scratch/stores/work/neptune-check/snapshot=2026-10-03/run=run-ee4ffd21aa20dbe4c078a4be96fe8c9f/expect-benchmark.csv --graph scratch/stores/s3/graph/neptune/snapshot=2026-10-03/run=run-1d6a86491812ff94887270c1ab885e69 --items scratch/stores/s3/curated/dynamodb/snapshot=2026-10-03/run=run-1d6a86491812ff94887270c1ab885e69 --objects scratch/stores/s3 --vectors scratch/stores-live/s3vectors --out scratch/runtime --live --profile scholarchain-sdk --region us-east-2 --per-minute 8 --max 30
+runtime run run-80e436dea5587ed42c03f98d66a05bb2 (live mode), snapshot 2026-10-03
+graph loaded: 511920 vertices, 3123311 edges in 31109 ms; heap in use 3771 MiB
+items indexed: 876228 in 12180 ms; heap in use 3913 MiB
+LIVE: Bedrock us.anthropic.claude-haiku-4-5-20251001-v1:0 (at most 8 requests per minute) and amazon.titan-embed-text-v2:0 in us-east-2, profile scholarchain-sdk
+SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+SLF4J: Defaulting to no-operation (NOP) logger implementation
+SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+benchmark run run-2f7b6b9ce82a37c0a80d892dc09422f8: 30 questions, 2 already done, answering 28 now
+B03 abstained NO_VERIFIED_CLAIM; 0 verified; graph 2 reads, 1 items; semantic 5 hits; llm 2 attempts 2 requests; 10122 ms; FAIL abstention
+B04 abstained NO_VERIFIED_CLAIM; 0 verified; graph 2 reads, 1 items; semantic 5 hits; llm 2 attempts 2 requests; 15672 ms; FAIL abstention
+B05 answered; 1 verified; graph 15 reads, 3 items; semantic 1 hits; llm 2 attempts 2 requests; 15027 ms; checks pass
+B06 answered; 3 verified; graph 22 reads, 3 items; semantic 2 hits; llm 2 attempts 2 requests; 15875 ms; checks pass
+B07 answered; 3 verified; graph 33 reads, 28 items; semantic 3 hits; llm 2 attempts 2 requests; 14885 ms; checks pass
+B08 answered; 2 verified; graph 25 reads, 8 items; semantic 3 hits; llm 2 attempts 2 requests; 13474 ms; checks pass
+B09 abstained AMBIGUOUS_RESEARCHER; 0 verified; graph 572 reads, 0 items; semantic 0 hits; llm 1 attempts 1 requests; 6189 ms; checks pass
+B10 answered; 1 verified; graph 35 reads, 13 items; semantic 3 hits; llm 2 attempts 2 requests; 19251 ms; checks pass
+B11 answered; 1 verified; graph 28 reads, 37 items; semantic 3 hits; llm 2 attempts 2 requests; 14998 ms; checks pass
+B12 abstained UNKNOWN_RESEARCHER; 0 verified; graph 21 reads, 0 items; semantic 0 hits; llm 1 attempts 1 requests; 3096 ms; checks pass
+B13 abstained UNSUPPORTED_REQUEST; 0 verified; graph 0 reads, 0 items; semantic 0 hits; llm 1 attempts 1 requests; 7460 ms; FAIL abstention
+B14 answered; 3 verified; graph 17 reads, 4 items; semantic 1 hits; llm 2 attempts 2 requests; 17999 ms; checks pass
+B15 abstained NO_VERIFIED_CLAIM; 0 verified; graph 2 reads, 1 items; semantic 5 hits; llm 2 attempts 2 requests; 13219 ms; FAIL plan-operations,abstention
+B16 answered; 2 verified; graph 25 reads, 4 items; semantic 1 hits; llm 3 attempts 3 requests; 28723 ms; checks pass
+B17 abstained UNSUPPORTED_REQUEST; 0 verified; graph 0 reads, 0 items; semantic 0 hits; llm 1 attempts 1 requests; 1827 ms; FAIL abstention
+B18 answered; 3 verified; graph 18 reads, 3 items; semantic 1 hits; llm 3 attempts 3 requests; 27719 ms; FAIL plan-operations
+B19 abstained NO_VERIFIED_CLAIM; 0 verified; graph 2 reads, 1 items; semantic 5 hits; llm 2 attempts 2 requests; 17202 ms; FAIL abstention
+B20 answered; 3 verified; graph 14 reads, 2 items; semantic 1 hits; llm 2 attempts 2 requests; 11346 ms; checks pass
+B21 abstained NO_VERIFIED_CLAIM; 0 verified; graph 2 reads, 1 items; semantic 5 hits; llm 2 attempts 2 requests; 19732 ms; FAIL abstention
+B22 answered; 3 verified; graph 22 reads, 3 items; semantic 1 hits; llm 2 attempts 2 requests; 11760 ms; checks pass
+B23 abstained BUDGET_EXHAUSTED; 0 verified; graph 18 reads, 4 items; semantic 1 hits; llm 3 attempts 3 requests; 23283 ms; FAIL plan-operations,abstention
+B24 abstained UNSUPPORTED_REQUEST; 0 verified; graph 0 reads, 0 items; semantic 0 hits; llm 1 attempts 1 requests; 3666 ms; FAIL plan-operations,abstention
+B25 answered; 1 verified; graph 22 reads, 3 items; semantic 1 hits; llm 2 attempts 2 requests; 17849 ms; checks pass
+B26 abstained BUDGET_EXHAUSTED; 0 verified; graph 6 reads, 2 items; semantic 5 hits; llm 3 attempts 3 requests; 28701 ms; FAIL abstention
+B27 answered; 1 verified; graph 16 reads, 3 items; semantic 1 hits; llm 3 attempts 3 requests; 18375 ms; checks pass
+B28 abstained UNSUPPORTED_REQUEST; 0 verified; graph 8 reads, 0 items; semantic 0 hits; llm 1 attempts 1 requests; 5288 ms; checks pass
+B29 abstained BUDGET_EXHAUSTED; 0 verified; graph 34 reads, 29 items; semantic 3 hits; llm 3 attempts 3 requests; 32759 ms; FAIL abstention,path-hops
+B30 abstained NO_VERIFIED_CLAIM; 0 verified; graph 28 reads, 37 items; semantic 3 hits; llm 3 attempts 3 requests; 27521 ms; FAIL abstention,path-hops
+done 30 of 30 (live mode)
+  check abstention: 18 pass, 12 fail, 0 n/a
+  check bundle-budget: 24 pass, 0 fail, 6 n/a
+  check claim-evidence: 15 pass, 0 fail, 15 n/a
+  check deadline: 30 pass, 0 fail, 0 n/a
+  check embedding-budget: 30 pass, 0 fail, 0 n/a
+  check llm-budget: 30 pass, 0 fail, 0 n/a
+  check pair-edges: 6 pass, 0 fail, 24 n/a
+  check path-hops: 2 pass, 2 fail, 26 n/a
+  check plan-operations: 26 pass, 4 fail, 0 n/a
+  check researcher-names: 30 pass, 0 fail, 0 n/a
+  check resolution: 21 pass, 0 fail, 9 n/a
+  check verification: 30 pass, 0 fail, 0 n/a
+  FAIL B03 abstention: expected answer, got abstain (NO_VERIFIED_CLAIM)
+  FAIL B04 abstention: expected answer, got abstain (NO_VERIFIED_CLAIM)
+  FAIL B13 abstention: expected answer, got abstain (UNSUPPORTED_REQUEST)
+  FAIL B15 plan-operations: needs COMPONENT_LOOKUP; plan [RESEARCHER_RANKING/CORPUS]
+  FAIL B15 abstention: expected answer, got abstain (NO_VERIFIED_CLAIM)
+  FAIL B17 abstention: expected answer, got abstain (UNSUPPORTED_REQUEST)
+  FAIL B18 plan-operations: needs COMMUNITY_COMPARISON; plan [COMPONENT_LOOKUP/RESEARCHER, TOPIC_FILTER/CORPUS]
+  FAIL B19 abstention: expected answer, got abstain (NO_VERIFIED_CLAIM)
+  FAIL B21 abstention: expected answer, got abstain (NO_VERIFIED_CLAIM)
+  FAIL B23 plan-operations: needs TEMPORAL_COMPARISON; plan [COMMUNITY_COMPARISON/RESEARCHER]
+  FAIL B23 abstention: expected answer, got abstain (BUDGET_EXHAUSTED)
+  FAIL B24 plan-operations: needs TEMPORAL_COMPARISON; plan [COMPONENT_LOOKUP/CORPUS]
+  FAIL B24 abstention: expected answer, got abstain (UNSUPPORTED_REQUEST)
+  FAIL B26 abstention: expected answer, got abstain (BUDGET_EXHAUSTED)
+  FAIL B29 abstention: expected answer, got abstain (BUDGET_EXHAUSTED)
+  FAIL B29 path-hops: scr:canon-v1.er-v2:6de4012bbe8608f1d49d18cf9a40a763-scr:canon-v1.er-v2:da6e3bdff14745638f3f5425f0133388: runtime FOUND 1 hops, stored 1 hops, same researchers; no claim cites the path
+  FAIL B30 abstention: expected answer, got abstain (NO_VERIFIED_CLAIM)
+  FAIL B30 path-hops: scr:canon-v1.er-v2:8c41e7402418b6a74ad89d1b987f6f44-scr:canon-v1.er-v2:410e0336ad1b7732771b1c91b8be2bed: runtime FOUND 3 hops, stored 3 hops, same researchers; no claim cites the path
+plan sources: MODEL 30; outcomes: AMBIGUOUS_RESEARCHER 1, ANSWERED 15, BUDGET_EXHAUSTED 3, NO_VERIFIED_CLAIM 6, UNKNOWN_RESEARCHER 1, UNSUPPORTED_REQUEST 4
+resolutions: AMBIGUOUS 2, RESOLVED_DOMINANT 26, UNKNOWN_RESEARCHER 1
+verification: 30 verified, 0 partial, 40 unsupported, 3 conflicting; 30 final claims
+graph retrieval: 1025 reads in 27 questions, 3727 rows, 178 truncated, 195 evidence items, 34273 tokens; paths FOUND 4; p50 3 ms, p95 252 ms, max 495 ms
+semantic retrieval: 24 embedding calls in 24 questions, 61 hits in 24 questions, 24041 tokens; indexes collaboration-community-v1 2, collaboration-path-v1 4, paper-abstract-v1 4, researcher-profile-v1 18, topic-institution-summary-v1 6; p50 183 ms, p95 1700 ms, max 2180 ms
+llm: 61 attempts, 61 requests (ANSWER_SYNTHESIS 30, QUERY_PLANNING 31), outcomes INVALID_OUTPUT 10, OK 51, tokens in 233241 out 40466, throttle wait 251157 ms
+question latency: p50 14998 ms, p95 28723 ms, max 32759 ms, total 467929 ms
+summary: scratch/runtime/s3/reports/rag-benchmark/snapshot=2026-10-03/run=run-2f7b6b9ce82a37c0a80d892dc09422f8/summary-030.json
+[success] Total time: 490 s (0:08:10.0), completed Nov 11, 2026, 9:47:32 PM

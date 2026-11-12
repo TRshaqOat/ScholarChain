@@ -1,0 +1,34 @@
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] compiling 3 Scala sources to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/rag/target/scala-3.3.7/classes ...
+[info] done compiling
+[info] compiling 1 Scala source to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/rag/target/scala-3.3.7/classes ...
+[info] done compiling
+[info] compiling 2 Scala sources to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/rag/target/scala-3.3.7/test-classes ...
+[error] -- [E171] Type Error: /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/rag/src/test/scala/scholarchain/rag/runtime/VerifierSpec.scala:385:16 
+[error] 385 |      assert(say("They have three joint publications.").summary == edgeClaim.text)
+[error]     |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[error]     |missing argument for parameter v2 of method apply in trait Function2: (v1: String, v2: Vector[String]): scholarchain.rag.runtime.Verifier.Result
+[error] -- [E171] Type Error: /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/rag/src/test/scala/scholarchain/rag/runtime/VerifierSpec.scala:386:16 
+[error] 386 |      assert(say("They have two joint publications.").summary == "They have two joint publications.")
+[error]     |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[error]     |missing argument for parameter v2 of method apply in trait Function2: (v1: String, v2: Vector[String]): scholarchain.rag.runtime.Verifier.Result
+[error] -- [E171] Type Error: /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/rag/src/test/scala/scholarchain/rag/runtime/VerifierSpec.scala:462:16 
+[error] 462 |      assert(say("Grace Hopper and Edsger Dijkstra have 1 joint publication.").summary.startsWith("Grace"))
+[error]     |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[error]     |missing argument for parameter v2 of method apply in trait Function2: (v1: String, v2: Vector[String]): scholarchain.rag.runtime.Verifier.Result
+[error] -- [E171] Type Error: /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/rag/src/test/scala/scholarchain/rag/runtime/VerifierSpec.scala:463:16 
+[error] 463 |      assert(say("Ada Lovelace and Grace Hopper have 1 joint publication.").summary == right.text)
+[error]     |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[error]     |missing argument for parameter v2 of method apply in trait Function2: (v1: String, v2: Vector[String]): scholarchain.rag.runtime.Verifier.Result
+[error] -- [E171] Type Error: /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/rag/src/test/scala/scholarchain/rag/runtime/VerifierSpec.scala:486:16 
+[error] 486 |      assert(say("Ada Lovelace and Edsger Dijkstra have 2 joint publications.").summary == edgeClaim.text)
+[error]     |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[error]     |missing argument for parameter v2 of method apply in trait Function2: (v1: String, v2: Vector[String]): scholarchain.rag.runtime.Verifier.Result
+[error] 5 errors found
+[error] (rag / Test / compileIncremental) Compilation failed
+[error] Total time: 4 s, completed Nov 11, 2026, 8:07:50 PM

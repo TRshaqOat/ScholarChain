@@ -1,0 +1,231 @@
+{
+  "schemaVersion": "rag-audit-v2",
+  "queryId": "qry-294ef9c8d1b5df4fa70e37b92cee634f",
+  "sessionId": null,
+  "runId": "run-80e436dea5587ed42c03f98d66a05bb2",
+  "createdAt": "2026-11-12T03:44:23.771088Z",
+  "mode": "LIVE",
+  "questionHash": "sha256:d839ccc588ee8298a8502e4551da9f7dc2c97d7c82e7d5163f59806ff1afc523",
+  "questionChars": 70,
+  "plan": {
+    "schemaVersion": "rag-query-plan-v1",
+    "queryId": "qry-294ef9c8d1b5df4fa70e37b92cee634f",
+    "operations": [
+      {
+        "operation": "RESEARCHER_RANKING",
+        "scope": "CORPUS",
+        "researchers": [],
+        "metric": "CROSS_COMMUNITY_DEGREE",
+        "topN": null
+      }
+    ],
+    "researcherNames": [],
+    "metrics": [],
+    "window": {
+      "requested": {
+        "kind": "NAMED",
+        "name": "2000-2014",
+        "yearFrom": null,
+        "yearTo": null
+      },
+      "window": "2000-2014",
+      "startYear": 2000,
+      "endYear": 2014,
+      "exact": true,
+      "note": null
+    },
+    "comparison": null,
+    "topics": [],
+    "venues": [],
+    "institutions": [],
+    "semanticIndexes": [
+      "topic-institution-summary-v1"
+    ],
+    "limits": {
+      "graphLimit": 100,
+      "vectorLimit": 50,
+      "maxPathDepth": 6,
+      "topK": 5
+    },
+    "source": "MODEL",
+    "overriddenFields": [],
+    "rejectedItems": [],
+    "promptVersion": "planner-v2",
+    "modelId": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "RUNTIME",
+      "sourceRecordId": "qry-294ef9c8d1b5df4fa70e37b92cee634f",
+      "snapshot": "2026-10-03",
+      "runId": "run-80e436dea5587ed42c03f98d66a05bb2",
+      "policyVersion": null,
+      "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+    }
+  },
+  "resolutions": [],
+  "graphEvidenceIds": [
+    "ev-589f45bbff7d672ea15fddfe238869cb"
+  ],
+  "semanticEvidenceIds": [
+    "ev-fe1d1e7ef031ba4646bc3284cabeba13",
+    "ev-8cf19b30a9a065bd69b2811d36a87756",
+    "ev-9e9aab4c7fa93341004ea3e81fc3eb20",
+    "ev-e5ead52d85b4b0394e047a8562ca364b",
+    "ev-041dd1ea179c69f28fbb582fb90561da"
+  ],
+  "metricVersions": [
+    "researcher-ranking-v1@run-1d6a86491812ff94887270c1ab885e69"
+  ],
+  "graphRunId": "run-1d6a86491812ff94887270c1ab885e69",
+  "vectorIndexes": [
+    "topic-institution-summary-v1"
+  ],
+  "embeddingModelVersion": "amazon.titan-embed-text-v2:0|1024|normalized|rendering-v1",
+  "promptVersions": {
+    "planner.schema": "planner-output-v1",
+    "synthesis.schema": "synthesis-output-v2",
+    "synthesis": "synthesis-v2",
+    "planner.schema.sha256": "sha256:3ff40901f3f625204eaaa3ddc525b844c96178ad36629666ebc96f9fe91c1368",
+    "synthesis.schema.sha256": "sha256:2d930e0f580ca9b66e234b91a0c5e75fb27f2bc59e84b005208dbee382ad3c16",
+    "planner.sha256": "sha256:c7354f86ece47e7aa01481f6c893a9721a9f13e3d24716bc73942ef49e81e655",
+    "planner": "planner-v2",
+    "synthesis.sha256": "sha256:1a535dc3d5992d3538b4aa0e13403998d5d1e3235e4c21d3256e0c15dc76f46e"
+  },
+  "modelIds": {
+    "planner": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "synthesis": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "embedding": "amazon.titan-embed-text-v2:0|1024|normalized|rendering-v1"
+  },
+  "llmCalls": [
+    {
+      "stage": "QUERY_PLANNING",
+      "modelId": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+      "promptVersion": "planner-v2",
+      "schemaVersion": "planner-output-v1",
+      "attempt": 1,
+      "outcome": "OK",
+      "requests": 1,
+      "inputTokens": 2521,
+      "outputTokens": 176,
+      "latencyMs": 1126,
+      "throttleWaitMs": 3653,
+      "failure": null
+    },
+    {
+      "stage": "ANSWER_SYNTHESIS",
+      "modelId": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+      "promptVersion": "synthesis-v2",
+      "schemaVersion": "synthesis-output-v2",
+      "attempt": 1,
+      "outcome": "OK",
+      "requests": 1,
+      "inputTokens": 3836,
+      "outputTokens": 1993,
+      "latencyMs": 8563,
+      "throttleWaitMs": 6139,
+      "failure": null
+    }
+  ],
+  "embeddingCalls": [
+    {
+      "index": "topic-institution-summary-v1",
+      "modelVersion": "amazon.titan-embed-text-v2:0|1024|normalized|rendering-v1",
+      "attempt": 1,
+      "outcome": "OK",
+      "inputTokens": null,
+      "latencyMs": 203,
+      "throttleWaitMs": 0
+    }
+  ],
+  "templateCalls": [
+    {
+      "templateId": "kv.ranking",
+      "latencyMs": 5,
+      "resultCount": 1,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.vertices",
+      "latencyMs": 0,
+      "resultCount": 10,
+      "truncated": false
+    }
+  ],
+  "stages": [
+    {
+      "stage": "QUERY_PLANNING",
+      "outcome": "OK",
+      "latencyMs": 4780
+    },
+    {
+      "stage": "RESEARCHER_RESOLUTION",
+      "outcome": "OK",
+      "latencyMs": 0
+    },
+    {
+      "stage": "COLLABORATION_METRICS",
+      "outcome": "OK",
+      "latencyMs": 6
+    },
+    {
+      "stage": "PATH_FINDING",
+      "outcome": "SKIPPED",
+      "latencyMs": 0
+    },
+    {
+      "stage": "COMMUNITY_ANALYSIS",
+      "outcome": "SKIPPED",
+      "latencyMs": 0
+    },
+    {
+      "stage": "SEMANTIC_CONTEXT",
+      "outcome": "OK",
+      "latencyMs": 227
+    },
+    {
+      "stage": "EVIDENCE_BUILDING",
+      "outcome": "OK",
+      "latencyMs": 1
+    },
+    {
+      "stage": "ANSWER_SYNTHESIS",
+      "outcome": "OK",
+      "latencyMs": 14703
+    },
+    {
+      "stage": "CLAIM_VERIFICATION",
+      "outcome": "ABSTAINED",
+      "latencyMs": 7
+    },
+    {
+      "stage": "AUDIT",
+      "outcome": "OK",
+      "latencyMs": 0
+    }
+  ],
+  "budget": {
+    "tokenBudget": 11000,
+    "graphTokens": 603,
+    "semanticTokens": 1261,
+    "omittedGraphItems": 0,
+    "omittedSemanticItems": 0
+  },
+  "verification": {
+    "verified": 0,
+    "partiallySupported": 0,
+    "unsupported": 10,
+    "conflicting": 0
+  },
+  "abstained": true,
+  "abstentionReason": "NO_VERIFIED_CLAIM",
+  "answerHash": "sha256:5ae99430999d0e24f36200ade9cc1290d9b62d8842b03d03b2ed442852595a0d",
+  "provenance": {
+    "schemaVersion": "provenance-v1",
+    "sourceDataset": "RUNTIME",
+    "sourceRecordId": "qry-294ef9c8d1b5df4fa70e37b92cee634f",
+    "snapshot": "2026-10-03",
+    "runId": "run-80e436dea5587ed42c03f98d66a05bb2",
+    "policyVersion": "fusion-v1",
+    "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+  }
+}

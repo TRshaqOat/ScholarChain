@@ -55,7 +55,11 @@ class AdjudicationSpec extends AnyFunSuite:
   test("schema validation rejects every malformed, fabricated, or out-of-schema reply") {
     val bad = Seq(
       "not json",
-      "```json\n" + reply() + "\n```",
+      "Here is my decision:\n" + reply(), // prose before the object
+      reply() + "\nI accepted because the names match.", // prose after it
+      "```json\n" + reply() + "\n```\nDone.", // prose after a fence
+      "```json\n" + reply() + "\n" + reply() + "\n```", // two objects in a fence
+      "```json\n" + reply(), // unclosed fence
       "[1,2]",
       reply(targetId = "dblp:conf/a/B9#1"), // fabricated identifier
       reply(sourceId = "orcid:0000-0002-1825-0097"),
@@ -71,6 +75,9 @@ class AdjudicationSpec extends AnyFunSuite:
     )
     bad.foreach(r => assert(AdjudicationPrompt.validate(req, r).isLeft, r))
     assert(AdjudicationPrompt.validate(req, "  " + reply() + "\n").isRight)
+    // repair-01 part C: one enclosing Markdown fence, the shape Claude models often add, is allowed
+    assert(AdjudicationPrompt.validate(req, "```json\n" + reply() + "\n```").isRight)
+    assert(AdjudicationPrompt.validate(req, "\n```\n" + reply() + "\n```\n").isRight)
     assert(
       AdjudicationPrompt
         .validate(
@@ -101,7 +108,7 @@ class AdjudicationSpec extends AnyFunSuite:
     assert(a.decision == LlmDecision.REJECT && c.calls.size == 2)
     val twice = FakeClient("{oops", "still not json")
     val b = adjudicator(twice).adjudicate(req).get
-    assert(b.decision == LlmDecision.ABSTAIN && b.failure.contains("malformed JSON"))
+    assert(b.decision == LlmDecision.ABSTAIN && b.failure.exists(_.startsWith("malformed JSON")))
   }
 
   test("the model may abstain, and abstention keeps the pair UNRESOLVED") {

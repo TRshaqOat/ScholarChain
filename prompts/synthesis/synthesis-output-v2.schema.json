@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "synthesis-output-v2",
+  "title": "ScholarChain answer synthesis output (modules/rag/RUNTIME.md section 11); v2: every claim but DESCRIPTIVE has a non-empty values map (Phase 9 ruling 17)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "summary", "claims", "uncertainty"],
+  "properties": {
+    "schemaVersion": {"const": "synthesis-output-v2"},
+    "summary": {"type": "string", "maxLength": 4000},
+    "claims": {
+      "type": "array",
+      "maxItems": 100,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["claimId", "kind", "text", "evidenceIds", "subjectIds", "window", "values"],
+        "properties": {
+          "claimId": {"type": "string", "maxLength": 20},
+          "kind": {"enum": ["IDENTITY", "METRIC_VALUE", "RANKING", "COAUTHORSHIP", "PATH", "PATH_HOP", "COMPONENT", "COMMUNITY", "BRIDGE", "TEMPORAL_CHANGE", "PUBLICATION", "FACET", "DESCRIPTIVE"]},
+          "text": {"type": "string", "minLength": 1, "maxLength": 2000},
+          "evidenceIds": {"type": "array", "minItems": 1, "maxItems": 100, "items": {"type": "string", "maxLength": 40}},
+          "subjectIds": {"type": "array", "maxItems": 50, "items": {"type": "string", "maxLength": 200}},
+          "window": {"type": ["string", "null"], "maxLength": 100},
+          "values": {"type": "object", "additionalProperties": {"type": "string", "maxLength": 2000}}
+        },
+        "if": {"properties": {"kind": {"enum": ["IDENTITY", "METRIC_VALUE", "RANKING", "COAUTHORSHIP", "PATH", "PATH_HOP", "COMPONENT", "COMMUNITY", "BRIDGE", "TEMPORAL_CHANGE", "PUBLICATION", "FACET"]}}},
+        "then": {"properties": {"values": {"minProperties": 1}}}
+      }
+    },
+    "uncertainty": {"type": "array", "maxItems": 20, "items": {"type": "string", "maxLength": 1000}}
+  }
+}

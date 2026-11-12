@@ -1,0 +1,251 @@
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] compiling 1 Scala source to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/rag/target/scala-3.3.7/classes ...
+[info] done compiling
+[info] compiling 11 Scala sources to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/rag/target/scala-3.3.7/test-classes ...
+[info] done compiling
+[info] HaikuClientSpec:
+[info] - the request body is an Anthropic Messages body with temperature and no top_p
+[info] - the response parser joins text blocks and reads usage; other bodies are refused
+[info] - an expired token is retried once, after the caller's throttle hook
+[info] TemplatesSpec:
+[info] - profile text is frozen for rendering-v1
+[info] - every document type renders; texts are deterministic and independent of key order
+[info] - path statuses, paper, community, and topic wording
+[info] - missing required facts fail; missing optional facts drop their sentence
+[info] - untrusted text is flattened, capped, and kept as data
+[info] SmokeSpec:
+[info] - structural smoke tests pass on the fake store with fake embeddings
+[info] - smoke queries use facts only, and a structural filter returns only matching documents
+[info] - smoke CLI: dry run passes; live needs --profile; unknown model is a usage error
+[info] - semantic context: evidence items, hash check, escaping, budget
+[info] BenchmarkSpec:
+[info] - question CSV: quoted commas and escaped quotes parse; bad rows are refused
+[info] - stored path reference: the stored researcher sequence and hop lookup in either direction
+[info] - fake mode: --max 1 answers one question, a rerun resumes by question ID, and the checks pass *** FAILED ***
+[info]   1 did not equal 0 runtime run run-6a99fcebffb358e1ab3342e446bf4662 (fake mode), snapshot 2026-10-03
+[info]   violations 1
+[info]     EVIDENCE_NOT_AUTHORED 1
+[info]       edges/coauthored-with/part-00000.csv:4 cae-dfab1f20b35d14ccdfe49c424cb76714: 1 missing AUTHORED links, first: scr:canon-v1.er-v2:024dc3f2813867eed841536cdbe73e12 did not author dblp:conf/fx/W28 (BenchmarkSpec.scala:106)
+[info] - a stored path that differs from the runtime path fails path-hops and pair-edges *** FAILED ***
+[info]   1 did not equal 0 runtime run run-6a99fcebffb358e1ab3342e446bf4662 (fake mode), snapshot 2026-10-03
+[info]   violations 1
+[info]     EVIDENCE_NOT_AUTHORED 1
+[info]       edges/coauthored-with/part-00000.csv:4 cae-dfab1f20b35d14ccdfe49c424cb76714: 1 missing AUTHORED links, first: scr:canon-v1.er-v2:024dc3f2813867eed841536cdbe73e12 did not author dblp:conf/fx/W28 (BenchmarkSpec.scala:152)
+[info] - claim-evidence fails a material claim that cites only semantic context or an unknown ID *** FAILED ***
+[info]   java.lang.RuntimeException: Violation(edges/coauthored-with/part-00000.csv,4,EVIDENCE_NOT_AUTHORED,cae-dfab1f20b35d14ccdfe49c424cb76714: 1 missing AUTHORED links, first: scr:canon-v1.er-v2:024dc3f2813867eed841536cdbe73e12 did not author dblp:conf/fx/W28)
+[info]   at scala.sys.package$.error(package.scala:27)
+[info]   at scholarchain.rag.runtime.RuntimeFixtures$World.$init$$$anonfun$8(RuntimeFixtures.scala:379)
+[info]   at scala.util.Either.fold(Either.scala:198)
+[info]   at scholarchain.rag.runtime.RuntimeFixtures$World.<init>(RuntimeFixtures.scala:379)
+[info]   at scholarchain.rag.runtime.RuntimeFixtures$.withWorld(RuntimeFixtures.scala:448)
+[info]   at scholarchain.rag.runtime.BenchmarkSpec.testFun$proxy5$1(BenchmarkSpec.scala:162)
+[info]   at scholarchain.rag.runtime.BenchmarkSpec.$init$$$anonfun$5(BenchmarkSpec.scala:161)
+[info]   at org.scalatest.Transformer.apply$$anonfun$1(Transformer.scala:22)
+[info]   at org.scalatest.OutcomeOf.outcomeOf(OutcomeOf.scala:85)
+[info]   at org.scalatest.OutcomeOf.outcomeOf$(OutcomeOf.scala:31)
+[info]   ...
+[info] - a model that never answers is a call failure (no result is recorded); fake mode is not *** FAILED ***
+[info]   java.lang.RuntimeException: Violation(edges/coauthored-with/part-00000.csv,4,EVIDENCE_NOT_AUTHORED,cae-dfab1f20b35d14ccdfe49c424cb76714: 1 missing AUTHORED links, first: scr:canon-v1.er-v2:024dc3f2813867eed841536cdbe73e12 did not author dblp:conf/fx/W28)
+[info]   at scala.sys.package$.error(package.scala:27)
+[info]   at scholarchain.rag.runtime.RuntimeFixtures$World.$init$$$anonfun$8(RuntimeFixtures.scala:379)
+[info]   at scala.util.Either.fold(Either.scala:198)
+[info]   at scholarchain.rag.runtime.RuntimeFixtures$World.<init>(RuntimeFixtures.scala:379)
+[info]   at scholarchain.rag.runtime.RuntimeFixtures$.withWorld(RuntimeFixtures.scala:448)
+[info]   at scholarchain.rag.runtime.BenchmarkSpec.testFun$proxy6$1(BenchmarkSpec.scala:192)
+[info]   at scholarchain.rag.runtime.BenchmarkSpec.$init$$$anonfun$6(BenchmarkSpec.scala:190)
+[info]   at org.scalatest.Transformer.apply$$anonfun$1(Transformer.scala:22)
+[info]   at org.scalatest.OutcomeOf.outcomeOf(OutcomeOf.scala:85)
+[info]   at org.scalatest.OutcomeOf.outcomeOf$(OutcomeOf.scala:31)
+[info]   ...
+[info] - usage: questions and path evidence are required, --max is at least 1, live needs a profile
+[info] AskCliSpec:
+[info] - fake mode answers one question, writes the audit, answer, records, and a manifest under --out *** FAILED ***
+[info]   1 did not equal 0 runtime run run-6a99fcebffb358e1ab3342e446bf4662 (fake mode), snapshot 2026-10-03
+[info]   violations 1
+[info]     EVIDENCE_NOT_AUTHORED 1
+[info]       edges/coauthored-with/part-00000.csv:4 cae-dfab1f20b35d14ccdfe49c424cb76714: 1 missing AUTHORED links, first: scr:canon-v1.er-v2:024dc3f2813867eed841536cdbe73e12 did not author dblp:conf/fx/W28 (AskCliSpec.scala:54)
+[info] - usage errors: live needs a profile, and the Haiku rate is at most 8 per minute
+[info] RuntimeRecordsSpec:
+[info] - request and planner output round-trip, with absent and present optional fields
+[info] - query plan round-trips and enums are their case names on the wire
+[info] - an unknown enum value fails decoding
+[info] - resolution and every graph-fact record round-trip
+[info] - semantic result, bundle, synthesis output, and verification round-trip
+[info] - answer and audit record round-trip
+[info] - metric attributes cover every core metric, and the ranked ones are the stored rankings
+[info] - schema versions are distinct
+[info] WorkflowSpec:
+[info] - a dominant name resolves with its share; every material claim cites bundle evidence and verifies *** FAILED ***
+[info]   java.lang.RuntimeException: Violation(edges/coauthored-with/part-00000.csv,4,EVIDENCE_NOT_AUTHORED,cae-dfab1f20b35d14ccdfe49c424cb76714: 1 missing AUTHORED links, first: scr:canon-v1.er-v2:024dc3f2813867eed841536cdbe73e12 did not author dblp:conf/fx/W28)
+[info]   at scala.sys.package$.error(package.scala:27)
+[info]   at scholarchain.rag.runtime.RuntimeFixtures$World.$init$$$anonfun$8(RuntimeFixtures.scala:379)
+[info]   at scala.util.Either.fold(Either.scala:198)
+[info]   at scholarchain.rag.runtime.RuntimeFixtures$World.<init>(RuntimeFixtures.scala:379)
+[info]   at scholarchain.rag.runtime.RuntimeFixtures$.withWorld(RuntimeFixtures.scala:448)
+[info]   at scholarchain.rag.runtime.WorkflowSpec.testFun$proxy1$1(WorkflowSpec.scala:31)
+[info]   at scholarchain.rag.runtime.WorkflowSpec.$init$$$anonfun$1(WorkflowSpec.scala:30)
+[info]   at org.scalatest.Transformer.apply$$anonfun$1(Transformer.scala:22)
+[info]   at org.scalatest.OutcomeOf.outcomeOf(OutcomeOf.scala:85)
+[info]   at org.scalatest.OutcomeOf.outcomeOf$(OutcomeOf.scala:31)
+[info]   ...
+[info] - a shortest path: the PATH and PATH_HOP claims equal the path evidence hop by hop *** FAILED ***
+[info]   java.lang.RuntimeException: Violation(edges/coauthored-with/part-00000.csv,4,EVIDENCE_NOT_AUTHORED,cae-dfab1f20b35d14ccdfe49c424cb76714: 1 missing AUTHORED links, first: scr:canon-v1.er-v2:024dc3f2813867eed841536cdbe73e12 did not author dblp:conf/fx/W28)
+[info]   at scala.sys.package$.error(package.scala:27)
+[info]   at scholarchain.rag.runtime.RuntimeFixtures$World.$init$$$anonfun$8(RuntimeFixtures.scala:379)
+[info]   at scala.util.Either.fold(Either.scala:198)
+[info]   at scholarchain.rag.runtime.RuntimeFixtures$World.<init>(RuntimeFixtures.scala:379)
+[info]   at scholarchain.rag.runtime.RuntimeFixtures$.withWorld(RuntimeFixtures.scala:448)
+[info]   at scholarchain.rag.runtime.WorkflowSpec.testFun$proxy2$1(WorkflowSpec.scala:81)
+[info]   at scholarchain.rag.runtime.WorkflowSpec.$init$$$anonfun$2(WorkflowSpec.scala:80)
+[info]   at org.scalatest.Transformer.apply$$anonfun$1(Transformer.scala:22)
+[info]   at org.scalatest.OutcomeOf.outcomeOf(OutcomeOf.scala:85)
+[info]   at org.scalatest.OutcomeOf.outcomeOf$(OutcomeOf.scala:31)
+[info]   ...
+[info] - an ambiguous name abstains with every candidate and makes no synthesis call *** FAILED ***
+[info]   java.lang.RuntimeException: Violation(edges/coauthored-with/part-00000.csv,4,EVIDENCE_NOT_AUTHORED,cae-dfab1f20b35d14ccdfe49c424cb76714: 1 missing AUTHORED links, first: scr:canon-v1.er-v2:024dc3f2813867eed841536cdbe73e12 did not author dblp:conf/fx/W28)
+[info]   at scala.sys.package$.error(package.scala:27)
+[info]   at scholarchain.rag.runtime.RuntimeFixtures$World.$init$$$anonfun$8(RuntimeFixtures.scala:379)
+[info]   at scala.util.Either.fold(Either.scala:198)
+[info]   at scholarchain.rag.runtime.RuntimeFixtures$World.<init>(RuntimeFixtures.scala:379)
+[info]   at scholarchain.rag.runtime.RuntimeFixtures$.withWorld(RuntimeFixtures.scala:448)
+[info]   at scholarchain.rag.runtime.WorkflowSpec.testFun$proxy3$1(WorkflowSpec.scala:145)
+[info]   at scholarchain.rag.runtime.WorkflowSpec.$init$$$anonfun$3(WorkflowSpec.scala:122)
+[info]   at org.scalatest.Transformer.apply$$anonfun$1(Transformer.scala:22)
+[info]   at org.scalatest.OutcomeOf.outcomeOf(OutcomeOf.scala:85)
+[info]   at org.scalatest.OutcomeOf.outcomeOf$(OutcomeOf.scala:31)
+[info]   ...
+[info] - unsupported requests and missing evidence abstain or are stated, never filled in *** FAILED ***
+[info]   java.lang.RuntimeException: Violation(edges/coauthored-with/part-00000.csv,4,EVIDENCE_NOT_AUTHORED,cae-dfab1f20b35d14ccdfe49c424cb76714: 1 missing AUTHORED links, first: scr:canon-v1.er-v2:024dc3f2813867eed841536cdbe73e12 did not author dblp:conf/fx/W28)
+[info]   at scala.sys.package$.error(package.scala:27)
+[info]   at scholarchain.rag.runtime.RuntimeFixtures$World.$init$$$anonfun$8(RuntimeFixtures.scala:379)
+[info]   at scala.util.Either.fold(Either.scala:198)
+[info]   at scholarchain.rag.runtime.RuntimeFixtures$World.<init>(RuntimeFixtures.scala:379)
+[info]   at scholarchain.rag.runtime.RuntimeFixtures$.withWorld(RuntimeFixtures.scala:448)
+[info]   at scholarchain.rag.runtime.WorkflowSpec.testFun$proxy4$1(WorkflowSpec.scala:187)
+[info]   at scholarchain.rag.runtime.WorkflowSpec.$init$$$anonfun$4(WorkflowSpec.scala:186)
+[info]   at org.scalatest.Transformer.apply$$anonfun$1(Transformer.scala:22)
+[info]   at org.scalatest.OutcomeOf.outcomeOf(OutcomeOf.scala:85)
+[info]   at org.scalatest.OutcomeOf.outcomeOf$(OutcomeOf.scala:31)
+[info]   ...
+[info] - verification statuses: VERIFIED kept, PARTIALLY_SUPPORTED labelled, UNSUPPORTED and CONFLICTING removed *** FAILED ***
+[info]   java.lang.RuntimeException: Violation(edges/coauthored-with/part-00000.csv,4,EVIDENCE_NOT_AUTHORED,cae-dfab1f20b35d14ccdfe49c424cb76714: 1 missing AUTHORED links, first: scr:canon-v1.er-v2:024dc3f2813867eed841536cdbe73e12 did not author dblp:conf/fx/W28)
+[info]   at scala.sys.package$.error(package.scala:27)
+[info]   at scholarchain.rag.runtime.RuntimeFixtures$World.$init$$$anonfun$8(RuntimeFixtures.scala:379)
+[info]   at scala.util.Either.fold(Either.scala:198)
+[info]   at scholarchain.rag.runtime.RuntimeFixtures$World.<init>(RuntimeFixtures.scala:379)
+[info]   at scholarchain.rag.runtime.RuntimeFixtures$.withWorld(RuntimeFixtures.scala:448)
+[info]   at scholarchain.rag.runtime.WorkflowSpec.testFun$proxy5$1(WorkflowSpec.scala:210)
+[info]   at scholarchain.rag.runtime.WorkflowSpec.$init$$$anonfun$5(WorkflowSpec.scala:209)
+[info]   at org.scalatest.Transformer.apply$$anonfun$1(Transformer.scala:22)
+[info]   at org.scalatest.OutcomeOf.outcomeOf(OutcomeOf.scala:85)
+[info]   at org.scalatest.OutcomeOf.outcomeOf$(OutcomeOf.scala:31)
+[info]   ...
+[info] - model synthesis: bad claims are removed, and with no verified claim the answer abstains *** FAILED ***
+[info]   java.lang.RuntimeException: Violation(edges/coauthored-with/part-00000.csv,4,EVIDENCE_NOT_AUTHORED,cae-dfab1f20b35d14ccdfe49c424cb76714: 1 missing AUTHORED links, first: scr:canon-v1.er-v2:024dc3f2813867eed841536cdbe73e12 did not author dblp:conf/fx/W28)
+[info]   at scala.sys.package$.error(package.scala:27)
+[info]   at scholarchain.rag.runtime.RuntimeFixtures$World.$init$$$anonfun$8(RuntimeFixtures.scala:379)
+[info]   at scala.util.Either.fold(Either.scala:198)
+[info]   at scholarchain.rag.runtime.RuntimeFixtures$World.<init>(RuntimeFixtures.scala:379)
+[info]   at scholarchain.rag.runtime.RuntimeFixtures$.withWorld(RuntimeFixtures.scala:448)
+[info]   at scholarchain.rag.runtime.WorkflowSpec.run$1(WorkflowSpec.scala:368)
+[info]   at scholarchain.rag.runtime.WorkflowSpec.testFun$proxy6$1(WorkflowSpec.scala:387)
+[info]   at scholarchain.rag.runtime.WorkflowSpec.$init$$$anonfun$6(WorkflowSpec.scala:357)
+[info]   at org.scalatest.Transformer.apply$$anonfun$1(Transformer.scala:22)
+[info]   at org.scalatest.OutcomeOf.outcomeOf(OutcomeOf.scala:85)
+[info]   ...
+[info] - prompt injection in the question, a name, a retrieved document, or a title changes no operation, store call, or claim *** FAILED ***
+[info]   java.lang.RuntimeException: Violation(edges/coauthored-with/part-00000.csv,4,EVIDENCE_NOT_AUTHORED,cae-dfab1f20b35d14ccdfe49c424cb76714: 1 missing AUTHORED links, first: scr:canon-v1.er-v2:024dc3f2813867eed841536cdbe73e12 did not author dblp:conf/fx/W28)
+[info]   at scala.sys.package$.error(package.scala:27)
+[info]   at scholarchain.rag.runtime.RuntimeFixtures$World.$init$$$anonfun$8(RuntimeFixtures.scala:379)
+[info]   at scala.util.Either.fold(Either.scala:198)
+[info]   at scholarchain.rag.runtime.RuntimeFixtures$World.<init>(RuntimeFixtures.scala:379)
+[info]   at scholarchain.rag.runtime.RuntimeFixtures$.withWorld(RuntimeFixtures.scala:448)
+[info]   at scholarchain.rag.runtime.WorkflowSpec.testFun$proxy7$1(WorkflowSpec.scala:406)
+[info]   at scholarchain.rag.runtime.WorkflowSpec.$init$$$anonfun$7(WorkflowSpec.scala:403)
+[info]   at org.scalatest.Transformer.apply$$anonfun$1(Transformer.scala:22)
+[info]   at org.scalatest.OutcomeOf.outcomeOf(OutcomeOf.scala:85)
+[info]   at org.scalatest.OutcomeOf.outcomeOf$(OutcomeOf.scala:31)
+[info]   ...
+[info] - the evidence token budget cuts whole groups, lists the omissions, and cited omitted items fail *** FAILED ***
+[info]   java.lang.RuntimeException: Violation(edges/coauthored-with/part-00000.csv,4,EVIDENCE_NOT_AUTHORED,cae-dfab1f20b35d14ccdfe49c424cb76714: 1 missing AUTHORED links, first: scr:canon-v1.er-v2:024dc3f2813867eed841536cdbe73e12 did not author dblp:conf/fx/W28)
+[info]   at scala.sys.package$.error(package.scala:27)
+[info]   at scholarchain.rag.runtime.RuntimeFixtures$World.$init$$$anonfun$8(RuntimeFixtures.scala:379)
+[info]   at scala.util.Either.fold(Either.scala:198)
+[info]   at scholarchain.rag.runtime.RuntimeFixtures$World.<init>(RuntimeFixtures.scala:379)
+[info]   at scholarchain.rag.runtime.RuntimeFixtures$.withWorld(RuntimeFixtures.scala:448)
+[info]   at scholarchain.rag.runtime.WorkflowSpec.testFun$proxy8$1(WorkflowSpec.scala:464)
+[info]   at scholarchain.rag.runtime.WorkflowSpec.$init$$$anonfun$8(WorkflowSpec.scala:462)
+[info]   at org.scalatest.Transformer.apply$$anonfun$1(Transformer.scala:22)
+[info]   at org.scalatest.OutcomeOf.outcomeOf(OutcomeOf.scala:85)
+[info]   at org.scalatest.OutcomeOf.outcomeOf$(OutcomeOf.scala:31)
+[info]   ...
+[info] - the audit record, QuerySession, and EvidenceBundle items hold the run facts and no question text *** FAILED ***
+[info]   java.lang.RuntimeException: Violation(edges/coauthored-with/part-00000.csv,4,EVIDENCE_NOT_AUTHORED,cae-dfab1f20b35d14ccdfe49c424cb76714: 1 missing AUTHORED links, first: scr:canon-v1.er-v2:024dc3f2813867eed841536cdbe73e12 did not author dblp:conf/fx/W28)
+[info]   at scala.sys.package$.error(package.scala:27)
+[info]   at scholarchain.rag.runtime.RuntimeFixtures$World.$init$$$anonfun$8(RuntimeFixtures.scala:379)
+[info]   at scala.util.Either.fold(Either.scala:198)
+[info]   at scholarchain.rag.runtime.RuntimeFixtures$World.<init>(RuntimeFixtures.scala:379)
+[info]   at scholarchain.rag.runtime.RuntimeFixtures$.withWorld(RuntimeFixtures.scala:448)
+[info]   at scholarchain.rag.runtime.WorkflowSpec.testFun$proxy9$1(WorkflowSpec.scala:512)
+[info]   at scholarchain.rag.runtime.WorkflowSpec.$init$$$anonfun$9(WorkflowSpec.scala:511)
+[info]   at org.scalatest.Transformer.apply$$anonfun$1(Transformer.scala:22)
+[info]   at org.scalatest.OutcomeOf.outcomeOf(OutcomeOf.scala:85)
+[info]   at org.scalatest.OutcomeOf.outcomeOf$(OutcomeOf.scala:31)
+[info]   ...
+[info] PlannerSpec:
+[info] - the rule planner extracts names, windows, and operations of benchmark-style questions
+[info] - validation enforces the operation allowlist: scopes, researcher indexes, metrics, topN
+[info] - a researcher name or filter term that does not occur in the question is rejected
+[info] - window selection: stored windows exact, other ranges widen with a note, no corpus year abstains
+[info] - request fields override the model; retrieval limits are clamped to configuration
+[info] - output schemas: exact keys, enums equal the Scala enums, only the supported keywords
+[info] - the model planner retries once with the failed rule names, then falls back to the rules *** FAILED ***
+[info]   java.lang.RuntimeException: Violation(edges/coauthored-with/part-00000.csv,4,EVIDENCE_NOT_AUTHORED,cae-dfab1f20b35d14ccdfe49c424cb76714: 1 missing AUTHORED links, first: scr:canon-v1.er-v2:024dc3f2813867eed841536cdbe73e12 did not author dblp:conf/fx/W28)
+[info]   at scala.sys.package$.error(package.scala:27)
+[info]   at scholarchain.rag.runtime.RuntimeFixtures$World.$init$$$anonfun$8(RuntimeFixtures.scala:379)
+[info]   at scala.util.Either.fold(Either.scala:198)
+[info]   at scholarchain.rag.runtime.RuntimeFixtures$World.<init>(RuntimeFixtures.scala:379)
+[info]   at scholarchain.rag.runtime.RuntimeFixtures$.withWorld(RuntimeFixtures.scala:448)
+[info]   at scholarchain.rag.runtime.PlannerSpec.testFun$proxy7$1(PlannerSpec.scala:377)
+[info]   at scholarchain.rag.runtime.PlannerSpec.$init$$$anonfun$9(PlannerSpec.scala:362)
+[info]   at org.scalatest.Transformer.apply$$anonfun$1(Transformer.scala:22)
+[info]   at org.scalatest.OutcomeOf.outcomeOf(OutcomeOf.scala:85)
+[info]   at org.scalatest.OutcomeOf.outcomeOf$(OutcomeOf.scala:31)
+[info]   ...
+[info] - every model attempt passes the throttle, and an attempt over the token budget is not sent *** FAILED ***
+[info]   java.lang.RuntimeException: Violation(edges/coauthored-with/part-00000.csv,4,EVIDENCE_NOT_AUTHORED,cae-dfab1f20b35d14ccdfe49c424cb76714: 1 missing AUTHORED links, first: scr:canon-v1.er-v2:024dc3f2813867eed841536cdbe73e12 did not author dblp:conf/fx/W28)
+[info]   at scala.sys.package$.error(package.scala:27)
+[info]   at scholarchain.rag.runtime.RuntimeFixtures$World.$init$$$anonfun$8(RuntimeFixtures.scala:379)
+[info]   at scala.util.Either.fold(Either.scala:198)
+[info]   at scholarchain.rag.runtime.RuntimeFixtures$World.<init>(RuntimeFixtures.scala:379)
+[info]   at scholarchain.rag.runtime.RuntimeFixtures$.withWorld(RuntimeFixtures.scala:448)
+[info]   at scholarchain.rag.runtime.PlannerSpec.testFun$proxy8$1(PlannerSpec.scala:415)
+[info]   at scholarchain.rag.runtime.PlannerSpec.$init$$$anonfun$10(PlannerSpec.scala:405)
+[info]   at org.scalatest.Transformer.apply$$anonfun$1(Transformer.scala:22)
+[info]   at org.scalatest.OutcomeOf.outcomeOf(OutcomeOf.scala:85)
+[info]   at org.scalatest.OutcomeOf.outcomeOf$(OutcomeOf.scala:31)
+[info]   ...
+[info] RenderSpec:
+[info] - model versioning and selection constants
+[info] - candidates with facts pass the storage candidate validator unchanged
+[info] - rendered documents pass RenderedDocuments.validate and follow the key and hash rules
+[info] - bad inputs: missing facts, facts that disagree, rank gaps, wrong policy, duplicates
+[info] - render CLI writes write-once files and a manifest; a rerun is Unchanged
+[info] - render CLI refuses an unknown model and bad candidates without writing
+[info] Run completed in 488 milliseconds.
+[info] Total number of tests run: 52
+[info] Suites: completed 9, aborted 0
+[info] Tests: succeeded 36, failed 16, canceled 0, ignored 0, pending 0
+[info] *** 16 TESTS FAILED ***
+[error] Failed tests:
+[error] 	scholarchain.rag.runtime.BenchmarkSpec
+[error] 	scholarchain.rag.runtime.WorkflowSpec
+[error] 	scholarchain.rag.runtime.AskCliSpec
+[error] 	scholarchain.rag.runtime.PlannerSpec
+[error] (rag / Test / test) sbt.TestsFailedException: Tests unsuccessful
+[error] Total time: 6 s, completed Nov 11, 2026, 4:42:14 PM

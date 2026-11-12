@@ -1,0 +1,171 @@
+{
+  "schemaVersion": "rag-benchmark-summary-v1",
+  "benchmarkRunId": "run-f81918c20fc8696df960176278c6c4fe",
+  "runtimeRunId": "run-cc0f8d74d6164b37d3bd59e49d5953e8",
+  "mode": "LIVE",
+  "questionsTotal": 30,
+  "questionsDone": 4,
+  "notDone": [
+    "B05",
+    "B06",
+    "B07",
+    "B08",
+    "B09",
+    "B10",
+    "B11",
+    "B12",
+    "B13",
+    "B14",
+    "B15",
+    "B16",
+    "B17",
+    "B18",
+    "B19",
+    "B20",
+    "B21",
+    "B22",
+    "B23",
+    "B24",
+    "B25",
+    "B26",
+    "B27",
+    "B28",
+    "B29",
+    "B30"
+  ],
+  "checks": {
+    "plan-operations": {
+      "pass": 4,
+      "fail": 0,
+      "notApplicable": 0
+    },
+    "researcher-names": {
+      "pass": 4,
+      "fail": 0,
+      "notApplicable": 0
+    },
+    "verification": {
+      "pass": 4,
+      "fail": 0,
+      "notApplicable": 0
+    },
+    "pair-edges": {
+      "pass": 0,
+      "fail": 0,
+      "notApplicable": 4
+    },
+    "resolution": {
+      "pass": 2,
+      "fail": 0,
+      "notApplicable": 2
+    },
+    "claim-evidence": {
+      "pass": 0,
+      "fail": 0,
+      "notApplicable": 4
+    },
+    "embedding-budget": {
+      "pass": 4,
+      "fail": 0,
+      "notApplicable": 0
+    },
+    "abstention": {
+      "pass": 0,
+      "fail": 4,
+      "notApplicable": 0
+    },
+    "deadline": {
+      "pass": 4,
+      "fail": 0,
+      "notApplicable": 0
+    },
+    "path-hops": {
+      "pass": 0,
+      "fail": 0,
+      "notApplicable": 4
+    },
+    "bundle-budget": {
+      "pass": 4,
+      "fail": 0,
+      "notApplicable": 0
+    },
+    "llm-budget": {
+      "pass": 4,
+      "fail": 0,
+      "notApplicable": 0
+    }
+  },
+  "failures": [
+    "B01 abstention: expected answer, got abstain (BUDGET_EXHAUSTED)",
+    "B02 abstention: expected answer, got abstain (BUDGET_EXHAUSTED)",
+    "B03 abstention: expected answer, got abstain (BUDGET_EXHAUSTED)",
+    "B04 abstention: expected answer, got abstain (BUDGET_EXHAUSTED)"
+  ],
+  "planSources": {
+    "FALLBACK_RULES": 4
+  },
+  "abstentions": {
+    "BUDGET_EXHAUSTED": 4
+  },
+  "resolutions": {
+    "RESOLVED_DOMINANT": 2
+  },
+  "verification": {
+    "verified": 0,
+    "partiallySupported": 0,
+    "unsupported": 0,
+    "conflicting": 0
+  },
+  "claims": 0,
+  "graph": {
+    "questionsWithReads": 4,
+    "reads": 40,
+    "rows": 120,
+    "truncatedReads": 2,
+    "evidenceItems": 6,
+    "tokens": 2220,
+    "pathStatuses": {},
+    "latency": {
+      "p50Ms": 5,
+      "p95Ms": 14,
+      "maxMs": 14,
+      "totalMs": 27
+    }
+  },
+  "semantic": {
+    "questionsWithEmbedding": 3,
+    "questionsWithHits": 3,
+    "embeddingCalls": 3,
+    "hits": 7,
+    "tokens": 2465,
+    "indexes": {
+      "topic-institution-summary-v1": 1,
+      "researcher-profile-v1": 2
+    },
+    "latency": {
+      "p50Ms": 168,
+      "p95Ms": 1837,
+      "maxMs": 1837,
+      "totalMs": 3123
+    }
+  },
+  "llm": {
+    "attempts": 16,
+    "attemptsByStage": {
+      "QUERY_PLANNING": 8,
+      "ANSWER_SYNTHESIS": 8
+    },
+    "outcomes": {
+      "INVALID_OUTPUT": 16
+    },
+    "inputTokens": 40870,
+    "outputTokens": 8165,
+    "throttleWaitMs": 64949
+  },
+  "latency": {
+    "p50Ms": 27207,
+    "p95Ms": 30037,
+    "maxMs": 30037,
+    "totalMs": 111876
+  }
+}

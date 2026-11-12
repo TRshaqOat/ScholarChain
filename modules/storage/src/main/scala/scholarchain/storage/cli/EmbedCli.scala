@@ -46,12 +46,18 @@ object EmbedCli:
             out(p)
             Cli.LowDisk
           case None =>
+            val throttle = Throttle(perMinute, nowMs, sleep)
             val embedder = live match
               case Some(t) =>
                 out(
                   s"LIVE: Bedrock ${cfg.models.embeddingModel} in ${t.region}, profile ${t.profile}"
                 )
-                BedrockTitanEmbedder(LiveAws.bedrock(t), cfg.models.embeddingModel)
+                // The expired-token retry passes the same throttle as every other attempt (N1).
+                BedrockTitanEmbedder(
+                  LiveAws.bedrock(t),
+                  cfg.models.embeddingModel,
+                  () => throttle.acquire()
+                )
               case None =>
                 out("dry run: fake embedder (no AWS call)")
                 HashingEmbedder()
@@ -59,7 +65,7 @@ object EmbedCli:
               Cli.files(input, ".jsonl"),
               root,
               embedder,
-              Throttle(perMinute, nowMs, sleep),
+              throttle,
               ms =>
                 sleep(if live.nonEmpty then ms / 2 + scala.util.Random.nextLong(ms / 2 + 1)
                 else ms),

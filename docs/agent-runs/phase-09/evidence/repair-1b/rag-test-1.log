@@ -1,0 +1,38 @@
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] compiling 11 Scala sources to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/rag/target/scala-3.3.7/test-classes ...
+[error] -- [E007] Type Mismatch Error: /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/rag/src/test/scala/scholarchain/rag/runtime/RuntimeRecordsSpec.scala:509:16 
+[error] 509 |            Some(900),
+[error]     |            ^^^^^^^^^
+[error]     |            Found:    Some[Int]
+[error]     |            Required: Int
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/rag/src/test/scala/scholarchain/rag/runtime/RuntimeRecordsSpec.scala:511:12 
+[error] 511 |            800L,
+[error]     |            ^^^^
+[error]     |            Found:    (800L : Long)
+[error]     |            Required: Option[Int]
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/rag/src/test/scala/scholarchain/rag/runtime/RuntimeRecordsSpec.scala:521:12 
+[error] 521 |            None,
+[error]     |            ^^^^
+[error]     |            Found:    None.type
+[error]     |            Required: Int
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/rag/src/test/scala/scholarchain/rag/runtime/RuntimeRecordsSpec.scala:523:12 
+[error] 523 |            1200L,
+[error]     |            ^^^^^
+[error]     |            Found:    (1200L : Long)
+[error]     |            Required: Option[Int]
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] four errors found
+[error] (rag / Test / compileIncremental) Compilation failed
+[error] Total time: 3 s, completed Nov 11, 2026, 4:40:13 PM

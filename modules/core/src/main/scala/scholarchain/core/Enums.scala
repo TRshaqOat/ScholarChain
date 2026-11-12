@@ -32,10 +32,17 @@ object MatchEntityType:
 
 /** Evidence kinds. Deterministic graph facts and semantic context are kept apart (see
   * [[EvidenceType.isSemantic]]).
+  *
+  * Runtime kinds (Phase 9, appended; evidence-v1 shape unchanged): IDENTITY_RESOLUTION is a runtime
+  * name-to-researcher decision (dominant-name-v1), not a pipeline MATCH_DECISION; RANKING_RECORD is
+  * a stored top-N ranking entry, not a per-researcher METRIC_RECORD; TEMPORAL_CHANGE is a stored
+  * window-to-window change; FACET_RECORD is a stored topic, venue, or institution facet of a
+  * researcher or community. All four are deterministic, never semantic.
   */
 enum EvidenceType:
   case WORK_RECORD, AUTHORSHIP, COAUTHOR_EDGE, GRAPH_PATH, METRIC_RECORD, COMPONENT_RECORD,
-    COMMUNITY_RECORD, MATCH_DECISION, TEXT_CHUNK, PROFILE
+    COMMUNITY_RECORD, MATCH_DECISION, TEXT_CHUNK, PROFILE, IDENTITY_RESOLUTION, RANKING_RECORD,
+    TEMPORAL_CHANGE, FACET_RECORD
 
   /** Vector-retrieved descriptive text; never proof of an edge or a metric. */
   def isSemantic: Boolean = this == TEXT_CHUNK || this == PROFILE

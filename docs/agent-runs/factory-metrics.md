@@ -62,3 +62,19 @@ Running log for the Phase 16 agentic-factory evaluation. One row per agent invoc
 | 2026-11-05 | 07 | code-reviewer (review 1) | REQUEST_CHANGES | n | 0/2/13 | 0 | 0 | ? | F1, F2 to storage-engineer; ruling 36 acknowledgements |
 | 2026-11-06 | 07 | storage-engineer (repair-01) | COMPLETE | y | - | 1 | 0 | ? | F1, F2, M1, M3, M4, M8, credential refresh (expired-token 403 not retried; shared refreshing provider, retry once); 448 tests; guard false positives handled with Edit |
 | 2026-11-06 | 07 | code-reviewer (review 2) | APPROVE | y | 0/0/6 | 1 | 0 | ? | N1-N6 minors to storage-engineer; Phase 7: 0 BLOCKED-ON, 1 repair round, 3 mid-session human rulings (29, 30-32) |
+| 2026-11-06 | 09 | rag-engineer (WO1) | COMPLETE | y | - | 0 | 0 | ? | RUNTIME.md contract, runtime records; resumed after cut-off |
+| 2026-11-06 | 09 | domain-engineer (WO2) | COMPLETE | y | - | 0 | 0 | ? | runtime and graph-read config keys, M10 two keys, C1, C2; analytics.ranking-size |
+| 2026-11-06 | 09 | storage-engineer (WO3) | COMPLETE | y | - | 0 | 0 | ? | 17 openCypher templates, bidirectional path search (54/54), runtime records, N1-N6 |
+| 2026-11-06 | 09 | rag-engineer (WO4) | COMPLETE | n | - | 0 | 0 | ? | stages 1-10, Haiku client, prompts; F1-F5 and F6 (ItemFileIndex) originate here |
+| 2026-11-07 | 09 | rag-engineer (WO5) | COMPLETE | y | - | 0 | 0 | ? | benchmark CLI, fake run 26/30 (FU2), live command |
+| 2026-11-07 | 09 | entity-resolution-engineer (WO6) | COMPLETE | n | - | 0 | 0 | ? | AdjudicateSample; silent fenced-reply rejection found live (rulings 26, 27) |
+| 2026-11-07 | 09 | code-reviewer (review 1) | REQUEST_CHANGES | n | 0/6/9 | 0 | 0 | ? | F1-F5 rag-engineer, F6 storage then rag |
+| 2026-11-07 | 09 | entity-resolution-engineer (repair-01 C) | COMPLETE | y | - | 1 | 0 | ? | fence strip, reply shape, progress lines, stop after 3 failures; m4 |
+| 2026-11-11 | 09 | storage-engineer (repair-01 A) | COMPLETE | y | - | 1 | 0 | ? | ItemFileReader (F6); one read-only git status (deviation) |
+| 2026-11-11 | 09 | rag-engineer (repair-01 B) | BLOCKED-ON | n | - | 1 | 1 | ? | F1-F6 and minors; synthesis-v2 default routed to domain-engineer; N1 N2 found later |
+| 2026-11-11 | 09 | domain-engineer (repair-01 D) | COMPLETE | y | - | 1 | 0 | ? | synthesis-v2 default (ruling 28) |
+| 2026-11-11 | 09 | code-reviewer (review 2) | REQUEST_CHANGES | n | 0/2/3 | 1 | 0 | ? | N1 number words, N2 names |
+| 2026-11-11 | 09 | rag-engineer (repair-02) | COMPLETE | n | - | 2 | 0 | ? | N1 N2 fixed; R3-1 R3-2 originate here; rate-limit interruption |
+| 2026-11-11 | 09 | rag-engineer (repair-02, ruling 30) | COMPLETE | y | - | 2 | 0 | ? | planner messages name what is allowed; planner-v2 |
+| 2026-11-11 | 09 | domain-engineer (repair-02, ruling 30) | COMPLETE | y | - | 2 | 0 | ? | planner-v2 default |
+| 2026-11-12 | 09 | code-reviewer (review 3) | REQUEST_CHANGES | n | 0/2/4 | 2 | 0 | ? | Phase 9: 1 BLOCKED-ON, 2 repair rounds (2nd by exception), human escalation (ruling 31) |

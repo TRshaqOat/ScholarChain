@@ -1,0 +1,34 @@
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] compiling 2 Scala sources to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/rag/target/scala-3.3.7/test-classes ...
+[info] done compiling
+[info] VerifierSpec:
+[info] - numbers: integers exact, decimals equal or rounded half-up from at least 2 decimals
+[info] - F1 (a): a number must be bound to the named fact it states, not to any fact or to none *** FAILED ***
+[info]   Set("values-required", "numbers-in-text", "identity") did not equal Set("values-required", "numbers-in-text") (VerifierSpec.scala:60)
+[info]   Analysis:
+[info]   Set(missingInRight: ["identity"])
+[info] - F1 (a): a rank number verifies only in a RANKING claim, against that researcher's rank
+[info] - F1 (b): PATH_HOP asserts every fact of its hop, and the joint count is the hop's
+[info] - F1 (c): a decimal never verifies as a rounded integer
+[info] - F2: a window name or year range in the text must be the claim's window
+[info] - F3: a semantic-only claim is never VERIFIED: context only, or removed
+[info] - F4: a name outside the bundle fails, whether a corpus researcher or absent from the corpus
+[info] - N1 (ruling 29): number words are written as digits before binding
+[info] - N1 (ruling 29): a wrong count written as words fails; the right word form verifies
+[info] - N2 (ruling 29): every name in a claim is a researcher of the facts its values assert
+[info] - ruling 29: the runtime run ID changes with the verifier version
+[info] - ruling 20: summary and uncertainty lines get the numbers, windows, names, and titles checks
+[info] Run completed in 750 milliseconds.
+[info] Total number of tests run: 13
+[info] Suites: completed 1, aborted 0
+[info] Tests: succeeded 12, failed 1, canceled 0, ignored 0, pending 0
+[info] *** 1 TEST FAILED ***
+[error] Failed tests:
+[error] 	scholarchain.rag.runtime.VerifierSpec
+[error] (rag / Test / testOnly) sbt.TestsFailedException: Tests unsuccessful
+[error] Total time: 4 s, completed Nov 11, 2026, 8:08:15 PM

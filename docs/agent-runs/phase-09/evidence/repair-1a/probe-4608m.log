@@ -1,0 +1,31 @@
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] running scholarchain.storage.ItemFileReaderProbe scratch/stores/s3/graph/neptune/snapshot=2026-10-03/run=run-1d6a86491812ff94887270c1ab885e69 scratch/stores/s3/curated/dynamodb/snapshot=2026-10-03/run=run-1d6a86491812ff94887270c1ab885e69 scratch/stores/s3
+max heap 4608 MiB; in use at start 83 MiB
+graph: 511920 vertices, 3123311 edges in 31600 ms; in use 3769 MiB; peak sampled 4295 MiB, pool-peak sum 5588 MiB
+items: 876228 indexed (RunLedger 0, EntityLinkCache 287780, QuerySession 0, EvidenceBundle 0, ArtifactRegistry 9, ResearcherMetricCache 588439) in 13183 ms; in use 3913 MiB; peak sampled 4295 MiB, pool-peak sum 5588 MiB
+lookups: 21 of 21 ranking items; 200 metric items for the 50 researchers of the first ranking; name candidates Wei Wang 420, Lei Zhang 134, Jack J. Dongarra 17; 42 ms
+final: in use 3913 MiB; peak sampled 4295 MiB, pool-peak sum 5588 MiB; max 4608 MiB
+[success] Total time: 48 s, completed Nov 11, 2026, 3:46:52 PM
+       50.29 real       135.12 user         4.26 sys
+          5221908480  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              611399  page reclaims
+                  19  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   8  messages sent
+                   8  messages received
+                  29  signals received
+                1955  voluntary context switches
+              174104  involuntary context switches
+       1810651570274  instructions retired
+        514589108506  cycles elapsed
+          5382771440  peak memory footprint

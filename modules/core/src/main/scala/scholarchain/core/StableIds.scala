@@ -215,7 +215,18 @@ object StableIds:
   def evidenceId(evidenceType: EvidenceType, subjectIds: Seq[String], runId: String): String =
     "ev-" + hash((Seq("evidence", evidenceType.toString, runId) ++ subjectIds)*)
 
-  /** Run ID, timestamp-independent: "run-" + H("run", stage, codeVersion, configVersion, attempt,
+  /** Query ID: "qry-" + H("query", runId, questionHash, requestHash, ordinal). runId is the runtime
+    * run, questionHash the textHash of the normalized question, requestHash a hash of the
+    * structured request fields, and ordinal (>= 1) separates repeats of the same question and
+    * request in one run (modules/rag/RUNTIME.md, audit IDs). No timestamp is an input.
+    */
+  def queryId(runId: String, questionHash: String, requestHash: String, ordinal: Int): String =
+    require(IdFormat.isRunId(runId), s"malformed runId: $runId")
+    require(questionHash.trim.nonEmpty && requestHash.trim.nonEmpty, "hashes must not be blank")
+    require(ordinal >= 1, s"ordinal must be >= 1, got $ordinal")
+    "qry-" + hash("query", runId, questionHash, requestHash, s"$ordinal")
+
+  /** Run ID, timestamp-independent:"run-" + H("run", stage, codeVersion, configVersion, attempt,
     * inputSnapshots...), inputs sorted and de-duplicated. It is the content hash of the immutable
     * run manifest those fields form; attempt (>= 1) separates reruns of identical inputs.
     */
@@ -256,6 +267,7 @@ object IdFormat:
   private val Chunk = s"chunk-$Hex32".r
   private val Evidence = s"ev-$Hex32".r
   private val Run = s"run-$Hex32".r
+  private val Query = s"qry-$Hex32".r
 
   def isWorkId(s: String): Boolean = Work.matches(s)
   def isResearcherId(s: String): Boolean =
@@ -272,4 +284,5 @@ object IdFormat:
   def isChunkId(s: String): Boolean = Chunk.matches(s)
   def isEvidenceId(s: String): Boolean = Evidence.matches(s)
   def isRunId(s: String): Boolean = Run.matches(s)
+  def isQueryId(s: String): Boolean = Query.matches(s)
   def isVisibleAscii(s: String): Boolean = s.nonEmpty && s.forall(c => c >= 0x21 && c <= 0x7e)

@@ -47,11 +47,12 @@ class NeptuneSpec extends AnyFunSuite:
       val again = loadInto(g, root)
       assert(again == Right(GraphLoadReport(0, 0, 7, 7)))
       assert(g.vertexCount == 7 && g.edgeCount == 7)
-      val e = g.reader.coauthorEdge(rb, ra, "all-years")
+      val r = g.reader(GraphReadLimits.from(config))
+      val e = r.coauthorEdge(rb, ra, "all-years")
       assert(e.map(_.props("jointPublicationCount")).contains(2L))
-      assert(g.reader.coauthorEdge(ra, rb, "2000-2014").isEmpty)
-      assert(g.reader.coauthors(ra, "all-years", 10).map(_.id) == e.toVector.map(_.id))
-      assertThrows[IllegalArgumentException](g.reader.coauthors(ra, "all-years", 0))
+      assert(r.coauthorEdge(ra, rb, "2000-2014").isEmpty)
+      assert(r.coauthors(ra, "all-years", 10).items.map(_.edge.id) == e.toVector.map(_.id))
+      assertThrows[IllegalArgumentException](r.coauthors(ra, "all-years", 0))
     }
   }
 
@@ -72,7 +73,9 @@ class NeptuneSpec extends AnyFunSuite:
         )
       )
       assert(codes(loadInto(g, root)) == Set("PROPERTY_CONFLICT"))
-      assert(g.reader.vertex(ra).map(_.props("mentionCount")).contains(2L))
+      assert(
+        g.reader(GraphReadLimits.from(config)).vertex(ra).map(_.props("mentionCount")).contains(2L)
+      )
     }
   }
 

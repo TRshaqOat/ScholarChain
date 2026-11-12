@@ -1,0 +1,106 @@
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] compiling 2 Scala sources to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/rag/target/scala-3.3.7/classes ...
+[info] done compiling
+[info] AskCliSpec:
+[info] - fake mode answers one question, writes the audit, answer, records, and a manifest under --out
+[info] - usage errors: live needs a profile, and the Haiku rate is at most 8 per minute
+[info] RenderSpec:
+[info] - model versioning and selection constants
+[info] - candidates with facts pass the storage candidate validator unchanged
+[info] - rendered documents pass RenderedDocuments.validate and follow the key and hash rules
+[info] - bad inputs: missing facts, facts that disagree, rank gaps, wrong policy, duplicates
+[info] - render CLI writes write-once files and a manifest; a rerun is Unchanged
+[info] - render CLI refuses an unknown model and bad candidates without writing
+[info] TemplatesSpec:
+[info] - profile text is frozen for rendering-v1
+[info] - every document type renders; texts are deterministic and independent of key order
+[info] - path statuses, paper, community, and topic wording
+[info] - missing required facts fail; missing optional facts drop their sentence
+[info] - untrusted text is flattened, capped, and kept as data
+[info] RuntimeRecordsSpec:
+[info] - request and planner output round-trip, with absent and present optional fields
+[info] - query plan round-trips and enums are their case names on the wire
+[info] - an unknown enum value fails decoding
+[info] - resolution and every graph-fact record round-trip
+[info] - semantic result, bundle, synthesis output, and verification round-trip
+[info] - answer and audit record round-trip
+[info] - metric attributes cover every core metric, and the ranked ones are the stored rankings
+[info] - schema versions are distinct
+[info] BenchmarkSpec:
+[info] - question CSV: quoted commas and escaped quotes parse; bad rows are refused
+[info] - stored path reference: the stored researcher sequence and hop lookup in either direction
+[info] - fake mode: --max 1 answers one question, a rerun resumes by question ID, and the checks pass
+[info] - a stored path that differs from the runtime path fails path-hops and pair-edges
+[info] - claim-evidence fails a material claim that cites only semantic context or an unknown ID
+[info] - a model that never answers is a call failure (no result is recorded); fake mode is not
+[info] - usage: questions and path evidence are required, --max is at least 1, live needs a profile
+[info] VerifierSpec:
+[info] - numbers: integers exact, decimals equal or rounded half-up from at least 2 decimals
+[info] - F1 (a): a number must be bound to the named fact it states, not to any fact or to none
+[info] - F1 (a): a rank number verifies only in a RANKING claim, against that researcher's rank
+[info] - F1 (b): PATH_HOP asserts every fact of its hop, and the joint count is the hop's
+[info] - F1 (c): a decimal never verifies as a rounded integer
+[info] - F2: a window name or year range in the text must be the claim's window
+[info] - F3: a semantic-only claim is never VERIFIED: context only, or removed
+[info] - F4: a name outside the bundle fails, whether a corpus researcher or absent from the corpus
+[info] - N1 (ruling 29): number words are written as digits before binding
+[info] - N1 (ruling 29): a wrong count written as words fails; the right word form verifies
+[info] - N2 (ruling 29): every name in a claim is a researcher of the facts its values assert
+[info] - ruling 29: the runtime run ID changes with the verifier version *** FAILED ***
+[info]   "run-4b03e8c147b28bc3ea01e508323e4747" equaled "run-4b03e8c147b28bc3ea01e508323e4747" (VerifierSpec.scala:505)
+[info] - ruling 20: summary and uncertainty lines get the numbers, windows, names, and titles checks
+[info] InjectionSpec:
+[info] - planner prompt: one <question> block, holding the injected question only escaped
+[info] - synthesis prompt: one block per delimiter; question, title, name, and document escaped
+[info] - the injected question changes no plan operation, store call, or claim
+[info] PlannerSpec:
+[info] - the rule planner extracts names, windows, and operations of benchmark-style questions
+[info] - validation enforces the operation allowlist: scopes, researcher indexes, metrics, topN
+[info] - a researcher name or filter term that does not occur in the question is rejected
+[info] - window selection: stored windows exact, other ranges widen with a note, no corpus year abstains
+[info] - request fields override the model; retrieval limits are clamped to configuration
+[info] - output schemas: exact keys, enums equal the Scala enums, only the supported keywords
+[info] - the model planner retries once with the failed rule names, then falls back to the rules
+[info] - every model attempt passes the throttle, and an attempt over the token budget is not sent
+[info] LlmSpec:
+[info] - one enclosing code fence is accepted; prose, two objects, or an unclosed fence are not
+[info] - a recorded Haiku body with a fenced, pretty-printed plan parses and validates
+[info] - a rejected output records its failed rules and shape, never its text; the retry names them
+[info] - every Bedrock request is counted, the expired-token retry included (m5)
+[info] HaikuClientSpec:
+[info] - the request body is an Anthropic Messages body with temperature and no top_p
+[info] - the response parser joins text blocks and reads usage; other bodies are refused
+[info] - an expired token is retried once, after the caller's throttle hook, and both requests count
+[info] SmokeSpec:
+[info] - structural smoke tests pass on the fake store with fake embeddings
+[info] - smoke queries use facts only, and a structural filter returns only matching documents
+[info] - smoke CLI: dry run passes; live needs --profile; unknown model is a usage error
+[info] - semantic context: evidence items, hash check, escaping, budget
+[info] WorkflowSpec:
+[info] - a dominant name resolves with its share; every material claim cites bundle evidence and verifies
+[info] - a shortest path: the PATH and PATH_HOP claims equal the path evidence hop by hop
+[info] - an ambiguous name abstains with every candidate and makes no synthesis call
+[info] - unsupported requests and missing evidence abstain or are stated, never filled in
+[info] - verification statuses: VERIFIED kept, PARTIALLY_SUPPORTED labelled, UNSUPPORTED and CONFLICTING removed
+[info] - model synthesis: bad claims are removed, and with no verified claim the answer abstains
+[info] - prompt injection in the question, a name, a retrieved document, or a title changes no operation, store call, or claim
+[info] - the evidence token budget cuts whole groups, lists the omissions, and cited omitted items fail
+[info] - the audit record, QuerySession, and EvidenceBundle items hold the run facts and no question text
+[info] - m1: stages 3 to 5 are timed separately; a stage the plan gives nothing to do is SKIPPED
+[info] - m2: a candidate list cut at its limit is AMBIGUOUS with a truncation note, never unknown
+[info] - m7: the question deadline is checked before every stage and before every store read
+[info] - m8: request years with yearFrom after yearTo are an invalid plan, stated as reversed
+[info] Run completed in 1 second, 367 milliseconds.
+[info] Total number of tests run: 76
+[info] Suites: completed 12, aborted 0
+[info] Tests: succeeded 75, failed 1, canceled 0, ignored 0, pending 0
+[info] *** 1 TEST FAILED ***
+[error] Failed tests:
+[error] 	scholarchain.rag.runtime.VerifierSpec
+[error] (rag / Test / test) sbt.TestsFailedException: Tests unsuccessful
+[error] Total time: 5 s, completed Nov 11, 2026, 8:11:39 PM

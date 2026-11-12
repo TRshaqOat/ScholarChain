@@ -7,7 +7,8 @@ import scala.jdk.CollectionConverters.*
 import scala.util.Using
 
 /** Streams and validates a directory of store files (STORAGE.md, "CLIs"). Prints counts and, per
-  * rule, the violation count and the first --show violations. Exits 1 on any violation.
+  * rule, the violation count and the first --show violations. Exits 1 on any violation, and for
+  * neptune also when COAUTHORED_WITH evidence objects were left untraced (no --evidence-root, N6).
   */
 object ValidateCli:
   val Kinds = Vector("neptune", "dynamodb", "candidates", "rendered", "vectors")
@@ -40,10 +41,12 @@ object ValidateCli:
       yield
         val windows = cfg.graph.windows
         var extra = Vector.empty[String]
+        var untraced = 0L
         val (violations, counts) = kind match
           case "neptune" =>
             val ev = a.get("evidence-root").map(r => FileObjectStore(Paths.get(r)).reader)
             val s = NeptuneCsv.scan(dir, windows, ev)
+            untraced = s.evidenceChecks.getOrElse("edges-object-not-opened", 0L)
             extra = s.evidenceChecks.toVector.sorted.map((k, n) => s"evidence $k $n") ++
               NeptuneCsv.EvidenceRules.map(r => s"rule $r ${s.ruleCounts.getOrElse(r, 0L)}")
             (s.violations, s.counts)
@@ -59,10 +62,15 @@ object ValidateCli:
         out(s"count total ${counts.values.sum}")
         extra.foreach(out)
         Cli.report(violations, show, out)
-        if violations.isEmpty then
+        if violations.nonEmpty then 1
+        else if untraced > 0 then
+          out(
+            s"INCOMPLETE: $untraced edges cite evidence objects that were not opened; pass --evidence-root"
+          )
+          1
+        else
           out("OK")
           0
-        else 1
     }
 
   private def nonEmpty(dir: Path, suffix: String)(

@@ -1,0 +1,93 @@
+{
+  "schemaVersion": "rag-answer-v1",
+  "response": {
+    "schemaVersion": "answer-response-v1",
+    "queryId": "qry-15bb5b805e63331b65fde707c084d7ec",
+    "summary": "This request is not supported by the stored data: Corpus-level component lookup statistics are not stored in this version.",
+    "claims": [],
+    "abstained": true,
+    "uncertainty": "Corpus-level component lookup statistics are not stored in this version.",
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "RUNTIME",
+      "sourceRecordId": "qry-15bb5b805e63331b65fde707c084d7ec",
+      "snapshot": "2026-10-03",
+      "runId": "run-80e436dea5587ed42c03f98d66a05bb2",
+      "policyVersion": "fusion-v1",
+      "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+    }
+  },
+  "plan": {
+    "schemaVersion": "rag-query-plan-v1",
+    "queryId": "qry-15bb5b805e63331b65fde707c084d7ec",
+    "operations": [
+      {
+        "operation": "COMPONENT_LOOKUP",
+        "scope": "CORPUS",
+        "researchers": [],
+        "metric": null,
+        "topN": null
+      }
+    ],
+    "researcherNames": [],
+    "metrics": [],
+    "window": {
+      "requested": {
+        "kind": "NAMED",
+        "name": "2000-2014",
+        "yearFrom": null,
+        "yearTo": null
+      },
+      "window": "2000-2014",
+      "startYear": 2000,
+      "endYear": 2014,
+      "exact": true,
+      "note": null
+    },
+    "comparison": {
+      "fromWindow": "2000-2014",
+      "toWindow": "2015-2026"
+    },
+    "topics": [],
+    "venues": [],
+    "institutions": [],
+    "semanticIndexes": [],
+    "limits": {
+      "graphLimit": 100,
+      "vectorLimit": 50,
+      "maxPathDepth": 6,
+      "topK": 5
+    },
+    "source": "MODEL",
+    "overriddenFields": [],
+    "rejectedItems": [],
+    "promptVersion": "planner-v2",
+    "modelId": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "RUNTIME",
+      "sourceRecordId": "qry-15bb5b805e63331b65fde707c084d7ec",
+      "snapshot": "2026-10-03",
+      "runId": "run-80e436dea5587ed42c03f98d66a05bb2",
+      "policyVersion": null,
+      "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+    }
+  },
+  "resolutions": [],
+  "verification": {
+    "schemaVersion": "claim-verification-v1",
+    "queryId": "qry-15bb5b805e63331b65fde707c084d7ec",
+    "checks": [],
+    "counts": {
+      "verified": 0,
+      "partiallySupported": 0,
+      "unsupported": 0,
+      "conflicting": 0
+    }
+  },
+  "abstention": {
+    "reason": "UNSUPPORTED_REQUEST",
+    "detail": "This request is not supported by the stored data: Corpus-level component lookup statistics are not stored in this version."
+  },
+  "answerHash": "sha256:e5de1144067a965cd9228ea0f03c0314ed691820135793762552aa8c9cc489ee"
+}

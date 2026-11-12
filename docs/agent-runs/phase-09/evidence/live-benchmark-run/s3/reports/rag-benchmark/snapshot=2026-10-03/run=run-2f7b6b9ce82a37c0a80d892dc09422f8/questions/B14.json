@@ -1,0 +1,152 @@
+{
+  "schemaVersion": "rag-benchmark-result-v2",
+  "questionId": "B14",
+  "category": "components",
+  "mode": "LIVE",
+  "runtimeRunId": "run-80e436dea5587ed42c03f98d66a05bb2",
+  "queryId": "qry-10a342045ea6951144a5332a0b52edf8",
+  "planSource": "MODEL",
+  "operations": [
+    "COMPONENT_LOOKUP/RESEARCHER"
+  ],
+  "metrics": [],
+  "window": "2015-2026",
+  "resolutions": [
+    {
+      "name": "Dhabaleswar K. Panda 0001",
+      "decision": "RESOLVED_DOMINANT",
+      "researcherId": "scr:canon-v1.er-v2:6c5fc452ebb56826c254a79b5bdae377",
+      "topShare": 0.9765625,
+      "candidateCount": 6
+    }
+  ],
+  "abstained": false,
+  "abstentionReason": null,
+  "verification": {
+    "verified": 3,
+    "partiallySupported": 0,
+    "unsupported": 0,
+    "conflicting": 0
+  },
+  "claims": 3,
+  "graph": {
+    "reads": 17,
+    "readsByTemplate": {
+      "kv.metrics.window": 1,
+      "kv.metrics.change": 1,
+      "graph.authored-counts": 1,
+      "graph.coauthors": 11,
+      "kv.entity-link": 1,
+      "graph.researcher-institutions": 2
+    },
+    "rows": 44,
+    "truncatedReads": 1,
+    "evidenceItems": 4,
+    "tokens": 1097,
+    "omittedItems": 0,
+    "latencyMs": 9,
+    "pathStatuses": []
+  },
+  "semantic": {
+    "embeddingCalls": 1,
+    "embeddingInputTokens": 0,
+    "indexes": [
+      "researcher-profile-v1"
+    ],
+    "hits": 1,
+    "tokens": 609,
+    "omittedItems": 0,
+    "latencyMs": 170,
+    "outcome": "OK"
+  },
+  "llm": {
+    "attempts": 2,
+    "requests": 2,
+    "attemptsByStage": {
+      "QUERY_PLANNING": 1,
+      "ANSWER_SYNTHESIS": 1
+    },
+    "outcomes": {
+      "OK": 2
+    },
+    "inputTokens": 6524,
+    "outputTokens": 1021,
+    "throttleWaitMs": 12492
+  },
+  "latencyMs": 17999,
+  "stageLatencyMs": {
+    "COLLABORATION_METRICS": 2,
+    "PATH_FINDING": 7,
+    "EVIDENCE_BUILDING": 5,
+    "AUDIT": 0,
+    "QUERY_PLANNING": 7614,
+    "SEMANTIC_CONTEXT": 170,
+    "COMMUNITY_ANALYSIS": 0,
+    "CLAIM_VERIFICATION": 10,
+    "RESEARCHER_RESOLUTION": 35,
+    "ANSWER_SYNTHESIS": 10148
+  },
+  "checks": [
+    {
+      "name": "plan-operations",
+      "outcome": "PASS",
+      "detail": "needs COMPONENT_LOOKUP; plan [COMPONENT_LOOKUP/RESEARCHER]"
+    },
+    {
+      "name": "researcher-names",
+      "outcome": "PASS",
+      "detail": "expected [Dhabaleswar K. Panda 0001], extracted [Dhabaleswar K. Panda 0001]"
+    },
+    {
+      "name": "resolution",
+      "outcome": "PASS",
+      "detail": "Dhabaleswar K. Panda 0001: expected RESOLVED_DOMINANT, got RESOLVED_DOMINANT"
+    },
+    {
+      "name": "abstention",
+      "outcome": "PASS",
+      "detail": "expected answer, got answer"
+    },
+    {
+      "name": "claim-evidence",
+      "outcome": "PASS",
+      "detail": "3 claims cite bundle IDs; 3 material claims each cite a graph item; 0 descriptive"
+    },
+    {
+      "name": "verification",
+      "outcome": "PASS",
+      "detail": "answer has a verified claim; counts 3/0/0/0; final claims 3 verified of 3"
+    },
+    {
+      "name": "bundle-budget",
+      "outcome": "PASS",
+      "detail": "graph 1097/8000 tokens, semantic 609/3000, items 5/300"
+    },
+    {
+      "name": "llm-budget",
+      "outcome": "PASS",
+      "detail": "2 attempts, 2 requests (ANSWER_SYNTHESIS 1, QUERY_PLANNING 1), tokens in 6524 out 1021"
+    },
+    {
+      "name": "embedding-budget",
+      "outcome": "PASS",
+      "detail": "1 embedding calls for 1 indexes queried"
+    },
+    {
+      "name": "path-hops",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no path evidence in the bundle"
+    },
+    {
+      "name": "pair-edges",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no bundle edge has stored path evidence"
+    },
+    {
+      "name": "deadline",
+      "outcome": "PASS",
+      "detail": "17999 ms of 180000"
+    }
+  ],
+  "answerHash": "sha256:d28813e72c07f4d8a2a119fb732b45fbc8e3fea127f6ffbd029a86b219bc5512"
+}

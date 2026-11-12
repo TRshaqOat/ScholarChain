@@ -2,7 +2,7 @@
 
 Owner: rag-engineer. Code: `modules/rag/src/main/scala/scholarchain/rag/`. Tests: `modules/rag/src/test/scala/scholarchain/rag/`. Selection policy: `modules/rag/SELECTION.md`. Store contracts: `modules/storage/STORAGE.md`.
 
-Phase 7+8 scope: deterministic text for the five vector indexes, the render CLI, model versioning, the semantic-context format, and retrieval smoke tests. Query planning, retrieval fusion, synthesis, and verification come in Phase 9. Nothing here calls AWS unless a human passes `--live --profile`.
+Phase 7+8 scope: deterministic text for the five vector indexes, the render CLI, model versioning, the semantic-context format, and retrieval smoke tests. The Phase 9 runtime workflow (planning, resolution, retrieval, synthesis, verification, audit) is specified in `modules/rag/RUNTIME.md`. Nothing here calls AWS unless a human passes `--live --profile`.
 
 ## Data flow (ruling 23)
 

@@ -1,0 +1,86 @@
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] compiling 1 Scala source to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/rag/target/scala-3.3.7/test-classes ...
+[info] done compiling
+[info] AskCliSpec:
+[info] - fake mode answers one question, writes the audit, answer, records, and a manifest under --out
+[info] - usage errors: live needs a profile, and the Haiku rate is at most 8 per minute
+[info] SmokeSpec:
+[info] - structural smoke tests pass on the fake store with fake embeddings
+[info] - smoke queries use facts only, and a structural filter returns only matching documents
+[info] - smoke CLI: dry run passes; live needs --profile; unknown model is a usage error
+[info] - semantic context: evidence items, hash check, escaping, budget
+[info] TemplatesSpec:
+[info] - profile text is frozen for rendering-v1
+[info] - every document type renders; texts are deterministic and independent of key order
+[info] - path statuses, paper, community, and topic wording
+[info] - missing required facts fail; missing optional facts drop their sentence
+[info] - untrusted text is flattened, capped, and kept as data
+[info] HaikuClientSpec:
+[info] - the request body is an Anthropic Messages body with temperature and no top_p
+[info] - the response parser joins text blocks and reads usage; other bodies are refused
+[info] - an expired token is retried once, after the caller's throttle hook
+[info] RenderSpec:
+[info] - model versioning and selection constants
+[info] - candidates with facts pass the storage candidate validator unchanged
+[info] - rendered documents pass RenderedDocuments.validate and follow the key and hash rules
+[info] - bad inputs: missing facts, facts that disagree, rank gaps, wrong policy, duplicates
+[info] - render CLI writes write-once files and a manifest; a rerun is Unchanged
+[info] - render CLI refuses an unknown model and bad candidates without writing
+[info] RuntimeRecordsSpec:
+[info] - request and planner output round-trip, with absent and present optional fields
+[info] - query plan round-trips and enums are their case names on the wire
+[info] - an unknown enum value fails decoding
+[info] - resolution and every graph-fact record round-trip
+[info] - semantic result, bundle, synthesis output, and verification round-trip
+[info] - answer and audit record round-trip
+[info] - metric attributes cover every core metric, and the ranked ones are the stored rankings
+[info] - schema versions are distinct
+[info] BenchmarkSpec:
+[info] - question CSV: quoted commas and escaped quotes parse; bad rows are refused
+[info] - stored path reference: the stored researcher sequence and hop lookup in either direction
+[info] - fake mode: --max 1 answers one question, a rerun resumes by question ID, and the checks pass
+[info] - a stored path that differs from the runtime path fails path-hops and pair-edges
+[info] - claim-evidence fails a material claim that cites only semantic context or an unknown ID
+[info] - a model that never answers is a call failure (no result is recorded); fake mode is not
+[info] - usage: questions and path evidence are required, --max is at least 1, live needs a profile
+[info] PlannerSpec:
+[info] - the rule planner extracts names, windows, and operations of benchmark-style questions
+[info] - validation enforces the operation allowlist: scopes, researcher indexes, metrics, topN
+[info] - a researcher name or filter term that does not occur in the question is rejected
+[info] - window selection: stored windows exact, other ranges widen with a note, no corpus year abstains
+[info] - request fields override the model; retrieval limits are clamped to configuration
+[info] - output schemas: exact keys, enums equal the Scala enums, only the supported keywords
+[info] - the model planner retries once with the failed rule names, then falls back to the rules
+[info] - every model attempt passes the throttle, and an attempt over the token budget is not sent
+[info] WorkflowSpec:
+[info] - a dominant name resolves with its share; every material claim cites bundle evidence and verifies *** FAILED ***
+[info]   VerificationCounts(4, 1, 0, 0) did not equal VerificationCounts(5, 0, 0, 0) (WorkflowSpec.scala:63)
+[info]   Analysis:
+[info]   VerificationCounts(partiallySupported: 1 -> 0, verified: 4 -> 5)
+[info] - a shortest path: the PATH and PATH_HOP claims equal the path evidence hop by hop *** FAILED ***
+[info]   7 did not equal 9 (WorkflowSpec.scala:109)
+[info] - an ambiguous name abstains with every candidate and makes no synthesis call
+[info] - unsupported requests and missing evidence abstain or are stated, never filled in
+[info] - verification statuses: VERIFIED kept, PARTIALLY_SUPPORTED labelled, UNSUPPORTED and CONFLICTING removed *** FAILED ***
+[info]   Vector(VERIFIED, PARTIALLY_SUPPORTED, UNSUPPORTED, CONFLICTING, UNSUPPORTED, UNSUPPORTED, UNSUPPORTED, CONFLICTING, PARTIALLY_SUPPORTED) did not equal Vector(VERIFIED, PARTIALLY_SUPPORTED, UNSUPPORTED, CONFLICTING, UNSUPPORTED, UNSUPPORTED, UNSUPPORTED, CONFLICTING, VERIFIED) (WorkflowSpec.scala:290)
+[info]   Analysis:
+[info]   Vector1(8: PARTIALLY_SUPPORTED -> VERIFIED)
+[info] - model synthesis: bad claims are removed, and with no verified claim the answer abstains
+[info] - prompt injection in the question, a name, a retrieved document, or a title changes no operation, store call, or claim *** FAILED ***
+[info]   pair.answer.response.claims.forall(((c: scholarchain.core.AnswerClaim) => c.verificationStatus.==(scholarchain.core.VerificationStatus.VERIFIED))) was false (WorkflowSpec.scala:432)
+[info] - the evidence token budget cuts whole groups, lists the omissions, and cited omitted items fail
+[info] - the audit record, QuerySession, and EvidenceBundle items hold the run facts and no question text
+[info] Run completed in 950 milliseconds.
+[info] Total number of tests run: 52
+[info] Suites: completed 9, aborted 0
+[info] Tests: succeeded 48, failed 4, canceled 0, ignored 0, pending 0
+[info] *** 4 TESTS FAILED ***
+[error] Failed tests:
+[error] 	scholarchain.rag.runtime.WorkflowSpec
+[error] (rag / Test / test) sbt.TestsFailedException: Tests unsuccessful
+[error] Total time: 3 s, completed Nov 11, 2026, 4:42:28 PM
