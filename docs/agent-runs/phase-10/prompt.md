@@ -187,3 +187,34 @@ Read the work order 8, 9, and 10 reports. Edit only modules/services/**.
 3. Find why services shows 34 tests on the sbt console but 35 in the JUnit XML since work order 8. Fix it if it is a test defect; otherwise explain it with evidence.
 4. Rerun the work order 6 local smoke (fake mode, 127.0.0.1, the same fixture stores) with --window-summary-root scratch/runtime/wo8/s3 and SCHOLARCHAIN_WINDOW_SUMMARY_RUN=run-6fbad498beb0d8f570df67665fb97544, adding one sync POST of the B13-shaped question. Save the output under scratch/phase-10-logs/wo11/ and stop the server.
 Run sbt check twice.
+
+## Human rulings after code review 1
+
+22. Code review 1 (REQUEST_CHANGES: F1 major; m1 to m5 minor) is accepted in full. Every finding is fixed in repair-01, the one repair round. The untracked files under docs/agent-runs/phase-10/evidence/ were copied there by the human from Terminal; no agent wrote them. The report-claim discrepancies the review lists (the WO5 "503 OVERLOADED" risk, WO11 item 4, the WO10 STORAGE.md note) stand corrected by the review; the reports stay verbatim, and the repair-01 Part A report states the corrected behaviour.
+23. Phase 12 carry-forward (infra-engineer): the IAM and environment needs that repair-01 documents in modules/services/SERVICES.md for m1 (the readiness probe and reads of missing keys), m2 (query-api and worker must serve the same runtime run ID, so they are deployed together), and m3 (window-summary access only for the tasks that open it).
+
+## Repair 1 (repair-01)
+
+One repair round with two parts, run in order in one session: Part A, then Part B. Before each part, check docs/agent-runs/phase-10/repair-01.md for that part's heading; if present, skip the part. Append each report verbatim to docs/agent-runs/phase-10/repair-01.md under "## Part A: service-engineer" or "## Part B: rag-engineer", wrapped in a ````text fence. Ruling 14 constraints apply. Cited logs go under scratch/phase-10-logs/repair-01/. Each part runs sbt check twice.
+
+### Part A: service-engineer (F1, m1, m2, m3, m5)
+
+Read code review 1 in docs/agent-runs/phase-10/review-report.md and the work order 5, 6, and 11 reports. Edit only modules/services/**.
+1. F1. Separate the slow path from the fast path, so that long-running workflows cannot make store calls or readiness probes time out and open breakers against healthy stores. At least: the sync workflow runs on its own bounded pool, separate from store calls and readiness probes; and time a call spends waiting to start does not count as a downstream failure (a call that cannot start in time answers 503 OVERLOADED and touches no breaker). Apply the same rule to the worker if it shares a pool the same way. Add no configuration key: size the pools from existing keys and document the choice. Tests: with every workflow slot held by blocked workflows, GET /v1/jobs/{jobId}, GET /v1/explain/{queryId}, and /readyz still answer within their timeouts and no breaker opens; a call that cannot start gives 503 OVERLOADED. The tests must fail without the fix (a logged disable check, restore verified by sha256).
+2. m1. Move the S3 readiness probe key under a prefix the services already read. Write modules/services/SERVICES.md and state there the S3 permissions each service needs so that a missing key reads as not found (s3:ListBucket on the bucket), for readiness and for unknown query IDs.
+3. m2. Document in SERVICES.md that query-api and worker must compute the same runtime run ID (same configuration, prompt versions, window-summary run, and store runs) and must be deployed together. Each service logs its runtime run ID at startup (keep the existing line if it already does).
+4. m3. graph-evidence-api does not open the window-summary object (it never answers questions); only query-api and worker open it. Add a test. Document in SERVICES.md which task needs which S3 access.
+5. m5. An IllegalArgumentException thrown inside a downstream call (not by route validation) answers 500 INTERNAL_ERROR with a traceId and no internal detail, not 400. Add a test.
+6. Rerun the work order 11 local smoke once (fake mode, 127.0.0.1, the same inputs) and save it under scratch/phase-10-logs/repair-01/. Stop the server afterwards.
+Run sbt check twice.
+
+### Part B: rag-engineer (m4; verifier evidence on the final tree)
+
+Read code review 1 and the work order 1 and 9 reports. Edit only modules/rag/**.
+1. m4. Fix modules/rag/RUNTIME.md (about lines 403 and 482, and any other stale line) so it says runtime.window-summary.load-run exists (work order 10) and how the services use it (work order 11).
+2. On the final tree (verifier-v5), rerun the work order 1 disable checks D1 to D15 and the work order 9 checks D1 to D4 in the same way: one rule disabled at a time, a named test must fail, restore verified by sha256. Report a table (check, failing test, log). Any check that no longer fails a test is a finding: strengthen the test until it fails, as work order 1 did for D6.
+Run sbt check twice.
+
+## Code review 2: code-reviewer
+
+Review the repair-01 changes (the files Parts A and B name in repair-01.md) against code review 1's F1 and m1 to m5, rulings 22 and 23, and the Part B evidence table. For each finding: resolved or not, with file and line and the test that fails without the fix. Check that repair-01 edited nothing outside its owned paths and broke no Phase 10 gate item (routes embed no retrieval, verification, or query logic; every error response carries a traceId; health and readiness expose no secrets; examples match the contract tests; an end-to-end API test reaches an evidence-backed answer). Verify each candidate finding against the files. Give critical and major findings in full (severity, file and line, failure input, impact, owner) and minors briefly. Return APPROVE or REQUEST_CHANGES. Do not edit any file.
