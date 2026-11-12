@@ -226,3 +226,22 @@ Review the Phase 09 change set again; the orchestrator supplies it as for review
     - Agent sbt runs may set SPARK_LOCAL_IP=127.0.0.1 in the environment (the Spark driver cannot bind the hostname address in the agent shell). Environment only, no code or build change.
     - Process note: repair 1A ran one read-only git status and disclosed it. This deviates from ruling 15 and is recorded at the gate; no repair.
     - Review 2 covers rulings 17 to 28, including part D.
+
+## Human rulings after review 2 (binding)
+
+29. Review 2 majors N1 and N2: a narrow second repair round (repair-02), by human exception.
+    - Review 2 returned REQUEST_CHANGES with two major findings for rag-engineer, N1 and N2, and minors n1 to n3. Every review 1 failure input now fails verification or a test; F6, the ruling 23 minors, and rulings 26 to 28 are resolved; nothing in modules/entity-resolution changed after repair 1C, so the live adjudication result stands.
+    - The human allows one narrow second repair round, an exception to the one-round rule, recorded at the gate. Scope: N1 and N2 only. n1, n2, and n3 are deferred to the first Phase 10 rag-engineer work order and are not part of repair-02.
+    - N1 (numbers written as words): number words in claim, summary, and uncertainty text must be bound to a fact exactly like digits, or fail the claim (or replace the line). At least: cardinals zero to twenty and the tens to ninety, "a single", ordinals first to tenth, "once" and "twice", and zero expressions attached to a measure or relation ("never coauthored", "no joint publications", "none"), which count as 0. Decide and document whether "a"/"an" before a measure counts as 1; avoid false positives such as "a path". A DESCRIPTIVE claim with a number word is not context-only (ruling 19). No prompt or schema change: synthesis-v2 stays (its default is domain-engineer's file).
+    - N2 (names not tied to cited evidence): every researcher name written in a claim must be a researcher of the cited graph items whose facts the claim's values assert: for PATH_HOP, the from or to of an asserted hop; for a coauthorship edge, its two endpoints; for a metric or ranking item, its researcher. A name known only through resolution candidates or their top coauthors never verifies a claim that cites other evidence. Summary and uncertainty lines may name only researchers allowed in the kept claims. AMBIGUOUS and UNKNOWN_RESEARCHER answers, whose candidate text deterministic code writes, must not change.
+    - Tests: each review 2 failure input ends UNSUPPORTED or CONFLICTING: N1's "three joint publications" claim, its summary line, the DESCRIPTIVE "three students" claim, and "never coauthored" against a stored count of 2; N2 (a), the PATH_HOP claim naming the hop 1 pair with hop 2's facts; N2 (b), the Ada and Edsger claim citing the Ada and Grace edge. A correct word form, such as "two joint publications" against a stored 2, verifies. Disable each new rule temporarily, report the failing test names with saved logs, then restore.
+    - Rerun the fake benchmark on all 30 questions as a new run (heap at most 6g). Report it next to run-3250005c792bad74709a1b3c7f0a4814 and explain every claim whose status changed (a false positive must be named as one).
+    - Runs: existing runs under scratch/runtime/ are never modified. A verifier change must give a new rag-runtime and benchmark run ID, so a live rerun cannot resume pre-repair results; if the run ID would not change, add a verifier version to it. Give the exact live benchmark commands again (--max 2, then --max 30).
+    - Update RUNTIME.md sections 12 and 21 (rules and known failure modes). Run sbt check twice with SPARK_LOCAL_IP=127.0.0.1. Keep every cited log in a durable path and state it.
+    - Evidence provenance: the human copied the repair logs from the agents' scratchpads into docs/agent-runs/phase-09/evidence/repair-1a, repair-1b, and repair-1d.
+    - After repair-02, review 3 (code-reviewer) checks N1 and N2, the tests, and that nothing else regressed. If review 3 still requests changes, the exit is human escalation.
+
+## Repair 2 (repair-02)
+
+### rag-engineer
+Edit only modules/rag/** (no prompt or schema change). Ruling 29, N1 and N2. Read the Review 2 section of review-report.md and the Repair 1B section of repair-01.md first. Report per ruling 16 plus what changed for N1 and N2, with file and line.
