@@ -162,3 +162,28 @@ Review the Phase 10 change set against work orders 1 to 9, rulings 1 to 15, spec
     b. Read the 13 removed claims in the audits of runtime run-d94e077cc52fa2fbfa628f21a4c4adaa under scratch/runtime/s3/logs/rag-runtime/ (failing rules: numbers-in-text 10, identity 2, context-only 1, window CONFLICT 1). Classify each as removed by design (the claim is not backed by its evidence) or as a verifier defect. Fix clear defects, each with a test built from the failure shape using fixture names (never copy model text into tests or logs). Report anything uncertain as a residual risk. Report a table: question, claim kind, failing rule, by design or defect, fixed or not.
     c. No live calls. The human reruns the live benchmark at the gate.
     Residual, no action in Phase 10: the planner misplans B15, B18, B23 and B24 (as in Phase 9); one live question took 45,712 ms, above the 40,000 ms sync deadline (the async path is the remedy).
+
+## Human rulings after session 2a
+
+20. Session 2a accepted (work orders 7 to 9 COMPLETE; sbt check 656/0 in JUnit XML twice; fake benchmark run-396fa84df47be7a2579b491bec64356c passes every check on 30 of 30, 91 verified, 0 unsupported):
+    - WO7: the window-summary run lives under scratch/runtime/wo7/spark (not scratch/spark), as ruling 14 directs.
+    - WO8: the window summaries are one S3 object under curated/window-summary/, read through WindowSummaryReadPort; no new table or GSI. The loader builds rows from the Spark _manifest.json, not the Parquet file; accepted as a marked shortcut (it refuses on any schema, count, or violation mismatch). A direct store-object writer is optional later work for spark-engineer.
+    - WO9: the ruling 19b classification (2 defects fixed, 11 removals by design), the ruling 19a cut-off retry, verifier-v5, and rag-runtime-v3.
+    - Phase 12 carry-forward: copy the window-summary object to the data bucket (LoadS3Cli) and grant s3:GetObject on curated/window-summary/* to every role that runs the rag runtime (query-api, worker).
+21. Session 2c runs work orders 10 and 11 (the follow-ups the work order 9 report names). Code review 1 then reviews the change set of work orders 1 to 11 against rulings 1 to 21. In addition to the checks in its text, it checks: the verifier-v5 fixes (digit groups, comparison sides) and the ruling 19a retry; the corpus evidence path for B13, B15, B17, and B24 and its uncertainty lines; the WO8 manifest-based conversion (column mapping and refusal on mismatch); the services test-count explanation from work order 11; and the constant-time key comparison, by reading the code.
+
+## Work order 10: domain-engineer (window-summary key; session 2c)
+
+Read the work order 8 and 9 reports. Edit only modules/core/**.
+1. Add runtime.window-summary.load-run: String, default "" (no window summaries served, so corpus questions abstain), environment override SCHOLARCHAIN_WINDOW_SUMMARY_RUN. When not empty it must be run-<32 lower-case hex>.
+2. Validation and tests: the default, the override, and rejected values. config-version stays config-v1 (a key added with a default).
+Run sbt check twice.
+
+## Work order 11: service-engineer (window-summary wiring; session 2c)
+
+Read the work order 8, 9, and 10 reports. Edit only modules/services/**.
+1. Wire WindowSummaryReadPort in Composition.scala as the work order 9 report describes. The key is S3Layout.windowSummary(<snapshot the composition serves>, runtime.window-summary.load-run). Live mode opens it with the S3 objects reader. Fake mode takes a new optional argument --window-summary-root <root> and opens it with a FileObjectStore reader on that root. If fake mode has no snapshot, add the smallest argument needed and record it as an assumption. Pass the WindowSummarySource as the RuntimePorts argument and add window-summary=<key> to the run ID inputs. An empty key leaves the port unset (corpus questions abstain as now). A Left from WindowSummaries.open stops startup with a message that names the key, never file contents. LocalRun passes the argument through.
+2. Tests: a corpus question of the B13 shape (components in 2000-2014) answered over a real localhost socket with VERIFIED claims from a fixture window summary; the empty-key case abstains; a bad object stops startup. Update openapi.yaml and its examples only if a response shape changes; contract tests must pass.
+3. Find why services shows 34 tests on the sbt console but 35 in the JUnit XML since work order 8. Fix it if it is a test defect; otherwise explain it with evidence.
+4. Rerun the work order 6 local smoke (fake mode, 127.0.0.1, the same fixture stores) with --window-summary-root scratch/runtime/wo8/s3 and SCHOLARCHAIN_WINDOW_SUMMARY_RUN=run-6fbad498beb0d8f570df67665fb97544, adding one sync POST of the B13-shaped question. Save the output under scratch/phase-10-logs/wo11/ and stop the server.
+Run sbt check twice.
