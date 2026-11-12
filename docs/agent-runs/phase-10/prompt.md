@@ -154,3 +154,11 @@ Review the Phase 10 change set against work orders 1 to 9, rulings 1 to 15, spec
     - Docker entrypoint and the per-task commands bin/query-api, bin/graph-evidence-api and bin/worker; ECS stopTimeout of at least 25 s (Phases 12+13).
     - An idempotency release for failed requests and a traceId on JobRecord: residual risks, optional later.
     - The constant-time key comparison cannot be checked by a functional test (WO5 D3); code review 1 checks it by reading the code.
+
+## Human rulings after the live benchmark (work orders 1 and 2)
+
+19. Live benchmark after work orders 1 and 2 (benchmark run-149a1e0a5d493732e32257518878039e, runtime run-d94e077cc52fa2fbfa628f21a4c4adaa; copies in docs/agent-runs/phase-10/evidence/live-benchmark-run/, with live-llm-failures.txt and live-claim-rules.txt): plan source MODEL 30; ANSWERED 22, NO_VERIFIED_CLAIM 1, BUDGET_EXHAUSTED 1, UNSUPPORTED_REQUEST 4, AMBIGUOUS 1, UNKNOWN 1; 72 verified, 12 unsupported, 1 conflicting; 57 Haiku requests. Work order 9 (rag-engineer) also does:
+    a. B29 ended BUDGET_EXHAUSTED because both synthesis attempts stopped with stop reason max_tokens at 4000 output tokens (about 10,300 characters each). When a synthesis attempt stops with max_tokens, the retry message must say the output was cut off and ask for at most half of runtime.synthesis.max-claims claims, one sentence each. Do not raise any token limit or budget. Add a test that fails without the change. Record any prompt or version change in RUNTIME.md.
+    b. Read the 13 removed claims in the audits of runtime run-d94e077cc52fa2fbfa628f21a4c4adaa under scratch/runtime/s3/logs/rag-runtime/ (failing rules: numbers-in-text 10, identity 2, context-only 1, window CONFLICT 1). Classify each as removed by design (the claim is not backed by its evidence) or as a verifier defect. Fix clear defects, each with a test built from the failure shape using fixture names (never copy model text into tests or logs). Report anything uncertain as a residual risk. Report a table: question, claim kind, failing rule, by design or defect, fixed or not.
+    c. No live calls. The human reruns the live benchmark at the gate.
+    Residual, no action in Phase 10: the planner misplans B15, B18, B23 and B24 (as in Phase 9); one live question took 45,712 ms, above the 40,000 ms sync deadline (the async path is the remedy).
