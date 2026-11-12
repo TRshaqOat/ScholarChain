@@ -138,3 +138,19 @@ Read the work order 7 and 8 reports. Plan operations and evidence for the corpus
 ## Code review 1: code-reviewer (session 2)
 
 Review the Phase 10 change set against work orders 1 to 9, rulings 1 to 15, spec Phase 10 (work order and gate), the REST API contract, the Error model, and D-10. Check especially: routes embed no retrieval, verification, or query logic; every error response carries a traceId; health and readiness expose no secrets or configuration; request and response examples match the contract tests; at least one end-to-end API test reaches an evidence-backed answer from bounded fixtures; authentication is constant-time and keys never reach logs; idempotency and job state transitions are safe under redelivery; graph exploration is bounded; the Phase 9 ruling 31 verifier fixes resolve R3-1, R3-2, and n1 to n7 with tests that fail without them; no edits outside owned paths, and no reads of labels/, scratch/stores-live/, or scratch/er/adjudication-live/. Verify each candidate finding against the files. Give critical and major findings in full (severity, file and line, failure input, impact, owner) and minors briefly. Return APPROVE or REQUEST_CHANGES. Do not edit any file.
+
+## Human rulings after session 1
+
+16. Session 1 assumptions accepted as design (all six work orders COMPLETE, sbt check 637/0 twice, no BLOCKED-ON):
+    - WO4: the new DynamoDB table ServiceState (job and idempotency records, TTL expiresAt) and the GSI evidenceById on EvidenceBundle. Both are Phase 12 Terraform items.
+    - WO4: conditional writes and SQS calls are never retried; reads use services.resilience.
+    - WO5: query IDs minted by the service with a random nonce; malformed IDs answer 404 without a store read; REQUEST_TOO_LARGE is 400; async POSTs and replays count against the rate limit.
+    - WO6: the stuck-RUNNING policy (FAILED DEADLINE_EXCEEDED on the last delivery); poison messages and messages without a job are left to the redrive policy; a failed send fails the job at once (502); resultRef is not written.
+    - WO2: services.stub-llm defaults to true; the worker uses runtime.question.deadline-ms.
+    - WO6: the local smoke used test fixtures, not the Phase 7 stores (heap limit).
+17. Work order 9 (rag-engineer) also fixes the stale text in modules/rag/RUNTIME.md section 20 (about lines 430, 431 and 455), so it states the current defaults: synthesis-v3, runtime.synthesis.max-output-tokens 4000, runtime.budget.max-output-tokens-per-question 9600.
+18. Deferred, not Phase 10 work:
+    - A credentials provider for ECS task roles in live mode (storage-engineer, before cloud window 2, with the M10 remainder).
+    - Docker entrypoint and the per-task commands bin/query-api, bin/graph-evidence-api and bin/worker; ECS stopTimeout of at least 25 s (Phases 12+13).
+    - An idempotency release for failed requests and a traceId on JobRecord: residual risks, optional later.
+    - The constant-time key comparison cannot be checked by a functional test (WO5 D3); code review 1 checks it by reading the code.
