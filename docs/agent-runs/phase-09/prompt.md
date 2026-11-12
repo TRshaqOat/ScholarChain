@@ -245,3 +245,17 @@ Review the Phase 09 change set again; the orchestrator supplies it as for review
 
 ### rag-engineer
 Edit only modules/rag/** (no prompt or schema change). Ruling 29, N1 and N2. Read the Review 2 section of review-report.md and the Repair 1B section of repair-01.md first. Report per ruling 16 plus what changed for N1 and N2, with file and line.
+
+## Human rulings during repair-02 (binding)
+
+30. Live planner validation (rag-engineer, added to repair-02; found by the human's post-repair-01 live step 1 on 2026-11-11 at about 18:02).
+    - Evidence (read-only): docs/agent-runs/phase-09/evidence/live-benchmark-step1.txt and that run's two audit objects under scratch/runtime/s3/logs/rag-runtime/ (qry-feee55c56170fefd… and qry-0bf42695989d67a5…). Synthesis returned OK on both questions, confirming the fence fix (ruling 27). Every planner output was fenced and parsed, but 3 of 4 planner attempts failed plan rules:
+      - qry-feee55c5…: attempt 1 "rule-2 RESEARCHER_RANKING: scope RESEARCHER not allowed"; attempt 2 OK.
+      - qry-0bf42695…: attempt 1 "rule-2 RESEARCHER_RANKING: scope RESEARCHER not allowed; rule-7 window"; attempt 2 "rule-7 window"; plan source FALLBACK_RULES.
+    - Fix within modules/rag/** and prompts/**:
+      1. Every planner rule failure, in LlmCall.failure and in the retry prompt, names what is allowed in fixed text (the scopes allowed for that operation; the stored window IDs and the explicit year-range form), never the model's text. rule-7 currently gives no detail.
+      2. Check rule-2 and rule-7 against the planner-v1 prompt and RUNTIME.md. If the prompt invites or fails to exclude what the validator rejects, fix the side that is wrong: the validator if the rule contradicts RUNTIME.md; otherwise a planner-v2 prompt (and a planner output schema v2 only if the schema text changes) that states the allowed scopes per operation and the exact window values, with the version recorded in RUNTIME.md. Do not change the allowed operations or loosen any safety rule (ruling 4). Do not tune for answer quality.
+      3. Tests: a realistic fenced planner output with each recorded failure (scope RESEARCHER on RESEARCHER_RANKING; a window that is not stored) fails with the detailed reason, and the retry prompt carries the allowed values; the corrected output validates.
+    - If planner-v2 is created, domain-engineer changes the default planner prompt-version in modules/core/src/main/resources/scholarchain.conf to "planner-v2" in the same session, and updates any test that pins it (the ruling 28 pattern; edit only modules/core/**).
+    - Reports go in repair-02.md under "## Repair 2, ruling 30: rag-engineer" (and "## Repair 2, ruling 30: domain-engineer" if it runs). The final tree gets sbt check twice with SPARK_LOCAL_IP=127.0.0.1.
+    - Review 3 covers rulings 29 and 30.
