@@ -1,0 +1,35 @@
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[success] Total time: 0 s, completed Nov 12, 2026, 1:12:19 PM
+[info] scalafmt: Formatting 1 Scala sources (/Users/achyutpatel/Developer/Cloud/ScholarChain/modules/storage)...
+[success] Total time: 0 s, completed Nov 12, 2026, 1:12:19 PM
+[info] compiling 3 Scala sources to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/storage/target/scala-3.3.7/classes ...
+[warn] -- Deprecation Warning: /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/storage/src/main/scala/scholarchain/storage/WindowSummaries.scala:210:40 
+[warn] 210 |            val extra = (o.value.keySet -- Fields).toVector.sorted.mkString(" ")
+[warn]     |                         ^^^^^^^^^^^^^^^^^
+[warn]     |method -- in trait SetOps is deprecated since 2.13.0: Consider requiring an immutable Set
+[warn] one warning found
+[info] done compiling
+[info] compiling 1 Scala source to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/storage/target/scala-3.3.7/test-classes ...
+[info] done compiling
+[info] WindowSummarySpec:
+[info] - rows from a Spark manifest carry the rebuilt provenance, nodeBasis and sourceRuns
+[info] - the port reads the store object back unchanged; a reload is Unchanged
+[info] - malformed rows, duplicate or missing windows, and mixed runs refuse the whole object
+[info] - a manifest with integrity violations, another schema, or another row count is refused
+[info] - the loader writes once under a new root, reloads as Unchanged, and refuses a conflict *** FAILED ***
+[info]   0 equaled 0, but l1.exists(((_$7: scala.Predef.String) => _$7.endsWith(" Inserted"))) was false Vector(load run run-0053706cdd03fc23306c511339a7285e from spark run run-e5ce772dd21a6f90696108f753cb7141 snapshot 2026-10-03, object curated/window-summary/snapshot=2026-10-03/run=run-0053706cdd03fc23306c511339a7285e/part-00000.jsonl Right(Inserted), manifest runs/load-window-summary/snapshot=2026-10-03/run=run-0053706cdd03fc23306c511339a7285e/manifest.json Right(Inserted), window all-years researchers 10 components 4 largestComponentFraction 0.5 singletonResearchers 2 communitiesAtLeastMinSize 1 (min 3) runId run-e5ce772dd21a6f90696108f753cb7141, window 2000-2014 researchers 10 components 4 largestComponentFraction 0.5 singletonResearchers 2 communitiesAtLeastMinSize 1 (min 3) runId run-e5ce772dd21a6f90696108f753cb7141, window 2015-2026 researchers 0 components 0 largestComponentFraction null singletonResearchers 0 communitiesAtLeastMinSize 0 (min 3) runId run-e5ce772dd21a6f90696108f753cb7141, violations 0) (WindowSummarySpec.scala:198)
+[info] - the loader refuses a run directory whose manifest names another run
+[info] Run completed in 245 milliseconds.
+[info] Total number of tests run: 6
+[info] Suites: completed 1, aborted 0
+[info] Tests: succeeded 5, failed 1, canceled 0, ignored 0, pending 0
+[info] *** 1 TEST FAILED ***
+[error] Failed tests:
+[error] 	scholarchain.storage.WindowSummarySpec
+[error] (storage / Test / testOnly) sbt.TestsFailedException: Tests unsuccessful
+[error] Total time: 4 s, completed Nov 12, 2026, 1:12:23 PM

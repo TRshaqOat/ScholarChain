@@ -1,0 +1,7 @@
+{
+  "error": "UNSUPPORTED_CONSTRAINT",
+  "message": "constraints holds an unsupported field; allowed: institutions, topics, venues, yearFrom, yearTo",
+  "traceId": "trace-example-1",
+  "requestId": "req-example-1",
+  "retryable": false
+}

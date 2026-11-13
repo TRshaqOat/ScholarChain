@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "store-run-manifest-v1",
+  "stage": "rag-benchmark",
+  "runId": "run-149a1e0a5d493732e32257518878039e",
+  "snapshot": "2026-10-03",
+  "entries": [
+    {
+      "key": "reports/rag-benchmark/snapshot=2026-10-03/run=run-149a1e0a5d493732e32257518878039e/questions/B01.json",
+      "sha256": "sha256:e9b307b629a985696017514729e5fcf04e44f7a9ba4348c7f184b99f6dfde5d9",
+      "bytes": 3759,
+      "sourceRef": "qry-2118cc4b61bff42e106295ed765d570c"
+    },
+    {
+      "key": "reports/rag-benchmark/snapshot=2026-10-03/run=run-149a1e0a5d493732e32257518878039e/questions/B02.json",
+      "sha256": "sha256:647872d5b04aac542dea95723e68ee005d7c1a47a3cb7c5847e27d0f4653ebb4",
+      "bytes": 3748,
+      "sourceRef": "qry-f67e928020dd0308c05973d947a87c65"
+    },
+    {
+      "key": "reports/rag-benchmark/snapshot=2026-10-03/run=run-149a1e0a5d493732e32257518878039e/summary-002.json",
+      "sha256": "sha256:84098b8440962362a0587103ce228f7937b47f457d8c33ec51314f006c29a7c3",
+      "bytes": 2846,
+      "sourceRef": "summary"
+    }
+  ]
+}

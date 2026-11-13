@@ -1,0 +1,152 @@
+{
+  "schemaVersion": "rag-benchmark-result-v2",
+  "questionId": "B25",
+  "category": "topics",
+  "mode": "LIVE",
+  "runtimeRunId": "run-d94e077cc52fa2fbfa628f21a4c4adaa",
+  "queryId": "qry-db4b72792b43bdd635214f93aad83b6e",
+  "planSource": "MODEL",
+  "operations": [
+    "TOPIC_FILTER/RESEARCHER"
+  ],
+  "metrics": [],
+  "window": "all-years",
+  "resolutions": [
+    {
+      "name": "Franck Cappello",
+      "decision": "RESOLVED_DOMINANT",
+      "researcherId": "scr:canon-v1.er-v2:84a0a600f9fc8efeb0a87b085e316bfd",
+      "topShare": 0.9391634980988594,
+      "candidateCount": 17
+    }
+  ],
+  "abstained": false,
+  "abstentionReason": null,
+  "verification": {
+    "verified": 5,
+    "partiallySupported": 0,
+    "unsupported": 0,
+    "conflicting": 0
+  },
+  "claims": 5,
+  "graph": {
+    "reads": 22,
+    "readsByTemplate": {
+      "kv.metrics.window": 1,
+      "graph.researcher-facets": 1,
+      "graph.authored-counts": 1,
+      "graph.coauthors": 17,
+      "kv.entity-link": 1,
+      "graph.researcher-institutions": 1
+    },
+    "rows": 65,
+    "truncatedReads": 2,
+    "evidenceItems": 3,
+    "tokens": 886,
+    "omittedItems": 0,
+    "latencyMs": 26,
+    "pathStatuses": []
+  },
+  "semantic": {
+    "embeddingCalls": 1,
+    "embeddingInputTokens": 0,
+    "indexes": [
+      "researcher-profile-v1"
+    ],
+    "hits": 1,
+    "tokens": 605,
+    "omittedItems": 0,
+    "latencyMs": 377,
+    "outcome": "OK"
+  },
+  "llm": {
+    "attempts": 2,
+    "requests": 2,
+    "attemptsByStage": {
+      "QUERY_PLANNING": 1,
+      "ANSWER_SYNTHESIS": 1
+    },
+    "outcomes": {
+      "OK": 2
+    },
+    "inputTokens": 6249,
+    "outputTokens": 1265,
+    "throttleWaitMs": 11850
+  },
+  "latencyMs": 18122,
+  "stageLatencyMs": {
+    "COLLABORATION_METRICS": 1,
+    "PATH_FINDING": 0,
+    "EVIDENCE_BUILDING": 1,
+    "AUDIT": 0,
+    "QUERY_PLANNING": 7630,
+    "SEMANTIC_CONTEXT": 377,
+    "COMMUNITY_ANALYSIS": 25,
+    "CLAIM_VERIFICATION": 11,
+    "RESEARCHER_RESOLUTION": 34,
+    "ANSWER_SYNTHESIS": 10036
+  },
+  "checks": [
+    {
+      "name": "plan-operations",
+      "outcome": "PASS",
+      "detail": "needs TOPIC_FILTER; plan [TOPIC_FILTER/RESEARCHER]"
+    },
+    {
+      "name": "researcher-names",
+      "outcome": "PASS",
+      "detail": "expected [Franck Cappello], extracted [Franck Cappello]"
+    },
+    {
+      "name": "resolution",
+      "outcome": "PASS",
+      "detail": "Franck Cappello: expected RESOLVED_DOMINANT, got RESOLVED_DOMINANT"
+    },
+    {
+      "name": "abstention",
+      "outcome": "PASS",
+      "detail": "expected answer, got answer"
+    },
+    {
+      "name": "claim-evidence",
+      "outcome": "PASS",
+      "detail": "5 claims cite bundle IDs; 5 material claims each cite a graph item; 0 descriptive"
+    },
+    {
+      "name": "verification",
+      "outcome": "PASS",
+      "detail": "answer has a verified claim; counts 5/0/0/0; final claims 5 verified of 5"
+    },
+    {
+      "name": "bundle-budget",
+      "outcome": "PASS",
+      "detail": "graph 886/8000 tokens, semantic 605/3000, items 4/300"
+    },
+    {
+      "name": "llm-budget",
+      "outcome": "PASS",
+      "detail": "2 attempts, 2 requests (ANSWER_SYNTHESIS 1, QUERY_PLANNING 1), tokens in 6249 out 1265"
+    },
+    {
+      "name": "embedding-budget",
+      "outcome": "PASS",
+      "detail": "1 embedding calls for 1 indexes queried"
+    },
+    {
+      "name": "path-hops",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no path evidence in the bundle"
+    },
+    {
+      "name": "pair-edges",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no bundle edge has stored path evidence"
+    },
+    {
+      "name": "deadline",
+      "outcome": "PASS",
+      "detail": "18122 ms of 180000"
+    }
+  ],
+  "answerHash": "sha256:49af04603fd7a1fb4ccb7db5e6f5bfe6b3e08f9fe3965fad544da04311e2e4b2"
+}

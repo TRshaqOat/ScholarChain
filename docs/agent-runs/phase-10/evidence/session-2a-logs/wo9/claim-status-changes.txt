@@ -1,0 +1,131 @@
+| Q | WO1 outcome | WO1 V/P/U/C | WO9 outcome | WO9 V/P/U/C | checks failing WO1 -> WO9 |
+|---|---|---|---|---|---|
+| B01 | ANSWERED | 3/1/0/0 | ANSWERED | 3/1/0/0 | - -> - |
+| B02 | ANSWERED | 3/1/0/0 | ANSWERED | 3/1/0/0 | - -> - |
+| B03 | ANSWERED | 1/1/0/0 | ANSWERED | 1/1/0/0 | - -> - |
+| B04 | ANSWERED | 1/0/0/0 | ANSWERED | 1/0/0/0 | - -> - |
+| B05 | ANSWERED | 3/1/0/0 | ANSWERED | 3/1/0/0 | - -> - |
+| B06 | ANSWERED | 3/2/0/0 | ANSWERED | 3/2/0/0 | - -> - |
+| B07 | ANSWERED | 4/2/0/0 | ANSWERED | 4/2/0/0 | - -> - |
+| B08 | ANSWERED | 4/2/0/0 | ANSWERED | 4/2/0/0 | - -> - |
+| B09 | AMBIGUOUS_RESEARCHER | 0/0/0/0 | AMBIGUOUS_RESEARCHER | 0/0/0/0 | - -> - |
+| B10 | ANSWERED | 9/2/0/0 | ANSWERED | 9/2/0/0 | - -> - |
+| B11 | ANSWERED | 9/2/0/0 | ANSWERED | 9/2/0/0 | - -> - |
+| B12 | UNKNOWN_RESEARCHER | 0/0/0/0 | UNKNOWN_RESEARCHER | 0/0/0/0 | - -> - |
+| B13 | UNSUPPORTED_REQUEST | 0/0/0/0 | ANSWERED | 2/0/0/0 | abstention -> - |
+| B14 | ANSWERED | 4/1/0/0 | ANSWERED | 4/1/0/0 | - -> - |
+| B15 | UNSUPPORTED_REQUEST | 0/0/0/0 | ANSWERED | 2/0/0/0 | abstention -> - |
+| B16 | ANSWERED | 3/1/0/0 | ANSWERED | 3/1/0/0 | - -> - |
+| B17 | UNSUPPORTED_REQUEST | 0/0/0/0 | ANSWERED | 2/0/0/0 | abstention -> - |
+| B18 | ANSWERED | 3/2/0/0 | ANSWERED | 3/2/0/0 | - -> - |
+| B19 | ANSWERED | 1/0/0/0 | ANSWERED | 1/0/0/0 | - -> - |
+| B20 | ANSWERED | 3/1/0/0 | ANSWERED | 3/1/0/0 | - -> - |
+| B21 | ANSWERED | 1/0/0/0 | ANSWERED | 1/0/0/0 | - -> - |
+| B22 | ANSWERED | 5/1/0/0 | ANSWERED | 5/1/0/0 | - -> - |
+| B23 | ANSWERED | 3/1/0/0 | ANSWERED | 3/1/0/0 | - -> - |
+| B24 | UNSUPPORTED_REQUEST | 0/0/0/0 | ANSWERED | 4/0/0/0 | abstention -> - |
+| B25 | ANSWERED | 2/1/0/0 | ANSWERED | 2/1/0/0 | - -> - |
+| B26 | ANSWERED | 1/1/0/0 | ANSWERED | 1/1/0/0 | - -> - |
+| B27 | ANSWERED | 2/1/0/0 | ANSWERED | 2/1/0/0 | - -> - |
+| B28 | UNSUPPORTED_REQUEST | 0/0/0/0 | UNSUPPORTED_REQUEST | 0/0/0/0 | - -> - |
+| B29 | ANSWERED | 4/2/0/0 | ANSWERED | 4/2/0/0 | - -> - |
+| B30 | ANSWERED | 9/2/0/0 | ANSWERED | 9/2/0/0 | - -> - |
+
+TOTALS wo1 {'answered': 23, 'abstained': 7, 'V': 81, 'P': 28, 'U': 0, 'C': 0}
+TOTALS wo9 {'answered': 27, 'abstained': 3, 'V': 91, 'P': 28, 'U': 0, 'C': 0}
+
+CHANGED QUESTIONS 4
+## B13
+   outcome UNSUPPORTED_REQUEST -> ANSWERED
+   claims [] -> [('claim-1', ('In 2000-2014, the coauthorship graph has 7709 connected components; the largest connected component has 46062 researchers out of 66350 researchers, a share of 0.6942.', 'VERIFIED')), ('claim-2', ('In 2000-2014, 3119 singleton researchers (researchers without any coauthor edge in that window) are among the 66350 researchers of the coauthorship graph.', 'VERIFIED'))]
+   summary changed
+   uncertainty 'Corpus-level component lookup statistics are not stored in this version.' -> 'Graph nodes in 2000-2014 (corpus counts): researchers with at least one DBLP publication in the window (one analytics/researcher-metrics row each); researchers with only OpenAlex or Crossref authorship are not nodes.'
+   check outcomes {'plan-operations': 'PASS', 'researcher-names': 'PASS', 'resolution': 'NOT_APPLICABLE', 'abstention': 'FAIL', 'claim-evidence': 'NOT_APPLICABLE', 'verification': 'PASS', 'bundle-budget': 'NOT_APPLICABLE', 'llm-budget': 'PASS', 'embedding-budget': 'PASS', 'path-hops': 'NOT_APPLICABLE', 'pair-edges': 'NOT_APPLICABLE', 'deadline': 'PASS'} -> {'plan-operations': 'PASS', 'researcher-names': 'PASS', 'resolution': 'NOT_APPLICABLE', 'abstention': 'PASS', 'claim-evidence': 'PASS', 'verification': 'PASS', 'bundle-budget': 'PASS', 'llm-budget': 'PASS', 'embedding-budget': 'PASS', 'path-hops': 'NOT_APPLICABLE', 'pair-edges': 'NOT_APPLICABLE', 'deadline': 'PASS'}
+## B15
+   outcome UNSUPPORTED_REQUEST -> ANSWERED
+   claims [] -> [('claim-1', ('In all-years, the coauthorship graph has 16091 connected components; the largest connected component has 141367 researchers out of 191318 researchers, a share of 0.7389.', 'VERIFIED')), ('claim-2', ('In all-years, 4849 singleton researchers (researchers without any coauthor edge in that window) are among the 191318 researchers of the coauthorship graph.', 'VERIFIED'))]
+   summary changed
+   uncertainty 'Corpus-level component lookup statistics are not stored in this version.' -> 'Graph nodes in all-years (corpus counts): researchers with at least one DBLP publication in the window (one analytics/researcher-metrics row each); researchers with only OpenAlex or Crossref authorship are not nodes.'
+   check outcomes {'plan-operations': 'PASS', 'researcher-names': 'PASS', 'resolution': 'NOT_APPLICABLE', 'abstention': 'FAIL', 'claim-evidence': 'NOT_APPLICABLE', 'verification': 'PASS', 'bundle-budget': 'NOT_APPLICABLE', 'llm-budget': 'PASS', 'embedding-budget': 'PASS', 'path-hops': 'NOT_APPLICABLE', 'pair-edges': 'NOT_APPLICABLE', 'deadline': 'PASS'} -> {'plan-operations': 'PASS', 'researcher-names': 'PASS', 'resolution': 'NOT_APPLICABLE', 'abstention': 'PASS', 'claim-evidence': 'PASS', 'verification': 'PASS', 'bundle-budget': 'PASS', 'llm-budget': 'PASS', 'embedding-budget': 'PASS', 'path-hops': 'NOT_APPLICABLE', 'pair-edges': 'NOT_APPLICABLE', 'deadline': 'PASS'}
+## B17
+   outcome UNSUPPORTED_REQUEST -> ANSWERED
+   claims [] -> [('claim-1', ('In 2000-2014, 8075 communities have size 3 or more, out of 15312 communities; the largest community has 323 researchers.', 'VERIFIED')), ('claim-2', ('Community detection in 2000-2014 did not converge within its 10 rounds.', 'VERIFIED'))]
+   summary changed
+   uncertainty 'Corpus-level community comparison statistics are not stored in this version.' -> 'Graph nodes in 2000-2014 (corpus counts): researchers with at least one DBLP publication in the window (one analytics/researcher-metrics row each); researchers with only OpenAlex or Crossref authorship are not nodes. Communities in 2000-2014 did not converge: detection stopped after 10 rounds, so community counts depend on that cap and its tie-break.'
+   check outcomes {'plan-operations': 'PASS', 'researcher-names': 'PASS', 'resolution': 'NOT_APPLICABLE', 'abstention': 'FAIL', 'claim-evidence': 'NOT_APPLICABLE', 'verification': 'PASS', 'bundle-budget': 'NOT_APPLICABLE', 'llm-budget': 'PASS', 'embedding-budget': 'PASS', 'path-hops': 'NOT_APPLICABLE', 'pair-edges': 'NOT_APPLICABLE', 'deadline': 'PASS'} -> {'plan-operations': 'PASS', 'researcher-names': 'PASS', 'resolution': 'NOT_APPLICABLE', 'abstention': 'PASS', 'claim-evidence': 'PASS', 'verification': 'PASS', 'bundle-budget': 'PASS', 'llm-budget': 'PASS', 'embedding-budget': 'PASS', 'path-hops': 'NOT_APPLICABLE', 'pair-edges': 'NOT_APPLICABLE', 'deadline': 'PASS'}
+## B24
+   outcome UNSUPPORTED_REQUEST -> ANSWERED
+   claims [] -> [('claim-1', ("The largest connected component's share of researchers went from 0.6942 in 2000-2014 to 0.7087 in 2015-2026 (change 0.0144), so it is a larger share in 2015-2026 than in 2000-2014.", 'VERIFIED')), ('claim-2', ('The compared windows differ in length: 2000-2014 covers 15 years and 2015-2026 covers 12 years.', 'VERIFIED')), ('claim-3', ('In 2015-2026, the coauthorship graph has 10746 connected components; the largest connected component has 98812 researchers out of 139432 researchers, a share of 0.7087.', 'VERIFIED')), ('claim-4', ('In 2015-2026, 1798 singleton researchers (researchers without any coauthor edge in that window) are among the 139432 researchers of the coauthorship graph.', 'VERIFIED'))]
+   summary changed
+   uncertainty 'Corpus-level temporal comparison statistics are not stored in this version. Corpus-level component lookup statistics are not stored in this version.' -> 'Graph nodes in 2000-2014 (corpus counts): researchers with at least one DBLP publication in the window (one analytics/researcher-metrics row each); researchers with only OpenAlex or Crossref authorship are not nodes. Graph nodes in 2015-2026 (corpus counts): researchers with at least one DBLP publication in the window (one analytics/researcher-metrics row each); researchers with only OpenAlex or Crossref authorship are not nodes. The compared windows differ in length: 2000-2014 covers 15 years and 2015-2026 covers 12 years; counts are not normalized by window length.'
+   check outcomes {'plan-operations': 'PASS', 'researcher-names': 'PASS', 'resolution': 'NOT_APPLICABLE', 'abstention': 'FAIL', 'claim-evidence': 'NOT_APPLICABLE', 'verification': 'PASS', 'bundle-budget': 'NOT_APPLICABLE', 'llm-budget': 'PASS', 'embedding-budget': 'PASS', 'path-hops': 'NOT_APPLICABLE', 'pair-edges': 'NOT_APPLICABLE', 'deadline': 'PASS'} -> {'plan-operations': 'PASS', 'researcher-names': 'PASS', 'resolution': 'NOT_APPLICABLE', 'abstention': 'PASS', 'claim-evidence': 'PASS', 'verification': 'PASS', 'bundle-budget': 'PASS', 'llm-budget': 'PASS', 'embedding-budget': 'PASS', 'path-hops': 'NOT_APPLICABLE', 'pair-edges': 'NOT_APPLICABLE', 'deadline': 'PASS'}
+
+DETAIL B13 B15 B17 B24
+### B13 wo1 query qry-4e977cc6d4154624a69f05c8820de846
+  plan operations ['COMPONENT_LOOKUP/CORPUS'] window 2000-2014 comparison None
+  outcome UNSUPPORTED_REQUEST abstention detail This request is not supported by the stored data: Corpus-level component lookup statistics are not stored in this version.
+  graph evidence [] metricVersions []
+  template calls []
+  uncertainty Corpus-level component lookup statistics are not stored in this version.
+### B13 wo9 query qry-91b1ddc769246946fe9d8531cd8aecf5
+  plan operations ['COMPONENT_LOOKUP/CORPUS'] window 2000-2014 comparison None
+  outcome ANSWERED abstention detail None
+  graph evidence ['ev-b0de284ed5b7a6dd4680db3a6dabcf76'] metricVersions ['spark-corpus-window-summary-v1@run-1de2293597c338227290eb382de16957']
+  template calls ['obj.window-summary']
+  claim claim-1 VERIFIED ['ev-b0de284ed5b7a6dd4680db3a6dabcf76'] In 2000-2014, the coauthorship graph has 7709 connected components; the largest connected component has 46062 researchers out of 66350 researchers, a share of 0.6942.
+  claim claim-2 VERIFIED ['ev-b0de284ed5b7a6dd4680db3a6dabcf76'] In 2000-2014, 3119 singleton researchers (researchers without any coauthor edge in that window) are among the 66350 researchers of the coauthorship graph.
+   verify claim-1 VERIFIED [('evidence-exists', 'PASS'), ('graph-evidence-required', 'PASS'), ('kind-matches-type', 'PASS'), ('asserted-values', 'PASS'), ('asserted-values', 'PASS'), ('asserted-values', 'PASS'), ('asserted-values', 'PASS'), ('asserted-values', 'PASS'), ('numbers-in-text', 'PASS'), ('window', 'PASS'), ('identity', 'PASS')]
+   verify claim-2 VERIFIED [('evidence-exists', 'PASS'), ('graph-evidence-required', 'PASS'), ('kind-matches-type', 'PASS'), ('asserted-values', 'PASS'), ('asserted-values', 'PASS'), ('numbers-in-text', 'PASS'), ('window', 'PASS'), ('identity', 'PASS')]
+  uncertainty Graph nodes in 2000-2014 (corpus counts): researchers with at least one DBLP publication in the window (one analytics/researcher-metrics row each); researchers with only OpenAlex or Crossref authorship are not nodes.
+### B15 wo1 query qry-15143faced5fab33ced844223995f458
+  plan operations ['COMPONENT_LOOKUP/CORPUS'] window all-years comparison None
+  outcome UNSUPPORTED_REQUEST abstention detail This request is not supported by the stored data: Corpus-level component lookup statistics are not stored in this version.
+  graph evidence [] metricVersions []
+  template calls []
+  uncertainty Corpus-level component lookup statistics are not stored in this version.
+### B15 wo9 query qry-0fef9c338f38247b0b290a03248ced5b
+  plan operations ['COMPONENT_LOOKUP/CORPUS'] window all-years comparison None
+  outcome ANSWERED abstention detail None
+  graph evidence ['ev-621f9723cf0bc6952816f1d85cb18a53'] metricVersions ['spark-corpus-window-summary-v1@run-1de2293597c338227290eb382de16957']
+  template calls ['obj.window-summary']
+  claim claim-1 VERIFIED ['ev-621f9723cf0bc6952816f1d85cb18a53'] In all-years, the coauthorship graph has 16091 connected components; the largest connected component has 141367 researchers out of 191318 researchers, a share of 0.7389.
+  claim claim-2 VERIFIED ['ev-621f9723cf0bc6952816f1d85cb18a53'] In all-years, 4849 singleton researchers (researchers without any coauthor edge in that window) are among the 191318 researchers of the coauthorship graph.
+   verify claim-1 VERIFIED [('evidence-exists', 'PASS'), ('graph-evidence-required', 'PASS'), ('kind-matches-type', 'PASS'), ('asserted-values', 'PASS'), ('asserted-values', 'PASS'), ('asserted-values', 'PASS'), ('asserted-values', 'PASS'), ('asserted-values', 'PASS'), ('numbers-in-text', 'PASS'), ('window', 'PASS'), ('identity', 'PASS')]
+   verify claim-2 VERIFIED [('evidence-exists', 'PASS'), ('graph-evidence-required', 'PASS'), ('kind-matches-type', 'PASS'), ('asserted-values', 'PASS'), ('asserted-values', 'PASS'), ('numbers-in-text', 'PASS'), ('window', 'PASS'), ('identity', 'PASS')]
+  uncertainty Graph nodes in all-years (corpus counts): researchers with at least one DBLP publication in the window (one analytics/researcher-metrics row each); researchers with only OpenAlex or Crossref authorship are not nodes.
+### B17 wo1 query qry-652fab09500e01210127b26bb9e40ae8
+  plan operations ['COMMUNITY_COMPARISON/CORPUS'] window 2000-2014 comparison None
+  outcome UNSUPPORTED_REQUEST abstention detail This request is not supported by the stored data: Corpus-level community comparison statistics are not stored in this version.
+  graph evidence [] metricVersions []
+  template calls []
+  uncertainty Corpus-level community comparison statistics are not stored in this version.
+### B17 wo9 query qry-cad5df202e18281964c1943ccf9d3daa
+  plan operations ['COMMUNITY_COMPARISON/CORPUS'] window 2000-2014 comparison None
+  outcome ANSWERED abstention detail None
+  graph evidence ['ev-d478876c5b9f956de174991faecdf99e'] metricVersions ['spark-corpus-window-summary-v1@run-1de2293597c338227290eb382de16957']
+  template calls ['obj.window-summary']
+  claim claim-1 VERIFIED ['ev-d478876c5b9f956de174991faecdf99e'] In 2000-2014, 8075 communities have size 3 or more, out of 15312 communities; the largest community has 323 researchers.
+  claim claim-2 VERIFIED ['ev-d478876c5b9f956de174991faecdf99e'] Community detection in 2000-2014 did not converge within its 10 rounds.
+   verify claim-1 VERIFIED [('evidence-exists', 'PASS'), ('graph-evidence-required', 'PASS'), ('kind-matches-type', 'PASS'), ('asserted-values', 'PASS'), ('asserted-values', 'PASS'), ('asserted-values', 'PASS'), ('asserted-values', 'PASS'), ('asserted-values', 'PASS'), ('numbers-in-text', 'PASS'), ('window', 'PASS'), ('identity', 'PASS')]
+   verify claim-2 VERIFIED [('evidence-exists', 'PASS'), ('graph-evidence-required', 'PASS'), ('kind-matches-type', 'PASS'), ('asserted-values', 'PASS'), ('asserted-values', 'PASS'), ('numbers-in-text', 'PASS'), ('window', 'PASS'), ('identity', 'PASS')]
+  uncertainty Graph nodes in 2000-2014 (corpus counts): researchers with at least one DBLP publication in the window (one analytics/researcher-metrics row each); researchers with only OpenAlex or Crossref authorship are not nodes. Communities in 2000-2014 did not converge: detection stopped after 10 rounds, so community counts depend on that cap and its tie-break.
+### B24 wo1 query qry-93ca995b336344744f864c0b15c1015a
+  plan operations ['TEMPORAL_COMPARISON/CORPUS', 'COMPONENT_LOOKUP/CORPUS'] window 2015-2026 comparison {'fromWindow': '2000-2014', 'toWindow': '2015-2026'}
+  outcome UNSUPPORTED_REQUEST abstention detail This request is not supported by the stored data: Corpus-level temporal comparison statistics are not stored in this version. Corpus-level component lookup statistics are not stored in this version.
+  graph evidence [] metricVersions []
+  template calls []
+  uncertainty Corpus-level temporal comparison statistics are not stored in this version. Corpus-level component lookup statistics are not stored in this version.
+### B24 wo9 query qry-d97c892caba48b822cab5f5cde04db8a
+  plan operations ['TEMPORAL_COMPARISON/CORPUS', 'COMPONENT_LOOKUP/CORPUS'] window 2015-2026 comparison {'fromWindow': '2000-2014', 'toWindow': '2015-2026'}
+  outcome ANSWERED abstention detail None
+  graph evidence ['ev-7d1aa3b4e739a13c38439f70dd3b4086', 'ev-647d7b1cec9cd18484d04273feeaa6fc'] metricVersions ['spark-corpus-window-summary-v1@run-1de2293597c338227290eb382de16957']
+  template calls ['obj.window-summary', 'obj.window-summary', 'obj.window-summary']
+  claim claim-1 VERIFIED ['ev-7d1aa3b4e739a13c38439f70dd3b4086'] The largest connected component's share of researchers went from 0.6942 in 2000-2014 to 0.7087 in 2015-2026 (change 0.0144), so it is a larger share in 2015-2026 than in 2000-2014.
+  claim claim-2 VERIFIED ['ev-7d1aa3b4e739a13c38439f70dd3b4086'] The compared windows differ in length: 2000-2014 covers 15 years and 2015-2026 covers 12 years.
+  claim claim-3 VERIFIED ['ev-647d7b1cec9cd18484d04273feeaa6fc'] In 2015-2026, the coauthorship graph has 10746 connected components; the largest connected component has 98812 researchers out of 139432 researchers, a share of 0.7087.
+  claim claim-4 VERIFIED ['ev-647d7b1cec9cd18484d04273feeaa6fc'] In 2015-2026, 1798 singleton researchers (researchers without any coauthor edge in that window) are among the 139432 researchers of the coauthorship graph.
+   verify claim-1 VERIFIED [('evidence-exists', 'PASS'), ('graph-evidence-required', 'PASS'), ('kind-matches-type', 'PASS'), ('asserted-values', 'PASS'), ('asserted-values', 'PASS'), ('asserted-values', 'PASS'), ('numbers-in-text', 'PASS'), ('window', 'PASS'), ('identity', 'PASS')]
+   verify claim-2 VERIFIED [('evidence-exists', 'PASS'), ('graph-evidence-required', 'PASS'), ('kind-matches-type', 'PASS'), ('asserted-values', 'PASS'), ('asserted-values', 'PASS'), ('numbers-in-text', 'PASS'), ('window', 'PASS'), ('identity', 'PASS')]
+   verify claim-3 VERIFIED [('evidence-exists', 'PASS'), ('graph-evidence-required', 'PASS'), ('kind-matches-type', 'PASS'), ('asserted-values', 'PASS'), ('asserted-values', 'PASS'), ('asserted-values', 'PASS'), ('asserted-values', 'PASS'), ('asserted-values', 'PASS'), ('numbers-in-text', 'PASS'), ('window', 'PASS'), ('identity', 'PASS')]
+   verify claim-4 VERIFIED [('evidence-exists', 'PASS'), ('graph-evidence-required', 'PASS'), ('kind-matches-type', 'PASS'), ('asserted-values', 'PASS'), ('asserted-values', 'PASS'), ('numbers-in-text', 'PASS'), ('window', 'PASS'), ('identity', 'PASS')]
+  uncertainty Graph nodes in 2000-2014 (corpus counts): researchers with at least one DBLP publication in the window (one analytics/researcher-metrics row each); researchers with only OpenAlex or Crossref authorship are not nodes. Graph nodes in 2015-2026 (corpus counts): researchers with at least one DBLP publication in the window (one analytics/researcher-metrics row each); researchers with only OpenAlex or Crossref authorship are not nodes. The compared windows differ in length: 2000-2014 covers 15 years and 2015-2026 covers 12 years; counts are not normalized by window length.

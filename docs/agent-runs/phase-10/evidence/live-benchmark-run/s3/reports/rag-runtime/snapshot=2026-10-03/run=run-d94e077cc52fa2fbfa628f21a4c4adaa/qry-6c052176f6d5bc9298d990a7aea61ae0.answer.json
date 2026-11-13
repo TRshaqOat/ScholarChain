@@ -1,0 +1,630 @@
+{
+  "schemaVersion": "rag-answer-v1",
+  "response": {
+    "schemaVersion": "answer-response-v1",
+    "queryId": "qry-6c052176f6d5bc9298d990a7aea61ae0",
+    "summary": "Dhabaleswar K. Panda 0001 is in the largest connected component in the 2015-2026 window. The component contains 98812 researchers, and Panda has 128 distinct coauthors and a weighted degree of 622 in this period.",
+    "claims": [
+      {
+        "schemaVersion": "answer-claim-v1",
+        "claimId": "claim-1",
+        "text": "Dhabaleswar K. Panda 0001 is resolved with high confidence (0.93) from 384 works across 6 candidate researchers.",
+        "evidenceIds": [
+          "ev-97690f72cbf0e07aaecaba589f25d047"
+        ],
+        "verificationStatus": "VERIFIED",
+        "uncertainty": null,
+        "provenance": {
+          "schemaVersion": "provenance-v1",
+          "sourceDataset": "RUNTIME",
+          "sourceRecordId": "qry-6c052176f6d5bc9298d990a7aea61ae0",
+          "snapshot": "2026-10-03",
+          "runId": "run-d94e077cc52fa2fbfa628f21a4c4adaa",
+          "policyVersion": null,
+          "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+        }
+      },
+      {
+        "schemaVersion": "answer-claim-v1",
+        "claimId": "claim-2",
+        "text": "Dhabaleswar K. Panda 0001 is in the largest connected component in 2015-2026.",
+        "evidenceIds": [
+          "ev-464ebfd7652c3b8ab01c0ece83ebdc55"
+        ],
+        "verificationStatus": "VERIFIED",
+        "uncertainty": null,
+        "provenance": {
+          "schemaVersion": "provenance-v1",
+          "sourceDataset": "RUNTIME",
+          "sourceRecordId": "qry-6c052176f6d5bc9298d990a7aea61ae0",
+          "snapshot": "2026-10-03",
+          "runId": "run-d94e077cc52fa2fbfa628f21a4c4adaa",
+          "policyVersion": null,
+          "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+        }
+      },
+      {
+        "schemaVersion": "answer-claim-v1",
+        "claimId": "claim-3",
+        "text": "In 2015-2026, Dhabaleswar K. Panda 0001 has 128 distinct coauthors and weighted degree 622.",
+        "evidenceIds": [
+          "ev-af22e94f85b0e5e4c22a0e1adc015e8e"
+        ],
+        "verificationStatus": "VERIFIED",
+        "uncertainty": null,
+        "provenance": {
+          "schemaVersion": "provenance-v1",
+          "sourceDataset": "RUNTIME",
+          "sourceRecordId": "qry-6c052176f6d5bc9298d990a7aea61ae0",
+          "snapshot": "2026-10-03",
+          "runId": "run-d94e077cc52fa2fbfa628f21a4c4adaa",
+          "policyVersion": null,
+          "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+        }
+      },
+      {
+        "schemaVersion": "answer-claim-v1",
+        "claimId": "claim-4",
+        "text": "From 2000-2014 to 2015-2026, Dhabaleswar K. Panda 0001 remained in the largest connected component (largestComponentTransition IN->IN).",
+        "evidenceIds": [
+          "ev-9727315bcedcaf959de1fc56ff79af09"
+        ],
+        "verificationStatus": "VERIFIED",
+        "uncertainty": null,
+        "provenance": {
+          "schemaVersion": "provenance-v1",
+          "sourceDataset": "RUNTIME",
+          "sourceRecordId": "qry-6c052176f6d5bc9298d990a7aea61ae0",
+          "snapshot": "2026-10-03",
+          "runId": "run-d94e077cc52fa2fbfa628f21a4c4adaa",
+          "policyVersion": null,
+          "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+        }
+      }
+    ],
+    "abstained": false,
+    "uncertainty": "Dhabaleswar K. Panda 0001 was linked to scr:canon-v1.er-v2:6c5fc452ebb56826c254a79b5bdae377 by dominant-name-v1: 0.9766 of 384 works among 6 researchers with this display name. Dhabaleswar K. Panda 0001 was linked to scr:canon-v1.er-v2:6c5fc452ebb56826c254a79b5bdae377 by dominant-name-v1 with 0.9766 of 384 works among 6 researchers with this display name.",
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "RUNTIME",
+      "sourceRecordId": "qry-6c052176f6d5bc9298d990a7aea61ae0",
+      "snapshot": "2026-10-03",
+      "runId": "run-d94e077cc52fa2fbfa628f21a4c4adaa",
+      "policyVersion": "fusion-v1",
+      "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+    }
+  },
+  "plan": {
+    "schemaVersion": "rag-query-plan-v1",
+    "queryId": "qry-6c052176f6d5bc9298d990a7aea61ae0",
+    "operations": [
+      {
+        "operation": "COMPONENT_LOOKUP",
+        "scope": "RESEARCHER",
+        "researchers": [
+          0
+        ],
+        "metric": null,
+        "topN": null
+      }
+    ],
+    "researcherNames": [
+      {
+        "name": "Dhabaleswar K. Panda 0001",
+        "offset": 3
+      }
+    ],
+    "metrics": [],
+    "window": {
+      "requested": {
+        "kind": "NAMED",
+        "name": "2015-2026",
+        "yearFrom": null,
+        "yearTo": null
+      },
+      "window": "2015-2026",
+      "startYear": 2015,
+      "endYear": 2026,
+      "exact": true,
+      "note": null
+    },
+    "comparison": null,
+    "topics": [],
+    "venues": [],
+    "institutions": [],
+    "semanticIndexes": [
+      "researcher-profile-v1"
+    ],
+    "limits": {
+      "graphLimit": 100,
+      "vectorLimit": 50,
+      "maxPathDepth": 6,
+      "topK": 5
+    },
+    "source": "MODEL",
+    "overriddenFields": [],
+    "rejectedItems": [],
+    "promptVersion": "planner-v2",
+    "modelId": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "RUNTIME",
+      "sourceRecordId": "qry-6c052176f6d5bc9298d990a7aea61ae0",
+      "snapshot": "2026-10-03",
+      "runId": "run-d94e077cc52fa2fbfa628f21a4c4adaa",
+      "policyVersion": null,
+      "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+    }
+  },
+  "resolutions": [
+    {
+      "schemaVersion": "researcher-resolution-v1",
+      "name": "Dhabaleswar K. Panda 0001",
+      "nameKey": "name-v1:dhabaleswar k panda",
+      "policyVersion": "dominant-name-v1",
+      "dominantShare": 0.9,
+      "minWorks": 5,
+      "decision": "RESOLVED_DOMINANT",
+      "researcherId": "scr:canon-v1.er-v2:6c5fc452ebb56826c254a79b5bdae377",
+      "topShare": 0.9765625,
+      "totalWorks": 384,
+      "candidateCount": 6,
+      "candidates": [
+        {
+          "researcherId": "scr:canon-v1.er-v2:6c5fc452ebb56826c254a79b5bdae377",
+          "displayName": "Dhabaleswar K. Panda 0001",
+          "matchedName": "Dhabaleswar K. Panda 0001",
+          "works": 375,
+          "share": 0.9765625,
+          "identityConfidence": 0.93,
+          "mentionCount": 1077,
+          "dblpAnchored": true,
+          "orcid": "0000-0002-0356-1781",
+          "institutions": [
+            {
+              "id": "ror:00rs6vg23",
+              "name": "The Ohio State University",
+              "count": null
+            },
+            {
+              "id": "ror:01apna436",
+              "name": "Ohio Supercomputer Center",
+              "count": null
+            },
+            {
+              "id": "ror:01e41cf67",
+              "name": "Los Alamos National Laboratory",
+              "count": null
+            }
+          ],
+          "topCoauthors": [
+            {
+              "id": "scr:canon-v1.er-v2:0030bba93ef411df4e36dd61b03530df",
+              "name": "Hari Subramoni",
+              "count": 127
+            },
+            {
+              "id": "scr:canon-v1.er-v2:53cc7b772df3f4620fdaa5441995f24e",
+              "name": "Xiaoyi Lu 0001",
+              "count": 53
+            },
+            {
+              "id": "scr:canon-v1.er-v2:7e816316ec3d220834e3f3c22c95fdd3",
+              "name": "Khaled Hamidouche",
+              "count": 33
+            }
+          ],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:f5ee051751bc9ba9d8acd2eba27c010b",
+          "displayName": "Dhabaleswar K. Panda 0001",
+          "matchedName": "Dhabaleswar K. Panda 0001",
+          "works": 5,
+          "share": 0.013020833333333334,
+          "identityConfidence": 0.93,
+          "mentionCount": 5,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:50eed3ae84c59c8b9a854198e689addf",
+          "displayName": "Dhabaleswar K. Panda 0001",
+          "matchedName": "Dhabaleswar K. Panda 0001",
+          "works": 1,
+          "share": 0.0026041666666666665,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [
+            {
+              "id": "scr:canon-v1.er-v2:165d347484aca5be5203f415a0a2939f",
+              "name": "N. S. Sundar",
+              "count": 1
+            },
+            {
+              "id": "scr:canon-v1.er-v2:a16d1185ed835898636a245e0f6afad5",
+              "name": "Doddaballapur Narasimha-Murthy Jayasimha",
+              "count": 1
+            }
+          ],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:61d1718239a80a034c7167bcc36ec466",
+          "displayName": "Dhabaleswar K. Panda 0001",
+          "matchedName": "Dhabaleswar K. Panda 0001",
+          "works": 1,
+          "share": 0.0026041666666666665,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [
+            {
+              "id": "scr:canon-v1.er-v2:0030bba93ef411df4e36dd61b03530df",
+              "name": "Hari Subramoni",
+              "count": 1
+            },
+            {
+              "id": "scr:canon-v1.er-v2:53cc7b772df3f4620fdaa5441995f24e",
+              "name": "Xiaoyi Lu 0001",
+              "count": 1
+            }
+          ],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:86407fc37dfa1dff319d4ab4e50cad09",
+          "displayName": "Dhabaleswar K. Panda 0001",
+          "matchedName": "Dhabaleswar K. Panda 0001",
+          "works": 1,
+          "share": 0.0026041666666666665,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [
+            {
+              "id": "scr:canon-v1.er-v2:d33f62f8ae3ac01fb8215361fdfb4acb",
+              "name": "Hari Subramoni",
+              "count": 1
+            }
+          ],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:e585509ba6fda61d2e820e41ad607ff4",
+          "displayName": "Dhabaleswar K. Panda 0001",
+          "matchedName": "Dhabaleswar K. Panda 0001",
+          "works": 1,
+          "share": 0.0026041666666666665,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [
+            {
+              "id": "scr:canon-v1.er-v2:51da24851b33c351d52040e3d0a5d454",
+              "name": "Hari Subramoni",
+              "count": 1
+            }
+          ],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        }
+      ],
+      "otherNameMatches": [
+        {
+          "researcherId": "scr:canon-v1.er-v2:641a54db87ed474a099836b7ea16130c",
+          "displayName": "Dhabaleswar K. Panda",
+          "matchedName": "Dhabaleswar K. Panda",
+          "works": 1,
+          "share": null,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": false,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:698b3758718bc594ad2506234249171c",
+          "displayName": "Dhabaleswar K. Panda",
+          "matchedName": "Dhabaleswar K. Panda",
+          "works": 1,
+          "share": null,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": false,
+          "orcid": null,
+          "institutions": [
+            {
+              "id": "sci:affn-v1:87e200ad19488b5aefa0e799a95bc8b1",
+              "name": "The Ohio State University,Columbus,Ohio,USA",
+              "count": null
+            }
+          ],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:bbeea622c23cc55dd611e9463a34cb83",
+          "displayName": "Dhabaleswar K. Panda",
+          "matchedName": "Dhabaleswar K. Panda",
+          "works": 1,
+          "share": null,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": false,
+          "orcid": null,
+          "institutions": [
+            {
+              "id": "sci:affn-v1:87e200ad19488b5aefa0e799a95bc8b1",
+              "name": "The Ohio State University,Columbus,Ohio,USA",
+              "count": null
+            }
+          ],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:f7090b6157ced4ca68156d832584fa3d",
+          "displayName": "Dhabaleswar K. Panda",
+          "matchedName": "Dhabaleswar K. Panda",
+          "works": 1,
+          "share": null,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": false,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:ff9b750ad9c451d3b69a5004d9c762a0",
+          "displayName": "Dhabaleswar K. Panda",
+          "matchedName": "Dhabaleswar K. Panda",
+          "works": 1,
+          "share": null,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": false,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        }
+      ],
+      "truncated": false,
+      "evidenceId": "ev-97690f72cbf0e07aaecaba589f25d047"
+    }
+  ],
+  "verification": {
+    "schemaVersion": "claim-verification-v1",
+    "queryId": "qry-6c052176f6d5bc9298d990a7aea61ae0",
+    "checks": [
+      {
+        "claimId": "claim-1",
+        "status": "VERIFIED",
+        "checks": [
+          {
+            "rule": "evidence-exists",
+            "outcome": "PASS",
+            "detail": "all cited items are in the bundle"
+          },
+          {
+            "rule": "graph-evidence-required",
+            "outcome": "PASS",
+            "detail": "1 graph item(s) cited"
+          },
+          {
+            "rule": "kind-matches-type",
+            "outcome": "PASS",
+            "detail": "IDENTITY needs IDENTITY_RESOLUTION"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "candidateCount"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "identityConfidence"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "totalWorks"
+          },
+          {
+            "rule": "numbers-in-text",
+            "outcome": "PASS",
+            "detail": "every number is an asserted, named fact"
+          },
+          {
+            "rule": "identity",
+            "outcome": "PASS",
+            "detail": "every subject and name is resolved or cited"
+          }
+        ],
+        "action": "KEPT"
+      },
+      {
+        "claimId": "claim-2",
+        "status": "VERIFIED",
+        "checks": [
+          {
+            "rule": "evidence-exists",
+            "outcome": "PASS",
+            "detail": "all cited items are in the bundle"
+          },
+          {
+            "rule": "graph-evidence-required",
+            "outcome": "PASS",
+            "detail": "1 graph item(s) cited"
+          },
+          {
+            "rule": "kind-matches-type",
+            "outcome": "PASS",
+            "detail": "COMPONENT needs COMPONENT_RECORD or METRIC_RECORD"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "componentSize"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "inLargestComponent"
+          },
+          {
+            "rule": "numbers-in-text",
+            "outcome": "PASS",
+            "detail": "every number is an asserted, named fact"
+          },
+          {
+            "rule": "window",
+            "outcome": "PASS",
+            "detail": "2015-2026"
+          },
+          {
+            "rule": "identity",
+            "outcome": "PASS",
+            "detail": "every subject and name is resolved or cited"
+          }
+        ],
+        "action": "KEPT"
+      },
+      {
+        "claimId": "claim-3",
+        "status": "VERIFIED",
+        "checks": [
+          {
+            "rule": "evidence-exists",
+            "outcome": "PASS",
+            "detail": "all cited items are in the bundle"
+          },
+          {
+            "rule": "graph-evidence-required",
+            "outcome": "PASS",
+            "detail": "1 graph item(s) cited"
+          },
+          {
+            "rule": "kind-matches-type",
+            "outcome": "PASS",
+            "detail": "METRIC_VALUE needs METRIC_RECORD or RANKING_RECORD or TEMPORAL_CHANGE"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "distinctCoauthorCount"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "weightedDegree"
+          },
+          {
+            "rule": "numbers-in-text",
+            "outcome": "PASS",
+            "detail": "every number is an asserted, named fact"
+          },
+          {
+            "rule": "window",
+            "outcome": "PASS",
+            "detail": "2015-2026"
+          },
+          {
+            "rule": "identity",
+            "outcome": "PASS",
+            "detail": "every subject and name is resolved or cited"
+          }
+        ],
+        "action": "KEPT"
+      },
+      {
+        "claimId": "claim-4",
+        "status": "VERIFIED",
+        "checks": [
+          {
+            "rule": "evidence-exists",
+            "outcome": "PASS",
+            "detail": "all cited items are in the bundle"
+          },
+          {
+            "rule": "graph-evidence-required",
+            "outcome": "PASS",
+            "detail": "1 graph item(s) cited"
+          },
+          {
+            "rule": "kind-matches-type",
+            "outcome": "PASS",
+            "detail": "TEMPORAL_CHANGE needs TEMPORAL_CHANGE"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "fromInLargestComponent"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "largestComponentTransition"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "toInLargestComponent"
+          },
+          {
+            "rule": "numbers-in-text",
+            "outcome": "PASS",
+            "detail": "every number is an asserted, named fact"
+          },
+          {
+            "rule": "window",
+            "outcome": "PASS",
+            "detail": "2000-2014>2015-2026"
+          },
+          {
+            "rule": "identity",
+            "outcome": "PASS",
+            "detail": "every subject and name is resolved or cited"
+          }
+        ],
+        "action": "KEPT"
+      }
+    ],
+    "counts": {
+      "verified": 4,
+      "partiallySupported": 0,
+      "unsupported": 0,
+      "conflicting": 0
+    }
+  },
+  "abstention": null,
+  "answerHash": "sha256:7c9644baa7d3b1909ea1d7268deea91e0b920efdf09e51709fa68c1df9675718"
+}

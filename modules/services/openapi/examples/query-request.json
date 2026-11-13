@@ -1,0 +1,28 @@
+{
+  "question": "Which researchers have the most distinct coauthors in distributed systems since 2015, which of them participated in the largest author teams, and which are the strongest bridges between collaboration communities?",
+  "constraints": {
+    "yearFrom": 2015,
+    "yearTo": 2026,
+    "topics": ["distributed systems"],
+    "institutions": [],
+    "venues": []
+  },
+  "analysis": {
+    "rankingMetric": "DISTINCT_COAUTHOR_COUNT",
+    "includeTeamSize": true,
+    "includeBridgeMetrics": true,
+    "includeCommunities": true,
+    "includePaths": true
+  },
+  "retrieval": {
+    "graphLimit": 100,
+    "vectorLimit": 30,
+    "maxPathDepth": 6
+  },
+  "output": {
+    "includeEvidence": true,
+    "includeScores": true,
+    "includeUncertainty": true
+  },
+  "execution": "sync"
+}

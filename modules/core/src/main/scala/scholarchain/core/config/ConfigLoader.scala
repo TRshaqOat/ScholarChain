@@ -115,6 +115,11 @@ final case class BudgetConfig(
     maxOutputTokensPerQuestion: Int
 )
 final case class AuditConfig(ttlDays: Int)
+
+/** loadRun: the load run of the served window-summary object; "" serves none (corpus questions
+  * abstain).
+  */
+final case class WindowSummaryConfig(loadRun: String)
 final case class RuntimeConfig(
     promptsDir: String,
     question: QuestionConfig,
@@ -126,7 +131,8 @@ final case class RuntimeConfig(
     rankings: RankingsConfig,
     semantic: SemanticConfig,
     budget: BudgetConfig,
-    audit: AuditConfig
+    audit: AuditConfig,
+    windowSummary: WindowSummaryConfig
 ):
   def positiveInts: Seq[Int] = Seq(
     question.maxChars,
@@ -177,6 +183,59 @@ final case class GraphReadConfig(
 ):
   def all: Seq[Int] = productIterator.collect { case i: Int => i }.toSeq
 
+// ---- Phase 10 services (`services.*`; meanings in scholarchain.conf) -------------------------
+final case class QueryApiConfig(port: Int, threads: Int, queryRatePerMinute: Int)
+final case class GraphEvidenceApiConfig(port: Int, threads: Int)
+final case class WorkerConfig(
+    port: Int,
+    threads: Int,
+    concurrency: Int,
+    pollWaitSeconds: Int,
+    visibilityTimeoutSeconds: Int
+)
+
+/** The async job queue. URLs are SQS queue URLs; the dead-letter queue is reached by the redrive
+  * policy after maxReceiveCount receives.
+  */
+final case class JobQueueConfig(url: String, deadLetterUrl: String, maxReceiveCount: Int)
+final case class ServiceTtlConfig(idempotencyHours: Int, jobHours: Int)
+
+/** Bounded read retries (same meaning as the storage RetryPolicy) and per-downstream breakers. */
+final case class ResilienceConfig(
+    maxAttempts: Int,
+    baseDelayMs: Int,
+    maxDelayMs: Int,
+    breakerFailureThreshold: Int,
+    breakerOpenMs: Int
+)
+final case class DownstreamTimeouts(
+    neptuneMs: Int,
+    dynamoDbMs: Int,
+    s3Ms: Int,
+    s3VectorsMs: Int,
+    sqsMs: Int
+)
+final case class ServicesConfig(
+    stubLlm: Boolean,
+    metricsEnabled: Boolean,
+    apiKeyEnv: String,
+    maxBodyBytes: Int,
+    maxQueuedRequests: Int,
+    queryApi: QueryApiConfig,
+    graphEvidenceApi: GraphEvidenceApiConfig,
+    worker: WorkerConfig,
+    queue: JobQueueConfig,
+    ttl: ServiceTtlConfig,
+    evidenceMaxContentChars: Int,
+    resilience: ResilienceConfig,
+    timeouts: DownstreamTimeouts
+):
+  def positiveInts: Seq[Int] =
+    Seq(maxBodyBytes, maxQueuedRequests, evidenceMaxContentChars, queue.maxReceiveCount) ++
+      Seq(queryApi, graphEvidenceApi, worker, ttl, resilience, timeouts).flatMap(
+        _.productIterator.collect { case i: Int => i }
+      )
+
 /** Typed view of the `scholarchain` configuration tree (see scholarchain.conf). */
 final case class ScholarChainConfig(
     configVersion: String,
@@ -194,7 +253,8 @@ final case class ScholarChainConfig(
     models: ModelsConfig,
     operations: OperationsConfig,
     runtime: RuntimeConfig,
-    graphRead: GraphReadConfig
+    graphRead: GraphReadConfig,
+    services: ServicesConfig
 )
 
 /** Loads configuration. Precedence, highest first:
@@ -230,7 +290,12 @@ object ConfigLoader:
     "SCHOLARCHAIN_SYNTHESIS_MODEL_ID" -> "models.synthesis-model",
     "SCHOLARCHAIN_VERIFICATION_MODEL_ID" -> "models.verification-model",
     "SCHOLARCHAIN_ADJUDICATION_MODEL_ID" -> "models.adjudication-model",
-    "SCHOLARCHAIN_PROMPTS_DIR" -> "runtime.prompts-dir"
+    "SCHOLARCHAIN_PROMPTS_DIR" -> "runtime.prompts-dir",
+    "SCHOLARCHAIN_WINDOW_SUMMARY_RUN" -> "runtime.window-summary.load-run",
+    "SCHOLARCHAIN_STUB_LLM" -> "services.stub-llm",
+    "SCHOLARCHAIN_JOB_QUEUE_URL" -> "services.queue.url",
+    "SCHOLARCHAIN_JOB_DLQ_URL" -> "services.queue.dead-letter-url",
+    "SCHOLARCHAIN_JOB_MAX_RECEIVE_COUNT" -> "services.queue.max-receive-count"
   )
 
   /** Keys removed by the one-bucket change (Phase 7 ruling 20). A layer that still sets one is an
@@ -402,7 +467,8 @@ object ConfigLoader:
           int("runtime.budget.max-input-tokens-per-question"),
           int("runtime.budget.max-output-tokens-per-question")
         ),
-        AuditConfig(int("runtime.audit.ttl-days"))
+        AuditConfig(int("runtime.audit.ttl-days")),
+        WindowSummaryConfig(str("runtime.window-summary.load-run"))
       ),
       graphRead = GraphReadConfig(
         int("graph-read.max-results"),
@@ -417,6 +483,50 @@ object ConfigLoader:
         int("graph-read.max-lookup-ids"),
         int("graph-read.neighbors-max-depth"),
         int("graph-read.neighbors-max-limit")
+      ),
+      services = ServicesConfig(
+        c.getBoolean("services.stub-llm"),
+        c.getBoolean("services.metrics-enabled"),
+        str("services.api-key-env"),
+        int("services.max-body-bytes"),
+        int("services.max-queued-requests"),
+        QueryApiConfig(
+          int("services.query-api.port"),
+          int("services.query-api.threads"),
+          int("services.query-api.query-rate-per-minute")
+        ),
+        GraphEvidenceApiConfig(
+          int("services.graph-evidence-api.port"),
+          int("services.graph-evidence-api.threads")
+        ),
+        WorkerConfig(
+          int("services.worker.port"),
+          int("services.worker.threads"),
+          int("services.worker.concurrency"),
+          int("services.worker.poll-wait-seconds"),
+          int("services.worker.visibility-timeout-seconds")
+        ),
+        JobQueueConfig(
+          str("services.queue.url"),
+          str("services.queue.dead-letter-url"),
+          int("services.queue.max-receive-count")
+        ),
+        ServiceTtlConfig(int("services.ttl.idempotency-hours"), int("services.ttl.job-hours")),
+        int("services.evidence-max-content-chars"),
+        ResilienceConfig(
+          int("services.resilience.max-attempts"),
+          int("services.resilience.base-delay-ms"),
+          int("services.resilience.max-delay-ms"),
+          int("services.resilience.breaker-failure-threshold"),
+          int("services.resilience.breaker-open-ms")
+        ),
+        DownstreamTimeouts(
+          int("services.timeouts.neptune-ms"),
+          int("services.timeouts.dynamodb-ms"),
+          int("services.timeouts.s3-ms"),
+          int("services.timeouts.s3-vectors-ms"),
+          int("services.timeouts.sqs-ms")
+        )
       )
     )
 
@@ -426,6 +536,68 @@ object ConfigLoader:
   // DynamoDB table names allow A-Z a-z 0-9 _ . - (3 to 255); 200 leaves room for the logical name.
   private val TablePrefix = "[A-Za-z0-9_.-]{1,200}".r
   private val IamRoleArn = "arn:aws[a-z-]*:iam::\\d{12}:role/[A-Za-z0-9+=,.@_/-]+".r
+  // SQS queue URL: https://<host>/<12-digit account>/<queue name, 1 to 80 of A-Z a-z 0-9 _ ->.
+  private val SqsQueueUrl = "https://[a-z0-9.-]+/\\d{12}/[A-Za-z0-9_-]{1,80}".r
+  private val EnvVarName = "[A-Z][A-Z0-9_]*".r
+
+  /** The `services.*` rules (Phase 10 rulings 5 to 11). */
+  private def validateServices(c: ScholarChainConfig): List[String] =
+    def check(ok: Boolean, msg: String) = if ok then Nil else List(msg)
+    val s = c.services
+    val ports = Seq(s.queryApi.port, s.graphEvidenceApi.port, s.worker.port)
+    // The worker runs each job under runtime.question.deadline-ms; the deadline is cooperative, so a
+    // running model attempt can overrun it by up to runtime.llm.timeout-ms.
+    val workerBoundMs = c.runtime.question.deadlineMs.toLong + c.runtime.llm.timeoutMs
+    check(
+      s.positiveInts.forall(_ >= 1),
+      "services limits, sizes, TTLs, and timeouts must be positive"
+    ) ++
+      check(
+        ports.forall(_ <= 65535) && ports.distinct.size == 3,
+        "services ports must be distinct and at most 65535"
+      ) ++
+      check(
+        EnvVarName.matches(s.apiKeyEnv) && !EnvOverrides.contains(s.apiKeyEnv) &&
+          s.apiKeyEnv != ConfigFileEnv,
+        "services.api-key-env must be an upper-case environment variable name that is not a " +
+          "configuration variable"
+      ) ++
+      check(
+        s.worker.pollWaitSeconds <= 20,
+        "services.worker.poll-wait-seconds must be at most 20"
+      ) ++
+      check(
+        s.worker.visibilityTimeoutSeconds * 1000L > workerBoundMs &&
+          s.worker.visibilityTimeoutSeconds <= 43200,
+        "services.worker.visibility-timeout-seconds must exceed runtime.question.deadline-ms + " +
+          "runtime.llm.timeout-ms and be at most 43200"
+      ) ++
+      check(
+        s.queue.maxReceiveCount <= 1000,
+        "services.queue.max-receive-count must be at most 1000"
+      ) ++
+      Seq(
+        "services.queue.url" -> s.queue.url,
+        "services.queue.dead-letter-url" -> s.queue.deadLetterUrl
+      ).toList
+        .flatMap((k, v) => check(SqsQueueUrl.matches(v), s"$k '$v' is not an SQS queue URL")) ++
+      check(
+        s.queue.url != s.queue.deadLetterUrl,
+        "services.queue.url and dead-letter-url must differ"
+      ) ++
+      check(
+        s.ttl.idempotencyHours <= s.ttl.jobHours &&
+          s.ttl.jobHours.toLong <= c.runtime.audit.ttlDays * 24L,
+        "services.ttl must satisfy idempotency-hours <= job-hours <= runtime.audit.ttl-days x 24"
+      ) ++
+      check(
+        s.resilience.baseDelayMs <= s.resilience.maxDelayMs,
+        "services.resilience.base-delay-ms must be at most max-delay-ms"
+      ) ++
+      check(
+        s.timeouts.neptuneMs >= c.neptune.queryTimeoutMs,
+        "services.timeouts.neptune-ms must be at least neptune.query-timeout-ms"
+      )
 
   /** Rule violations of a loaded configuration; empty means valid. */
   def validate(c: ScholarChainConfig): List[String] =
@@ -443,7 +615,9 @@ object ConfigLoader:
       c.models.plannerModel,
       c.models.synthesisModel,
       c.models.verificationModel,
-      c.models.adjudicationModel
+      c.models.adjudicationModel,
+      c.services.queue.url,
+      c.services.queue.deadLetterUrl
     ).filter(v =>
       v.startsWith("example-") || v.endsWith(".invalid") || v == "000000000000" ||
         v.contains(":000000000000:") || v.contains("/example-")
@@ -516,6 +690,11 @@ object ConfigLoader:
       ) ++
       check(c.analytics.rankingSize >= 1, "analytics.ranking-size must be positive") ++
       check(rt.promptsDir.trim.nonEmpty, "runtime.prompts-dir must not be blank") ++
+      check(
+        rt.windowSummary.loadRun.isEmpty || IdFormat.isRunId(rt.windowSummary.loadRun),
+        s"runtime.window-summary.load-run '${rt.windowSummary.loadRun}' must be empty or " +
+          "run-<32 lower-case hex>"
+      ) ++
       Seq(
         "runtime.planner.prompt-version" -> rt.planner.promptVersion,
         "runtime.synthesis.prompt-version" -> rt.synthesis.promptVersion,
@@ -561,6 +740,7 @@ object ConfigLoader:
         "runtime.rankings.default-top-n must be at most analytics.ranking-size and max-top-n"
       ) ++
       check(c.retrieval.maxPathDepth <= 6, "retrieval.max-path-depth must be at most 6") ++
+      validateServices(c) ++
       check(
         c.environment == "local" || placeholders.isEmpty,
         s"environment '${c.environment}' still uses placeholder values: ${placeholders.mkString(", ")}"

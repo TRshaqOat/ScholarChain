@@ -10,6 +10,7 @@ import scholarchain.core.{
   StableIds
 }
 import scholarchain.rag.SemanticContext
+import scholarchain.storage.WindowSummary
 
 /** Stage 7 (EVIDENCE_BUILDING, RUNTIME.md section 10): deterministic graph evidence and semantic
   * context as separate, budgeted lists of core EvidenceItems with stable IDs. Facts are canonical
@@ -258,6 +259,86 @@ object EvidenceBuilder:
         )
       }
 
+    // Corpus window summaries (work order 9, F2): every value is the stored row's, with the row's
+    // provenance (its Spark run) and window; `scope` CORPUS tells them from a researcher's items.
+    def corpusFacts(s: WindowSummary): Map[String, String] =
+      win(s.window) ++ Map(
+        "scope" -> "CORPUS",
+        "researchers" -> s.researchers.toString,
+        "years" -> s.years.toString,
+        "nodeBasis" -> s.nodeBasis,
+        "metricVersion" -> s"${s.schemaVersion}@${s.provenance.runId}"
+      )
+    def corpusItem(t: EvidenceType, kind: String, s: WindowSummary, facts: Map[String, String]) =
+      item(
+        t,
+        Seq("CORPUS", s"$kind#${s.window}"),
+        s.provenance.runId,
+        (s.largestComponentId.toVector ++ s.largestCommunityId.toVector)
+          .filter(id => facts.values.exists(_ == id)),
+        s"${g.corpusSource}#${s.window}",
+        corpusFacts(s) ++ facts,
+        s.provenance
+      )
+    def componentFacts(s: WindowSummary) = Map(
+      "components" -> s.components.toString,
+      "largestComponentSize" -> s.largestComponentSize.toString,
+      "singletonResearchers" -> s.singletonResearchers.toString,
+      "coauthorEdges" -> s.coauthorEdges.toString
+    ) ++ s.largestComponentId.map("largestComponentId" -> _) ++
+      s.largestComponentFraction.map("largestComponentFraction" -> canon(_))
+    def communityFacts(s: WindowSummary) = Map(
+      "communities" -> s.communities.toString,
+      "largestCommunitySize" -> s.largestCommunitySize.toString,
+      "singletonCommunities" -> s.singletonCommunities.toString,
+      "communityMinSize" -> s.communityMinSize.toString,
+      "communitiesAtLeastMinSize" -> s.communitiesAtLeastMinSize.toString,
+      "communityConverged" -> s.communityConverged.toString,
+      "communityRounds" -> s.communityRounds.toString
+    ) ++ s.largestCommunityId.map("largestCommunityId" -> _) ++
+      s.largestCommunityFraction.map("largestCommunityFraction" -> canon(_))
+    val corpusComponents =
+      g.corpusComponents.map(s =>
+        corpusItem(EvidenceType.COMPONENT_RECORD, "COMPONENTS", s, componentFacts(s))
+      )
+    val corpusCommunities =
+      g.corpusCommunities.map(s =>
+        corpusItem(EvidenceType.COMMUNITY_RECORD, "COMMUNITIES", s, communityFacts(s))
+      )
+    // A stored pair of windows: from<Fact>, to<Fact>, and delta<Fact> = to - from (exact decimals of
+    // the two stored values), like a researcher's CHANGE# item.
+    val corpusChanges = g.corpusComparisons.map { (a, b) =>
+      val key = s"${a.window}>${b.window}"
+      def side(p: String, s: WindowSummary) =
+        (corpusFacts(s) ++ componentFacts(s) ++ communityFacts(s)).collect {
+          case (k, v) if !Set("scope", "nodeBasis", "metricVersion", "window").contains(k) =>
+            s"$p${k.head.toUpper}${k.tail}" -> v
+        } + (s"${p}Window" -> s.window)
+      val (from, to) = (side("from", a), side("to", b))
+      val deltas = from.toVector.flatMap { (k, v) =>
+        val f = k.stripPrefix("from")
+        for
+          x <- scala.util.Try(BigDecimal(v)).toOption
+          y <- to.get(s"to$f").flatMap(t => scala.util.Try(BigDecimal(t)).toOption)
+          if !f.endsWith("Year") && f != "CommunityMinSize"
+        yield s"delta$f" -> (y - x).bigDecimal.stripTrailingZeros.toPlainString
+      }
+      item(
+        EvidenceType.TEMPORAL_CHANGE,
+        Seq("CORPUS", s"CHANGE#$key"),
+        a.provenance.runId,
+        (a.largestComponentId.toVector ++ b.largestComponentId.toVector).distinct,
+        s"${g.corpusSource}#$key",
+        from ++ to ++ deltas ++ Map(
+          "window" -> key,
+          "scope" -> "CORPUS",
+          "nodeBasis" -> a.nodeBasis,
+          "metricVersion" -> s"${a.schemaVersion}@${a.provenance.runId}"
+        ),
+        a.provenance.copy(sourceRecordId = key)
+      )
+    }
+
     def edgeItem(l: CoauthorLink): EvidenceItem =
       val (a, b) = if l.researcherId < l.coauthorId then (l.researcherId, l.coauthorId)
       else (l.coauthorId, l.researcherId)
@@ -413,10 +494,10 @@ object EvidenceBuilder:
 
     val seen = collection.mutable.HashSet.empty[String]
     def fresh(g: Vector[EvidenceItem]) = g.filter(e => seen.add(e.evidenceId))
-    (identity.map(Vector(_)) ++ metrics.map(Vector(_)) ++ rankings.map(Vector(_)) ++ changes.map(
-      Vector(_)
-    ) ++
-      components.map(Vector(_)) ++ paths ++ edges.map(Vector(_)) ++ communities.map(Vector(_)) ++
+    (identity.map(Vector(_)) ++ metrics.map(Vector(_)) ++ rankings.map(Vector(_)) ++
+      (changes ++ corpusChanges).map(Vector(_)) ++
+      (components ++ corpusComponents).map(Vector(_)) ++ paths ++ edges.map(Vector(_)) ++
+      (communities ++ corpusCommunities).map(Vector(_)) ++
       facets.map(Vector(_)) ++ works.map(Vector(_))).map(fresh).filter(_.nonEmpty)
 
   /** The bounded bundle: graph groups fill the graph share in order, whole groups only; semantic

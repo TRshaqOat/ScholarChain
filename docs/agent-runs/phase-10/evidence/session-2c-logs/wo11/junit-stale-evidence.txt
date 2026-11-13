@@ -1,0 +1,25 @@
+total 128
+drwxr-xr-x@ 10 achyutpatel  staff   320 Nov 12 15:58:13 2026 .
+drwxr-xr-x@  7 achyutpatel  staff   224 Nov 12 02:23:31 2026 ..
+-rw-r--r--@  1 achyutpatel  staff  5587 Nov 12 15:47:27 2026 TEST-scholarchain.services.BuildingBlocksSpec.xml
+-rw-r--r--@  1 achyutpatel  staff  5135 Nov 12 15:58:13 2026 TEST-scholarchain.services.CorpusQuerySpec.xml
+-rw-r--r--@  1 achyutpatel  staff  4575 Nov 12 02:52:48 2026 TEST-scholarchain.services.GenerateExamplesSpec.xml
+-rw-r--r--@  1 achyutpatel  staff  5660 Nov 12 15:47:28 2026 TEST-scholarchain.services.GraphEvidenceApiSpec.xml
+-rw-r--r--@  1 achyutpatel  staff  4763 Nov 12 15:47:49 2026 TEST-scholarchain.services.LifecycleSpec.xml
+-rw-r--r--@  1 achyutpatel  staff  6879 Nov 12 15:47:30 2026 TEST-scholarchain.services.QueryApiSpec.xml
+-rw-r--r--@  1 achyutpatel  staff  4818 Nov 12 15:47:27 2026 TEST-scholarchain.services.ServicesContractSpec.xml
+-rw-r--r--@  1 achyutpatel  staff  5634 Nov 12 15:47:31 2026 TEST-scholarchain.services.WorkerSpec.xml
+
+<testsuite hostname="mac.lan" name="scholarchain.services.BuildingBlocksSpec" tests="6" errors="0" failures="0" skipped="0" time="0.138" timestamp="2026-11-12T15:47:27">
+<testsuite hostname="mac.lan" name="scholarchain.services.CorpusQuerySpec" tests="3" errors="0" failures="0" skipped="0" time="20.458" timestamp="2026-11-12T15:57:53">
+<testsuite hostname="mac.lan" name="scholarchain.services.GenerateExamplesSpec" tests="1" errors="0" failures="0" skipped="0" time="0.391" timestamp="2026-11-12T02:52:47">
+<testsuite hostname="mac.lan" name="scholarchain.services.GraphEvidenceApiSpec" tests="6" errors="0" failures="0" skipped="0" time="1.683" timestamp="2026-11-12T15:47:27">
+<testsuite hostname="mac.lan" name="scholarchain.services.LifecycleSpec" tests="2" errors="0" failures="0" skipped="0" time="21.925" timestamp="2026-11-12T15:47:27">
+<testsuite hostname="mac.lan" name="scholarchain.services.QueryApiSpec" tests="12" errors="0" failures="0" skipped="0" time="2.905" timestamp="2026-11-12T15:47:27">
+<testsuite hostname="mac.lan" name="scholarchain.services.ServicesContractSpec" tests="2" errors="0" failures="0" skipped="0" time="0.703" timestamp="2026-11-12T15:47:27">
+<testsuite hostname="mac.lan" name="scholarchain.services.WorkerSpec" tests="6" errors="0" failures="0" skipped="0" time="3.812" timestamp="2026-11-12T15:47:27">
+
+source files named GenerateExamples*:
+       0
+test classes named GenerateExamples*:
+       0

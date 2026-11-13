@@ -19,15 +19,24 @@ import scholarchain.storage.{
   RuntimeRecordPort,
   TableName,
   Throttle,
-  VectorReadPort
+  VectorReadPort,
+  WindowSummaryReadPort
 }
 import upickle.default.write
 
 import java.time.Instant
 import scala.util.control.NonFatal
 
+/** The corpus window summaries served (Phase 10 work order 9, follow-up F2): the store object key
+  * (curated/window-summary/snapshot=<d>/run=<load run>/part-00000.jsonl, the evidence source
+  * pointer and a runtime run ID input) and the validated read port opened on it.
+  */
+final case class WindowSummarySource(key: String, port: WindowSummaryReadPort)
+
 /** The read and write ports one question uses. objects holds coauthor-evidence objects and semantic
   * text; auditReader and auditWriter are the runtime object store (logs/, reports/, runs/).
+  * windowSummaries None: corpus-level component, community, and window questions are stated as
+  * NOT_STORED and abstain (RUNTIME.md section 3).
   */
 final case class RuntimePorts(
     graph: GraphReadPort,
@@ -37,7 +46,8 @@ final case class RuntimePorts(
     embedder: Embedder,
     auditReader: ObjectReadPort,
     auditWriter: ObjectLoadPort,
-    records: RuntimeRecordPort
+    records: RuntimeRecordPort,
+    windowSummaries: Option[WindowSummarySource] = None
 )
 
 /** Everything fixed for a runtime run. llm None is fake mode: the rule planner and the template
@@ -59,19 +69,23 @@ final case class RuntimeSetup(
 )
 
 /** A stage that failed (a store error after the storage retry policy, or a refused write). It is
-  * never turned into an answer.
+  * never turned into an answer. deadlinePassed: the question deadline passed before any plan.
   */
-final case class RuntimeFailure(stage: Stage, message: String)
+final case class RuntimeFailure(stage: Stage, message: String, deadlinePassed: Boolean = false)
 
+/** deadlinePassed: the question deadline had passed when the answer was finished (an abstention at
+  * the deadline, or a late answer); a service maps it to its deadline status (Phase 10 ruling 7).
+  */
 final case class RuntimeResult(
     answer: RuntimeAnswer,
     audit: AuditRecord,
     bundle: Option[EvidenceBundle],
-    written: Vector[scholarchain.storage.ManifestEntry]
+    written: Vector[scholarchain.storage.ManifestEntry],
+    deadlinePassed: Boolean = false
 )
 
 object Workflow:
-  val CodeVersion = "rag-runtime-v2"
+  val CodeVersion = "rag-runtime-v3"
 
   /** The runtime run ID (RUNTIME.md section 14): timestamp-free, over the served store runs, the
     * vector store content, the embedding model version, prompt versions and hashes, model IDs, and
@@ -113,14 +127,19 @@ object Workflow:
       .find(q => audits.get(Audit.auditKey(setup.snapshot, setup.runId, q)).isEmpty)
       .get
 
+  /** Answers one request. deadlineMs is the question's time budget from now; None takes
+    * `runtime.question.deadline-ms` (the CLI).
+    */
   def answer(
       request: QueryRequest,
       ports: RuntimePorts,
-      setup: RuntimeSetup
+      setup: RuntimeSetup,
+      deadlineMs: Option[Long] = None
   ): Either[RuntimeFailure, RuntimeResult] =
     val cfg = setup.cfg
     val started = setup.nowMs()
-    val deadline = started + cfg.runtime.question.deadlineMs
+    val budgetMs = deadlineMs.getOrElse(cfg.runtime.question.deadlineMs.toLong)
+    val deadline = started + budgetMs
     val createdAt = setup.now()
     Question
       .normalize(request.question, cfg.runtime.question.maxChars)
@@ -132,7 +151,7 @@ object Workflow:
           else queryIdFor(question, request, setup, ports.auditReader)
         if !IdFormat.isQueryId(queryId) then
           Left(RuntimeFailure(Stage.QUERY_PLANNING, "queryId is not qry-<32 hex>"))
-        else new Run(request, question, queryId, ports, setup, deadline, createdAt).go()
+        else new Run(request, question, queryId, ports, setup, deadline, budgetMs, createdAt).go()
       }
 
   private final class Run(
@@ -142,6 +161,7 @@ object Workflow:
       ports: RuntimePorts,
       setup: RuntimeSetup,
       deadline: Long,
+      budgetMs: Long,
       createdAt: Instant
   ):
     private val cfg = setup.cfg
@@ -301,7 +321,9 @@ object Workflow:
         claims: Vector[scholarchain.core.AnswerClaim],
         summary: String,
         uncertainty: Vector[String],
-        abstention: Option[Abstention]
+        abstention: Option[Abstention],
+        removed: Vector[RemovedClaim] = Vector.empty,
+        dropped: Vector[DroppedLine] = Vector.empty
     ): Either[RuntimeFailure, RuntimeResult] =
       val prov = Provenance(
         SchemaVersions.Provenance,
@@ -363,6 +385,8 @@ object Workflow:
         timings,
         bundle.fold(BundleBudget(0, 0, 0, 0, 0))(_.budget),
         verification.counts,
+        removed,
+        dropped,
         abstention.isDefined,
         abstention.map(_.reason),
         answerHash,
@@ -383,7 +407,7 @@ object Workflow:
         )
         .left
         .map(RuntimeFailure(Stage.AUDIT, _))
-        .map(RuntimeResult(answer, record, bundle, _))
+        .map(RuntimeResult(answer, record, bundle, _, setup.nowMs() > deadline))
 
     private val emptyReport = VerificationReport(
       RuntimeSchemas.Verification,
@@ -420,14 +444,14 @@ object Workflow:
           Left(RuntimeFailure(stage, s"${e.getClass.getSimpleName}: ${e.getMessage}"))
         case DeadlinePassed(stage) =>
           planSoFar match
-            case None    => Left(RuntimeFailure(stage, "the question deadline passed"))
+            case None    => Left(RuntimeFailure(stage, "the question deadline passed", true))
             case Some(p) =>
               abstain(
                 p,
                 resolutionsSoFar,
                 Abstention(
                   AbstentionReason.BUDGET_EXHAUSTED,
-                  s"The question deadline of ${cfg.runtime.question.deadlineMs} ms passed during " +
+                  s"The question deadline of $budgetMs ms passed during " +
                     s"$stage, so no claim is made."
                 ),
                 stage
@@ -482,8 +506,17 @@ object Workflow:
     ): Either[RuntimeFailure, RuntimeResult] =
       val resolved = rs.zipWithIndex.flatMap((r, i) => r.researcherId.map(Resolved(i, _, r.name)))
       val g = timed(Stage.COLLABORATION_METRICS)(
-        GraphStages(p, resolved, ports.graph, ports.kv, ports.objects, cfg, log, setup.graphRunId)
-          .run(queryId)
+        GraphStages(
+          p,
+          resolved,
+          ports.graph,
+          ports.kv,
+          ports.objects,
+          cfg,
+          log,
+          setup.graphRunId,
+          ports.windowSummaries
+        ).run(queryId)
       )(_ => StageOutcome.OK)
       // Stages 3 to 5 run as one pass over the plan; each is recorded with its own time, or SKIPPED
       // when the plan gave it nothing to do (review 1 m1).
@@ -496,7 +529,7 @@ object Workflow:
       val f = g.facts
       val empty =
         f.metrics.isEmpty && f.rankings.isEmpty && f.changes.isEmpty && f.coauthors.isEmpty && f.paths.isEmpty &&
-          f.communities.isEmpty && f.facets.isEmpty && f.works.isEmpty
+          f.communities.isEmpty && f.facets.isEmpty && f.works.isEmpty && g.corpusEmpty
       val onlyUnsupported =
         p.operations.nonEmpty && p.operations.forall(o => g.unsupported.contains(o.operation)) &&
           (p.metrics.isEmpty || f.metrics.isEmpty)
@@ -548,7 +581,8 @@ object Workflow:
         val bundle = timed(Stage.EVIDENCE_BUILDING)(
           EvidenceBuilder.build(p, rs, g, sem.results, sem.missing, cfg, setup.runId)
         )(_ => StageOutcome.OK)
-        val lines = notes(p, rs, bundle.missing)
+        // The limitations the corpus rows carry (node basis, convergence, window lengths) are stated.
+        val lines = (notes(p, rs, bundle.missing) ++ g.limitations).distinct
         val synthesis = timed(Stage.ANSWER_SYNTHESIS)(session match
           case None    => Some(TemplateSynthesizer.synthesize(p, bundle, resolved))
           case Some(s) =>
@@ -564,7 +598,8 @@ object Workflow:
                 cfg.models.synthesisModel,
                 cfg.runtime.synthesis.maxOutputTokens
               ),
-              Synthesis.parseModel(_, prompt.schema, cfg)
+              Synthesis.parseModel(_, prompt.schema, cfg),
+              Some(Synthesis.cutOffRule(cfg))
             )
             llmCalls ++= out.calls
             out.value)(o => if o.isDefined then StageOutcome.OK else StageOutcome.ABSTAINED)
@@ -620,5 +655,7 @@ object Workflow:
               v.claims,
               v.summary,
               lines ++ v.uncertainty,
-              abstention
+              abstention,
+              v.removed,
+              v.dropped
             )

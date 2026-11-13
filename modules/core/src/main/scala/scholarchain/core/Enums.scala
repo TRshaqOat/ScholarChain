@@ -96,3 +96,53 @@ enum EdgeType:
   def undirected: Boolean = this == COAUTHORED_WITH
 object EdgeType:
   given ReadWriter[EdgeType] = enumRW(values, _.toString)
+
+/** State of an async query job (Phase 10 ruling 7). Writers move a job only along
+  * [[JobState.canMoveTo]], with conditional writes, so a redelivered message never runs a job
+  * twice. SUCCEEDED and FAILED are final.
+  */
+enum JobState:
+  case QUEUED, RUNNING, SUCCEEDED, FAILED
+
+  def isFinal: Boolean = this == SUCCEEDED || this == FAILED
+
+  /** QUEUED -> RUNNING -> SUCCEEDED or FAILED; QUEUED -> FAILED ends a job that never ran (for
+    * example a poison message). Nothing else, and no state moves to itself.
+    */
+  def canMoveTo(next: JobState): Boolean = (this, next) match
+    case (QUEUED, RUNNING) | (QUEUED, FAILED)     => true
+    case (RUNNING, SUCCEEDED) | (RUNNING, FAILED) => true
+    case _                                        => false
+object JobState:
+  given ReadWriter[JobState] = enumRW(values, _.toString)
+
+/** Typed error codes of the REST error model (spec "Error model", Phase 10 ruling 6), each with its
+  * HTTP status and default retryable flag. Also the error of a FAILED job. The wire form is the
+  * case name. Appending a code is compatible; renaming or removing one breaks stored FAILED jobs.
+  * FORBIDDEN (403) is reserved and unused in the single-key deployment (ruling 5).
+  */
+enum ErrorCode(val httpStatus: Int, val retryable: Boolean):
+  case MALFORMED_JSON extends ErrorCode(400, false)
+  case INVALID_FIELD extends ErrorCode(400, false)
+  case REQUEST_TOO_LARGE extends ErrorCode(400, false)
+  case UNAUTHORIZED extends ErrorCode(401, false)
+  case FORBIDDEN extends ErrorCode(403, false)
+  case ROUTE_NOT_FOUND extends ErrorCode(404, false)
+  case QUERY_NOT_FOUND extends ErrorCode(404, false)
+  case JOB_NOT_FOUND extends ErrorCode(404, false)
+  case NODE_NOT_FOUND extends ErrorCode(404, false)
+  case EVIDENCE_NOT_FOUND extends ErrorCode(404, false)
+  case IDEMPOTENCY_CONFLICT extends ErrorCode(409, false)
+  case JOB_NOT_FINISHED extends ErrorCode(409, true) // poll again later
+  case UNSUPPORTED_CONSTRAINT extends ErrorCode(422, false)
+  case UNSUPPORTED_RETRIEVAL_MODE extends ErrorCode(422, false)
+  case RATE_LIMITED extends ErrorCode(429, true)
+  case DOWNSTREAM_FAILURE extends ErrorCode(502, true)
+  case NOT_READY extends ErrorCode(503, true)
+  case CIRCUIT_OPEN extends ErrorCode(503, true)
+  case OVERLOADED extends ErrorCode(503, true)
+  case DEADLINE_EXCEEDED extends ErrorCode(504, true)
+  case DOWNSTREAM_TIMEOUT extends ErrorCode(504, true)
+  case INTERNAL_ERROR extends ErrorCode(500, false)
+object ErrorCode:
+  given ReadWriter[ErrorCode] = enumRW(values, _.toString)

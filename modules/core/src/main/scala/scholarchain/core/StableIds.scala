@@ -226,6 +226,14 @@ object StableIds:
     require(ordinal >= 1, s"ordinal must be >= 1, got $ordinal")
     "qry-" + hash("query", runId, questionHash, requestHash, s"$ordinal")
 
+  /** Job ID of the async execution of a query (Phase 10 ruling 7): "job-" + H("job", queryId). One
+    * job per query ID, so a retried send or a redelivered message maps to the same job. No
+    * timestamp is an input.
+    */
+  def jobId(queryId: String): String =
+    require(IdFormat.isQueryId(queryId), s"malformed queryId: $queryId")
+    "job-" + hash("job", queryId)
+
   /** Run ID, timestamp-independent:"run-" + H("run", stage, codeVersion, configVersion, attempt,
     * inputSnapshots...), inputs sorted and de-duplicated. It is the content hash of the immutable
     * run manifest those fields form; attempt (>= 1) separates reruns of identical inputs.
@@ -268,6 +276,7 @@ object IdFormat:
   private val Evidence = s"ev-$Hex32".r
   private val Run = s"run-$Hex32".r
   private val Query = s"qry-$Hex32".r
+  private val Job = s"job-$Hex32".r
 
   def isWorkId(s: String): Boolean = Work.matches(s)
   def isResearcherId(s: String): Boolean =
@@ -285,4 +294,11 @@ object IdFormat:
   def isEvidenceId(s: String): Boolean = Evidence.matches(s)
   def isRunId(s: String): Boolean = Run.matches(s)
   def isQueryId(s: String): Boolean = Query.matches(s)
+  def isJobId(s: String): Boolean = Job.matches(s)
+
+  /** A node ID that GraphNode validation accepts for some label: namespaced (researcher, work,
+    * mention, institution, venue, topic, and other "<ns>:" IDs), chunk, or community. Routes check
+    * it before any store read (404 only for a well-formed unknown ID).
+    */
+  def isNodeId(s: String): Boolean = isNamespacedId(s) || isChunkId(s) || isCommunityId(s)
   def isVisibleAscii(s: String): Boolean = s.nonEmpty && s.forall(c => c >= 0x21 && c <= 0x7e)

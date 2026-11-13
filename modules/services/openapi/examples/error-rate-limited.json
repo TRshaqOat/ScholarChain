@@ -1,0 +1,7 @@
+{
+  "error": "RATE_LIMITED",
+  "message": "at most 1 queries per minute per instance",
+  "traceId": "trace-example-1",
+  "requestId": "req-example-1",
+  "retryable": true
+}

@@ -361,6 +361,68 @@ Implements modules/rag/SELECTION.md exactly (owner: rag-engineer): `rankKey` = H
 - Shuffles: one repartition per family; the WINDOW# join on (window, researcherId); the rankings window per (metric, window) and their group-by; the entity-link window per (nameKey, researcherId); selection: broadcast joins of the tier sets, a `row_number` per window for communities, a `row_number` per workId for papers, and the paper fact joins and top-N windows on workId for the 1,000 selected works only.
 - Driver: holds a 64 KB copy buffer, the manifest entries (one per object: 608 in work order 6), the at most 21 ranking items' counts, and bounded report rows. Limitation: every output byte passes through the driver once (copy and hash), and the evidence objects are written by the driver from one Spark-written file: about 1.7 GB locally; on EMR this is one sequential S3 stream per file.
 
+## CorpusWindowSummaryJob (Phase 10 work order 7: corpus-level window summaries, FU2)
+
+```text
+sbt "sparkAnalytics/runMain scholarchain.spark.CorpusWindowSummaryJob --input <temporal-summary-export run dir> \
+  --code-version <v> [--out <root>] [--checkpoint-dir <dir>] [--summary-min-community-size 3] [--attempt n]"
+```
+
+A separate, read-only stage over the Phase 6 chain: one row per configured window with the graph-level values the corpus questions need (B13, B15, B17, B24). It is not a conversion run and writes nothing into any input run. Values are recomputed with Spark from the base Phase 6 tables (group-bys on `window`; nothing but the 3 summary rows reaches the driver) and checked against the Phase 6 `temporal/window-summary`.
+
+- Input: one complete TemporalSummaryExportJob run. Its manifest names the community-path, researcher-analytics, and canonical-graph runs; the four run IDs must form one chain, and the configured `graph.windows` must equal the input's, or the run fails. Tables read (columns only): `analytics/researcher-metrics` (window, researcherId), `analytics/components` (window, componentId, componentSize), `analytics/communities` (window, communityId, communitySize), `graph/coauthor-edges` (window, jointPublicationCount), the export's `temporal/window-summary` (for the check only), and the community-path manifest's `counts.communityConverged` and `counts.communityIterations`.
+- Run ID: `StableIds.runId("spark-corpus-window-summary", code version, config version, [the four input runs and their sizes, graph policy, windows, summary-min-community-size], attempt)`.
+- Output (JobRun layout): `<out>/snapshot=<snapshot>/run=<runId>/corpus/window-summary` and `corpus/window-summary-violations`, one Parquet file each, plus `_manifest.json` (`counts.windowSummary` holds every row without provenance; `counts.integrityViolations` every violation) and `_stages.json`.
+- Phase 10 run: `scratch/runtime/wo7/spark/snapshot=2026-10-03/run=run-1de2293597c338227290eb382de16957/` (code version `src-db536eecfe78`, attempt 1), from export run `run-0375535e0174b7330b18a78988c07211`; 3 rows, 0 violations. The output root is under `scratch/runtime/` (Phase 10 ruling 14), not `scratch/spark/`.
+
+### Contract: `corpus/window-summary` (schema version `spark-corpus-window-summary-v1`)
+
+Grain: one row per configured window (3 rows: `all-years`, `2000-2014`, `2015-2026`). Key: `window`. Intended targets: dynamodb, s3. A benchmark window `all` is the first configured window, `all-years` (as BenchmarkPathJob). Every value is for the stated window only (inclusive years).
+
+| Column | Type | Definition |
+|---|---|---|
+| `window`, `windowStartYear`, `windowEndYear` | STRING, INT, INT | the window (inclusive years) |
+| `years` | INT | windowEndYear - windowStartYear + 1 |
+| `researchers` | BIGINT | graph nodes: researchers with a DBLP publication in the window (researcher-metrics rows); see `nodeBasis` |
+| `coauthorEdges` | BIGINT | coauthor edges (distinct researcher pairs) in the window |
+| `sumJointPublicationCount` | BIGINT | sum of `jointPublicationCount` over those edges |
+| `components` | BIGINT | connected components, singletons included (job 4) |
+| `largestComponentId`, `largestComponentSize` | STRING, BIGINT | the largest component (ties: smallest componentId); the ID resolves to `analytics/components` |
+| `largestComponentFraction` | DOUBLE | largestComponentSize / researchers (null when researchers = 0) |
+| `singletonResearchers` | BIGINT | researchers in a component of size 1, that is graph nodes with no coauthor edge in the window |
+| `communities` | BIGINT | label-propagation communities, size-1 communities included (job 6) |
+| `largestCommunityId`, `largestCommunitySize` | STRING, BIGINT | the largest community (ties: smallest communityId); the ID resolves to `analytics/communities` |
+| `largestCommunityFraction` | DOUBLE | largestCommunitySize / researchers (null when researchers = 0) |
+| `singletonCommunities` | BIGINT | communities of one member |
+| `communityMinSize`, `communitiesAtLeastMinSize` | INT, BIGINT | the threshold (`--summary-min-community-size`, default 3) and the number of communities with at least that many members |
+| `communityConverged`, `communityRounds` | BOOLEAN, INT | whether label propagation converged in this window, and the rounds run (the cap, 10, when not converged) |
+| `nodeBasis` | STRING | the fixed text saying who the nodes are (DBLP authorship only) |
+| `sourceRuns` | STRUCT | `temporalSummaryExportRunId`, `communityPathRunId`, `researcherAnalyticsRunId`, `canonicalGraphRunId`, `inputHadoopRunId`, `matchPolicyVersion` |
+| `provenance` | STRUCT | core Provenance names: `sourceDataset` DERIVED, `sourceRecordId` = window, `snapshot`, `runId` = this run, `policyVersion` = graph policy, `modelVersion` null |
+| `schemaVersion` | STRING | `spark-corpus-window-summary-v1` |
+
+Count columns are 0 (never null) for a window with no rows. A column change bumps the schema version.
+
+Benchmark use (fields that answer each question):
+
+| Question | Window | Fields |
+|---|---|---|
+| B13 components and largest share | 2000-2014 | `components`, `largestComponentFraction` (with `largestComponentSize`, `researchers`, `largestComponentId`) |
+| B15 researchers with no coauthors | all (`all-years`) | `singletonResearchers`, scoped by `nodeBasis` and `researchers` |
+| B17 communities of size 3 or more | 2000-2014 | `communitiesAtLeastMinSize` where `communityMinSize` = 3; `communityConverged` |
+| B24 largest component share, later vs earlier | 2015-2026 and 2000-2014 | `largestComponentFraction` of both rows (with `largestComponentSize`, `researchers`) |
+
+`corpus/window-summary-violations` (`spark-corpus-window-summary-violations-v1`; check, subjectId = window, relatedId = column, detail = `ours != other`):
+- `COMPONENT_MEMBERS_MISMATCH`, `COMMUNITY_MEMBERS_MISMATCH`: component (community) sizes of a window do not sum to `researchers`.
+- `PHASE6_WINDOW_SUMMARY_MISMATCH`: `researchers`, `coauthorEdges`, `sumJointPublicationCount`, `components`, `largestComponentSize`, `singletonResearchers`, `communities`, or `largestCommunitySize` (and `communitiesAtLeastMinSize` when both runs used the same threshold) differs from the Phase 6 `temporal/window-summary`, or the window has no Phase 6 row.
+
+Limitations:
+- Nodes are DBLP-authored researchers only, so `singletonResearchers` counts researchers with no DBLP coauthor in the window. Researchers known only from OpenAlex or Crossref are not nodes and are not counted at all.
+- Communities inherit job 6: label propagation stopped at the 10-round cap without converging in every window of the Phase 6 run (`communityConverged` false), so community counts and sizes depend on the cap and the tie-break.
+- Cross-window comparisons inherit job 9's inclusion limitation (`temporal/window-comparison.inclusionLimitation`): bounded DBLP subset, windows of 15 and 12 years, the last year possibly incomplete. `all-years` contains both other windows.
+
+Shuffle boundaries: one group-by on `window` per input table (metrics, edges, components, communities), one `row_number` window partitioned by `window` for each largest ID (at most one task per window; the all-years window holds 16,091 component and 38,034 community rows, so skew is bounded), the left joins of the five per-window results to the windows table, and the join to the Phase 6 summary for the check. No iteration, so no checkpoints (the checkpoint directory is set but stays empty).
+
 ## Running locally
 
 1. `sysctl -n hw.memsize`: keep the driver heap at most half of RAM (`SCHOLARCHAIN_SPARK_HEAP`, default 6g, set in build.sbt).
@@ -438,6 +500,7 @@ Checks: `JobRun.write` refuses to write a table without the provenance struct. J
 | 9, 10, 11 | TemporalSummaryExportJob | the three runs above | temporal/*, summaries/semantic-summaries (documentType, window), summary-export-violations, export/load-manifest.json | 8 on researcherId for researcher-changes; 2 on subjectId for summaries; 1 for the others | none (no iteration) | windows table; largest components | inputs and dblpWorks, DISK_ONLY (execution memory is left to the top-N sorts) |
 | all | PipelineJob | Hadoop run | the four stage runs plus the pipeline manifest | n/a | n/a | n/a | n/a |
 | 5, 10 (paths) | BenchmarkPathJob | a CommunityPathJob run (and its canonical researchers and authored); the benchmark CSV | paths/benchmark-pairs, selected-pairs.csv, path-evidence (window), summaries/path-summaries (documentType, window), violations | 1 | every BFS round | windows table; benchmark names; seeded pair IDs | inputs |
+| corpus windows | CorpusWindowSummaryJob | a TemporalSummaryExportJob run and its chain (researcher-metrics, components, communities, coauthor-edges, window-summary) | corpus/window-summary, corpus/window-summary-violations | 1 | none (no iteration) | windows table | the 3 summary rows |
 | store files | StoreConversionJob | the Phase 6 load manifest's tables; a BenchmarkPathJob run | Neptune CSV, evidence objects, DynamoDB items, candidates, store run manifest (under --stores-root); rankings/researcher-rankings | ceil(rows / 250,000) per family, hash on the element ID | none (no iteration) | windows table; selection tier sets | inputs DISK_ONLY; each family's lines while counted and written |
 
 - Schema versions and provenance: see "Provenance, schema versions, and the core records" above. Table schemas are recorded as DDL in each manifest.

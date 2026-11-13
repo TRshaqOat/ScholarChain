@@ -128,7 +128,7 @@ object ItemSize:
 
 enum TableName:
   case RunLedger, EntityLinkCache, QuerySession, EvidenceBundle, ArtifactRegistry,
-    ResearcherMetricCache
+    ResearcherMetricCache, ServiceState
 
 /** Key schema and item rules of one table (STORAGE.md, "DynamoDB"). Keys are strings. */
 final case class TableSpec(
@@ -138,7 +138,8 @@ final case class TableSpec(
     ttlAttribute: Option[String],
     required: Map[String, Char],
     loadedFromRuns: Boolean,
-    checks: (Item, Map[String, TimeWindow]) => List[String]
+    checks: (Item, Map[String, TimeWindow]) => List[String],
+    itemBudget: Int = DynamoContract.ItemBudgetBytes
 )
 
 object DynamoContract:
@@ -165,6 +166,11 @@ object DynamoContract:
       }
     case TableName.QuerySession   => Some("rag-query-session-v1")
     case TableName.EvidenceBundle => Some("rag-evidence-bundle-item-v1")
+    case TableName.ServiceState   =>
+      s(item, "recordType").collect {
+        case ServiceStateContract.JobType         => ServiceStateContract.JobSchema
+        case ServiceStateContract.IdempotencyType => ServiceStateContract.IdempotencySchema
+      }
 
   /** EntityLinkCache key of a name (rule name-v1): drop a trailing DBLP homonym number (" 0001"),
     * then the canonical form of StableIds.canonicalAffiliationName (NFKD, marks removed,
@@ -387,6 +393,25 @@ object DynamoContract:
             case k => List(s"metricKey '$k' is not WINDOW#<window> or CHANGE#<from>><to>"))
   )
 
+  /** Phase 10 job and idempotency records (STORAGE.md, "Service state"): written only through
+    * JobStore and IdempotencyStore, never by the loader or the rag runtime writer.
+    */
+  val ServiceState = TableSpec(
+    TableName.ServiceState,
+    "recordKey",
+    "recordType",
+    Some(TtlAttribute),
+    Map("queryId" -> 'S', "createdAt" -> 'S', TtlAttribute -> 'N', "schemaVersion" -> 'S'),
+    loadedFromRuns = false,
+    (i, _) => ServiceStateContract.problems(i),
+    itemBudget = ServiceStateContract.ItemBudgetBytes
+  )
+
+  /** EvidenceBundle global secondary index for GET /v1/evidence/{evidenceId} (STORAGE.md):
+    * partition key itemKey, sort key queryId, projection ALL. Created by Terraform (Phase 12).
+    */
+  val EvidenceByIdIndex = "evidenceById"
+
   val Tables: Map[TableName, TableSpec] =
     Vector(
       RunLedger,
@@ -394,7 +419,8 @@ object DynamoContract:
       QuerySession,
       EvidenceBundle,
       ArtifactRegistry,
-      ResearcherMetricCache
+      ResearcherMetricCache,
+      ServiceState
     )
       .map(t => t.name -> t)
       .toMap
@@ -449,7 +475,7 @@ object DynamoContract:
       SortKeyMaxBytes
     ) ++
       required ++ ttl ++ provenance ++ schema ++
-      check(size <= ItemBudgetBytes, s"item is $size bytes, budget $ItemBudgetBytes") ++
+      check(size <= spec.itemBudget, s"item is $size bytes, budget ${spec.itemBudget}") ++
       (if required.isEmpty && numbers.isEmpty then spec.checks(item, windows) else Nil)
 
   /** False for an item whose TTL has passed; DynamoDB deletes those only within days, so every read
@@ -585,6 +611,14 @@ trait KeyValueLoadPort:
     */
   def replace(table: TableName, item: Item, expectedRunId: String): Either[List[String], PutOutcome]
 
+/** GET /v1/evidence/{evidenceId}: the evidence ID alone to its EvidenceBundle EV# item. */
+trait EvidenceLookupPort:
+  /** The unexpired EV#<evidenceId> item of the smallest queryId whose bundle holds it (an evidence
+    * ID is the same fact in every query of one run), or None, also for a malformed evidenceId.
+    * Decode it with the rag RuntimeApi.evidenceOf.
+    */
+  def evidenceItem(evidenceId: String): Option[Item]
+
 /** Runtime writes: create-only puts to QuerySession and EvidenceBundle. */
 trait RuntimeRecordPort:
   def create(table: TableName, item: Item): Either[List[String], LoadOutcome]
@@ -653,6 +687,20 @@ final class InMemoryDynamo(windows: Seq[TimeWindow], nowEpochSeconds: () => Long
           .take(limit)
           .toVector
       )
+
+  /** The fake of the evidenceById index: (queryId, itemKey) order puts the smallest queryId first.
+    */
+  // shortcut: scans the EvidenceBundle items; fine for local fixtures, the live store uses the GSI.
+  val evidenceLookup: EvidenceLookupPort = new EvidenceLookupPort:
+    def evidenceItem(evidenceId: String): Option[Item] =
+      val spec = DynamoContract.EvidenceBundle
+      Option.when(IdFormat.isEvidenceId(evidenceId))(s"EV#$evidenceId").flatMap { k =>
+        InMemoryDynamo.this.synchronized(
+          tables(TableName.EvidenceBundle).iterator.collectFirst {
+            case ((_, sk), item) if sk == k && live(spec, item) => item
+          }
+        )
+      }
 
   val loader: KeyValueLoadPort = new KeyValueLoadPort:
     def putNew(table: TableName, item: Item): Either[List[String], LoadOutcome] =
@@ -749,6 +797,9 @@ final class FileRuntimeRecords(root: Path, windows: Seq[TimeWindow], nowEpochSec
 
   /** Query and get on the runtime tables (the loader tables are empty here). */
   val reader: KeyValueReadPort = db.reader
+
+  /** Evidence by ID alone over the EvidenceBundle log (the fake of the evidenceById index). */
+  val evidenceLookup: EvidenceLookupPort = db.evidenceLookup
 
   val writer: RuntimeRecordPort = new RuntimeRecordPort:
     def create(table: TableName, item: Item): Either[List[String], LoadOutcome] =

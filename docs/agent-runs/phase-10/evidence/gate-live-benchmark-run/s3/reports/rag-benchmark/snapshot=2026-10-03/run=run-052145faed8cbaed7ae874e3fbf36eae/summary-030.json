@@ -1,0 +1,161 @@
+{
+  "schemaVersion": "rag-benchmark-summary-v2",
+  "benchmarkRunId": "run-052145faed8cbaed7ae874e3fbf36eae",
+  "runtimeRunId": "run-422d912ac162f340f5f31a1b63b65e19",
+  "mode": "LIVE",
+  "questionsTotal": 30,
+  "questionsDone": 30,
+  "notDone": [],
+  "checks": {
+    "plan-operations": {
+      "pass": 26,
+      "fail": 4,
+      "notApplicable": 0
+    },
+    "researcher-names": {
+      "pass": 30,
+      "fail": 0,
+      "notApplicable": 0
+    },
+    "verification": {
+      "pass": 30,
+      "fail": 0,
+      "notApplicable": 0
+    },
+    "pair-edges": {
+      "pass": 6,
+      "fail": 0,
+      "notApplicable": 24
+    },
+    "resolution": {
+      "pass": 21,
+      "fail": 0,
+      "notApplicable": 9
+    },
+    "claim-evidence": {
+      "pass": 24,
+      "fail": 0,
+      "notApplicable": 6
+    },
+    "embedding-budget": {
+      "pass": 30,
+      "fail": 0,
+      "notApplicable": 0
+    },
+    "abstention": {
+      "pass": 27,
+      "fail": 3,
+      "notApplicable": 0
+    },
+    "deadline": {
+      "pass": 30,
+      "fail": 0,
+      "notApplicable": 0
+    },
+    "path-hops": {
+      "pass": 3,
+      "fail": 1,
+      "notApplicable": 26
+    },
+    "bundle-budget": {
+      "pass": 27,
+      "fail": 0,
+      "notApplicable": 3
+    },
+    "llm-budget": {
+      "pass": 30,
+      "fail": 0,
+      "notApplicable": 0
+    }
+  },
+  "failures": [
+    "B15 plan-operations: needs COMPONENT_LOOKUP; plan [RESEARCHER_RANKING/CORPUS]",
+    "B15 abstention: expected answer, got abstain (NO_VERIFIED_CLAIM)",
+    "B17 abstention: expected answer, got abstain (NO_VERIFIED_CLAIM)",
+    "B18 plan-operations: needs COMMUNITY_COMPARISON; plan [COMPONENT_LOOKUP/RESEARCHER, TOPIC_FILTER/CORPUS]",
+    "B23 plan-operations: needs TEMPORAL_COMPARISON; plan [COMMUNITY_COMPARISON/RESEARCHER]",
+    "B24 plan-operations: needs TEMPORAL_COMPARISON; plan [COMPONENT_LOOKUP/CORPUS]",
+    "B24 abstention: expected answer, got abstain (NO_VERIFIED_CLAIM)",
+    "B29 path-hops: scr:canon-v1.er-v2:6de4012bbe8608f1d49d18cf9a40a763-scr:canon-v1.er-v2:da6e3bdff14745638f3f5425f0133388: runtime FOUND 1 hops, stored 1 hops, same researchers; no claim cites the path"
+  ],
+  "planSources": {
+    "MODEL": 30
+  },
+  "abstentions": {
+    "UNKNOWN_RESEARCHER": 1,
+    "UNSUPPORTED_REQUEST": 1,
+    "AMBIGUOUS_RESEARCHER": 1,
+    "ANSWERED": 24,
+    "NO_VERIFIED_CLAIM": 3
+  },
+  "resolutions": {
+    "RESOLVED_DOMINANT": 26,
+    "AMBIGUOUS": 2,
+    "UNKNOWN_RESEARCHER": 1
+  },
+  "verification": {
+    "verified": 85,
+    "partiallySupported": 0,
+    "unsupported": 15,
+    "conflicting": 0
+  },
+  "claims": 85,
+  "graph": {
+    "questionsWithReads": 30,
+    "reads": 1034,
+    "rows": 3730,
+    "truncatedReads": 178,
+    "evidenceItems": 198,
+    "tokens": 34947,
+    "pathStatuses": {
+      "FOUND": 4
+    },
+    "latency": {
+      "p50Ms": 4,
+      "p95Ms": 245,
+      "maxMs": 457,
+      "totalMs": 1098
+    }
+  },
+  "semantic": {
+    "questionsWithEmbedding": 24,
+    "questionsWithHits": 24,
+    "embeddingCalls": 24,
+    "hits": 61,
+    "tokens": 24041,
+    "indexes": {
+      "topic-institution-summary-v1": 6,
+      "paper-abstract-v1": 4,
+      "collaboration-path-v1": 4,
+      "collaboration-community-v1": 2,
+      "researcher-profile-v1": 18
+    },
+    "latency": {
+      "p50Ms": 221,
+      "p95Ms": 1983,
+      "maxMs": 2911,
+      "totalMs": 15086
+    }
+  },
+  "llm": {
+    "attempts": 60,
+    "requests": 60,
+    "attemptsByStage": {
+      "QUERY_PLANNING": 31,
+      "ANSWER_SYNTHESIS": 29
+    },
+    "outcomes": {
+      "INVALID_OUTPUT": 3,
+      "OK": 57
+    },
+    "inputTokens": 219940,
+    "outputTokens": 39551,
+    "throttleWaitMs": 256853
+  },
+  "latency": {
+    "p50Ms": 14848,
+    "p95Ms": 30089,
+    "maxMs": 40149,
+    "totalMs": 475251
+  }
+}

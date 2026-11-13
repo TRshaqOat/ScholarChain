@@ -283,6 +283,75 @@ object RuntimeFixtures:
   val pathRef =
     s"semantic-context/text/snapshot=$snapshot/run=$renderRun/collaboration-path-v1/$pathKey.txt"
 
+  // ---- corpus window summaries (work order 9, F2): one fixture row per configured window ----
+  val summaryRun: String = StableIds.runId("rag-test-window-summary", "c", "config-v1", Seq("s"), 1)
+  val summaryLoadRun: String =
+    StableIds.runId("rag-test-load-window-summary", "c", "config-v1", Seq("l"), 1)
+  val summaryKey: String = S3Layout.windowSummary(snapshot, summaryLoadRun)
+  val NodeBasis = "researchers with at least one fixture publication in the window"
+
+  /** (window, researchers, components, largest component, singletons, communities, largest
+    * community, singleton communities, communities of at least 3)
+    */
+  val summaryCounts = Vector(
+    ("all-years", 1200L, 45L, 900L, 28L, 130L, 60L, 31L, 64L),
+    ("2000-2014", 400L, 33L, 252L, 13L, 71L, 21L, 11L, 37L),
+    ("2015-2026", 800L, 22L, 541L, 9L, 90L, 40L, 12L, 47L)
+  )
+  def summaryRows: Vector[WindowSummary] = summaryCounts.map {
+    (win, r, comps, lc, single, comms, lcm, singleComm, atLeast) =>
+      val tw = config.graph.windows.find(_.name == win).get
+      val runs = WindowSummarySourceRuns(
+        canonRun,
+        metricRun,
+        metricRun,
+        graphRun,
+        canonRun,
+        "er-v2"
+      )
+      WindowSummary(
+        win,
+        tw.startYear,
+        tw.endYear,
+        r,
+        r * 2,
+        r * 3,
+        comps,
+        lc,
+        single,
+        comms,
+        lcm,
+        singleComm,
+        atLeast,
+        Some("comp-" + StableIds.hash("component", win)),
+        Some(StableIds.communityId(policy, win, tw.startYear, tw.endYear, ada)),
+        tw.endYear - tw.startYear + 1,
+        Some(lc.toDouble / r.toDouble),
+        Some(lcm.toDouble / r.toDouble),
+        3,
+        false,
+        10,
+        NodeBasis,
+        runs,
+        scholarchain.core.Provenance(
+          scholarchain.core.SchemaVersions.Provenance,
+          scholarchain.core.SourceType.DERIVED,
+          win,
+          snapshot,
+          summaryRun,
+          Some(policy),
+          None
+        ),
+        WindowSummaries.SchemaVersion
+      )
+  }
+
+  /** Writes the fixture rows as the store object under root (a FileObjectStore root). */
+  def writeSummaries(root: Path): Unit =
+    FileObjectStore(root).loader
+      .putNew(summaryKey, WindowSummaries.render(summaryRows))
+      .fold(e => sys.error(e.mkString("; ")), _ => ())
+
   def tempDir(): Path = Files.createTempDirectory("rag-runtime-test-")
   def deleteTree(p: Path): Unit =
     if Files.exists(p) then
@@ -368,8 +437,20 @@ object RuntimeFixtures:
     )
 
   /** The loaded world: ports and a setup on a fresh temporary directory. */
-  final class World(val root: Path, val cfg: ScholarChainConfig, val llm: Option[LlmClient]):
+  final class World(
+      val root: Path,
+      val cfg: ScholarChainConfig,
+      val llm: Option[LlmClient],
+      withSummaries: Boolean = false
+  ):
     val objects = FileObjectStore(root.resolve("s3"))
+    // Work order 9: the corpus window summaries through the storage port (validated on open).
+    val summaries: Option[WindowSummarySource] = Option.when(withSummaries) {
+      writeSummaries(root.resolve("s3"))
+      WindowSummaries
+        .open(objects.reader, summaryKey, cfg.graph.windows)
+        .fold(v => sys.error(v.mkString("\n")), WindowSummarySource(summaryKey, _))
+    }
     objects.loader.putNew(profileRef, profileText.getBytes(UTF_8))
     objects.loader.putNew(pathRef, pathText.getBytes(UTF_8))
     val graphDir = root.resolve("graph")
@@ -394,7 +475,7 @@ object RuntimeFixtures:
     val throttle =
       Throttle(cfg.runtime.llm.requestsPerMinute, nowMs, ms => { slept :+= ms; clock += ms })
     val prompts: PromptSet = PromptSet
-      .load(Paths.get(cfg.runtime.promptsDir), "planner-v2", "synthesis-v2")
+      .load(Paths.get(cfg.runtime.promptsDir), "planner-v2", "synthesis-v3")
       .fold(sys.error, identity)
     val ports = RuntimePorts(
       graph.reader(GraphReadLimits.from(cfg)),
@@ -404,7 +485,8 @@ object RuntimeFixtures:
       embedder,
       audit.reader,
       audit.loader,
-      records.writer
+      records.writer,
+      summaries
     )
     val mode = if llm.isDefined then RuntimeMode.LIVE else RuntimeMode.FAKE
     val setup = RuntimeSetup(
@@ -442,11 +524,15 @@ object RuntimeFixtures:
         setup
       )
 
-  def withWorld[A](llm: Option[LlmClient] = None, cfg: ScholarChainConfig = config)(
+  def withWorld[A](
+      llm: Option[LlmClient] = None,
+      cfg: ScholarChainConfig = config,
+      summaries: Boolean = false
+  )(
       body: World => A
   ): A =
     val root = tempDir()
-    try body(World(root, cfg, llm))
+    try body(World(root, cfg, llm, summaries))
     finally deleteTree(root)
 
   /** A configuration with some keys replaced (HOCON text under `scholarchain`). */

@@ -1,0 +1,7 @@
+{
+  "error": "INVALID_FIELD",
+  "message": "depth must be 1 to 3",
+  "traceId": "trace-example-1",
+  "requestId": "req-example-1",
+  "retryable": false
+}

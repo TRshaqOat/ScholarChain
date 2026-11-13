@@ -38,8 +38,9 @@ object Dependencies {
   val typesafeConfig = "com.typesafe" % "config" % Versions.typesafeConfig
   val scalaLibrary = "org.scala-lang" % "scala-library" % Versions.scalaLibrary
   val bedrockRuntime = "software.amazon.awssdk" % "bedrockruntime" % Versions.awsSdk
-  // Live store adapters and the embedding runner (phase-07 ruling 24), all at Versions.awsSdk.
-  val storageAwsSdk = bedrockRuntime +: Seq("s3", "dynamodb", "neptunedata", "s3vectors")
+  // Live store adapters, the embedding runner (phase-07 ruling 24), and the job queue adapter
+  // (sqs, phase-10 ruling 4), all at Versions.awsSdk.
+  val storageAwsSdk = bedrockRuntime +: Seq("s3", "dynamodb", "neptunedata", "s3vectors", "sqs")
     .map("software.amazon.awssdk" % _ % Versions.awsSdk)
 
   // The EMR runtime supplies Hadoop and Spark, so both stay Provided (still on the Test classpath).

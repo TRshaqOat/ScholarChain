@@ -15,15 +15,18 @@ object RuntimeSchemas:
   val GraphFacts = "rag-graph-facts-v1"
   val SemanticResult = "rag-semantic-result-v1"
   val EvidenceBundle = "rag-evidence-bundle-v1"
-  val SynthesisOutput = "synthesis-output-v2"
+  val SynthesisOutput = "synthesis-output-v3"
 
-  /** Synthesis output versions the runtime accepts: v2 (ruling 17: non-empty values for every claim
-    * but DESCRIPTIVE, also enforced in code for v1) and v1 until configuration selects v2.
+  /** Synthesis output versions the runtime accepts: v3 (Phase 10 work order 1:
+    * rank.<k>.researcherId whenever a rank.<k> fact is asserted, enforced in code), v2 (ruling 17:
+    * non-empty values for every claim but DESCRIPTIVE, also enforced in code for v1), and v1. The
+    * prompt version named in configuration decides which one a run uses.
     */
-  val SynthesisOutputVersions: Set[String] = Set("synthesis-output-v1", SynthesisOutput)
+  val SynthesisOutputVersions: Set[String] =
+    Set("synthesis-output-v1", "synthesis-output-v2", SynthesisOutput)
   val Verification = "claim-verification-v1"
   val Answer = "rag-answer-v1"
-  val Audit = "rag-audit-v2"
+  val Audit = "rag-audit-v3"
   val QuerySessionItem = "rag-query-session-v1"
   val EvidenceBundleItem = "rag-evidence-bundle-item-v1"
 
@@ -113,6 +116,12 @@ enum ClaimAction:
   case KEPT, LABELLED, REMOVED
 object ClaimAction:
   given ReadWriter[ClaimAction] = enumRW(values)
+
+/** Which model line verification left out (n7): the summary, or an uncertainty line. */
+enum LinePart:
+  case SUMMARY, UNCERTAINTY
+object LinePart:
+  given ReadWriter[LinePart] = enumRW(values)
 
 enum AbstentionReason:
   case AMBIGUOUS_RESEARCHER, UNKNOWN_RESEARCHER, UNSUPPORTED_REQUEST, NO_DATA_IN_WINDOW,

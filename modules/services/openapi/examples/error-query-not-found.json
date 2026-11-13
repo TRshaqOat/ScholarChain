@@ -1,0 +1,7 @@
+{
+  "error": "QUERY_NOT_FOUND",
+  "message": "no query with this ID",
+  "traceId": "trace-example-1",
+  "requestId": "req-example-1",
+  "retryable": false
+}

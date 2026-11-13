@@ -1,0 +1,16 @@
+{
+  "node": {
+    "nodeId": "scr:canon-v1.er-v2:3bb726d3da683ea3732d02907753c921",
+    "label": "Researcher",
+    "properties": {
+      "displayName": "Grace Hopper",
+      "dblpAnchored": true,
+      "mentionCount": 3,
+      "assignedTier": "TIER1",
+      "snapshot": "2026-10-03",
+      "identityConfidence": 0.99,
+      "schemaVersion": "neptune-researcher-v1",
+      "runId": "run-b8a212f955daaeb0275f11f93e36c70a"
+    }
+  }
+}

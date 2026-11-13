@@ -1,0 +1,161 @@
+{
+  "schemaVersion": "rag-benchmark-result-v2",
+  "questionId": "B07",
+  "category": "direct_collaboration",
+  "mode": "LIVE",
+  "runtimeRunId": "run-d94e077cc52fa2fbfa628f21a4c4adaa",
+  "queryId": "qry-4de5111dcf9e5bd4dd9b1441e2095e1b",
+  "planSource": "MODEL",
+  "operations": [
+    "DIRECT_COAUTHORS/PAIR"
+  ],
+  "metrics": [],
+  "window": "all-years",
+  "resolutions": [
+    {
+      "name": "Jack J. Dongarra",
+      "decision": "RESOLVED_DOMINANT",
+      "researcherId": "scr:canon-v1.er-v2:6de4012bbe8608f1d49d18cf9a40a763",
+      "topShare": 0.9575596816976127,
+      "candidateCount": 17
+    },
+    {
+      "name": "Yves Robert",
+      "decision": "RESOLVED_DOMINANT",
+      "researcherId": "scr:canon-v1.er-v2:da6e3bdff14745638f3f5425f0133388",
+      "topShare": 0.9774774774774775,
+      "candidateCount": 6
+    }
+  ],
+  "abstained": false,
+  "abstentionReason": null,
+  "verification": {
+    "verified": 8,
+    "partiallySupported": 0,
+    "unsupported": 0,
+    "conflicting": 0
+  },
+  "claims": 8,
+  "graph": {
+    "reads": 33,
+    "readsByTemplate": {
+      "graph.coauthor-edge": 1,
+      "kv.metrics.window": 2,
+      "graph.vertices": 1,
+      "graph.authored-counts": 2,
+      "graph.coauthors": 23,
+      "kv.entity-link": 2,
+      "graph.researcher-institutions": 2
+    },
+    "rows": 104,
+    "truncatedReads": 2,
+    "evidenceItems": 28,
+    "tokens": 2913,
+    "omittedItems": 0,
+    "latencyMs": 9,
+    "pathStatuses": []
+  },
+  "semantic": {
+    "embeddingCalls": 1,
+    "embeddingInputTokens": 0,
+    "indexes": [
+      "researcher-profile-v1",
+      "paper-abstract-v1"
+    ],
+    "hits": 3,
+    "tokens": 1424,
+    "omittedItems": 0,
+    "latencyMs": 329,
+    "outcome": "OK"
+  },
+  "llm": {
+    "attempts": 2,
+    "requests": 2,
+    "attemptsByStage": {
+      "QUERY_PLANNING": 1,
+      "ANSWER_SYNTHESIS": 1
+    },
+    "outcomes": {
+      "OK": 2
+    },
+    "inputTokens": 9786,
+    "outputTokens": 2181,
+    "throttleWaitMs": 9391
+  },
+  "latencyMs": 20255,
+  "stageLatencyMs": {
+    "COLLABORATION_METRICS": 1,
+    "PATH_FINDING": 8,
+    "EVIDENCE_BUILDING": 3,
+    "AUDIT": 0,
+    "QUERY_PLANNING": 5059,
+    "SEMANTIC_CONTEXT": 329,
+    "COMMUNITY_ANALYSIS": 0,
+    "CLAIM_VERIFICATION": 25,
+    "RESEARCHER_RESOLUTION": 55,
+    "ANSWER_SYNTHESIS": 14763
+  },
+  "checks": [
+    {
+      "name": "plan-operations",
+      "outcome": "PASS",
+      "detail": "needs DIRECT_COAUTHORS/PAIR; plan [DIRECT_COAUTHORS/PAIR]"
+    },
+    {
+      "name": "researcher-names",
+      "outcome": "PASS",
+      "detail": "expected [Jack J. Dongarra; Yves Robert], extracted [Jack J. Dongarra; Yves Robert]"
+    },
+    {
+      "name": "resolution",
+      "outcome": "PASS",
+      "detail": "Jack J. Dongarra: expected RESOLVED_DOMINANT, got RESOLVED_DOMINANT; Yves Robert: expected RESOLVED_DOMINANT, got RESOLVED_DOMINANT"
+    },
+    {
+      "name": "abstention",
+      "outcome": "PASS",
+      "detail": "expected answer, got answer"
+    },
+    {
+      "name": "claim-evidence",
+      "outcome": "PASS",
+      "detail": "8 claims cite bundle IDs; 8 material claims each cite a graph item; 0 descriptive"
+    },
+    {
+      "name": "verification",
+      "outcome": "PASS",
+      "detail": "answer has a verified claim; counts 8/0/0/0; final claims 8 verified of 8"
+    },
+    {
+      "name": "bundle-budget",
+      "outcome": "PASS",
+      "detail": "graph 2913/8000 tokens, semantic 1424/3000, items 31/300"
+    },
+    {
+      "name": "llm-budget",
+      "outcome": "PASS",
+      "detail": "2 attempts, 2 requests (ANSWER_SYNTHESIS 1, QUERY_PLANNING 1), tokens in 9786 out 2181"
+    },
+    {
+      "name": "embedding-budget",
+      "outcome": "PASS",
+      "detail": "1 embedding calls for 2 indexes queried"
+    },
+    {
+      "name": "path-hops",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no path evidence in the bundle"
+    },
+    {
+      "name": "pair-edges",
+      "outcome": "PASS",
+      "detail": "1 of 1 edges equal the stored hop"
+    },
+    {
+      "name": "deadline",
+      "outcome": "PASS",
+      "detail": "20255 ms of 180000"
+    }
+  ],
+  "answerHash": "sha256:8bdec37a315cf3d57af424265a11375e0bbcb1358e8205befb6916cc667fd1d2"
+}

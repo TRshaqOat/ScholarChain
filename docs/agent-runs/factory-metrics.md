@@ -78,3 +78,18 @@ Running log for the Phase 16 agentic-factory evaluation. One row per agent invoc
 | 2026-11-11 | 09 | rag-engineer (repair-02, ruling 30) | COMPLETE | y | - | 2 | 0 | ? | planner messages name what is allowed; planner-v2 |
 | 2026-11-11 | 09 | domain-engineer (repair-02, ruling 30) | COMPLETE | y | - | 2 | 0 | ? | planner-v2 default |
 | 2026-11-12 | 09 | code-reviewer (review 3) | REQUEST_CHANGES | n | 0/2/4 | 2 | 0 | ? | Phase 9: 1 BLOCKED-ON, 2 repair rounds (2nd by exception), human escalation (ruling 31) |
+| 2026-11-12 | 10 | rag-engineer (WO1) | COMPLETE | n | - | 0 | 0 | ? | Phase 9 ruling 31 verifier fixes (verifier-v4), synthesis-v3, RuntimeApi; review 2 N5 |
+| 2026-11-12 | 10 | domain-engineer (WO2) | COMPLETE | y | - | 0 | 0 | ? | synthesis limits, sync deadline 40 s, services keys, JobState, ErrorCode |
+| 2026-11-12 | 10 | build-engineer (WO3) | COMPLETE | y | - | 0 | 0 | ? | services entry points, sqs artifact, prompts packaging (FU3) |
+| 2026-11-12 | 10 | storage-engineer (WO4) | COMPLETE | y | - | 0 | 0 | ? | ServiceState table, evidenceById GSI, job queue port |
+| 2026-11-12 | 10 | service-engineer (WO5) | COMPLETE | n | - | 0 | 0 | ? | APIs, OpenAPI, contract tests; review 1 F1, m1, m5 |
+| 2026-11-12 | 10 | service-engineer (WO6) | COMPLETE | n | - | 0 | 0 | ? | worker, async path, lifecycle test, local smoke; review 1 m2 |
+| 2026-11-12 | 10 | spark-engineer (WO7) | COMPLETE | y | - | 0 | 0 | ? | FU2 window summaries |
+| 2026-11-12 | 10 | storage-engineer (WO8) | COMPLETE | y | - | 0 | 0 | ? | FU2 read port (manifest-based loader, ruling 20) |
+| 2026-11-12 | 10 | rag-engineer (WO9) | COMPLETE | n | - | 0 | 0 | ? | FU2 answers, rulings 19a and 19b, verifier-v5; review 1 m4 |
+| 2026-11-12 | 10 | domain-engineer (WO10) | COMPLETE | y | - | 0 | 0 | ? | runtime.window-summary.load-run |
+| 2026-11-12 | 10 | service-engineer (WO11) | COMPLETE | n | - | 0 | 0 | ? | window-summary wiring, stale JUnit file; review 1 m3 |
+| 2026-11-12 | 10 | code-reviewer (review 1) | REQUEST_CHANGES | y | 0/1/5 | 0 | 0 | ? | F1 pool saturation; m1 to m5 |
+| 2026-11-12 | 10 | service-engineer (repair-01 A) | COMPLETE | n | - | 1 | 0 | ? | F1 two pools, m1 m2 m3 m5, SERVICES.md; review 2 N1 to N4; SaturationSpec flake (ruling 25) |
+| 2026-11-12 | 10 | rag-engineer (repair-01 B) | COMPLETE | y | - | 1 | 0 | ? | m4; 19 disable checks on verifier-v5 |
+| 2026-11-12 | 10 | code-reviewer (review 2) | APPROVE | y | 0/0/5 | 1 | 0 | ? | N1 to N5 residual (ruling 24) |

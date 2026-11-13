@@ -1,0 +1,48 @@
+== disable D4-corpus-port: modules/rag/src/main/scala/scholarchain/rag/runtime/Workflow.scala
+518c518
+<           ports.windowSummaries
+---
+>           None
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] compiling 2 Scala sources to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/rag/target/scala-3.3.7/classes ...
+[info] done compiling
+[info] CorpusSpec:
+[info] - B13 and B15 shapes: corpus component counts of a window, verified, with row provenance *** FAILED ***
+[info]   Some(Abstention(UNSUPPORTED_REQUEST, "This request is not supported by the stored data: Corpus-level component lookup statistics are not stored in this version.")) was not empty Some(Abstention(UNSUPPORTED_REQUEST,This request is not supported by the stored data: Corpus-level component lookup statistics are not stored in this version.)) (CorpusSpec.scala:35)
+[info] - B17 shape: communities of at least the stored minimum size; non-convergence is stated *** FAILED ***
+[info]   Some(Abstention(UNSUPPORTED_REQUEST, "This request is not supported by the stored data: Corpus-level community comparison statistics are not stored in this version.")) was not empty VerificationReport(claim-verification-v1,qry-b5088c0bed13c9e410d9d3d009e6944c,Vector(),VerificationCounts(0,0,0,0)) (CorpusSpec.scala:86)
+[info] - B24 shape: the stored pair of windows, with deltas, and the window lengths stated *** FAILED ***
+[info]   Some(Abstention(UNSUPPORTED_REQUEST, "This request is not supported by the stored data: Corpus-level temporal comparison statistics are not stored in this version. Corpus-level component lookup statistics are not stored in this version.")) was not empty VerificationReport(claim-verification-v1,qry-dd6ef7634113b3481962828f1005f493,Vector(),VerificationCounts(0,0,0,0)) (CorpusSpec.scala:108)
+[info] - a model claim on corpus evidence is still checked: wrong measure or value is removed *** FAILED ***
+[info]   java.util.NoSuchElementException: None.get
+[info]   at scala.None$.get(Option.scala:627)
+[info]   at scala.None$.get(Option.scala:626)
+[info]   at scholarchain.rag.runtime.CorpusSpec.testFun$proxy4$1$$anonfun$1(CorpusSpec.scala:141)
+[info]   at scholarchain.rag.runtime.RuntimeFixtures$.withWorld(RuntimeFixtures.scala:535)
+[info]   at scholarchain.rag.runtime.CorpusSpec.testFun$proxy4$1(CorpusSpec.scala:139)
+[info]   at scholarchain.rag.runtime.CorpusSpec.$init$$$anonfun$4(CorpusSpec.scala:138)
+[info]   at org.scalatest.Transformer.apply$$anonfun$1(Transformer.scala:22)
+[info]   at org.scalatest.OutcomeOf.outcomeOf(OutcomeOf.scala:85)
+[info]   at org.scalatest.OutcomeOf.outcomeOf$(OutcomeOf.scala:31)
+[info]   at org.scalatest.OutcomeOf$.outcomeOf(OutcomeOf.scala:104)
+[info]   ...
+[info] - without the window-summary port, corpus questions still abstain as NOT_STORED
+[info] - AskCli: --window-summary-root and --window-summary-run wire the port; bad use is refused *** FAILED ***
+[info]   out.exists(((l: scala.Predef.String) => l.contains("[VERIFIED]").&&(l.contains("33 connected components")))) was false (CorpusSpec.scala:229)
+[info] Run completed in 589 milliseconds.
+[info] Total number of tests run: 6
+[info] Suites: completed 1, aborted 0
+[info] Tests: succeeded 1, failed 5, canceled 0, ignored 0, pending 0
+[info] *** 5 TESTS FAILED ***
+[error] Failed tests:
+[error] 	scholarchain.rag.runtime.CorpusSpec
+[error] (rag / Test / testOnly) sbt.TestsFailedException: Tests unsuccessful
+[error] Total time: 4 s, completed Nov 12, 2026, 1:44:45 PM
+== sbt exit 1
+== restore check
+modules/rag/src/main/scala/scholarchain/rag/runtime/Workflow.scala: OK

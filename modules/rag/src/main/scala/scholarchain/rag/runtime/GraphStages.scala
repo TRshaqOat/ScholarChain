@@ -20,7 +20,8 @@ import scholarchain.storage.{
   KeyValueReadPort,
   LookupLabel,
   ObjectReadPort,
-  TableName
+  TableName,
+  WindowSummary
 }
 
 /** A plan name resolved to one researcher (index into QueryPlan.researcherNames). */
@@ -29,15 +30,25 @@ final case class Resolved(index: Int, researcherId: String, name: String)
 /** Stages 3 to 5. names: display names of every researcher, community, topic, or work met (for
   * evidence facts). componentSubjects: researchers whose component is asked for. unsupported: the
   * operations that produced only missing-evidence entries. stageMs: the time of each of stages 3 to
-  * 5 that ran (review 1 m1); a stage with no work is absent.
+  * 5 that ran (review 1 m1); a stage with no work is absent. The corpus fields are the stored
+  * window summary rows the CORPUS scopes read (work order 9, F2): components and communities of a
+  * window, and (from, to) rows of a stored comparison; corpusSource is their store object;
+  * limitations are the fixed lines the rows carry (node basis, convergence, window lengths).
   */
 final case class GraphStageResult(
     facts: GraphFacts,
     names: Map[String, String],
     componentSubjects: Vector[String],
     unsupported: Vector[QueryOperation],
-    stageMs: Map[Stage, Long]
-)
+    stageMs: Map[Stage, Long],
+    corpusComponents: Vector[WindowSummary] = Vector.empty,
+    corpusCommunities: Vector[WindowSummary] = Vector.empty,
+    corpusComparisons: Vector[(WindowSummary, WindowSummary)] = Vector.empty,
+    corpusSource: String = "",
+    limitations: Vector[String] = Vector.empty
+):
+  def corpusEmpty: Boolean =
+    corpusComponents.isEmpty && corpusCommunities.isEmpty && corpusComparisons.isEmpty
 
 object GraphStages:
   /** The stage an operation's reads belong to (RUNTIME.md section 2); SEMANTIC_EXPLANATION reads
@@ -66,7 +77,8 @@ final class GraphStages(
     objects: ObjectReadPort,
     cfg: ScholarChainConfig,
     log: CallLog,
-    graphRunId: String
+    graphRunId: String,
+    summaries: Option[WindowSummarySource] = None
 ):
   import ResolutionPort.*
   private val w = plan.window.window
@@ -83,6 +95,10 @@ final class GraphStages(
   private val doneCommunities = collection.mutable.HashSet.empty[String]
   private val doneChanges = collection.mutable.HashSet.empty[(String, WindowComparison)]
   private val components = Vector.newBuilder[String]
+  private val corpusComponents = Vector.newBuilder[WindowSummary]
+  private val corpusCommunities = Vector.newBuilder[WindowSummary]
+  private val corpusComparisons = Vector.newBuilder[(WindowSummary, WindowSummary)]
+  private val limitations = Vector.newBuilder[String]
   private def nameOf(id: String) = names.getOrElse(id, id)
   private def miss(r: MissingReason, subject: String, detail: String) =
     missing += MissingEvidence(r, subject, detail)
@@ -585,6 +601,28 @@ final class GraphStages(
     )
     false
 
+  /** The stored window summary rows of the given windows (obj.window-summary, read through the
+    * validated port), or None when no port is wired (NOT_STORED, as before F2) or a row is missing.
+    */
+  private def corpusRows(op: QueryOperation, ws: Vector[String]): Option[Vector[WindowSummary]] =
+    summaries match
+      case None      => Option.when(corpusOnly(op))(Vector.empty)
+      case Some(src) =>
+        val rows = ws.map(x => x -> log("obj.window-summary")(src.port.windowSummary(x))(_.size))
+        rows.collect { case (x, None) => x }.foreach { x =>
+          miss(MissingReason.NOT_STORED, x, s"No corpus window summary is stored for $x.")
+        }
+        val found = rows.flatMap(_._2)
+        found.foreach(r =>
+          limitations += s"Graph nodes in ${r.window} (corpus counts): ${r.nodeBasis}."
+        )
+        Option.when(found.size == ws.size)(found)
+
+  private def notConverged(r: WindowSummary): Unit =
+    if !r.communityConverged then
+      limitations += s"Communities in ${r.window} did not converge: detection stopped after " +
+        s"${r.communityRounds} rounds, so community counts depend on that cap and its tie-break."
+
   private def operation(op: PlannedOperation, ids: Vector[String]): Boolean =
     import QueryOperation.*
     (op.operation, op.scope) match
@@ -608,8 +646,9 @@ final class GraphStages(
       case (SHORTEST_PATH, _) =>
         path(ids(0), ids(1))
         true
-      case (COMPONENT_LOOKUP, OperationScope.CORPUS) => corpusOnly(COMPONENT_LOOKUP)
-      case (COMPONENT_LOOKUP, _)                     =>
+      case (COMPONENT_LOOKUP, OperationScope.CORPUS) =>
+        corpusRows(COMPONENT_LOOKUP, Vector(w)).map(corpusComponents ++= _).isDefined
+      case (COMPONENT_LOOKUP, _) =>
         val found = ids.filter(metric(_).isDefined)
         components ++= found
         val pairs =
@@ -624,8 +663,12 @@ final class GraphStages(
           )
         else for id <- found; c <- pairs do change(id, c)
         found.nonEmpty
-      case (COMMUNITY_COMPARISON, OperationScope.CORPUS) => corpusOnly(COMMUNITY_COMPARISON)
-      case (COMMUNITY_COMPARISON, _)                     =>
+      case (COMMUNITY_COMPARISON, OperationScope.CORPUS) =>
+        corpusRows(COMMUNITY_COMPARISON, Vector(w)).map { rs =>
+          rs.foreach(notConverged)
+          corpusCommunities ++= rs
+        }.isDefined
+      case (COMMUNITY_COMPARISON, _) =>
         val cids = ids.flatMap(metric).flatMap(_.metrics.communityId)
         cids.foreach(community)
         cids.nonEmpty
@@ -651,8 +694,25 @@ final class GraphStages(
           )
         }
         found.nonEmpty
-      case (TEMPORAL_COMPARISON, OperationScope.CORPUS) => corpusOnly(TEMPORAL_COMPARISON)
-      case (TEMPORAL_COMPARISON, _)                     =>
+      case (TEMPORAL_COMPARISON, OperationScope.CORPUS) =>
+        plan.comparison match
+          case None =>
+            miss(
+              MissingReason.NO_STORED_COMPARISON,
+              "comparison",
+              "No stored window comparison exists."
+            )
+            false
+          case Some(c) =>
+            corpusRows(TEMPORAL_COMPARISON, Vector(c.fromWindow, c.toWindow)).map { rs =>
+              val (a, b) = (rs(0), rs(1))
+              if a.years != b.years then
+                limitations += s"The compared windows differ in length: ${a.window} covers " +
+                  s"${a.years} years and ${b.window} covers ${b.years} years; counts are not " +
+                  "normalized by window length."
+              corpusComparisons += ((a, b))
+            }.isDefined
+      case (TEMPORAL_COMPARISON, _) =>
         plan.comparison match
           case None =>
             miss(
@@ -721,5 +781,10 @@ final class GraphStages(
       names.toMap,
       components.result().distinct,
       unsupported.distinct,
-      stageMs.toMap
+      stageMs.toMap,
+      corpusComponents.result().distinct,
+      corpusCommunities.result().distinct,
+      corpusComparisons.result().distinct,
+      summaries.fold("")(_.key),
+      limitations.result().distinct
     )

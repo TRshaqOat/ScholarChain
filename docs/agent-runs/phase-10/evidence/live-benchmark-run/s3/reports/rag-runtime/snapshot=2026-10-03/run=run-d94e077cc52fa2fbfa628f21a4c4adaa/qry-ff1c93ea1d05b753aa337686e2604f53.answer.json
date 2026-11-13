@@ -1,0 +1,446 @@
+{
+  "schemaVersion": "rag-answer-v1",
+  "response": {
+    "schemaVersion": "answer-response-v1",
+    "queryId": "qry-ff1c93ea1d05b753aa337686e2604f53",
+    "summary": "No researcher named 'Elena Vasquez-Marlowe' is in the graph.",
+    "claims": [],
+    "abstained": true,
+    "uncertainty": "Jack J. Dongarra was linked to scr:canon-v1.er-v2:6de4012bbe8608f1d49d18cf9a40a763 by dominant-name-v1: 0.9576 of 377 works among 17 researchers with this display name.",
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "RUNTIME",
+      "sourceRecordId": "qry-ff1c93ea1d05b753aa337686e2604f53",
+      "snapshot": "2026-10-03",
+      "runId": "run-d94e077cc52fa2fbfa628f21a4c4adaa",
+      "policyVersion": "fusion-v1",
+      "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+    }
+  },
+  "plan": {
+    "schemaVersion": "rag-query-plan-v1",
+    "queryId": "qry-ff1c93ea1d05b753aa337686e2604f53",
+    "operations": [
+      {
+        "operation": "SHORTEST_PATH",
+        "scope": "PAIR",
+        "researchers": [
+          0,
+          1
+        ],
+        "metric": null,
+        "topN": null
+      }
+    ],
+    "researcherNames": [
+      {
+        "name": "Jack J. Dongarra",
+        "offset": 47
+      },
+      {
+        "name": "Elena Vasquez-Marlowe",
+        "offset": 68
+      }
+    ],
+    "metrics": [],
+    "window": {
+      "requested": {
+        "kind": "DEFAULT",
+        "name": null,
+        "yearFrom": null,
+        "yearTo": null
+      },
+      "window": "all-years",
+      "startYear": 2000,
+      "endYear": 2026,
+      "exact": true,
+      "note": null
+    },
+    "comparison": null,
+    "topics": [],
+    "venues": [],
+    "institutions": [],
+    "semanticIndexes": [
+      "researcher-profile-v1",
+      "collaboration-path-v1"
+    ],
+    "limits": {
+      "graphLimit": 100,
+      "vectorLimit": 50,
+      "maxPathDepth": 6,
+      "topK": 5
+    },
+    "source": "MODEL",
+    "overriddenFields": [],
+    "rejectedItems": [],
+    "promptVersion": "planner-v2",
+    "modelId": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "RUNTIME",
+      "sourceRecordId": "qry-ff1c93ea1d05b753aa337686e2604f53",
+      "snapshot": "2026-10-03",
+      "runId": "run-d94e077cc52fa2fbfa628f21a4c4adaa",
+      "policyVersion": null,
+      "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+    }
+  },
+  "resolutions": [
+    {
+      "schemaVersion": "researcher-resolution-v1",
+      "name": "Jack J. Dongarra",
+      "nameKey": "name-v1:jack j dongarra",
+      "policyVersion": "dominant-name-v1",
+      "dominantShare": 0.9,
+      "minWorks": 5,
+      "decision": "RESOLVED_DOMINANT",
+      "researcherId": "scr:canon-v1.er-v2:6de4012bbe8608f1d49d18cf9a40a763",
+      "topShare": 0.9575596816976127,
+      "totalWorks": 377,
+      "candidateCount": 17,
+      "candidates": [
+        {
+          "researcherId": "scr:canon-v1.er-v2:6de4012bbe8608f1d49d18cf9a40a763",
+          "displayName": "Jack J. Dongarra",
+          "matchedName": "Jack J. Dongarra",
+          "works": 361,
+          "share": 0.9575596816976127,
+          "identityConfidence": 0.9300527553067827,
+          "mentionCount": 1035,
+          "dblpAnchored": true,
+          "orcid": "0000-0003-3247-1782",
+          "institutions": [
+            {
+              "id": "ringgold:4292",
+              "name": "University of Tennessee Knoxville",
+              "count": null
+            },
+            {
+              "id": "ringgold:5292",
+              "name": "University of Manchester",
+              "count": null
+            },
+            {
+              "id": "ror:00xzqjh13",
+              "name": "University of Tennessee System",
+              "count": null
+            }
+          ],
+          "topCoauthors": [
+            {
+              "id": "scr:canon-v1.er-v2:d6da0e3328e77af813dc4fef5d8e8e00",
+              "name": "Stanimire Tomov",
+              "count": 72
+            },
+            {
+              "id": "scr:canon-v1.er-v2:f8de7c4d37009549208e5498ffe88dce",
+              "name": "George Bosilca",
+              "count": 67
+            },
+            {
+              "id": "scr:canon-v1.er-v2:8c0c29d950518d7da8d7f8bdefc479e5",
+              "name": "Piotr Luszczek",
+              "count": 54
+            }
+          ],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:2bf5d8b97aab7d968e5d2e785c2f7086",
+          "displayName": "Jack J. Dongarra",
+          "matchedName": "Jack J. Dongarra",
+          "works": 1,
+          "share": 0.002652519893899204,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:34a3b3c10852f70ed6619d769476a84d",
+          "displayName": "Jack J. Dongarra",
+          "matchedName": "Jack J. Dongarra",
+          "works": 1,
+          "share": 0.002652519893899204,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:525fad5d910f3af5b8331e32d91c4998",
+          "displayName": "Jack J. Dongarra",
+          "matchedName": "Jack J. Dongarra",
+          "works": 1,
+          "share": 0.002652519893899204,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [
+            {
+              "id": "scr:canon-v1.er-v2:8dfdcbb93e2345f735c1623fe255d01f",
+              "name": "Piotr Luszczek",
+              "count": 1
+            }
+          ],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:5e1a412b01bb28f6501c871441470cb2",
+          "displayName": "Jack J. Dongarra",
+          "matchedName": "Jack J. Dongarra",
+          "works": 1,
+          "share": 0.002652519893899204,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:5f2d012b575ad00e9553855ade57d53c",
+          "displayName": "Jack J. Dongarra",
+          "matchedName": "Jack J. Dongarra",
+          "works": 1,
+          "share": 0.002652519893899204,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [
+            {
+              "id": "scr:canon-v1.er-v2:e7bd3167292a646bea5ffb1bfa945894",
+              "name": "James B. White",
+              "count": 1
+            }
+          ],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:67862e17097d5d22251a6ee0c3e1f792",
+          "displayName": "Jack J. Dongarra",
+          "matchedName": "Jack J. Dongarra",
+          "works": 1,
+          "share": 0.002652519893899204,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:6c0891b0da94fdad65cf09ce1aa5ea7a",
+          "displayName": "Jack J. Dongarra",
+          "matchedName": "Jack J. Dongarra",
+          "works": 1,
+          "share": 0.002652519893899204,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:7e9a08a98aac5b3eb92c1c643aba7141",
+          "displayName": "Jack J. Dongarra",
+          "matchedName": "Jack J. Dongarra",
+          "works": 1,
+          "share": 0.002652519893899204,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:8776b4a0b3008c8e13f19962f9ddd062",
+          "displayName": "Jack J. Dongarra",
+          "matchedName": "Jack J. Dongarra",
+          "works": 1,
+          "share": 0.002652519893899204,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:916cb35b7e9585553223e1f2f340066d",
+          "displayName": "Jack J. Dongarra",
+          "matchedName": "Jack J. Dongarra",
+          "works": 1,
+          "share": 0.002652519893899204,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:9cbe4a9c87eb2771d05989fefa6f0138",
+          "displayName": "Jack J. Dongarra",
+          "matchedName": "Jack J. Dongarra",
+          "works": 1,
+          "share": 0.002652519893899204,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:9e43bc2f235d48b379aaf0c6b3fed66d",
+          "displayName": "Jack J. Dongarra",
+          "matchedName": "Jack J. Dongarra",
+          "works": 1,
+          "share": 0.002652519893899204,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [
+            {
+              "id": "scr:canon-v1.er-v2:8c0c29d950518d7da8d7f8bdefc479e5",
+              "name": "Piotr Luszczek",
+              "count": 1
+            }
+          ],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:c9a87b36fe3da4eb17f3ea06300ed96f",
+          "displayName": "Jack J. Dongarra",
+          "matchedName": "Jack J. Dongarra",
+          "works": 1,
+          "share": 0.002652519893899204,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:e4d8b979f53fd6d64edb885bf46f6652",
+          "displayName": "Jack J. Dongarra",
+          "matchedName": "Jack J. Dongarra",
+          "works": 1,
+          "share": 0.002652519893899204,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:f578e74edba96473b74dbb6a04ae7c07",
+          "displayName": "Jack J. Dongarra",
+          "matchedName": "Jack J. Dongarra",
+          "works": 1,
+          "share": 0.002652519893899204,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:f7dd3af14fdaf64efe379d3aaf9e93c1",
+          "displayName": "Jack J. Dongarra",
+          "matchedName": "Jack J. Dongarra",
+          "works": 1,
+          "share": 0.002652519893899204,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        }
+      ],
+      "otherNameMatches": [],
+      "truncated": false,
+      "evidenceId": "ev-f77b0f57600fbe72e769edddb227902e"
+    },
+    {
+      "schemaVersion": "researcher-resolution-v1",
+      "name": "Elena Vasquez-Marlowe",
+      "nameKey": "name-v1:elena vasquez marlowe",
+      "policyVersion": "dominant-name-v1",
+      "dominantShare": 0.9,
+      "minWorks": 5,
+      "decision": "UNKNOWN_RESEARCHER",
+      "researcherId": null,
+      "topShare": null,
+      "totalWorks": 0,
+      "candidateCount": 0,
+      "candidates": [],
+      "otherNameMatches": [],
+      "truncated": false,
+      "evidenceId": null
+    }
+  ],
+  "verification": {
+    "schemaVersion": "claim-verification-v1",
+    "queryId": "qry-ff1c93ea1d05b753aa337686e2604f53",
+    "checks": [],
+    "counts": {
+      "verified": 0,
+      "partiallySupported": 0,
+      "unsupported": 0,
+      "conflicting": 0
+    }
+  },
+  "abstention": {
+    "reason": "UNKNOWN_RESEARCHER",
+    "detail": "No researcher named 'Elena Vasquez-Marlowe' is in the graph."
+  },
+  "answerHash": "sha256:5df8cef8078b2bb29bb6711cfa99575e79fa9ef28b2a39bfd97bb5e3903135d1"
+}

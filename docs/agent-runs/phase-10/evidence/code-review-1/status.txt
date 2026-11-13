@@ -1,0 +1,261 @@
+ M build.sbt
+ M modules/core/src/main/resources/scholarchain.conf
+ M modules/core/src/main/scala/scholarchain/core/Enums.scala
+ M modules/core/src/main/scala/scholarchain/core/StableIds.scala
+ M modules/core/src/main/scala/scholarchain/core/config/ConfigLoader.scala
+ M modules/core/src/test/scala/scholarchain/core/StableIdsSpec.scala
+ M modules/core/src/test/scala/scholarchain/core/WireContractSpec.scala
+ M modules/core/src/test/scala/scholarchain/core/config/ConfigLoaderSpec.scala
+ M modules/rag/RUNTIME.md
+ M modules/rag/src/main/scala/scholarchain/rag/cli/AskCli.scala
+ M modules/rag/src/main/scala/scholarchain/rag/runtime/Contracts.scala
+ M modules/rag/src/main/scala/scholarchain/rag/runtime/Evidence.scala
+ M modules/rag/src/main/scala/scholarchain/rag/runtime/GraphStages.scala
+ M modules/rag/src/main/scala/scholarchain/rag/runtime/Llm.scala
+ M modules/rag/src/main/scala/scholarchain/rag/runtime/Records.scala
+ M modules/rag/src/main/scala/scholarchain/rag/runtime/Synthesis.scala
+ M modules/rag/src/main/scala/scholarchain/rag/runtime/Verifier.scala
+ M modules/rag/src/main/scala/scholarchain/rag/runtime/Workflow.scala
+ M modules/rag/src/test/scala/scholarchain/rag/runtime/LlmSpec.scala
+ M modules/rag/src/test/scala/scholarchain/rag/runtime/PlannerSpec.scala
+ M modules/rag/src/test/scala/scholarchain/rag/runtime/RuntimeFixtures.scala
+ M modules/rag/src/test/scala/scholarchain/rag/runtime/RuntimeRecordsSpec.scala
+ M modules/rag/src/test/scala/scholarchain/rag/runtime/VerifierSpec.scala
+ M modules/spark/JOBS.md
+ M modules/storage/STORAGE.md
+ M modules/storage/src/main/scala/scholarchain/storage/Dynamo.scala
+ M modules/storage/src/main/scala/scholarchain/storage/GraphRead.scala
+ M modules/storage/src/main/scala/scholarchain/storage/ObjectStore.scala
+ M modules/storage/src/main/scala/scholarchain/storage/live/LiveAws.scala
+ M modules/storage/src/test/scala/scholarchain/storage/GraphReadSpec.scala
+ M modules/storage/src/test/scala/scholarchain/storage/LiveRequestSpec.scala
+ M project/Dependencies.scala
+?? docs/agent-runs/phase-10/agent-report.md
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/dynamodb/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/EvidenceBundle.jsonl
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/dynamodb/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/QuerySession.jsonl
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/logs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-03e5709afc86c6abba069a26ac44c1c9.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/logs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-067cb02eb951ff10e2fd90558c47084e.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/logs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-1389e6723bf5040d6a642e47298bba2a.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/logs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-2118cc4b61bff42e106295ed765d570c.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/logs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-4de5111dcf9e5bd4dd9b1441e2095e1b.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/logs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-52a45bb7f4664876485274f7187426ec.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/logs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-62ee898f95b74fe28591927042db879b.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/logs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-66ad30e92be4b8d09647ab7529f43792.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/logs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-6c052176f6d5bc9298d990a7aea61ae0.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/logs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-6c989558bc5a0bb3028ab9cd59cb74f5.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/logs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-7674bda45c38cfd7b7ba7455b1ccdd76.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/logs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-85b3db40271be986caf6dc9436885323.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/logs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-87825102cc828e39c3825c7d2a3bc413.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/logs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-8e10c70339c2cbb1970e0f0620e05891.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/logs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-93dd8444f1064552d86618a88378d3d6.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/logs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-a45c29ba2e14c17ba4a5c44c1461a38b.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/logs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-a4c67fe0d20581a83b0c7fed5c355e60.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/logs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-b5d45c56a669f19985fa6d697fb8ecfd.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/logs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-b79ecb0f9efc0ebd8d15622fd797f153.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/logs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-bbdcc72cc57af27cdea0da0bab986031.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/logs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-bd302f8c57f839a4192352d4e78bbd17.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/logs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-ce21fe196b1ee13885f1abda881efca9.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/logs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-d0227183a3904c15a4427630889aab8c.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/logs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-d5fff217376b3ae901ea7a0f08988272.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/logs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-d692f35ba000fae7b3a48118afe7dafc.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/logs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-db4b72792b43bdd635214f93aad83b6e.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/logs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-dcf8373cf7b508494e1de2b25f7cd7c0.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/logs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-ef42bc94b58927dab36948fe0f2e44ed.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/logs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-f67e928020dd0308c05973d947a87c65.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/logs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-ff1c93ea1d05b753aa337686e2604f53.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-benchmark/snapshot=2026-10-03/run=run-149a1e0a5d493732e32257518878039e/questions/B01.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-benchmark/snapshot=2026-10-03/run=run-149a1e0a5d493732e32257518878039e/questions/B02.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-benchmark/snapshot=2026-10-03/run=run-149a1e0a5d493732e32257518878039e/questions/B03.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-benchmark/snapshot=2026-10-03/run=run-149a1e0a5d493732e32257518878039e/questions/B04.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-benchmark/snapshot=2026-10-03/run=run-149a1e0a5d493732e32257518878039e/questions/B05.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-benchmark/snapshot=2026-10-03/run=run-149a1e0a5d493732e32257518878039e/questions/B06.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-benchmark/snapshot=2026-10-03/run=run-149a1e0a5d493732e32257518878039e/questions/B07.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-benchmark/snapshot=2026-10-03/run=run-149a1e0a5d493732e32257518878039e/questions/B08.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-benchmark/snapshot=2026-10-03/run=run-149a1e0a5d493732e32257518878039e/questions/B09.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-benchmark/snapshot=2026-10-03/run=run-149a1e0a5d493732e32257518878039e/questions/B10.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-benchmark/snapshot=2026-10-03/run=run-149a1e0a5d493732e32257518878039e/questions/B11.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-benchmark/snapshot=2026-10-03/run=run-149a1e0a5d493732e32257518878039e/questions/B12.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-benchmark/snapshot=2026-10-03/run=run-149a1e0a5d493732e32257518878039e/questions/B13.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-benchmark/snapshot=2026-10-03/run=run-149a1e0a5d493732e32257518878039e/questions/B14.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-benchmark/snapshot=2026-10-03/run=run-149a1e0a5d493732e32257518878039e/questions/B15.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-benchmark/snapshot=2026-10-03/run=run-149a1e0a5d493732e32257518878039e/questions/B16.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-benchmark/snapshot=2026-10-03/run=run-149a1e0a5d493732e32257518878039e/questions/B17.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-benchmark/snapshot=2026-10-03/run=run-149a1e0a5d493732e32257518878039e/questions/B18.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-benchmark/snapshot=2026-10-03/run=run-149a1e0a5d493732e32257518878039e/questions/B19.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-benchmark/snapshot=2026-10-03/run=run-149a1e0a5d493732e32257518878039e/questions/B20.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-benchmark/snapshot=2026-10-03/run=run-149a1e0a5d493732e32257518878039e/questions/B21.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-benchmark/snapshot=2026-10-03/run=run-149a1e0a5d493732e32257518878039e/questions/B22.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-benchmark/snapshot=2026-10-03/run=run-149a1e0a5d493732e32257518878039e/questions/B23.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-benchmark/snapshot=2026-10-03/run=run-149a1e0a5d493732e32257518878039e/questions/B24.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-benchmark/snapshot=2026-10-03/run=run-149a1e0a5d493732e32257518878039e/questions/B25.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-benchmark/snapshot=2026-10-03/run=run-149a1e0a5d493732e32257518878039e/questions/B26.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-benchmark/snapshot=2026-10-03/run=run-149a1e0a5d493732e32257518878039e/questions/B27.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-benchmark/snapshot=2026-10-03/run=run-149a1e0a5d493732e32257518878039e/questions/B28.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-benchmark/snapshot=2026-10-03/run=run-149a1e0a5d493732e32257518878039e/questions/B29.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-benchmark/snapshot=2026-10-03/run=run-149a1e0a5d493732e32257518878039e/questions/B30.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-benchmark/snapshot=2026-10-03/run=run-149a1e0a5d493732e32257518878039e/summary-002.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-benchmark/snapshot=2026-10-03/run=run-149a1e0a5d493732e32257518878039e/summary-030.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-03e5709afc86c6abba069a26ac44c1c9.answer.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-067cb02eb951ff10e2fd90558c47084e.answer.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-1389e6723bf5040d6a642e47298bba2a.answer.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-2118cc4b61bff42e106295ed765d570c.answer.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-4de5111dcf9e5bd4dd9b1441e2095e1b.answer.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-52a45bb7f4664876485274f7187426ec.answer.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-62ee898f95b74fe28591927042db879b.answer.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-66ad30e92be4b8d09647ab7529f43792.answer.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-6c052176f6d5bc9298d990a7aea61ae0.answer.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-6c989558bc5a0bb3028ab9cd59cb74f5.answer.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-7674bda45c38cfd7b7ba7455b1ccdd76.answer.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-85b3db40271be986caf6dc9436885323.answer.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-87825102cc828e39c3825c7d2a3bc413.answer.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-8e10c70339c2cbb1970e0f0620e05891.answer.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-93dd8444f1064552d86618a88378d3d6.answer.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-a45c29ba2e14c17ba4a5c44c1461a38b.answer.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-a4c67fe0d20581a83b0c7fed5c355e60.answer.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-b5d45c56a669f19985fa6d697fb8ecfd.answer.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-b79ecb0f9efc0ebd8d15622fd797f153.answer.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-bbdcc72cc57af27cdea0da0bab986031.answer.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-bd302f8c57f839a4192352d4e78bbd17.answer.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-ce21fe196b1ee13885f1abda881efca9.answer.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-d0227183a3904c15a4427630889aab8c.answer.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-d5fff217376b3ae901ea7a0f08988272.answer.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-d692f35ba000fae7b3a48118afe7dafc.answer.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-db4b72792b43bdd635214f93aad83b6e.answer.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-dcf8373cf7b508494e1de2b25f7cd7c0.answer.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-ef42bc94b58927dab36948fe0f2e44ed.answer.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-f67e928020dd0308c05973d947a87c65.answer.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/reports/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/qry-ff1c93ea1d05b753aa337686e2604f53.answer.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/runs/rag-benchmark/snapshot=2026-10-03/run=run-149a1e0a5d493732e32257518878039e/manifest-002.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/runs/rag-benchmark/snapshot=2026-10-03/run=run-149a1e0a5d493732e32257518878039e/manifest-030.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/runs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/manifest-qry-03e5709afc86c6abba069a26ac44c1c9.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/runs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/manifest-qry-067cb02eb951ff10e2fd90558c47084e.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/runs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/manifest-qry-1389e6723bf5040d6a642e47298bba2a.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/runs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/manifest-qry-2118cc4b61bff42e106295ed765d570c.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/runs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/manifest-qry-4de5111dcf9e5bd4dd9b1441e2095e1b.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/runs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/manifest-qry-52a45bb7f4664876485274f7187426ec.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/runs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/manifest-qry-62ee898f95b74fe28591927042db879b.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/runs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/manifest-qry-66ad30e92be4b8d09647ab7529f43792.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/runs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/manifest-qry-6c052176f6d5bc9298d990a7aea61ae0.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/runs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/manifest-qry-6c989558bc5a0bb3028ab9cd59cb74f5.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/runs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/manifest-qry-7674bda45c38cfd7b7ba7455b1ccdd76.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/runs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/manifest-qry-85b3db40271be986caf6dc9436885323.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/runs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/manifest-qry-87825102cc828e39c3825c7d2a3bc413.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/runs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/manifest-qry-8e10c70339c2cbb1970e0f0620e05891.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/runs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/manifest-qry-93dd8444f1064552d86618a88378d3d6.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/runs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/manifest-qry-a45c29ba2e14c17ba4a5c44c1461a38b.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/runs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/manifest-qry-a4c67fe0d20581a83b0c7fed5c355e60.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/runs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/manifest-qry-b5d45c56a669f19985fa6d697fb8ecfd.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/runs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/manifest-qry-b79ecb0f9efc0ebd8d15622fd797f153.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/runs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/manifest-qry-bbdcc72cc57af27cdea0da0bab986031.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/runs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/manifest-qry-bd302f8c57f839a4192352d4e78bbd17.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/runs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/manifest-qry-ce21fe196b1ee13885f1abda881efca9.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/runs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/manifest-qry-d0227183a3904c15a4427630889aab8c.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/runs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/manifest-qry-d5fff217376b3ae901ea7a0f08988272.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/runs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/manifest-qry-d692f35ba000fae7b3a48118afe7dafc.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/runs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/manifest-qry-db4b72792b43bdd635214f93aad83b6e.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/runs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/manifest-qry-dcf8373cf7b508494e1de2b25f7cd7c0.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/runs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/manifest-qry-ef42bc94b58927dab36948fe0f2e44ed.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/runs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/manifest-qry-f67e928020dd0308c05973d947a87c65.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-run/s3/runs/rag-runtime/snapshot=2026-10-03/run=run-d94e077cc52fa2fbfa628f21a4c4adaa/manifest-qry-ff1c93ea1d05b753aa337686e2604f53.json
+?? docs/agent-runs/phase-10/evidence/live-benchmark-start.txt
+?? docs/agent-runs/phase-10/evidence/live-benchmark-step1.txt
+?? docs/agent-runs/phase-10/evidence/live-benchmark-step2.txt
+?? docs/agent-runs/phase-10/evidence/live-benchmark-summary.json
+?? docs/agent-runs/phase-10/evidence/live-claim-rules.txt
+?? docs/agent-runs/phase-10/evidence/live-llm-failures.txt
+?? docs/agent-runs/phase-10/evidence/session-1-scratchpad/44501a57-scratchpad-compare.py
+?? docs/agent-runs/phase-10/evidence/session-1-scratchpad/44501a57-scratchpad-disable.py
+?? docs/agent-runs/phase-10/evidence/session-1-scratchpad/44501a57-wo5-disable.py
+?? docs/agent-runs/phase-10/evidence/session-1-scratchpad/44501a57-wo6-disable.py
+?? docs/agent-runs/phase-10/evidence/session-1-scratchpad/73c267b4-scratchpad-compare.py
+?? docs/agent-runs/phase-10/evidence/session-1-scratchpad/7c14c563-scratchpad-compare.py
+?? docs/agent-runs/phase-10/evidence/session-1-scratchpad/906257bc-repair-1b-compare.py
+?? docs/agent-runs/phase-10/evidence/session-1-scratchpad/repair-1b-compare.py
+?? docs/agent-runs/phase-10/evidence/session-1-scratchpad/scratchpad-compare.py
+?? docs/agent-runs/phase-10/evidence/session-1-scratchpad/scratchpad-disable.py
+?? docs/agent-runs/phase-10/evidence/session-1-scratchpad/wo5-disable.py
+?? docs/agent-runs/phase-10/evidence/session-1-scratchpad/wo6-disable.py
+?? docs/agent-runs/phase-10/evidence/session-2a-logs/wo9/claim-status-changes.txt
+?? docs/agent-runs/phase-10/evidence/session-2a-logs/wo9/junit-counts-1.txt
+?? docs/agent-runs/phase-10/evidence/session-2a-logs/wo9/junit-counts-2.txt
+?? docs/agent-runs/phase-10/evidence/session-2a-logs/wo9/wo7-wo8-stat-before.txt
+?? docs/agent-runs/phase-10/evidence/session-2a-outputs/wo7-window-summary-manifest.json
+?? docs/agent-runs/phase-10/evidence/session-2a-outputs/wo8-window-summary.jsonl
+?? docs/agent-runs/phase-10/evidence/session-2a-outputs/wo9-fake-benchmark-summary-030.json
+?? docs/agent-runs/phase-10/evidence/session-2c-logs/wo10/df-end.txt
+?? docs/agent-runs/phase-10/evidence/session-2c-logs/wo10/df-start.txt
+?? docs/agent-runs/phase-10/evidence/session-2c-logs/wo10/junit-counts-1.txt
+?? docs/agent-runs/phase-10/evidence/session-2c-logs/wo10/junit-counts-2.txt
+?? docs/agent-runs/phase-10/evidence/session-2c-logs/wo11/df-end.txt
+?? docs/agent-runs/phase-10/evidence/session-2c-logs/wo11/df-start.txt
+?? docs/agent-runs/phase-10/evidence/session-2c-logs/wo11/junit-counts-1.txt
+?? docs/agent-runs/phase-10/evidence/session-2c-logs/wo11/junit-counts-2.txt
+?? docs/agent-runs/phase-10/evidence/session-2c-logs/wo11/junit-stale-evidence.txt
+?? docs/agent-runs/phase-10/evidence/session-2c-logs/wo11/smoke-client.py
+?? docs/agent-runs/phase-10/evidence/session-2c-logs/wo11/stale-junit/TEST-scholarchain.services.GenerateExamplesSpec.xml
+?? docs/agent-runs/phase-10/evidence/session-2c-logs/wo11/wo8-stat-after.txt
+?? docs/agent-runs/phase-10/evidence/session-2c-logs/wo11/wo8-stat-before.txt
+?? modules/rag/src/main/scala/scholarchain/rag/runtime/RuntimeApi.scala
+?? modules/rag/src/test/scala/scholarchain/rag/runtime/CorpusSpec.scala
+?? modules/rag/src/test/scala/scholarchain/rag/runtime/RuntimeApiSpec.scala
+?? modules/services/openapi.yaml
+?? modules/services/openapi/examples/error-deadline-exceeded.json
+?? modules/services/openapi/examples/error-downstream-failure.json
+?? modules/services/openapi/examples/error-evidence-not-found.json
+?? modules/services/openapi/examples/error-idempotency-conflict.json
+?? modules/services/openapi/examples/error-invalid-field.json
+?? modules/services/openapi/examples/error-job-not-finished.json
+?? modules/services/openapi/examples/error-job-not-found.json
+?? modules/services/openapi/examples/error-malformed-json.json
+?? modules/services/openapi/examples/error-not-ready.json
+?? modules/services/openapi/examples/error-query-not-found.json
+?? modules/services/openapi/examples/error-rate-limited.json
+?? modules/services/openapi/examples/error-unauthorized.json
+?? modules/services/openapi/examples/error-unsupported-constraint.json
+?? modules/services/openapi/examples/error-unsupported-retrieval-mode.json
+?? modules/services/openapi/examples/evidence-response.json
+?? modules/services/openapi/examples/explain-response.json
+?? modules/services/openapi/examples/job-response-failed.json
+?? modules/services/openapi/examples/job-response.json
+?? modules/services/openapi/examples/job-result-response.json
+?? modules/services/openapi/examples/metrics-response.json
+?? modules/services/openapi/examples/neighbors-response.json
+?? modules/services/openapi/examples/node-response.json
+?? modules/services/openapi/examples/query-request-async.json
+?? modules/services/openapi/examples/query-request-minimal.json
+?? modules/services/openapi/examples/query-request.json
+?? modules/services/openapi/examples/query-response-async.json
+?? modules/services/openapi/examples/query-response-sync.json
+?? modules/services/openapi/examples/status-healthz.json
+?? modules/services/openapi/examples/status-readyz.json
+?? modules/services/src/main/scala/scholarchain/services/Composition.scala
+?? modules/services/src/main/scala/scholarchain/services/Http.scala
+?? modules/services/src/main/scala/scholarchain/services/Models.scala
+?? modules/services/src/main/scala/scholarchain/services/Observability.scala
+?? modules/services/src/main/scala/scholarchain/services/Resilience.scala
+?? modules/services/src/main/scala/scholarchain/services/Services.scala
+?? modules/services/src/main/scala/scholarchain/services/Worker.scala
+?? modules/services/src/main/scala/scholarchain/services/main/GraphEvidenceApi.scala
+?? modules/services/src/main/scala/scholarchain/services/main/LocalRun.scala
+?? modules/services/src/main/scala/scholarchain/services/main/QueryApi.scala
+?? modules/services/src/main/scala/scholarchain/services/main/Worker.scala
+?? modules/services/src/test/scala/scholarchain/services/BuildingBlocksSpec.scala
+?? modules/services/src/test/scala/scholarchain/services/CorpusQuerySpec.scala
+?? modules/services/src/test/scala/scholarchain/services/GraphEvidenceApiSpec.scala
+?? modules/services/src/test/scala/scholarchain/services/LifecycleSpec.scala
+?? modules/services/src/test/scala/scholarchain/services/QueryApiSpec.scala
+?? modules/services/src/test/scala/scholarchain/services/ServiceFixtures.scala
+?? modules/services/src/test/scala/scholarchain/services/ServicesContractSpec.scala
+?? modules/services/src/test/scala/scholarchain/services/WorkerSpec.scala
+?? modules/spark/src/main/scala/scholarchain/spark/CorpusWindowSummaryJob.scala
+?? modules/spark/src/test/scala/scholarchain/spark/CorpusWindowSummarySpec.scala
+?? modules/storage/src/main/scala/scholarchain/storage/JobQueue.scala
+?? modules/storage/src/main/scala/scholarchain/storage/ServiceState.scala
+?? modules/storage/src/main/scala/scholarchain/storage/WindowSummaries.scala
+?? modules/storage/src/main/scala/scholarchain/storage/cli/LoadWindowSummaryCli.scala
+?? modules/storage/src/main/scala/scholarchain/storage/live/ServiceLive.scala
+?? modules/storage/src/test/scala/scholarchain/storage/JobQueueSpec.scala
+?? modules/storage/src/test/scala/scholarchain/storage/ServiceStateSpec.scala
+?? modules/storage/src/test/scala/scholarchain/storage/WindowSummarySpec.scala
+?? prompts/synthesis/synthesis-output-v3.schema.json
+?? prompts/synthesis/synthesis-v3.md

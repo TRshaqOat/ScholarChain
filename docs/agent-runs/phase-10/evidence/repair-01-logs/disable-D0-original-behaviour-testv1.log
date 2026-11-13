@@ -1,0 +1,40 @@
+disable D0-original-behaviour: modules/services/src/main/scala/scholarchain/services/Resilience.scala
+  replaced: val a = await(f, start, p.timeoutMs)
+  with:     val a = f.get(p.timeoutMs, TimeUnit.MILLISECONDS)
+  replaced: (if p.workflow then workflows else pool).submit(task)
+  with:     pool.submit(task)
+sha256 before: 7607aafd7c1713c3aae76942e63f39ca90fc93a53dc050a50c4b7162205ded53
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] compiling 1 Scala source to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/services/target/scala-3.3.7/classes ...
+[info] done compiling
+[info] BuildingBlocksSpec:
+[info] - breaker: opens after the threshold, fails fast while open, half-opens after the interval
+[info] - downstream calls: timeout, retries only for retryable reads, breaker per downstream
+[info] - waiting to start is no downstream failure: 503 OVERLOADED, no breaker (repair-01 F1) *** FAILED ***
+[info]   DOWNSTREAM_TIMEOUT did not equal OVERLOADED (BuildingBlocksSpec.scala:101)
+[info] - rate limiter: a sliding minute
+[info] - cursor: round trip, bound to its walk, and opaque garbage rejected
+[info] - IDs: valid client values echoed, anything else replaced
+[info] - API key: exact match only, any length; the key is never printed
+[info] SaturationSpec:
+[info] - query-api: with every workflow slot held, jobs, explain, and readiness still answer *** FAILED ***
+[info]   504 did not equal 200 {"error":"DOWNSTREAM_TIMEOUT","message":"dynamodb did not answer within 1000 ms","traceId":"trace-07b61308ed774283861710782a8ed41a","requestId":"req-3d361bb63b2e4f5abc8ee875c82f9ad4","retryable":true} (SaturationSpec.scala:91)
+[info] - worker: an overrun job holds only its workflow slot; no job is claimed until it frees *** FAILED ***
+[info]   FAILED equaled FAILED, but wk.ds.workflowSlotFree was true (SaturationSpec.scala:139)
+[info] Run completed in 3 seconds, 377 milliseconds.
+[info] Total number of tests run: 9
+[info] Suites: completed 2, aborted 0
+[info] Tests: succeeded 6, failed 3, canceled 0, ignored 0, pending 0
+[info] *** 3 TESTS FAILED ***
+[error] Failed tests:
+[error] 	scholarchain.services.BuildingBlocksSpec
+[error] 	scholarchain.services.SaturationSpec
+[error] (services / Test / testOnly) sbt.TestsFailedException: Tests unsuccessful
+[error] Total time: 5 s, completed Nov 12, 2026, 5:17:29 PM
+sbt exit 1
+restored sha256: 7607aafd7c1713c3aae76942e63f39ca90fc93a53dc050a50c4b7162205ded53 OK

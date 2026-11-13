@@ -1,0 +1,163 @@
+{
+  "schemaVersion": "rag-benchmark-result-v2",
+  "questionId": "B30",
+  "category": "evidence",
+  "mode": "LIVE",
+  "runtimeRunId": "run-422d912ac162f340f5f31a1b63b65e19",
+  "queryId": "qry-171b4c42aef0fa9b1355d0be6c7bc20d",
+  "planSource": "MODEL",
+  "operations": [
+    "SHORTEST_PATH/PAIR"
+  ],
+  "metrics": [],
+  "window": "all-years",
+  "resolutions": [
+    {
+      "name": "Ian T. Foster",
+      "decision": "RESOLVED_DOMINANT",
+      "researcherId": "scr:canon-v1.er-v2:8c41e7402418b6a74ad89d1b987f6f44",
+      "topShare": 0.9679715302491103,
+      "candidateCount": 10
+    },
+    {
+      "name": "José Duato",
+      "decision": "RESOLVED_DOMINANT",
+      "researcherId": "scr:canon-v1.er-v2:410e0336ad1b7732771b1c91b8be2bed",
+      "topShare": 0.9870689655172413,
+      "candidateCount": 3
+    }
+  ],
+  "abstained": false,
+  "abstentionReason": null,
+  "verification": {
+    "verified": 3,
+    "partiallySupported": 0,
+    "unsupported": 0,
+    "conflicting": 0
+  },
+  "claims": 3,
+  "graph": {
+    "reads": 28,
+    "readsByTemplate": {
+      "kv.metrics.window": 2,
+      "graph.shortest-path": 1,
+      "graph.vertices": 4,
+      "graph.authored-counts": 2,
+      "graph.coauthors": 14,
+      "kv.entity-link": 2,
+      "graph.researcher-institutions": 3
+    },
+    "rows": 97,
+    "truncatedReads": 5,
+    "evidenceItems": 37,
+    "tokens": 4188,
+    "omittedItems": 0,
+    "latencyMs": 65,
+    "pathStatuses": [
+      "FOUND"
+    ]
+  },
+  "semantic": {
+    "embeddingCalls": 1,
+    "embeddingInputTokens": 0,
+    "indexes": [
+      "researcher-profile-v1",
+      "collaboration-path-v1"
+    ],
+    "hits": 3,
+    "tokens": 1604,
+    "omittedItems": 0,
+    "latencyMs": 222,
+    "outcome": "OK"
+  },
+  "llm": {
+    "attempts": 2,
+    "requests": 2,
+    "attemptsByStage": {
+      "QUERY_PLANNING": 1,
+      "ANSWER_SYNTHESIS": 1
+    },
+    "outcomes": {
+      "OK": 2
+    },
+    "inputTokens": 11846,
+    "outputTokens": 1584,
+    "throttleWaitMs": 5981
+  },
+  "latencyMs": 14848,
+  "stageLatencyMs": {
+    "COLLABORATION_METRICS": 1,
+    "PATH_FINDING": 64,
+    "EVIDENCE_BUILDING": 2,
+    "AUDIT": 0,
+    "QUERY_PLANNING": 1193,
+    "SEMANTIC_CONTEXT": 222,
+    "COMMUNITY_ANALYSIS": 0,
+    "CLAIM_VERIFICATION": 13,
+    "RESEARCHER_RESOLUTION": 41,
+    "ANSWER_SYNTHESIS": 13298
+  },
+  "checks": [
+    {
+      "name": "plan-operations",
+      "outcome": "PASS",
+      "detail": "needs DIRECT_COAUTHORS/PAIR or SHORTEST_PATH; plan [SHORTEST_PATH/PAIR]"
+    },
+    {
+      "name": "researcher-names",
+      "outcome": "PASS",
+      "detail": "expected [Ian T. Foster; José Duato], extracted [Ian T. Foster; José Duato]"
+    },
+    {
+      "name": "resolution",
+      "outcome": "PASS",
+      "detail": "Ian T. Foster: expected RESOLVED_DOMINANT, got RESOLVED_DOMINANT; José Duato: expected RESOLVED_DOMINANT, got RESOLVED_DOMINANT"
+    },
+    {
+      "name": "abstention",
+      "outcome": "PASS",
+      "detail": "expected answer, got answer"
+    },
+    {
+      "name": "claim-evidence",
+      "outcome": "PASS",
+      "detail": "3 claims cite bundle IDs; 3 material claims each cite a graph item; 0 descriptive"
+    },
+    {
+      "name": "verification",
+      "outcome": "PASS",
+      "detail": "answer has a verified claim; counts 3/0/0/0; final claims 3 verified of 3"
+    },
+    {
+      "name": "bundle-budget",
+      "outcome": "PASS",
+      "detail": "graph 4188/8000 tokens, semantic 1604/3000, items 40/300"
+    },
+    {
+      "name": "llm-budget",
+      "outcome": "PASS",
+      "detail": "2 attempts, 2 requests (ANSWER_SYNTHESIS 1, QUERY_PLANNING 1), tokens in 11846 out 1584"
+    },
+    {
+      "name": "embedding-budget",
+      "outcome": "PASS",
+      "detail": "1 embedding calls for 2 indexes queried"
+    },
+    {
+      "name": "path-hops",
+      "outcome": "PASS",
+      "detail": "scr:canon-v1.er-v2:8c41e7402418b6a74ad89d1b987f6f44-scr:canon-v1.er-v2:410e0336ad1b7732771b1c91b8be2bed: runtime FOUND 3 hops, stored 3 hops, same researchers"
+    },
+    {
+      "name": "pair-edges",
+      "outcome": "PASS",
+      "detail": "3 of 3 edges equal the stored hop"
+    },
+    {
+      "name": "deadline",
+      "outcome": "PASS",
+      "detail": "14848 ms of 180000"
+    }
+  ],
+  "answerHash": "sha256:c1530e04d7c1f1965b2f69ec9c3d7a9aea9b1da5bb4d87d49d4997aaac3e93cd"
+}

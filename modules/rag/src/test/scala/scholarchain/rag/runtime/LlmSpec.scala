@@ -17,7 +17,7 @@ class LlmSpec extends AnyFunSuite:
 
   private val cfg = config
   private val prompts = PromptSet
-    .load(Paths.get(cfg.runtime.promptsDir), "planner-v2", "synthesis-v2")
+    .load(Paths.get(cfg.runtime.promptsDir), "planner-v2", "synthesis-v3")
     .fold(sys.error, identity)
   private val q = "Have Ada Lovelace and Grace Hopper coauthored a paper?"
   private val plan = PlannerOutput(
@@ -155,6 +155,81 @@ class LlmSpec extends AnyFunSuite:
     }
   }
 
+  test("synthesis-output-v3: any rank.<k> fact needs rank.<k>.researcherId; the retry names it") {
+    val ranking = scholarchain.core.StableIds.evidenceId(
+      scholarchain.core.EvidenceType.RANKING_RECORD,
+      Seq("RANKING#distinctCoauthorCount", "TOP#all-years", "n=10", "filter=-"),
+      metricRun
+    )
+    def out(version: String, values: Map[String, String]) = SynthesisOutput(
+      version,
+      "Grace Hopper ranks first by distinct coauthors.",
+      Vector(
+        ClaimDraft(
+          "claim-1",
+          ClaimKind.RANKING,
+          "Grace Hopper ranks first by distinct coauthors in all-years.",
+          Vector(ranking),
+          Vector(grace),
+          Some("all-years"),
+          values
+        )
+      ),
+      Vector.empty
+    )
+    val noId = Map("rank.1.storedRank" -> "1", "rank.1.value" -> "2", "rank.3.value" -> "1")
+    val v3 = prompts.synthesis
+    assert(v3.version == "synthesis-v3" && v3.schemaVersion == "synthesis-output-v3")
+    val bad = Synthesis.parseModel(write(out("synthesis-output-v3", noId)), v3.schema, cfg)
+    assert(
+      bad == Left(
+        Vector(
+          "schema: $.claims[0].values: missing key rank.1.researcherId (required when any rank.1 fact is asserted)",
+          "schema: $.claims[0].values: missing key rank.3.researcherId (required when any rank.3 fact is asserted)"
+        )
+      ),
+      bad
+    )
+    val fixed = noId ++ Map("rank.1.researcherId" -> grace, "rank.3.researcherId" -> ada)
+    assert(Synthesis.parseModel(write(out("synthesis-output-v3", fixed)), v3.schema, cfg).isRight)
+    // synthesis-output-v2 is unchanged (the verifier still removes such a claim).
+    val v2 = PromptSet
+      .load(Paths.get(cfg.runtime.promptsDir), "planner-v2", "synthesis-v2")
+      .fold(sys.error, identity)
+      .synthesis
+    assert(Synthesis.parseModel(write(out("synthesis-output-v2", noId)), v2.schema, cfg).isRight)
+    // The prompt tells the model to omit uncitable claims and keep claims concise.
+    val system = v3.render("system", Map("schema" -> "", "max_claims" -> "20"))
+    assert(
+      system.exists(t => t.contains("Omit any claim you cannot cite with at least one evidence ID"))
+    )
+    assert(system.exists(t => t.contains("Keep each claim concise")))
+    assert(system.exists(t => t.contains("they also hold rank.<k>.researcherId")))
+    // Through the workflow: the first draft fails, the retry names the field, the second passes.
+    val llm = RecordedLlm(
+      Vector(
+        Right("{}"),
+        Right("{}"),
+        Right(write(out("synthesis-output-v3", noId))),
+        Right(write(out("synthesis-output-v3", fixed)))
+      )
+    )
+    withWorld(Some(llm)) { w =>
+      val a = w
+        .ask("Which researchers have the most distinct coauthors?")
+        .fold(f => fail(s"$f"), identity)
+      val synth = a.audit.llmCalls.filter(_.stage == Stage.ANSWER_SYNTHESIS)
+      assert(synth.map(_.outcome) == Vector(CallOutcome.INVALID_OUTPUT, CallOutcome.OK))
+      assert(synth.head.failure.exists(_.contains("missing key rank.1.researcherId")))
+      assert(
+        llm
+          .requests(3)
+          .user
+          .contains("- schema: $.claims[0].values: missing key rank.1.researcherId")
+      )
+    }
+  }
+
   test("every Bedrock request is counted, the expired-token retry included (m5)") {
 
     /** Sends `perCall` requests per invoke, as the live client does on an expired token. */
@@ -185,4 +260,48 @@ class LlmSpec extends AnyFunSuite:
     assert(res.checks.find(_.name == "llm-budget").get.outcome == Benchmark.Outcome.PASS)
     val over = Benchmark.result(question, run(3), ref, cfg, 0L)
     assert(over.checks.find(_.name == "llm-budget").get.outcome == Benchmark.Outcome.FAIL)
+  }
+
+  test(
+    "ruling 19a: a synthesis output cut off at max_tokens gets a retry that says so and asks for fewer claims"
+  ) {
+
+    /** A recorded client whose given invokes (1-based) stop with max_tokens, as the live B29 did.
+      */
+    final class CutOff(inner: RecordedLlm, cut: Set[Int]) extends LlmClient:
+      private var n = 0
+      def requestsSent: Long = inner.requestsSent
+      def invoke(r: LlmRequest): LlmResponse =
+        n += 1
+        val resp = inner.invoke(r)
+        if cut(n) then resp.copy(stopReason = Some(LlmCaller.MaxTokens)) else resp
+
+    // The shape of B29: output that stops inside the JSON (no model text is reused here).
+    val truncated = """{"schemaVersion": "synthesis-output-v3", "summary": "x", "claims": ["""
+    def run(cut: Set[Int], c: scholarchain.core.config.ScholarChainConfig = cfg) =
+      val inner = RecordedLlm(Vector(Right("{}"), Right("{}"), Right(truncated), Right(truncated)))
+      withWorld(Some(CutOff(inner, cut)), c) { w =>
+        val a = w.ask(q).fold(f => fail(s"$f"), identity)
+        (inner.requests, a)
+      }
+    val (requests, a) = run(Set(3, 4))
+    val retry = requests(3).user
+    val line =
+      "- output-cut-off: the output was cut off at the output token limit (stop reason max_tokens) " +
+        "before the JSON was complete; return at most 10 claims, one sentence each"
+    assert(retry.contains(line), retry)
+    assert(retry.indexOf(line) < retry.indexOf("- output-is-json"))
+    // No token limit or budget is raised: the retry has the same max_tokens.
+    assert(requests(3).maxTokens == cfg.runtime.synthesis.maxOutputTokens)
+    assert(requests(2).maxTokens == requests(3).maxTokens)
+    val synth = a.audit.llmCalls.filter(_.stage == Stage.ANSWER_SYNTHESIS)
+    assert(synth.map(_.outcome) == Vector(CallOutcome.INVALID_OUTPUT, CallOutcome.INVALID_OUTPUT))
+    assert(synth.head.failure.exists(_.contains("stop reason max_tokens")))
+    assert(a.answer.abstention.map(_.reason).contains(AbstentionReason.BUDGET_EXHAUSTED))
+    // Half of runtime.synthesis.max-claims, from configuration.
+    val (seven, _) = run(Set(3), configWith("runtime.synthesis.max-claims = 7"))
+    assert(seven(3).user.contains("return at most 3 claims, one sentence each"))
+    // Output that stopped at end_turn is not called cut off.
+    val (ended, _) = run(Set.empty)
+    assert(!ended(3).user.contains("output-cut-off") && ended(3).user.contains("- output-is-json"))
   }

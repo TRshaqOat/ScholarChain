@@ -1,0 +1,269 @@
+{
+  "schemaVersion": "spark-run-manifest-v1",
+  "stage": "spark-corpus-window-summary",
+  "runId": "run-1de2293597c338227290eb382de16957",
+  "attempt": 1,
+  "runDir": "scratch/runtime/wo7/spark/snapshot=2026-10-03/run=run-1de2293597c338227290eb382de16957",
+  "snapshot": "2026-10-03",
+  "codeVersion": "src-db536eecfe78",
+  "configVersion": "config-v1",
+  "input": {
+    "path": "scratch/spark/snapshot=2026-10-03/run=run-0375535e0174b7330b18a78988c07211",
+    "temporalSummaryExportRunId": "run-0375535e0174b7330b18a78988c07211",
+    "communityPathPath": "scratch/spark/snapshot=2026-10-03/run=run-83b496169099a614ec519133077a1993",
+    "researcherAnalyticsPath": "scratch/spark/snapshot=2026-10-03/run=run-d7865ad3f5f8195546c1dab817328ee5",
+    "canonicalGraphPath": "scratch/spark/snapshot=2026-10-03/run=run-10ceed31b3f602bb998eae7c00929ae9"
+  },
+  "lineage": {
+    "inputHadoopRunId": "run-035e75abfa6798c938cbd534273dbd8d",
+    "matchPolicyVersion": "er-v2"
+  },
+  "sourceRuns": {
+    "temporalSummaryExportRunId": "run-0375535e0174b7330b18a78988c07211",
+    "communityPathRunId": "run-83b496169099a614ec519133077a1993",
+    "researcherAnalyticsRunId": "run-d7865ad3f5f8195546c1dab817328ee5",
+    "canonicalGraphRunId": "run-10ceed31b3f602bb998eae7c00929ae9",
+    "inputHadoopRunId": "run-035e75abfa6798c938cbd534273dbd8d",
+    "matchPolicyVersion": "er-v2"
+  },
+  "settings": {
+    "master": "local[*]",
+    "shufflePartitions": 40,
+    "graphPolicy": "graph-v1",
+    "windows": [
+      {
+        "name": "all-years",
+        "startYear": 2000,
+        "endYear": 2026
+      },
+      {
+        "name": "2000-2014",
+        "startYear": 2000,
+        "endYear": 2014
+      },
+      {
+        "name": "2015-2026",
+        "startYear": 2015,
+        "endYear": 2026
+      }
+    ],
+    "communityMinSize": 3,
+    "phase6CommunityMinSize": 3,
+    "nodeBasis": "researchers with at least one DBLP publication in the window (one analytics/researcher-metrics row each); researchers with only OpenAlex or Crossref authorship are not nodes",
+    "minFreeDiskGiB": 5,
+    "driverMaxHeapBytes": 6442450944
+  },
+  "fingerprints": [
+    "temporal-summary-export-run=run-0375535e0174b7330b18a78988c07211",
+    "community-path-run=run-83b496169099a614ec519133077a1993",
+    "researcher-analytics-run=run-d7865ad3f5f8195546c1dab817328ee5",
+    "canonical-graph-run=run-10ceed31b3f602bb998eae7c00929ae9",
+    "input:temporal-summary-export=scratch/spark/snapshot=2026-10-03/run=run-0375535e0174b7330b18a78988c07211:166473880",
+    "input:community-path=scratch/spark/snapshot=2026-10-03/run=run-83b496169099a614ec519133077a1993:104280613",
+    "input:researcher-analytics=scratch/spark/snapshot=2026-10-03/run=run-d7865ad3f5f8195546c1dab817328ee5:44764160",
+    "input:canonical-graph=scratch/spark/snapshot=2026-10-03/run=run-10ceed31b3f602bb998eae7c00929ae9:460248464",
+    "config:graph-policy=graph-v1",
+    "config:windows=all-years:2000-2026,2000-2014:2000-2014,2015-2026:2015-2026",
+    "config:summary-min-community-size=3"
+  ],
+  "startedAt": "2026-11-12T18:52:35.377473Z",
+  "inputs": [
+    {
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-d7865ad3f5f8195546c1dab817328ee5/analytics/researcher-metrics",
+      "exists": true,
+      "rows": 397100
+    },
+    {
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-d7865ad3f5f8195546c1dab817328ee5/analytics/components",
+      "exists": true,
+      "rows": 34546
+    },
+    {
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-83b496169099a614ec519133077a1993/analytics/communities",
+      "exists": true,
+      "rows": 79740
+    },
+    {
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-10ceed31b3f602bb998eae7c00929ae9/graph/coauthor-edges",
+      "exists": true,
+      "rows": 1590754
+    },
+    {
+      "path": "scratch/spark/snapshot=2026-10-03/run=run-0375535e0174b7330b18a78988c07211/temporal/window-summary",
+      "exists": true,
+      "rows": 3
+    }
+  ],
+  "tables": [
+    {
+      "name": "corpus/window-summary",
+      "schemaVersion": "spark-corpus-window-summary-v1",
+      "path": "scratch/runtime/wo7/spark/snapshot=2026-10-03/run=run-1de2293597c338227290eb382de16957/corpus/window-summary",
+      "format": "parquet",
+      "partitionColumns": [],
+      "hashPartitionKey": null,
+      "writePartitions": 1,
+      "schema": "window STRING,windowStartYear INT,windowEndYear INT,researchers BIGINT,coauthorEdges BIGINT,sumJointPublicationCount BIGINT,components BIGINT,largestComponentSize BIGINT,singletonResearchers BIGINT,communities BIGINT,largestCommunitySize BIGINT,singletonCommunities BIGINT,communitiesAtLeastMinSize BIGINT,largestComponentId STRING,largestCommunityId STRING,years INT,largestComponentFraction DOUBLE,largestCommunityFraction DOUBLE,communityMinSize INT,communityConverged BOOLEAN,communityRounds INT,nodeBasis STRING,sourceRuns STRUCT<temporalSummaryExportRunId: STRING, communityPathRunId: STRING, researcherAnalyticsRunId: STRING, canonicalGraphRunId: STRING, inputHadoopRunId: STRING, matchPolicyVersion: STRING>,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING",
+      "rowCount": 3,
+      "intendedTargets": [
+        "dynamodb",
+        "s3"
+      ],
+      "fileCount": 1,
+      "totalBytes": 14698,
+      "minFileBytes": 14698,
+      "maxFileBytes": 14698
+    },
+    {
+      "name": "corpus/window-summary-violations",
+      "schemaVersion": "spark-corpus-window-summary-violations-v1",
+      "path": "scratch/runtime/wo7/spark/snapshot=2026-10-03/run=run-1de2293597c338227290eb382de16957/corpus/window-summary-violations",
+      "format": "parquet",
+      "partitionColumns": [],
+      "hashPartitionKey": null,
+      "writePartitions": 1,
+      "schema": "check STRING,subjectId STRING,relatedId STRING,detail STRING,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING",
+      "rowCount": 0,
+      "intendedTargets": [
+        "s3"
+      ],
+      "fileCount": 1,
+      "totalBytes": 1472,
+      "minFileBytes": 1472,
+      "maxFileBytes": 1472
+    }
+  ],
+  "counts": {
+    "windowSummary": [
+      {
+        "window": "2000-2014",
+        "windowStartYear": 2000,
+        "windowEndYear": 2014,
+        "researchers": 66350,
+        "coauthorEdges": 217957,
+        "sumJointPublicationCount": 297320,
+        "components": 7709,
+        "largestComponentSize": 46062,
+        "singletonResearchers": 3119,
+        "communities": 15312,
+        "largestCommunitySize": 323,
+        "singletonCommunities": 3247,
+        "communitiesAtLeastMinSize": 8075,
+        "largestComponentId": "comp-af5aeb020fac13dee03b6881edf4d3ab",
+        "largestCommunityId": "comm-edba8cb8a3e338b644984595a1c9b5de",
+        "years": 15,
+        "largestComponentFraction": 0.6942275810097965,
+        "largestCommunityFraction": 0.004868123587038433,
+        "communityMinSize": 3,
+        "communityConverged": false,
+        "communityRounds": 10,
+        "schemaVersion": "spark-corpus-window-summary-v1"
+      },
+      {
+        "window": "all-years",
+        "windowStartYear": 2000,
+        "windowEndYear": 2026,
+        "researchers": 191318,
+        "coauthorEdges": 787726,
+        "sumJointPublicationCount": 1019039,
+        "components": 16091,
+        "largestComponentSize": 141367,
+        "singletonResearchers": 4849,
+        "communities": 38034,
+        "largestCommunitySize": 621,
+        "singletonCommunities": 5137,
+        "communitiesAtLeastMinSize": 23635,
+        "largestComponentId": "comp-4a11d3713f9891c5c60312810523ce70",
+        "largestCommunityId": "comm-b7d5d6a31f74b68d124c7c88494cdf2b",
+        "years": 27,
+        "largestComponentFraction": 0.7389111322510167,
+        "largestCommunityFraction": 0.003245904724071964,
+        "communityMinSize": 3,
+        "communityConverged": false,
+        "communityRounds": 10,
+        "schemaVersion": "spark-corpus-window-summary-v1"
+      },
+      {
+        "window": "2015-2026",
+        "windowStartYear": 2015,
+        "windowEndYear": 2026,
+        "researchers": 139432,
+        "coauthorEdges": 585071,
+        "sumJointPublicationCount": 721719,
+        "components": 10746,
+        "largestComponentSize": 98812,
+        "singletonResearchers": 1798,
+        "communities": 26394,
+        "largestCommunitySize": 400,
+        "singletonCommunities": 1971,
+        "communitiesAtLeastMinSize": 18315,
+        "largestComponentId": "comp-b7aa22e5808836b7fa46ce1a75d80c87",
+        "largestCommunityId": "comm-7a578149cf434252a2113910df85c924",
+        "years": 12,
+        "largestComponentFraction": 0.7086751965115612,
+        "largestCommunityFraction": 0.0028687819151988064,
+        "communityMinSize": 3,
+        "communityConverged": false,
+        "communityRounds": 10,
+        "schemaVersion": "spark-corpus-window-summary-v1"
+      }
+    ],
+    "integrityViolations": []
+  },
+  "stepSeconds": {
+    "read inputs": 1.637489624,
+    "summarize": 0.280143083,
+    "write corpus/window-summary": 1.259222666,
+    "write corpus/window-summary-violations": 0.542028208,
+    "report": 0.137953958
+  },
+  "stagesByStep": [
+    {
+      "step": "read inputs",
+      "stages": 15,
+      "tasks": 37,
+      "maxTasksInAStage": 10,
+      "shuffleReadBytes": 1593,
+      "shuffleWriteBytes": 1593,
+      "spillDiskBytes": 0,
+      "stageMs": 522
+    },
+    {
+      "step": "write corpus/window-summary",
+      "stages": 21,
+      "tasks": 55,
+      "maxTasksInAStage": 10,
+      "shuffleReadBytes": 5683,
+      "shuffleWriteBytes": 5683,
+      "spillDiskBytes": 0,
+      "stageMs": 3755
+    },
+    {
+      "step": "write corpus/window-summary-violations",
+      "stages": 14,
+      "tasks": 46,
+      "maxTasksInAStage": 33,
+      "shuffleReadBytes": 56,
+      "shuffleWriteBytes": 56,
+      "spillDiskBytes": 0,
+      "stageMs": 450
+    },
+    {
+      "step": "report",
+      "stages": 5,
+      "tasks": 5,
+      "maxTasksInAStage": 1,
+      "shuffleReadBytes": 893,
+      "shuffleWriteBytes": 893,
+      "spillDiskBytes": 0,
+      "stageMs": 66
+    }
+  ],
+  "stageCount": 55,
+  "disk": {
+    "freeBeforeBytes": 14144905216,
+    "freeAfterBytes": 14142808064
+  },
+  "wallSeconds": 4.112182458,
+  "finishedAt": "2026-11-12T18:52:39.489654Z"
+}

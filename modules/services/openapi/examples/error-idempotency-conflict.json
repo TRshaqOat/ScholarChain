@@ -1,0 +1,7 @@
+{
+  "error": "IDEMPOTENCY_CONFLICT",
+  "message": "this Idempotency-Key was used with a different request body",
+  "traceId": "trace-example-1",
+  "requestId": "req-example-1",
+  "retryable": false
+}

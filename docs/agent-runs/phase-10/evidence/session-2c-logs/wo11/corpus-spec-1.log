@@ -1,0 +1,21 @@
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] scalafmt: Formatting 1 Scala sources (/Users/achyutpatel/Developer/Cloud/ScholarChain/modules/services)...
+[info] scalafmt: Formatting 2 Scala sources (/Users/achyutpatel/Developer/Cloud/ScholarChain/modules/services)...
+[info] scalafmt: Reformatted 1 Scala sources
+[success] Total time: 1 s, completed Nov 12, 2026, 3:57:34 PM
+[success] Total time: 0 s, completed Nov 12, 2026, 3:57:34 PM
+[info] compiling 1 Scala source to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/services/target/scala-3.3.7/classes ...
+[info] done compiling
+[info] compiling 2 Scala sources to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/services/target/scala-3.3.7/test-classes ...
+[error] -- [E008] Not Found Error: /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/services/src/test/scala/scholarchain/services/ServiceFixtures.scala:259:49 
+[error] 259 |  def summaryRows(windows: Seq[scholarchain.core.TimeWindow]): Vector[WindowSummary] =
+[error]     |                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[error]     |                  type TimeWindow is not a member of scholarchain.core
+[error] one error found
+[error] (services / Test / compileIncremental) Compilation failed
+[error] Total time: 3 s, completed Nov 12, 2026, 3:57:37 PM

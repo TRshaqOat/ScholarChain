@@ -1,0 +1,92 @@
+{
+  "schemaVersion": "rag-answer-v1",
+  "response": {
+    "schemaVersion": "answer-response-v1",
+    "queryId": "qry-d692f35ba000fae7b3a48118afe7dafc",
+    "summary": "This request is not supported by the stored data: Corpus-level community comparison statistics are not stored in this version.",
+    "claims": [],
+    "abstained": true,
+    "uncertainty": "Corpus-level community comparison statistics are not stored in this version.",
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "RUNTIME",
+      "sourceRecordId": "qry-d692f35ba000fae7b3a48118afe7dafc",
+      "snapshot": "2026-10-03",
+      "runId": "run-d94e077cc52fa2fbfa628f21a4c4adaa",
+      "policyVersion": "fusion-v1",
+      "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+    }
+  },
+  "plan": {
+    "schemaVersion": "rag-query-plan-v1",
+    "queryId": "qry-d692f35ba000fae7b3a48118afe7dafc",
+    "operations": [
+      {
+        "operation": "COMMUNITY_COMPARISON",
+        "scope": "CORPUS",
+        "researchers": [],
+        "metric": null,
+        "topN": null
+      }
+    ],
+    "researcherNames": [],
+    "metrics": [],
+    "window": {
+      "requested": {
+        "kind": "NAMED",
+        "name": "2000-2014",
+        "yearFrom": null,
+        "yearTo": null
+      },
+      "window": "2000-2014",
+      "startYear": 2000,
+      "endYear": 2014,
+      "exact": true,
+      "note": null
+    },
+    "comparison": null,
+    "topics": [],
+    "venues": [],
+    "institutions": [],
+    "semanticIndexes": [
+      "collaboration-community-v1"
+    ],
+    "limits": {
+      "graphLimit": 100,
+      "vectorLimit": 50,
+      "maxPathDepth": 6,
+      "topK": 5
+    },
+    "source": "MODEL",
+    "overriddenFields": [],
+    "rejectedItems": [],
+    "promptVersion": "planner-v2",
+    "modelId": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "RUNTIME",
+      "sourceRecordId": "qry-d692f35ba000fae7b3a48118afe7dafc",
+      "snapshot": "2026-10-03",
+      "runId": "run-d94e077cc52fa2fbfa628f21a4c4adaa",
+      "policyVersion": null,
+      "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+    }
+  },
+  "resolutions": [],
+  "verification": {
+    "schemaVersion": "claim-verification-v1",
+    "queryId": "qry-d692f35ba000fae7b3a48118afe7dafc",
+    "checks": [],
+    "counts": {
+      "verified": 0,
+      "partiallySupported": 0,
+      "unsupported": 0,
+      "conflicting": 0
+    }
+  },
+  "abstention": {
+    "reason": "UNSUPPORTED_REQUEST",
+    "detail": "This request is not supported by the stored data: Corpus-level community comparison statistics are not stored in this version."
+  },
+  "answerHash": "sha256:41079c063d36f717a4c02a1d810913726e67e65daeb3c0929f5d5edf575c0a54"
+}

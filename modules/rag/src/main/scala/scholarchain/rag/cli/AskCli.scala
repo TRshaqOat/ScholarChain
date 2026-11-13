@@ -1,5 +1,6 @@
 package scholarchain.rag.cli
 
+import scholarchain.core.IdFormat
 import scholarchain.core.config.ScholarChainConfig
 import scholarchain.rag.live.BedrockHaikuClient
 import scholarchain.rag.runtime.*
@@ -15,7 +16,9 @@ import scholarchain.storage.{
   ItemFileReader,
   RunManifest,
   GraphReadLimits,
-  Throttle
+  S3Layout,
+  Throttle,
+  WindowSummaries
 }
 
 import java.nio.file.{Path, Paths}
@@ -59,11 +62,21 @@ object AskCli:
   val StoreUsage =
     "--graph <neptune CSV run dir> --items <dynamodb item run dir> --objects <object store root> " +
       "--vectors <file vector store root> [--out <runtime root, default scratch/runtime>] " +
+      "[--window-summary-root <object store root> --window-summary-run <load run ID>] " +
       "[--live --profile <name> [--region <r>] [--per-minute 1..8]]"
   val UsageText =
     s"rag/runMain scholarchain.rag.cli.AskCli --question <text> [--session <id>] $StoreUsage"
   val StoreOpts: Set[String] =
-    Cli.LiveOpts ++ Set("graph", "items", "objects", "vectors", "out", "per-minute")
+    Cli.LiveOpts ++ Set(
+      "graph",
+      "items",
+      "objects",
+      "vectors",
+      "out",
+      "per-minute",
+      "window-summary-root",
+      "window-summary-run"
+    )
 
   def main(args: Array[String]): Unit = Cli.main("AskCli", args)(run(_, _))
 
@@ -107,6 +120,17 @@ object AskCli:
       }
     }
 
+  /** --window-summary-root and --window-summary-run (both or neither): the object store root and
+    * the load run of the corpus window summaries (work order 9; no configuration key names the
+    * served run yet). Neither: corpus-level questions are stated as NOT_STORED.
+    */
+  private def summaryArgs(a: Args): Either[String, Option[(Path, String)]] =
+    (a.get("window-summary-root"), a.get("window-summary-run")) match
+      case (None, None)                                  => Right(None)
+      case (Some(r), Some(run)) if IdFormat.isRunId(run) => Right(Some((Paths.get(r), run)))
+      case (Some(_), Some(_)) => Left("--window-summary-run must be run-<32 hex>")
+      case _                  => Left("--window-summary-root and --window-summary-run go together")
+
   /** Loads the stores read-only and wires the runtime. Left: a usage problem (exit 2). Right(None):
     * a store failed validation, already reported (exit 1).
     */
@@ -136,9 +160,11 @@ object AskCli:
         cfg.runtime.synthesis.promptVersion
       )
       _ <- Cli.freeDiskProblem(outRoot).toLeft(())
+      wsArgs <- summaryArgs(a)
     yield
       val (snapshot, graphRun) = graphSeg
       val itemsRun = itemsSeg._2
+      val summaryKey = wsArgs.map((_, run) => S3Layout.windowSummary(snapshot, run))
       val mode = if live.isDefined then RuntimeMode.LIVE else RuntimeMode.FAKE
       val version = EmbeddingModels.version(model, Templates.Version)
       val vectorFiles = Cli.files(vectorsRoot, ".jsonl")
@@ -149,15 +175,27 @@ object AskCli:
           s"items=$itemsRun",
           s"vectors=${Cli.contentHash(vectorsRoot, vectorFiles)}",
           s"embedding=$version"
-        ),
+        ) ++ summaryKey.map(k => s"window-summary=$k"),
         prompts,
         mode
       )
       out(s"runtime run $runId (${mode.toString.toLowerCase} mode), snapshot $snapshot")
+      // Work order 9 (F2): the corpus window summaries, opened and validated once; any violation
+      // refuses them whole and stops (exit 1).
+      val opened = wsArgs.zip(summaryKey).map { case ((root, _), k) =>
+        WindowSummaries
+          .open(FileObjectStore(root).reader, k, cfg.graph.windows)
+          .map(WindowSummarySource(k, _))
+      }
+      val summaries = opened.flatMap(_.toOption)
+      summaryKey.filter(_ => summaries.isDefined).foreach(k => out(s"window summaries: $k"))
       val objects = FileObjectStore(objectsRoot)
       val graph = InMemoryGraph()
       val t0 = nowMs()
-      graph.loader.load(graphDir, cfg.graph.windows, Some(objects.reader)) match
+      opened
+        .collect { case Left(vs) => vs }
+        .toLeft(graph.loader.load(graphDir, cfg.graph.windows, Some(objects.reader)))
+        .flatten match
         case Left(vs) =>
           Cli.report(vs, 5, out)
           None
@@ -193,7 +231,8 @@ object AskCli:
                   mode,
                   out,
                   sleep,
-                  nowMs
+                  nowMs,
+                  summaries
                 )
               )
 
@@ -215,7 +254,8 @@ object AskCli:
       mode: RuntimeMode,
       out: String => Unit,
       sleep: Long => Unit,
-      nowMs: () => Long
+      nowMs: () => Long,
+      summaries: Option[WindowSummarySource]
   ): LoadedRuntime =
     val llmThrottle = Throttle(perMinute, nowMs, sleep)
     val embedThrottle = Throttle(cfg.runtime.embedding.requestsPerMinute, nowMs, sleep)
@@ -255,7 +295,8 @@ object AskCli:
       embedder,
       audit.reader,
       audit.loader,
-      records.writer
+      records.writer,
+      summaries
     )
     val setup = RuntimeSetup(
       cfg,

@@ -1,0 +1,17 @@
+s3/logs/rag-runtime  CONFLICTING  1
+s3/logs/rag-runtime  UNSUPPORTED  12
+s3/reports/rag-runtime  CONFLICTING  1
+s3/reports/rag-runtime  UNSUPPORTED  12
+s3/reports/rag-runtime  VERIFIED  144
+
+== s3/logs/rag-runtime claim keys: ['claimId', 'failedChecks', 'kind', 'status', 'text']
+   10  numbers-in-text  FAIL
+    2  identity  FAIL
+    1  context-only  FAIL
+    1  window  CONFLICT
+
+== s3/reports/rag-runtime claim keys: ['action', 'checks', 'claimId', 'status']
+   10  numbers-in-text  FAIL
+    2  identity  FAIL
+    1  context-only  FAIL
+    1  window  CONFLICT

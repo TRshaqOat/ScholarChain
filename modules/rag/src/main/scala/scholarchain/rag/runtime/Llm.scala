@@ -64,16 +64,22 @@ object LlmCaller:
     */
   final case class Outcome[A](value: Option[A], calls: Vector[LlmCall], failures: Vector[String])
 
+  /** The stop reason of an output cut off at the request's max_tokens. */
+  val MaxTokens = "max_tokens"
+
   /** Up to session.maxAttempts attempts. request(attempt, failures) builds each request (the retry
     * names the failed rules, never the earlier output); parse validates the text. An attempt that
     * would pass the token budget or the deadline is not sent (SKIPPED_BUDGET) and ends the call.
+    * cutOff: a fixed rule put first in the failures of a rejected output that stopped at
+    * max_tokens, so the retry says the output was cut off (Phase 10 ruling 19a).
     */
   def call[A](
       s: LlmSession,
       stage: Stage,
       prompt: PromptTemplate,
       request: (Int, Vector[String]) => Either[String, LlmRequest],
-      parse: String => Either[Vector[String], A]
+      parse: String => Either[Vector[String], A],
+      cutOff: Option[String] = None
   ): Outcome[A] =
     var calls = Vector.empty[LlmCall]
     var failures = Vector.empty[String]
@@ -127,7 +133,8 @@ object LlmCaller:
                   result = Some(a)
                   log(r, CallOutcome.OK, Some(resp), s.nowMs() - t1, t1 - t0, sent, None)
                 case Left(es) =>
-                  failures = es
+                  failures = (if resp.stopReason.contains(MaxTokens) then cutOff.toVector
+                              else Vector.empty) ++ es
                   log(
                     r,
                     CallOutcome.INVALID_OUTPUT,

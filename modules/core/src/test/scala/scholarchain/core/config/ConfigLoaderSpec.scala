@@ -139,9 +139,156 @@ class ConfigLoaderSpec extends AnyFunSuite:
       "SCHOLARCHAIN_GRAPH_POLICY_VERSION" -> "graph-v1",
       "SCHOLARCHAIN_NEPTUNE_LOADER_ROLE_ARN" ->
         "arn:aws:iam::111111111111:role/scholarchain-dev-neptune-loader",
-      "SCHOLARCHAIN_DYNAMODB_TABLE_PREFIX" -> "scholarchain-dev-"
+      "SCHOLARCHAIN_DYNAMODB_TABLE_PREFIX" -> "scholarchain-dev-",
+      "SCHOLARCHAIN_STUB_LLM" -> "false",
+      "SCHOLARCHAIN_JOB_QUEUE_URL" -> queueUrl,
+      "SCHOLARCHAIN_JOB_DLQ_URL" -> s"$queueUrl-dlq",
+      "SCHOLARCHAIN_JOB_MAX_RECEIVE_COUNT" -> "5",
+      "SCHOLARCHAIN_WINDOW_SUMMARY_RUN" -> summaryRun
     )
     assert(ConfigLoader.load(env).map(_.environment) == Right("dev"))
+  }
+
+  private val queueUrl = "https://sqs.us-east-2.amazonaws.com/111111111111/scholarchain-dev-jobs"
+  private val summaryRun = "run-6fbad498beb0d8f570df67665fb97544"
+
+  test("Phase 10 work order 10: runtime.window-summary.load-run default, override, and rule") {
+    assert(load().runtime.windowSummary == WindowSummaryConfig("")) // none served
+    assert(
+      load("SCHOLARCHAIN_WINDOW_SUMMARY_RUN" -> summaryRun).runtime.windowSummary.loadRun ==
+        summaryRun
+    )
+    val f = file(s"""scholarchain.runtime.window-summary.load-run = "$summaryRun"""")
+    val fromFile = load(ConfigLoader.ConfigFileEnv -> f.toString)
+    assert(fromFile.runtime.windowSummary.loadRun == summaryRun)
+    assert(fromFile.configVersion == "config-v1") // a key with a default: no version bump
+    // The environment wins over the file, including an explicit empty value.
+    assert(
+      load(
+        ConfigLoader.ConfigFileEnv -> f.toString,
+        "SCHOLARCHAIN_WINDOW_SUMMARY_RUN" -> ""
+      ).runtime.windowSummary.loadRun == ""
+    )
+    val bad = Seq(
+      "run-6FBAD498BEB0D8F570DF67665FB97544", // upper-case hex
+      "run-6fbad498beb0d8f570df67665fb9754", // 31 hex
+      "run-6fbad498beb0d8f570df67665fb975444", // 33 hex
+      "6fbad498beb0d8f570df67665fb97544", // no prefix
+      "qry-6fbad498beb0d8f570df67665fb97544", // another ID kind
+      s" $summaryRun", // padded
+      " " // blank is not empty
+    )
+    for v <- bad do
+      val es = ConfigLoader.load(Map("SCHOLARCHAIN_WINDOW_SUMMARY_RUN" -> v)).left.toOption
+      assert(
+        es.exists(
+          _.contains(
+            s"runtime.window-summary.load-run '$v' must be empty or run-<32 lower-case hex>"
+          )
+        ),
+        v
+      )
+  }
+
+  test("Phase 10: services defaults (work order 2) and the sync deadline") {
+    val c = load()
+    assert(c.operations.synchronousDeadlineMs == 40000) // ruling 7
+    val s = c.services
+    assert(s.stubLlm && s.metricsEnabled && s.apiKeyEnv == "SCHOLARCHAIN_API_KEY")
+    assert(s.maxBodyBytes == 65536 && s.maxQueuedRequests == 64)
+    assert(s.queryApi == QueryApiConfig(8080, 8, 10))
+    assert(s.graphEvidenceApi == GraphEvidenceApiConfig(8081, 16))
+    assert(s.worker == WorkerConfig(8082, 2, 1, 20, 300))
+    assert(
+      s.queue == JobQueueConfig(
+        "https://sqs.us-east-2.amazonaws.com/000000000000/example-scholarchain-jobs",
+        "https://sqs.us-east-2.amazonaws.com/000000000000/example-scholarchain-jobs-dlq",
+        3
+      )
+    )
+    assert(s.ttl == ServiceTtlConfig(24, 168))
+    assert(s.evidenceMaxContentChars == 2000)
+    assert(s.resilience == ResilienceConfig(3, 100, 1000, 5, 30000))
+    assert(s.timeouts == DownstreamTimeouts(6000, 2000, 5000, 5000, 5000))
+  }
+
+  test("Phase 10: queue and stub-LLM environment overrides; fake queue URLs fail outside local") {
+    val s = load(
+      "SCHOLARCHAIN_STUB_LLM" -> "false",
+      "SCHOLARCHAIN_JOB_QUEUE_URL" -> queueUrl,
+      "SCHOLARCHAIN_JOB_DLQ_URL" -> s"$queueUrl-dlq",
+      "SCHOLARCHAIN_JOB_MAX_RECEIVE_COUNT" -> "7"
+    ).services
+    assert(!s.stubLlm && s.queue == JobQueueConfig(queueUrl, s"$queueUrl-dlq", 7))
+    val dev = ConfigLoader.load(Map("SCHOLARCHAIN_ENVIRONMENT" -> "dev")).left.toOption.get.mkString
+    assert(
+      dev.contains("/example-scholarchain-jobs,") && dev.contains("example-scholarchain-jobs-dlq")
+    )
+  }
+
+  test("Phase 10: the API key variable is a name only and never enters configuration") {
+    val key = "not-a-real-key-123"
+    val c = load("SCHOLARCHAIN_API_KEY" -> key)
+    assert(!ConfigLoader.EnvOverrides.contains(c.services.apiKeyEnv))
+    assert(!ConfigLoader.merged(Map("SCHOLARCHAIN_API_KEY" -> key)).root.render.contains(key))
+    assert(!c.toString.contains(key))
+    def errors(hocon: String) =
+      ConfigLoader.load(Map(ConfigLoader.ConfigFileEnv -> file(hocon).toString)).left.toOption.get
+    for bad <- Seq("SCHOLARCHAIN_BUCKET", "SCHOLARCHAIN_CONFIG_FILE", "api_key", "") do
+      assert(
+        errors(s"""scholarchain.services.api-key-env = "$bad"""").exists(_.contains("api-key-env")),
+        bad
+      )
+  }
+
+  test("Phase 10: services bounds and cross-key checks are enforced") {
+    def errors(hocon: String): String =
+      ConfigLoader
+        .load(Map(ConfigLoader.ConfigFileEnv -> file(hocon).toString))
+        .left
+        .toOption
+        .get
+        .mkString
+    val cases = Seq(
+      "services.worker.visibility-timeout-seconds = 210" -> "must exceed runtime.question.deadline-ms",
+      "services.worker.visibility-timeout-seconds = 43201" -> "be at most 43200",
+      "runtime.question.deadline-ms = 270001" -> "visibility-timeout-seconds must exceed",
+      "services.worker.poll-wait-seconds = 21" -> "poll-wait-seconds must be at most 20",
+      "services.worker.poll-wait-seconds = 0" -> "must be positive",
+      "services.queue.max-receive-count = 1001" -> "max-receive-count must be at most 1000",
+      "services.query-api.query-rate-per-minute = 0" -> "must be positive",
+      "services.graph-evidence-api.port = 8080" -> "ports must be distinct",
+      "services.worker.port = 65536" -> "ports must be distinct and at most 65535",
+      "services.queue.url = \"sqs://jobs\"" -> "services.queue.url 'sqs://jobs' is not an SQS queue URL",
+      "services.queue.dead-letter-url = ${scholarchain.services.queue.url}" -> "must differ",
+      "services.ttl.idempotency-hours = 169" -> "idempotency-hours <= job-hours",
+      "services.ttl.job-hours = 721" -> "job-hours <= runtime.audit.ttl-days x 24",
+      "services.resilience.base-delay-ms = 1001" -> "base-delay-ms must be at most max-delay-ms",
+      "services.resilience.max-attempts = 0" -> "must be positive",
+      "services.timeouts.neptune-ms = 4999" -> "neptune-ms must be at least neptune.query-timeout-ms",
+      "services.evidence-max-content-chars = 0" -> "must be positive"
+    )
+    for (hocon, msg) <- cases do assert(errors(s"scholarchain.$hocon").contains(msg), hocon)
+    // The boundary values themselves are valid.
+    for ok <- Seq(
+        "services.worker.visibility-timeout-seconds = 211",
+        "services.ttl.job-hours = 720",
+        "services.timeouts.neptune-ms = 5000"
+      )
+    do
+      assert(
+        ConfigLoader
+          .load(Map(ConfigLoader.ConfigFileEnv -> file(s"scholarchain.$ok").toString))
+          .isRight,
+        ok
+      )
+  }
+
+  test("every services leaf in the reference is read by the loader") {
+    import scala.jdk.CollectionConverters.*
+    val leaves = ConfigLoader.merged(Map.empty).getConfig("services").entrySet.asScala.size
+    // Typed fields: the Int list, the queue URLs, stub-llm, metrics-enabled, api-key-env.
+    assert(leaves == load().services.positiveInts.size + 2 + 3)
   }
 
   test("M10: table prefix and Neptune loader role ARN are keys with env overrides") {
@@ -198,13 +345,13 @@ class ConfigLoaderSpec extends AnyFunSuite:
     assert(r.promptsDir == "prompts")
     assert(r.question == QuestionConfig(2000, 180000))
     assert(r.planner == PlannerConfig("planner-v2", 800, 6, 4, 200, 5))
-    assert(r.synthesis == SynthesisConfig("synthesis-v2", 2000, 20)) // ruling 28
+    assert(r.synthesis == SynthesisConfig("synthesis-v3", 4000, 20)) // Phase 10 work order 1
     assert(r.llm == LlmCallConfig(8, 2, 30000, 0.0))
     assert(r.embedding == EmbeddingCallConfig(50, 10000))
     assert(r.resolver == ResolverConfig("dominant-name-v1", 0.9, 5, 500, 3, 3))
     assert(r.rankings == RankingsConfig(10, 1000))
     assert(r.semantic == SemanticConfig(5, 3))
-    assert(r.budget == BudgetConfig(8000, 3000, 300, 3, 40000, 5600))
+    assert(r.budget == BudgetConfig(8000, 3000, 300, 3, 40000, 9600)) // 2 x 800 + 2 x 4000
     assert(r.audit == AuditConfig(30))
     assert(c.analytics.rankingSize == 50)
     assert(
@@ -243,8 +390,9 @@ class ConfigLoaderSpec extends AnyFunSuite:
       reference.getConfig(s).entrySet.asScala.map(e => s"$s.${e.getKey}")
     )
     val c = load()
-    // Typed fields: the Int lists, plus prompts-dir, three versions, temperature, dominant-share.
-    val typed = c.runtime.positiveInts.size + c.graphRead.all.size + 1 + 3 + 2
+    // Typed fields: the Int lists, plus prompts-dir, three versions, temperature, dominant-share,
+    // and window-summary.load-run.
+    val typed = c.runtime.positiveInts.size + c.graphRead.all.size + 1 + 3 + 2 + 1
     assert(leaves.size == typed, leaves.sorted.mkString(", "))
   }
 

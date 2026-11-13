@@ -1,0 +1,157 @@
+{
+  "schemaVersion": "rag-benchmark-result-v2",
+  "questionId": "B23",
+  "category": "temporal",
+  "mode": "LIVE",
+  "runtimeRunId": "run-d94e077cc52fa2fbfa628f21a4c4adaa",
+  "queryId": "qry-62ee898f95b74fe28591927042db879b",
+  "planSource": "MODEL",
+  "operations": [
+    "COMMUNITY_COMPARISON/RESEARCHER"
+  ],
+  "metrics": [],
+  "window": "2000-2014",
+  "resolutions": [
+    {
+      "name": "Minyi Guo",
+      "decision": "RESOLVED_DOMINANT",
+      "researcherId": "scr:canon-v1.er-v2:110ec38e39367e47da67835ca2ce45cc",
+      "topShare": 0.9722222222222222,
+      "candidateCount": 8
+    }
+  ],
+  "abstained": false,
+  "abstentionReason": null,
+  "verification": {
+    "verified": 3,
+    "partiallySupported": 0,
+    "unsupported": 0,
+    "conflicting": 0
+  },
+  "claims": 3,
+  "graph": {
+    "reads": 18,
+    "readsByTemplate": {
+      "kv.metrics.window": 1,
+      "graph.community-facets": 1,
+      "graph.vertex": 1,
+      "graph.community-members": 1,
+      "graph.community-neighbors": 1,
+      "graph.authored-counts": 1,
+      "graph.coauthors": 9,
+      "kv.entity-link": 1,
+      "graph.researcher-institutions": 2
+    },
+    "rows": 114,
+    "truncatedReads": 3,
+    "evidenceItems": 4,
+    "tokens": 3380,
+    "omittedItems": 0,
+    "latencyMs": 95,
+    "pathStatuses": []
+  },
+  "semantic": {
+    "embeddingCalls": 1,
+    "embeddingInputTokens": 0,
+    "indexes": [
+      "researcher-profile-v1",
+      "collaboration-community-v1"
+    ],
+    "hits": 1,
+    "tokens": 614,
+    "omittedItems": 0,
+    "latencyMs": 192,
+    "outcome": "OK"
+  },
+  "llm": {
+    "attempts": 3,
+    "requests": 3,
+    "attemptsByStage": {
+      "QUERY_PLANNING": 1,
+      "ANSWER_SYNTHESIS": 2
+    },
+    "outcomes": {
+      "INVALID_OUTPUT": 1,
+      "OK": 2
+    },
+    "inputTokens": 18014,
+    "outputTokens": 1656,
+    "throttleWaitMs": 12501
+  },
+  "latencyMs": 22306,
+  "stageLatencyMs": {
+    "COLLABORATION_METRICS": 1,
+    "PATH_FINDING": 0,
+    "EVIDENCE_BUILDING": 1,
+    "AUDIT": 0,
+    "QUERY_PLANNING": 4154,
+    "SEMANTIC_CONTEXT": 192,
+    "COMMUNITY_ANALYSIS": 94,
+    "CLAIM_VERIFICATION": 19,
+    "RESEARCHER_RESOLUTION": 25,
+    "ANSWER_SYNTHESIS": 17813
+  },
+  "checks": [
+    {
+      "name": "plan-operations",
+      "outcome": "FAIL",
+      "detail": "needs TEMPORAL_COMPARISON; plan [COMMUNITY_COMPARISON/RESEARCHER]"
+    },
+    {
+      "name": "researcher-names",
+      "outcome": "PASS",
+      "detail": "expected [Minyi Guo], extracted [Minyi Guo]"
+    },
+    {
+      "name": "resolution",
+      "outcome": "PASS",
+      "detail": "Minyi Guo: expected RESOLVED_DOMINANT, got RESOLVED_DOMINANT"
+    },
+    {
+      "name": "abstention",
+      "outcome": "PASS",
+      "detail": "expected answer, got answer"
+    },
+    {
+      "name": "claim-evidence",
+      "outcome": "PASS",
+      "detail": "3 claims cite bundle IDs; 3 material claims each cite a graph item; 0 descriptive"
+    },
+    {
+      "name": "verification",
+      "outcome": "PASS",
+      "detail": "answer has a verified claim; counts 3/0/0/0; final claims 3 verified of 3"
+    },
+    {
+      "name": "bundle-budget",
+      "outcome": "PASS",
+      "detail": "graph 3380/8000 tokens, semantic 614/3000, items 5/300"
+    },
+    {
+      "name": "llm-budget",
+      "outcome": "PASS",
+      "detail": "3 attempts, 3 requests (ANSWER_SYNTHESIS 2, QUERY_PLANNING 1), tokens in 18014 out 1656"
+    },
+    {
+      "name": "embedding-budget",
+      "outcome": "PASS",
+      "detail": "1 embedding calls for 2 indexes queried"
+    },
+    {
+      "name": "path-hops",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no path evidence in the bundle"
+    },
+    {
+      "name": "pair-edges",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no bundle edge has stored path evidence"
+    },
+    {
+      "name": "deadline",
+      "outcome": "PASS",
+      "detail": "22306 ms of 180000"
+    }
+  ],
+  "answerHash": "sha256:74bac2ab83bbd6fffd6eaa960657d8e763e06aba68c6e0863aa25c66ecaa61d7"
+}

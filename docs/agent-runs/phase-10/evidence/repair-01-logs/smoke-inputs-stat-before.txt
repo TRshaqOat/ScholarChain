@@ -1,0 +1,14 @@
+scratch/runtime/wo8/s3/curated/window-summary/snapshot=2026-10-03/run=run-6fbad498beb0d8f570df67665fb97544/part-00000.jsonl 4320 1794510780
+scratch/runtime/wo8/s3/runs/load-window-summary/snapshot=2026-10-03/run=run-6fbad498beb0d8f570df67665fb97544/manifest.json 597 1794510780
+scratch/services/smoke-wo6-20261112T025709/stores/graph/snapshot=2026-10-03/run=run-b8a212f955daaeb0275f11f93e36c70a/edges/affiliated-with/part-00000.csv 320 1794473834
+scratch/services/smoke-wo6-20261112T025709/stores/graph/snapshot=2026-10-03/run=run-b8a212f955daaeb0275f11f93e36c70a/edges/authored/part-00000.csv 4466 1794473834
+scratch/services/smoke-wo6-20261112T025709/stores/graph/snapshot=2026-10-03/run=run-b8a212f955daaeb0275f11f93e36c70a/edges/coauthored-with/part-00000.csv 881 1794473834
+scratch/services/smoke-wo6-20261112T025709/stores/graph/snapshot=2026-10-03/run=run-b8a212f955daaeb0275f11f93e36c70a/edges/has-topic/part-00000.csv 404 1794473834
+scratch/services/smoke-wo6-20261112T025709/stores/graph/snapshot=2026-10-03/run=run-b8a212f955daaeb0275f11f93e36c70a/edges/member-of/part-00000.csv 853 1794473834
+scratch/services/smoke-wo6-20261112T025709/stores/graph/snapshot=2026-10-03/run=run-b8a212f955daaeb0275f11f93e36c70a/vertices/community/part-00000.csv 588 1794473834
+scratch/services/smoke-wo6-20261112T025709/stores/graph/snapshot=2026-10-03/run=run-b8a212f955daaeb0275f11f93e36c70a/vertices/institution/part-00000.csv 218 1794473834
+scratch/services/smoke-wo6-20261112T025709/stores/graph/snapshot=2026-10-03/run=run-b8a212f955daaeb0275f11f93e36c70a/vertices/researcher/part-00000.csv 838 1794473834
+scratch/services/smoke-wo6-20261112T025709/stores/graph/snapshot=2026-10-03/run=run-b8a212f955daaeb0275f11f93e36c70a/vertices/topic/part-00000.csv 211 1794473834
+scratch/services/smoke-wo6-20261112T025709/stores/graph/snapshot=2026-10-03/run=run-b8a212f955daaeb0275f11f93e36c70a/vertices/work/part-00000.csv 2162 1794473834
+scratch/services/smoke-wo6-20261112T025709/stores/items/snapshot=2026-10-03/run=run-b8a212f955daaeb0275f11f93e36c70a/EntityLinkCache/part-00000.jsonl 1785 1794473834
+scratch/services/smoke-wo6-20261112T025709/stores/items/snapshot=2026-10-03/run=run-b8a212f955daaeb0275f11f93e36c70a/ResearcherMetricCache/part-00000.jsonl 3829 1794473834

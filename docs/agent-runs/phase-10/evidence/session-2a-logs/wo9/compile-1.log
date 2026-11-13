@@ -1,0 +1,14 @@
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] compiling 7 Scala sources to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/rag/target/scala-3.3.7/classes ...
+[error] -- [E008] Not Found Error: /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/rag/src/main/scala/scholarchain/rag/runtime/Synthesis.scala:507:83 
+[error] 507 |    def r4(v: String) = BigDecimal(v).setScale(4, BigDecimal.RoundingMode.HALF_UP).toPlainString
+[error]     |                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[error]     |                     value toPlainString is not a member of BigDecimal
+[error] one error found
+[error] (rag / Compile / compileIncremental) Compilation failed
+[error] Total time: 3 s, completed Nov 12, 2026, 1:40:38 PM

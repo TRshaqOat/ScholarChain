@@ -1,0 +1,16 @@
+1794509559 92 scratch/runtime/wo7/spark/snapshot=2026-10-03/run=run-1de2293597c338227290eb382de16957/._manifest.json.crc
+1794509559 184 scratch/runtime/wo7/spark/snapshot=2026-10-03/run=run-1de2293597c338227290eb382de16957/._stages.json.crc
+1794509555 32 scratch/runtime/wo7/spark/snapshot=2026-10-03/run=run-1de2293597c338227290eb382de16957/._started.json.crc
+1794509559 10411 scratch/runtime/wo7/spark/snapshot=2026-10-03/run=run-1de2293597c338227290eb382de16957/_manifest.json
+1794509559 22498 scratch/runtime/wo7/spark/snapshot=2026-10-03/run=run-1de2293597c338227290eb382de16957/_stages.json
+1794509555 3072 scratch/runtime/wo7/spark/snapshot=2026-10-03/run=run-1de2293597c338227290eb382de16957/_started.json
+1794509559 8 scratch/runtime/wo7/spark/snapshot=2026-10-03/run=run-1de2293597c338227290eb382de16957/corpus/window-summary-violations/._SUCCESS.crc
+1794509559 20 scratch/runtime/wo7/spark/snapshot=2026-10-03/run=run-1de2293597c338227290eb382de16957/corpus/window-summary-violations/.part-00000-212ad7e7-fe0c-470a-9c18-a2e0bf7ce260-c000.snappy.parquet.crc
+1794509559 0 scratch/runtime/wo7/spark/snapshot=2026-10-03/run=run-1de2293597c338227290eb382de16957/corpus/window-summary-violations/_SUCCESS
+1794509559 1472 scratch/runtime/wo7/spark/snapshot=2026-10-03/run=run-1de2293597c338227290eb382de16957/corpus/window-summary-violations/part-00000-212ad7e7-fe0c-470a-9c18-a2e0bf7ce260-c000.snappy.parquet
+1794509558 8 scratch/runtime/wo7/spark/snapshot=2026-10-03/run=run-1de2293597c338227290eb382de16957/corpus/window-summary/._SUCCESS.crc
+1794509558 124 scratch/runtime/wo7/spark/snapshot=2026-10-03/run=run-1de2293597c338227290eb382de16957/corpus/window-summary/.part-00000-74d91a4e-0e35-431e-93f8-41142db57ed6-c000.snappy.parquet.crc
+1794509558 0 scratch/runtime/wo7/spark/snapshot=2026-10-03/run=run-1de2293597c338227290eb382de16957/corpus/window-summary/_SUCCESS
+1794509558 14698 scratch/runtime/wo7/spark/snapshot=2026-10-03/run=run-1de2293597c338227290eb382de16957/corpus/window-summary/part-00000-74d91a4e-0e35-431e-93f8-41142db57ed6-c000.snappy.parquet
+1794510780 4320 scratch/runtime/wo8/s3/curated/window-summary/snapshot=2026-10-03/run=run-6fbad498beb0d8f570df67665fb97544/part-00000.jsonl
+1794510780 597 scratch/runtime/wo8/s3/runs/load-window-summary/snapshot=2026-10-03/run=run-6fbad498beb0d8f570df67665fb97544/manifest.json

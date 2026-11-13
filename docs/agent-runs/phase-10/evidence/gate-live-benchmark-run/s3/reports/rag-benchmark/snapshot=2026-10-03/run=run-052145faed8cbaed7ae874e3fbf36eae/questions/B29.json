@@ -1,0 +1,164 @@
+{
+  "schemaVersion": "rag-benchmark-result-v2",
+  "questionId": "B29",
+  "category": "evidence",
+  "mode": "LIVE",
+  "runtimeRunId": "run-422d912ac162f340f5f31a1b63b65e19",
+  "queryId": "qry-6c055ad1b9bbf4d0f98b4abc7a4b7b5b",
+  "planSource": "MODEL",
+  "operations": [
+    "SHORTEST_PATH/PAIR"
+  ],
+  "metrics": [],
+  "window": "all-years",
+  "resolutions": [
+    {
+      "name": "Jack J. Dongarra",
+      "decision": "RESOLVED_DOMINANT",
+      "researcherId": "scr:canon-v1.er-v2:6de4012bbe8608f1d49d18cf9a40a763",
+      "topShare": 0.9575596816976127,
+      "candidateCount": 17
+    },
+    {
+      "name": "Yves Robert",
+      "decision": "RESOLVED_DOMINANT",
+      "researcherId": "scr:canon-v1.er-v2:da6e3bdff14745638f3f5425f0133388",
+      "topShare": 0.9774774774774775,
+      "candidateCount": 6
+    }
+  ],
+  "abstained": false,
+  "abstentionReason": null,
+  "verification": {
+    "verified": 10,
+    "partiallySupported": 0,
+    "unsupported": 0,
+    "conflicting": 0
+  },
+  "claims": 10,
+  "graph": {
+    "reads": 37,
+    "readsByTemplate": {
+      "kv.metrics.window": 2,
+      "graph.shortest-path": 1,
+      "graph.vertices": 2,
+      "graph.authored-counts": 2,
+      "graph.coauthors": 23,
+      "kv.entity-link": 5,
+      "graph.researcher-institutions": 2
+    },
+    "rows": 107,
+    "truncatedReads": 2,
+    "evidenceItems": 29,
+    "tokens": 3172,
+    "omittedItems": 0,
+    "latencyMs": 5,
+    "pathStatuses": [
+      "FOUND"
+    ]
+  },
+  "semantic": {
+    "embeddingCalls": 1,
+    "embeddingInputTokens": 0,
+    "indexes": [
+      "researcher-profile-v1",
+      "collaboration-path-v1"
+    ],
+    "hits": 3,
+    "tokens": 1461,
+    "omittedItems": 0,
+    "latencyMs": 199,
+    "outcome": "OK"
+  },
+  "llm": {
+    "attempts": 3,
+    "requests": 3,
+    "attemptsByStage": {
+      "QUERY_PLANNING": 1,
+      "ANSWER_SYNTHESIS": 2
+    },
+    "outcomes": {
+      "INVALID_OUTPUT": 1,
+      "OK": 2
+    },
+    "inputTokens": 18115,
+    "outputTokens": 6674,
+    "throttleWaitMs": 12391
+  },
+  "latencyMs": 40149,
+  "stageLatencyMs": {
+    "COLLABORATION_METRICS": 1,
+    "PATH_FINDING": 4,
+    "EVIDENCE_BUILDING": 2,
+    "AUDIT": 0,
+    "QUERY_PLANNING": 7547,
+    "SEMANTIC_CONTEXT": 199,
+    "COMMUNITY_ANALYSIS": 0,
+    "CLAIM_VERIFICATION": 14,
+    "RESEARCHER_RESOLUTION": 24,
+    "ANSWER_SYNTHESIS": 32349
+  },
+  "checks": [
+    {
+      "name": "plan-operations",
+      "outcome": "PASS",
+      "detail": "needs DIRECT_COAUTHORS/PAIR or SHORTEST_PATH; plan [SHORTEST_PATH/PAIR]"
+    },
+    {
+      "name": "researcher-names",
+      "outcome": "PASS",
+      "detail": "expected [Jack J. Dongarra; Yves Robert], extracted [Jack J. Dongarra; Yves Robert]"
+    },
+    {
+      "name": "resolution",
+      "outcome": "PASS",
+      "detail": "Jack J. Dongarra: expected RESOLVED_DOMINANT, got RESOLVED_DOMINANT; Yves Robert: expected RESOLVED_DOMINANT, got RESOLVED_DOMINANT"
+    },
+    {
+      "name": "abstention",
+      "outcome": "PASS",
+      "detail": "expected answer, got answer"
+    },
+    {
+      "name": "claim-evidence",
+      "outcome": "PASS",
+      "detail": "10 claims cite bundle IDs; 10 material claims each cite a graph item; 0 descriptive"
+    },
+    {
+      "name": "verification",
+      "outcome": "PASS",
+      "detail": "answer has a verified claim; counts 10/0/0/0; final claims 10 verified of 10"
+    },
+    {
+      "name": "bundle-budget",
+      "outcome": "PASS",
+      "detail": "graph 3172/8000 tokens, semantic 1461/3000, items 32/300"
+    },
+    {
+      "name": "llm-budget",
+      "outcome": "PASS",
+      "detail": "3 attempts, 3 requests (ANSWER_SYNTHESIS 2, QUERY_PLANNING 1), tokens in 18115 out 6674"
+    },
+    {
+      "name": "embedding-budget",
+      "outcome": "PASS",
+      "detail": "1 embedding calls for 2 indexes queried"
+    },
+    {
+      "name": "path-hops",
+      "outcome": "FAIL",
+      "detail": "scr:canon-v1.er-v2:6de4012bbe8608f1d49d18cf9a40a763-scr:canon-v1.er-v2:da6e3bdff14745638f3f5425f0133388: runtime FOUND 1 hops, stored 1 hops, same researchers; no claim cites the path"
+    },
+    {
+      "name": "pair-edges",
+      "outcome": "PASS",
+      "detail": "1 of 1 edges equal the stored hop"
+    },
+    {
+      "name": "deadline",
+      "outcome": "PASS",
+      "detail": "40149 ms of 180000"
+    }
+  ],
+  "answerHash": "sha256:c4c53ca5232b08c8bcfb9b861f94b147acc0dc80dbdcb05f6f0b308821d74648"
+}

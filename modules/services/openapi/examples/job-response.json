@@ -1,0 +1,13 @@
+{
+  "jobId": "job-556ed8f2ae50ecd0b13e685232544ddc",
+  "queryId": "qry-0a83cf6903ee3d6914629c8acc8a4d7c",
+  "state": "SUCCEEDED",
+  "stage": "AUDIT",
+  "createdAt": "2026-11-12T08:52:48.033Z",
+  "updatedAt": "2026-11-12T08:52:48.065Z",
+  "startedAt": "2026-11-12T08:52:48.049Z",
+  "finishedAt": "2026-11-12T08:52:48.065Z",
+  "error": null,
+  "statusUrl": "/v1/jobs/job-556ed8f2ae50ecd0b13e685232544ddc",
+  "resultUrl": "/v1/jobs/job-556ed8f2ae50ecd0b13e685232544ddc/result"
+}

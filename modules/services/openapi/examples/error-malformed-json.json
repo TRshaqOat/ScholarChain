@@ -1,0 +1,7 @@
+{
+  "error": "MALFORMED_JSON",
+  "message": "the body is not valid JSON",
+  "traceId": "trace-example-1",
+  "requestId": "req-example-1",
+  "retryable": false
+}

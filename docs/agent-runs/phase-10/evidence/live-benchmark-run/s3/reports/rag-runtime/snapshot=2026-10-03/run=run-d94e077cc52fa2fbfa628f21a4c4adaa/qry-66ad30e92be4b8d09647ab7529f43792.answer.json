@@ -1,0 +1,216 @@
+{
+  "schemaVersion": "rag-answer-v1",
+  "response": {
+    "schemaVersion": "answer-response-v1",
+    "queryId": "qry-66ad30e92be4b8d09647ab7529f43792",
+    "summary": "This request is not supported by the stored data: Affiliations are not windowed, so Albert Y. Zomaya's affiliation in a specific year or window is not in the data.",
+    "claims": [],
+    "abstained": true,
+    "uncertainty": "Requested 2005-2005; the stored window 2000-2014 (2000-2014) is the smallest that contains it, so values cover 2000-2014. Albert Y. Zomaya was linked to scr:canon-v1.er-v2:9c35232fa374c48fdc67309bfedd5f7c by dominant-name-v1: 0.9902 of 305 works among 4 researchers with this display name. Affiliations are not windowed, so Albert Y. Zomaya's affiliation in a specific year or window is not in the data.",
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "RUNTIME",
+      "sourceRecordId": "qry-66ad30e92be4b8d09647ab7529f43792",
+      "snapshot": "2026-10-03",
+      "runId": "run-d94e077cc52fa2fbfa628f21a4c4adaa",
+      "policyVersion": "fusion-v1",
+      "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+    }
+  },
+  "plan": {
+    "schemaVersion": "rag-query-plan-v1",
+    "queryId": "qry-66ad30e92be4b8d09647ab7529f43792",
+    "operations": [
+      {
+        "operation": "INSTITUTION_FILTER",
+        "scope": "RESEARCHER",
+        "researchers": [
+          0
+        ],
+        "metric": null,
+        "topN": null
+      }
+    ],
+    "researcherNames": [
+      {
+        "name": "Albert Y. Zomaya",
+        "offset": 10
+      }
+    ],
+    "metrics": [],
+    "window": {
+      "requested": {
+        "kind": "RANGE",
+        "name": null,
+        "yearFrom": 2005,
+        "yearTo": 2005
+      },
+      "window": "2000-2014",
+      "startYear": 2000,
+      "endYear": 2014,
+      "exact": false,
+      "note": "Requested 2005-2005; the stored window 2000-2014 (2000-2014) is the smallest that contains it, so values cover 2000-2014."
+    },
+    "comparison": null,
+    "topics": [],
+    "venues": [],
+    "institutions": [],
+    "semanticIndexes": [
+      "researcher-profile-v1"
+    ],
+    "limits": {
+      "graphLimit": 100,
+      "vectorLimit": 50,
+      "maxPathDepth": 6,
+      "topK": 5
+    },
+    "source": "MODEL",
+    "overriddenFields": [],
+    "rejectedItems": [],
+    "promptVersion": "planner-v2",
+    "modelId": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "RUNTIME",
+      "sourceRecordId": "qry-66ad30e92be4b8d09647ab7529f43792",
+      "snapshot": "2026-10-03",
+      "runId": "run-d94e077cc52fa2fbfa628f21a4c4adaa",
+      "policyVersion": null,
+      "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+    }
+  },
+  "resolutions": [
+    {
+      "schemaVersion": "researcher-resolution-v1",
+      "name": "Albert Y. Zomaya",
+      "nameKey": "name-v1:albert y zomaya",
+      "policyVersion": "dominant-name-v1",
+      "dominantShare": 0.9,
+      "minWorks": 5,
+      "decision": "RESOLVED_DOMINANT",
+      "researcherId": "scr:canon-v1.er-v2:9c35232fa374c48fdc67309bfedd5f7c",
+      "topShare": 0.9901639344262295,
+      "totalWorks": 305,
+      "candidateCount": 4,
+      "candidates": [
+        {
+          "researcherId": "scr:canon-v1.er-v2:9c35232fa374c48fdc67309bfedd5f7c",
+          "displayName": "Albert Y. Zomaya",
+          "matchedName": "Albert Y. Zomaya",
+          "works": 302,
+          "share": 0.9901639344262295,
+          "identityConfidence": 0.9300527553067827,
+          "mentionCount": 892,
+          "dblpAnchored": true,
+          "orcid": "0000-0002-3090-1059",
+          "institutions": [
+            {
+              "id": "ror:00y4zzh67",
+              "name": "George Washington University",
+              "count": null
+            },
+            {
+              "id": "ror:01n002310",
+              "name": "Institute of Electrical and Electronics Engineers",
+              "count": null
+            },
+            {
+              "id": "ror:024c2fq17",
+              "name": "Sharif University of Technology",
+              "count": null
+            }
+          ],
+          "topCoauthors": [
+            {
+              "id": "scr:canon-v1.er-v2:ae39befdc1e23cc6f2de90d46d2a9250",
+              "name": "Young Choon Lee",
+              "count": 43
+            },
+            {
+              "id": "scr:canon-v1.er-v2:02db5d5eec978cfa13cb84323e03a65b",
+              "name": "Rajiv Ranjan 0001",
+              "count": 28
+            },
+            {
+              "id": "scr:canon-v1.er-v2:595a2e34c105d5650ff479e9aaa86698",
+              "name": "Zahir Tari",
+              "count": 27
+            }
+          ],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:14c9eba733345ec548d8af14581ef618",
+          "displayName": "Albert Y. Zomaya",
+          "matchedName": "Albert Y. Zomaya",
+          "works": 1,
+          "share": 0.003278688524590164,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [
+            {
+              "id": "scr:canon-v1.er-v2:47b76c9fb889145c50966142c556e4ae",
+              "name": "Gerard Chan",
+              "count": 1
+            }
+          ],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:89c974fae39fa4ab79a13c67cea21412",
+          "displayName": "Albert Y. Zomaya",
+          "matchedName": "Albert Y. Zomaya",
+          "works": 1,
+          "share": 0.003278688524590164,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": false,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:90d4318dd139a291afaab8ffe7ee74ce",
+          "displayName": "Albert Y. Zomaya",
+          "matchedName": "Albert Y. Zomaya",
+          "works": 1,
+          "share": 0.003278688524590164,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        }
+      ],
+      "otherNameMatches": [],
+      "truncated": false,
+      "evidenceId": "ev-2ec1cb5fc28b243020e34a6711ea0ae5"
+    }
+  ],
+  "verification": {
+    "schemaVersion": "claim-verification-v1",
+    "queryId": "qry-66ad30e92be4b8d09647ab7529f43792",
+    "checks": [],
+    "counts": {
+      "verified": 0,
+      "partiallySupported": 0,
+      "unsupported": 0,
+      "conflicting": 0
+    }
+  },
+  "abstention": {
+    "reason": "UNSUPPORTED_REQUEST",
+    "detail": "This request is not supported by the stored data: Affiliations are not windowed, so Albert Y. Zomaya's affiliation in a specific year or window is not in the data."
+  },
+  "answerHash": "sha256:377b39bd12df6a10939ec65a3eebe13c6e9845ef354e16798f02a0343f719b77"
+}

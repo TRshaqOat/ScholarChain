@@ -35,6 +35,8 @@ object S3Layout:
     s"${base("vectors", "backup", snapshot, runId)}/$index"
   def rejectedVectors(snapshot: String, runId: String, index: String): String =
     s"${base("vectors", "rejected", snapshot, runId)}/$index.jsonl"
+  def windowSummary(snapshot: String, runId: String): String =
+    s"${base("curated", "window-summary", snapshot, runId)}/part-00000.jsonl"
   def runManifest(stage: String, snapshot: String, runId: String): String =
     s"${base("runs", stage, snapshot, runId)}/manifest.json"
 

@@ -30,6 +30,15 @@ object Synthesis:
       "max_claims" -> cfg.runtime.synthesis.maxClaims.toString
     )
 
+  /** The retry rule of a synthesis output cut off at max_tokens (Phase 10 ruling 19a): it says so
+    * and asks for at most half of runtime.synthesis.max-claims claims, one sentence each. Fixed
+    * text from configuration; no token limit or budget is raised.
+    */
+  def cutOffRule(cfg: ScholarChainConfig): String =
+    val n = math.max(1, cfg.runtime.synthesis.maxClaims / 2)
+    s"output-cut-off: the output was cut off at the output token limit (stop reason max_tokens) " +
+      s"before the JSON was complete; return at most $n claims, one sentence each"
+
   /** Rule failures of a synthesis output beyond its schema; empty means valid. */
   def problems(o: SynthesisOutput, cfg: ScholarChainConfig): Vector[String] =
     Vector(
@@ -51,7 +60,27 @@ object Synthesis:
       Option.when(o.claims.exists(c => c.kind != ClaimKind.DESCRIPTIVE && c.values.isEmpty))(
         "claims: a claim other than DESCRIPTIVE has no values"
       )
-    ).flatten
+    ).flatten ++ (if o.schemaVersion == "synthesis-output-v3" then missingRankIds(o)
+                  else Vector.empty)
+
+  private val RankFact = "rank\\.(\\d{1,4})\\..+".r
+
+  /** synthesis-output-v3 (ruling 31): any asserted rank.<k> fact needs rank.<k>.researcherId in the
+    * same values, so the retry names the missing field. k is digits the code parsed, never other
+    * model text.
+    */
+  def missingRankIds(o: SynthesisOutput): Vector[String] =
+    o.claims.zipWithIndex.flatMap { (c, i) =>
+      c.values.keys
+        .collect { case RankFact(k) => k.toInt }
+        .toVector
+        .distinct
+        .sorted
+        .filterNot(k => c.values.contains(s"rank.$k.researcherId"))
+        .map(k =>
+          s"schema: $$.claims[$i].values: missing key rank.$k.researcherId (required when any rank.$k fact is asserted)"
+        )
+    }
 
   def parseModel(
       text: String,
@@ -121,7 +150,9 @@ object TemplateSynthesizer:
         values
       )
     val g = bundle.graphEvidence
-    def of(t: EvidenceType) = g.filter(_.evidenceType == t)
+    // Corpus window summaries (scope CORPUS) have their own claims below.
+    def corpus(e: EvidenceItem) = e.facts.get("scope").contains("CORPUS")
+    def of(t: EvidenceType) = g.filter(e => e.evidenceType == t && !corpus(e))
     def f(e: EvidenceItem, k: String) = e.facts.getOrElse(k, "")
     def pick(e: EvidenceItem, ks: String*) = ks.flatMap(k => e.facts.get(k).map(k -> _)).toMap
     def name(e: EvidenceItem, id: String, key: String = "displayName") =
@@ -468,6 +499,103 @@ object TemplateSynthesizer:
           ((1 to math.min(k, 5)).flatMap(i => pick(e, s"entry.$i.id")) ++
             (1 to k).flatMap(i => pick(e, s"entry.$i.count"))).toMap
         )
+    }
+
+    // Work order 9 (F2): corpus counts of a window and a stored comparison of two windows. Every
+    // number is a stored fact named by its measure; decimals are written to 4 places (rounded half-up,
+    // which the verifier accepts).
+    def r4(v: String) =
+      BigDecimal(v).setScale(4, BigDecimal.RoundingMode.HALF_UP).bigDecimal.toPlainString
+    g.filter(corpus).foreach { e =>
+      val w = f(e, "window")
+      e.evidenceType match
+        case EvidenceType.COMPONENT_RECORD =>
+          e.facts.get("largestComponentFraction").foreach { share =>
+            claim(
+              ClaimKind.COMPONENT,
+              s"In $w, the coauthorship graph has ${f(e, "components")} connected components; the largest " +
+                s"connected component has ${f(e, "largestComponentSize")} researchers out of " +
+                s"${f(e, "researchers")} researchers, a share of ${r4(share)}.",
+              Seq(e),
+              Some(w),
+              pick(
+                e,
+                "components",
+                "largestComponentId",
+                "largestComponentSize",
+                "researchers",
+                "largestComponentFraction"
+              )
+            )
+          }
+          claim(
+            ClaimKind.COMPONENT,
+            s"In $w, ${f(e, "singletonResearchers")} singleton researchers (researchers without any " +
+              s"coauthor edge in that window) are among the ${f(e, "researchers")} researchers of the " +
+              "coauthorship graph.",
+            Seq(e),
+            Some(w),
+            pick(e, "singletonResearchers", "researchers")
+          )
+        case EvidenceType.COMMUNITY_RECORD =>
+          claim(
+            ClaimKind.COMMUNITY,
+            s"In $w, ${f(e, "communitiesAtLeastMinSize")} communities have size ${f(e, "communityMinSize")} " +
+              s"or more, out of ${f(e, "communities")} communities; the largest community has " +
+              s"${f(e, "largestCommunitySize")} researchers.",
+            Seq(e),
+            Some(w),
+            pick(
+              e,
+              "communitiesAtLeastMinSize",
+              "communityMinSize",
+              "communities",
+              "largestCommunitySize",
+              "largestCommunityId"
+            )
+          )
+          claim(
+            ClaimKind.COMMUNITY,
+            s"Community detection in $w ${
+                if f(e, "communityConverged") == "true" then "converged" else "did not converge"
+              } within its ${f(e, "communityRounds")} rounds.",
+            Seq(e),
+            Some(w),
+            pick(e, "communityConverged", "communityRounds")
+          )
+        case _ =>
+          val (a, b) = (f(e, "fromWindow"), f(e, "toWindow"))
+          for
+            fa <- e.facts.get("fromLargestComponentFraction")
+            fb <- e.facts.get("toLargestComponentFraction")
+            d <- e.facts.get("deltaLargestComponentFraction")
+          do
+            val verdict = BigDecimal(d).signum match
+              case 1  => s"a larger share in $b than in $a"
+              case -1 => s"a smaller share in $b than in $a"
+              case _  => "the same share in both windows"
+            claim(
+              ClaimKind.TEMPORAL_CHANGE,
+              s"The largest connected component's share of researchers went from ${r4(fa)} in $a to " +
+                s"${r4(fb)} in $b (change ${r4(d)}), so it is $verdict.",
+              Seq(e),
+              Some(w),
+              pick(
+                e,
+                "fromLargestComponentFraction",
+                "toLargestComponentFraction",
+                "deltaLargestComponentFraction"
+              )
+            )
+          if f(e, "fromYears") != f(e, "toYears") then
+            claim(
+              ClaimKind.TEMPORAL_CHANGE,
+              s"The compared windows differ in length: $a covers ${f(e, "fromYears")} years and $b " +
+                s"covers ${f(e, "toYears")} years.",
+              Seq(e),
+              Some(w),
+              pick(e, "fromYears", "toYears")
+            )
     }
 
     bundle.semanticEvidence.groupBy(_.facts.getOrElse("index", "")).toVector.sortBy(_._1).foreach {

@@ -1,0 +1,27 @@
+disable D4-worker-loop-receives-without-slot: modules/services/src/main/scala/scholarchain/services/Worker.scala
+  replaced: if ds.openBreakers.nonEmpty || !ds.workflowSlotFree then
+  with:     if ds.openBreakers.nonEmpty then
+sha256 before: 802da40027145351f1a71eb0420ba91c0ce7ab55c556442d6b5adf7206d83745
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] compiling 1 Scala source to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/services/target/scala-3.3.7/classes ...
+[info] done compiling
+[info] SaturationSpec:
+[info] - query-api: with every workflow slot held, jobs, explain, and readiness still answer
+[info] - worker: an overrun job holds only its workflow slot; no job is claimed until it frees *** FAILED ***
+[info]   5.0 did not equal 3.0 (SaturationSpec.scala:156)
+[info] Run completed in 4 seconds, 943 milliseconds.
+[info] Total number of tests run: 2
+[info] Suites: completed 1, aborted 0
+[info] Tests: succeeded 1, failed 1, canceled 0, ignored 0, pending 0
+[info] *** 1 TEST FAILED ***
+[error] Failed tests:
+[error] 	scholarchain.services.SaturationSpec
+[error] (services / Test / testOnly) sbt.TestsFailedException: Tests unsuccessful
+[error] Total time: 7 s, completed Nov 12, 2026, 5:18:09 PM
+sbt exit 1
+restored sha256: 802da40027145351f1a71eb0420ba91c0ce7ab55c556442d6b5adf7206d83745 OK

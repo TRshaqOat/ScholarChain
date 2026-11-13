@@ -508,17 +508,31 @@ trait GraphReadPort:
 
   /** Nodes within depth (1 to graph-read.neighbors-max-depth) of nodeId over the edge types, at
     * most limit (1 to graph-read.neighbors-max-limit) nodes, expanded level by level with
-    * graph.expand. Only reached nodes are expanded, so at most limit nodes are ever read.
+    * graph.expand. Only reached nodes are expanded, so at most offset + limit nodes are ever read.
+    *
+    * Order (Phase 10 pagination): level by level; within a level, in discovery order (the previous
+    * level in its order, read in batches of graph-read.id-batch-size, each batch's rows by edge ID,
+    * then node ID). For an unchanged store this order is fixed, and the first n nodes are the same
+    * for every cap of at least n, so a page is the walk capped at offset + limit with the first
+    * offset nodes dropped. offset + limit is at most graph-read.max-results. edges are the
+    * traversed edges between the start or walked nodes that touch a node of this page. truncated
+    * means more nodes may follow (a cap or a cut template read).
     */
   final def neighbors(
       nodeId: String,
       direction: Direction,
       depth: Int,
       limit: Int,
-      edgeTypes: Seq[String]
+      edgeTypes: Seq[String],
+      offset: Int = 0
   ): Neighborhood =
     limits.range("neighbors depth", depth, limits.neighborsMaxDepth)
     limits.range("neighbors limit", limit, limits.neighborsMaxLimit)
+    require(
+      offset >= 0 && offset <= limits.maxResults - limit,
+      s"neighbors offset $offset out of range 0 to ${limits.maxResults - limit}"
+    )
+    val cap = offset + limit
     val allowed = NeptuneContract.Edges.map(_.label).toSet
     require(
       edgeTypes.nonEmpty && edgeTypes.forall(allowed),
@@ -542,7 +556,7 @@ trait GraphReadPort:
             truncated ||= rows.truncated
             rows.items.foreach { (e, n) =>
               if !seen.contains(n.id) then
-                if seen.size - 1 < limit then
+                if seen.size - 1 < cap then
                   seen(n.id) = n
                   next += n.id
                 else truncated = true
@@ -551,4 +565,7 @@ trait GraphReadPort:
           }
           level = next.result()
           d += 1
-        Neighborhood(Some(start), seen.values.drop(1).toVector, kept.values.toVector, truncated)
+        val page = seen.values.drop(1 + offset).toVector
+        val inPage = page.map(_.id).toSet
+        val edges = kept.values.filter(e => inPage(e.from) || inPage(e.to)).toVector
+        Neighborhood(Some(start), page, edges, truncated)

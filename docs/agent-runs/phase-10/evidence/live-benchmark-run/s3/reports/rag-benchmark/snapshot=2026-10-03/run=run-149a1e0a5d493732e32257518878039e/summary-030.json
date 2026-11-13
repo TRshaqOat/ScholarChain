@@ -1,0 +1,164 @@
+{
+  "schemaVersion": "rag-benchmark-summary-v2",
+  "benchmarkRunId": "run-149a1e0a5d493732e32257518878039e",
+  "runtimeRunId": "run-d94e077cc52fa2fbfa628f21a4c4adaa",
+  "mode": "LIVE",
+  "questionsTotal": 30,
+  "questionsDone": 30,
+  "notDone": [],
+  "checks": {
+    "plan-operations": {
+      "pass": 26,
+      "fail": 4,
+      "notApplicable": 0
+    },
+    "researcher-names": {
+      "pass": 30,
+      "fail": 0,
+      "notApplicable": 0
+    },
+    "verification": {
+      "pass": 30,
+      "fail": 0,
+      "notApplicable": 0
+    },
+    "pair-edges": {
+      "pass": 6,
+      "fail": 0,
+      "notApplicable": 24
+    },
+    "resolution": {
+      "pass": 21,
+      "fail": 0,
+      "notApplicable": 9
+    },
+    "claim-evidence": {
+      "pass": 22,
+      "fail": 0,
+      "notApplicable": 8
+    },
+    "embedding-budget": {
+      "pass": 30,
+      "fail": 0,
+      "notApplicable": 0
+    },
+    "abstention": {
+      "pass": 25,
+      "fail": 5,
+      "notApplicable": 0
+    },
+    "deadline": {
+      "pass": 30,
+      "fail": 0,
+      "notApplicable": 0
+    },
+    "path-hops": {
+      "pass": 3,
+      "fail": 1,
+      "notApplicable": 26
+    },
+    "bundle-budget": {
+      "pass": 24,
+      "fail": 0,
+      "notApplicable": 6
+    },
+    "llm-budget": {
+      "pass": 30,
+      "fail": 0,
+      "notApplicable": 0
+    }
+  },
+  "failures": [
+    "B13 abstention: expected answer, got abstain (UNSUPPORTED_REQUEST)",
+    "B15 plan-operations: needs COMPONENT_LOOKUP; plan [RESEARCHER_RANKING/CORPUS]",
+    "B15 abstention: expected answer, got abstain (NO_VERIFIED_CLAIM)",
+    "B17 abstention: expected answer, got abstain (UNSUPPORTED_REQUEST)",
+    "B18 plan-operations: needs COMMUNITY_COMPARISON; plan [COMPONENT_LOOKUP/RESEARCHER, TOPIC_FILTER/CORPUS]",
+    "B23 plan-operations: needs TEMPORAL_COMPARISON; plan [COMMUNITY_COMPARISON/RESEARCHER]",
+    "B24 plan-operations: needs TEMPORAL_COMPARISON; plan [COMPONENT_LOOKUP/CORPUS]",
+    "B24 abstention: expected answer, got abstain (UNSUPPORTED_REQUEST)",
+    "B29 abstention: expected answer, got abstain (BUDGET_EXHAUSTED)",
+    "B29 path-hops: scr:canon-v1.er-v2:6de4012bbe8608f1d49d18cf9a40a763-scr:canon-v1.er-v2:da6e3bdff14745638f3f5425f0133388: runtime FOUND 1 hops, stored 1 hops, same researchers; no claim cites the path"
+  ],
+  "planSources": {
+    "MODEL": 30
+  },
+  "abstentions": {
+    "UNKNOWN_RESEARCHER": 1,
+    "UNSUPPORTED_REQUEST": 4,
+    "ANSWERED": 22,
+    "NO_VERIFIED_CLAIM": 1,
+    "BUDGET_EXHAUSTED": 1,
+    "AMBIGUOUS_RESEARCHER": 1
+  },
+  "resolutions": {
+    "RESOLVED_DOMINANT": 26,
+    "AMBIGUOUS": 2,
+    "UNKNOWN_RESEARCHER": 1
+  },
+  "verification": {
+    "verified": 72,
+    "partiallySupported": 0,
+    "unsupported": 12,
+    "conflicting": 1
+  },
+  "claims": 72,
+  "graph": {
+    "questionsWithReads": 27,
+    "reads": 1028,
+    "rows": 3727,
+    "truncatedReads": 178,
+    "evidenceItems": 195,
+    "tokens": 34273,
+    "pathStatuses": {
+      "FOUND": 4
+    },
+    "latency": {
+      "p50Ms": 4,
+      "p95Ms": 333,
+      "maxMs": 477,
+      "totalMs": 1213
+    }
+  },
+  "semantic": {
+    "questionsWithEmbedding": 24,
+    "questionsWithHits": 24,
+    "embeddingCalls": 24,
+    "hits": 61,
+    "tokens": 24041,
+    "indexes": {
+      "topic-institution-summary-v1": 6,
+      "paper-abstract-v1": 4,
+      "collaboration-path-v1": 4,
+      "collaboration-community-v1": 2,
+      "researcher-profile-v1": 18
+    },
+    "latency": {
+      "p50Ms": 299,
+      "p95Ms": 2263,
+      "maxMs": 2715,
+      "totalMs": 14799
+    }
+  },
+  "llm": {
+    "attempts": 57,
+    "requests": 57,
+    "attemptsByStage": {
+      "QUERY_PLANNING": 31,
+      "ANSWER_SYNTHESIS": 26
+    },
+    "outcomes": {
+      "INVALID_OUTPUT": 4,
+      "OK": 53
+    },
+    "inputTokens": 212696,
+    "outputTokens": 39797,
+    "throttleWaitMs": 228985
+  },
+  "latency": {
+    "p50Ms": 14961,
+    "p95Ms": 31090,
+    "maxMs": 45712,
+    "totalMs": 463410
+  }
+}

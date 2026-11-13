@@ -1,0 +1,53 @@
+OK   GET :8080/healthz -> 200 (X-Request-Id smoke-wo11)
+     {"status":"ok"}
+OK   GET :8080/readyz -> 200 (X-Request-Id smoke-wo11)
+     {"status":"ready"}
+OK   GET :8081/healthz -> 200 (X-Request-Id smoke-wo11)
+     {"status":"ok"}
+OK   GET :8081/readyz -> 200 (X-Request-Id smoke-wo11)
+     {"status":"ready"}
+OK   GET :8082/healthz -> 200 (X-Request-Id smoke-wo11)
+     {"status":"ok"}
+OK   GET :8082/readyz -> 200 (X-Request-Id smoke-wo11)
+     {"status":"ready"}
+OK   POST :8080/v1/query -> 200 (X-Request-Id smoke-wo11)
+     {"queryId":"qry-d34e2064af2b556804e4b4fabdd81d0f","mode":"synchronous","answer":{"summary":"Template answer (fake mode; no language model was called). 'Ada Lovelace' was linked to Ada Lovelace (scr:canon-v1.er-v2:3ed012c7e9d38ac0dc513403ec31176a) by dominant-name-v1: 10 of 11 works among researchers...
+     sync: 4 VERIFIED of 4 claims, abstained=False
+OK   POST :8080/v1/query -> 200 (X-Request-Id smoke-wo11)
+     ...
+     B13-shaped sync POST: queryId=qry-c8cb0d3c808ac06ac6a65f6634aae191, abstained=False, abstention=None, window=2000-2014
+     claim-1 VERIFIED: In 2000-2014, the coauthorship graph has 7709 connected components; the largest connected component has 46062 researchers out of 66350 researchers, a share of 0.6942.
+     claim-2 VERIFIED: In 2000-2014, 3119 singleton researchers (researchers without any coauthor edge in that window) are among the 66350 researchers of the coauthorship graph.
+OK   GET :8081/v1/evidence/ev-b0de284ed5b7a6dd4680db3a6dabcf76 -> 200 (X-Request-Id smoke-wo11)
+     ...
+     corpus evidence ev-b0de284ed5b7a6dd4680db3a6dabcf76: type=COMPONENT_RECORD, sourceUri=curated/window-summary/snapshot=2026-10-03/run=run-6fbad498beb0d8f570df67665fb97544/part-00000.jsonl#2000-2014, provenance.runId=run-1de2293597c338227290eb382de16957, sourceRecordId=2000-2014
+OK   POST :8080/v1/query -> 202 (X-Request-Id smoke-wo11)
+     {"jobId":"job-e8d0035a78478debc173f572611182ca","queryId":"qry-dcb73175231fb4d6482b699838144848","mode":"asynchronous","state":"QUEUED","statusUrl":"/v1/jobs/job-e8d0035a78478debc173f572611182ca"}
+OK   POST :8080/v1/query -> 202 (X-Request-Id smoke-wo11, Idempotent-Replay)
+     {"jobId":"job-e8d0035a78478debc173f572611182ca","queryId":"qry-dcb73175231fb4d6482b699838144848","mode":"asynchronous","state":"RUNNING","statusUrl":"/v1/jobs/job-e8d0035a78478debc173f572611182ca"}
+OK   GET :8080/v1/jobs/job-e8d0035a78478debc173f572611182ca -> 200 (X-Request-Id smoke-wo11)
+     ...
+OK   GET :8080/v1/jobs/job-e8d0035a78478debc173f572611182ca -> 200 (X-Request-Id smoke-wo11)
+     {"jobId":"job-e8d0035a78478debc173f572611182ca","queryId":"qry-dcb73175231fb4d6482b699838144848","state":"SUCCEEDED","stage":"AUDIT","createdAt":"2026-11-12T21:59:46.531Z","updatedAt":"2026-11-12T21:59:46.552Z","startedAt":"2026-11-12T21:59:46.537Z","finishedAt":"2026-11-12T21:59:46.552Z","error":null,"statusUrl":"/v1/jobs/job-e8d0035a78478debc173f572611182ca","resultUrl":"/v1/jobs/job-e8d0035a78478debc173f572611182ca/result"}
+OK   GET :8080/v1/jobs/job-e8d0035a78478debc173f572611182ca/result -> 200 (X-Request-Id smoke-wo11)
+     {"queryId":"qry-dcb73175231fb4d6482b699838144848","mode":"asynchronous","answer":{"summary":"Template answer (fake mode; no language model was called). 'Ada Lovelace' was linked to Ada Lovelace (scr:canon-v1.er-v2:3ed012c7e9d38ac0dc513403ec31176a) by dominant-name-v1: 10 of 11 works among researcher...
+     async result: mode=asynchronous, 4 VERIFIED of 4 claims
+OK   GET :8081/v1/evidence/ev-c6ce519f6d2765cea755628bc7901ab1 -> 200 (X-Request-Id smoke-wo11)
+     {"evidenceId":"ev-c6ce519f6d2765cea755628bc7901ab1","evidenceType":"IDENTITY_RESOLUTION","subjectIds":["scr:canon-v1.er-v2:3ed012c7e9d38ac0dc513403ec31176a"],"workId":null,"sourceUri":"dynamodb:EntityLinkCache/name-v1:ada lovelace/scr:canon-v1.er-v2:3ed012c7e9d38ac0dc513403ec31176a","chunkId":null,"graphPath":null,"score":null,"text":null,"textTruncated":false,"textHash":null,"facts":{"displayName":"Ada Lovelace","works":"10","name":"Ada Lovelace","candidateCount":"2","minWorks":"5","decision":"...
+OK   GET :8080/v1/explain/qry-d34e2064af2b556804e4b4fabdd81d0f -> 200 (X-Request-Id smoke-wo11)
+     {"queryId":"qry-d34e2064af2b556804e4b4fabdd81d0f","runId":"run-d21e6d611181c34f6794f91d28416e1b","createdAt":"2026-11-12T21:59:46.400758Z","auditSchemaVersion":"rag-audit-v3","mode":"FAKE","llm":"STUB...
+     explain qry-d34e2064af2b556804e4b4fabdd81d0f: llm=STUBBED, stages=10, verified=4, cited evidence in explain=n/a
+OK   GET :8080/v1/explain/qry-dcb73175231fb4d6482b699838144848 -> 200 (X-Request-Id smoke-wo11)
+     {"queryId":"qry-dcb73175231fb4d6482b699838144848","runId":"run-d21e6d611181c34f6794f91d28416e1b","createdAt":"2026-11-12T21:59:46.538178Z","auditSchemaVersion":"rag-audit-v3","mode":"FAKE","llm":"STUB...
+     explain qry-dcb73175231fb4d6482b699838144848: llm=STUBBED, stages=10, verified=4, cited evidence in explain=True
+OK   POST :8080/v1/query -> 401 (X-Request-Id smoke-wo11)
+     {"error":"UNAUTHORIZED","message":"missing or invalid API key","traceId":"smoke-trace-wo11","requestId":"smoke-wo11","retryable":false}
+OK   GET :8082/metrics -> 401 (X-Request-Id smoke-wo11)
+     {"error":"UNAUTHORIZED","message":"missing or invalid API key","traceId":"smoke-trace-wo11","requestId":"smoke-wo11","retryable":false}
+OK   GET :8082/metrics -> 200 (X-Request-Id smoke-wo11)
+     ...
+     worker counters: {"queueReceives": 1, "jobsSucceeded": 1, "jobsFailed": 0, "duplicateDeliveries": 0, "poisonMessages": 0, "answers": 1, "verifiedClaims": 4}
+OK   GET :8080/metrics -> 200 (X-Request-Id smoke-wo11)
+     ...
+     query-api requests: {"/healthz": {"200": 1}, "/readyz": {"200": 1}, "/v1/explain/{queryId}": {"200": 2}, "/v1/jobs/{jobId}": {"200": 2}, "/v1/jobs/{jobId}/result": {"200": 1}, "/v1/query": {"200": 2, "202": 2}, "unmatched": {"401": 1}}
+SMOKE PASSED

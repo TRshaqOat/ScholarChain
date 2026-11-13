@@ -539,6 +539,326 @@ class VerifierSpec extends AnyFunSuite:
     }
   }
 
+  /** A FACET_RECORD of Grace Hopper's topics (three entries), added to a context's bundle. */
+  private def withFacet(c: Verifier.Context, extra: Map[String, String] = Map.empty) =
+    val base = c.bundle.graphEvidence.find(_.evidenceType == EvidenceType.METRIC_RECORD).get
+    val facet = base.copy(
+      evidenceId = ev(EvidenceType.FACET_RECORD, Seq(grace, "TOPIC", "all-years", "n=3"), graphRun),
+      evidenceType = EvidenceType.FACET_RECORD,
+      subjectIds = Vector(grace, "TOPIC", "all-years", "n=3"),
+      facts = Map(
+        "subjectId" -> grace,
+        "displayName" -> "Grace Hopper",
+        "window" -> "all-years",
+        "basis" -> "AUTHORED works",
+        "truncated" -> "false",
+        "entry.1.id" -> "openalex:T1",
+        "entry.1.name" -> "Cloud Computing Systems",
+        "entry.1.count" -> "41",
+        "entry.2.id" -> "openalex:T2",
+        "entry.2.name" -> "Fault Tolerance",
+        "entry.2.count" -> "12",
+        "entry.3.id" -> "openalex:T3",
+        "entry.3.name" -> "Compilers",
+        "entry.3.count" -> "5"
+      ) ++ extra
+    )
+    (c.copy(bundle = c.bundle.copy(graphEvidence = c.bundle.graphEvidence :+ facet)), facet)
+
+  private def detail(d: ClaimDraft, c: Verifier.Context, rule: String) =
+    Verifier.check(d, c).checks.filter(_.rule == rule).map(_.detail).mkString("; ")
+
+  test("R3-1: a list-position ordinal binds to the index k of an asserted hop or entry") {
+    context(pathQ) { (c, _) =>
+      val p = c.bundle.graphEvidence.find(_.evidenceType == EvidenceType.GRAPH_PATH).get
+      def hop(k: Int) = Verifier.HopFacts.map(f => s"hop.$k.$f" -> p.facts(s"hop.$k.$f")).toMap
+      // Review 3 R3-1 input (B10 shape): the second hop, all five hop 2 facts asserted.
+      val second = draft(
+        ClaimKind.PATH_HOP,
+        "The second hop links Grace Hopper and Edsger Dijkstra with 1 joint publication in 2012.",
+        Vector(p.evidenceId),
+        hop(2),
+        subjects = Vector.empty
+      )
+      assert(status(second, c) == VERIFIED, Verifier.check(second, c))
+      // The wrong position fails as a position, never as an unbound rank.
+      val wrong = second.copy(text = second.text.replace("second", "third"))
+      assert(status(wrong, c) == UNSUPPORTED && failed(wrong, c) == Set("numbers-in-text"))
+      assert(detail(wrong, c, "numbers-in-text").contains("position k"))
+      assert(!detail(wrong, c, "numbers-in-text").contains("rank"))
+      val first = draft(
+        ClaimKind.PATH_HOP,
+        "The first hop links Ada Lovelace and Grace Hopper with two joint publications, first in 2001 and last in 2002.",
+        Vector(p.evidenceId),
+        hop(1),
+        subjects = Vector.empty
+      )
+      assert(status(first, c) == VERIFIED, Verifier.check(first, c))
+      // Both hops in one claim: either position may be written.
+      val both = first.copy(
+        text = "The first hop has 2 joint publications and the second hop has 1 joint publication.",
+        values = hop(1) ++ hop(2)
+      )
+      assert(status(both, c) == VERIFIED, Verifier.check(both, c))
+    }
+    context(pairQ) { (c0, _) =>
+      val (c, facet) = withFacet(c0)
+      // Review 3 R3-1 input (B25 shape): the second most common topic, entry.2 asserted.
+      val topic = draft(
+        ClaimKind.FACET,
+        "Fault Tolerance is Grace Hopper's second most common topic with 12 papers in all-years.",
+        Vector(facet.evidenceId),
+        Map("entry.2.name" -> "Fault Tolerance", "entry.2.count" -> "12"),
+        subjects = Vector(grace)
+      )
+      assert(status(topic, c) == VERIFIED, Verifier.check(topic, c))
+      assert(status(topic.copy(text = topic.text.replace("second", "third")), c) == UNSUPPORTED)
+      assert(
+        status(topic.copy(text = topic.text.replace("second most", "fiftieth most")), c) ==
+          UNSUPPORTED
+      )
+      // A year range after "first" (blanked before the conversion in verifier-v3) is a time marker.
+      val years = edgeClaim.copy(
+        text =
+          "Ada Lovelace and Grace Hopper first collaborated in 2001-2002 and have 2 joint publications in all-years.",
+        values = edgeClaim.values ++ Map(
+          "firstCollaborationYear" -> "2001",
+          "lastCollaborationYear" -> "2002"
+        )
+      )
+      assert(status(years, c) == VERIFIED, Verifier.check(years, c))
+    }
+  }
+
+  test("R3-1: an ordering word is no count, and an ordinal outside a ranking is no rank") {
+    import Verifier.wordsToDigits as w
+    assert(w("First, they met. Second, they wrote; Third, done.").forall(!_.isDigit))
+    assert(w("Firstly, x.\nSecondly, y.").forall(!_.isDigit))
+    // Mid-sentence ordinals are still positions or ranks.
+    assert(w("the first, second, and third hops") == "the 1st, 2nd, and 3rd hops")
+    context(pairQ) { (c, r) =>
+      val kept = edgeClaim
+      val v = lines(
+        c,
+        r,
+        kept,
+        "First, Ada Lovelace and Grace Hopper have 2 joint publications.",
+        Vector.empty
+      )
+      assert(v.summary == "First, Ada Lovelace and Grace Hopper have 2 joint publications.")
+    }
+  }
+
+  test("R3-2: the measure name 'on one paper' and fixed phrases are not counts") {
+    import Verifier.wordsToDigits as w
+    assert(w("98 authors on one paper") == "98 authors on a paper")
+    assert(w("286 coauthors on a single paper") == "286 coauthors on a paper")
+    assert(w("the largest team on one paper") == "the largest team on a paper")
+    assert(w("once again; twice as many coauthors").forall(!_.isDigit))
+    // Outside the measure name, the same words still count.
+    assert(w("they collaborated on one paper") == "they collaborated on 1 paper")
+    assert(w("they wrote a single paper together") == "they wrote 1 paper together")
+    context(pairQ) { (c, _) =>
+      // Review 3 R3-2 input (B05 shape): maximumTeamSize with "authors on one paper".
+      val team = draft(
+        ClaimKind.METRIC_VALUE,
+        "Ada Lovelace's largest team had 2 authors on one paper in all-years.",
+        Vector(adaMetric),
+        Map("maximumTeamSize" -> "2")
+      )
+      assert(status(team, c) == VERIFIED, Verifier.check(team, c))
+      assert(
+        status(team.copy(text = team.text.replace("one paper", "a single paper")), c) == VERIFIED
+      )
+      assert(
+        status(team.copy(text = team.text.replace("2 authors", "3 authors")), c) == UNSUPPORTED
+      )
+    }
+    context("Which researchers have the most distinct coauthors?") { (c, _) =>
+      // Review 3 R3-2 input (B04 shape): a correct ranking claim with "coauthors on one paper".
+      val ranking = c.bundle.graphEvidence.find(_.evidenceType == EvidenceType.RANKING_RECORD).get
+      assert(ranking.facts("rank.1.researcherId") == grace && ranking.facts("rank.1.value") == "2")
+      val b04 = draft(
+        ClaimKind.RANKING,
+        "Grace Hopper ranks first with 2 distinct coauthors on one paper in all-years.",
+        Vector(ranking.evidenceId),
+        Map("rank.1.researcherId" -> grace, "rank.1.storedRank" -> "1", "rank.1.value" -> "2"),
+        subjects = Vector(grace)
+      )
+      assert(status(b04, c) == VERIFIED, Verifier.check(b04, c))
+      val again = b04.copy(text = "Once again, Grace Hopper ranks first with 2 distinct coauthors.")
+      assert(status(again, c) == VERIFIED, Verifier.check(again, c))
+    }
+  }
+
+  test(
+    "n4 and review 2 n2: a rank is checked against a stored rank, never a year or a listed value"
+  ) {
+    context(pairQ) { (c, r) =>
+      val kept = edgeClaim.copy(
+        text =
+          "Ada Lovelace and Grace Hopper have 2 joint publications in all-years, first in 2001.",
+        values = edgeClaim.values ++ Map("firstCollaborationYear" -> "2001")
+      )
+      assert(status(kept, c) == VERIFIED)
+      def say(s: String) = lines(c, r, kept, s, Vector.empty).summary
+      // Review 3 n4 input: a single year after the ordinal no longer hides the rank.
+      assert(say("Grace Hopper ranks second since 2001.") == kept.text)
+      assert(say("Grace Hopper is second since 2001.") == kept.text)
+      // A measure word nearer the year binds the year as a year; the ordinal must still be a rank.
+      assert(say("Grace Hopper ranks second for joint publications since 2001.") == kept.text)
+      assert(say("Grace Hopper is second for joint publications since 2001.") == kept.text)
+      assert(say("Grace Hopper ranks first for joint publications since 2001.") == kept.text)
+      // "first" before a year without a rank word stays a time marker.
+      val time = "Ada Lovelace and Grace Hopper first coauthored in 2001."
+      assert(say(time) == time)
+    }
+    context("Which researchers have the most distinct coauthors?") { (c, _) =>
+      val ranking = c.bundle.graphEvidence.find(_.evidenceType == EvidenceType.RANKING_RECORD).get
+      // Review 2 n2 input: rank 1's value is 2, so "2nd" equals a listed value but is not a rank.
+      val n2 = draft(
+        ClaimKind.RANKING,
+        "Grace Hopper ranks 2nd by distinct coauthors in all-years.",
+        Vector(ranking.evidenceId),
+        Map("rank.1.value" -> "2", "rank.1.researcherId" -> grace),
+        subjects = Vector(grace)
+      )
+      assert(status(n2, c) == UNSUPPORTED && failed(n2, c) == Set("numbers-in-text"))
+      assert(
+        status(
+          n2.copy(text = "Grace Hopper ranks 2 by distinct coauthors in all-years."),
+          c
+        ) == UNSUPPORTED
+      )
+      assert(
+        status(
+          n2.copy(text = "Grace Hopper is #2 by distinct coauthors in all-years."),
+          c
+        ) == UNSUPPORTED
+      )
+      // The value written as a value still verifies.
+      val value = n2.copy(text = "Grace Hopper has 2 distinct coauthors in all-years.")
+      assert(status(value, c) == VERIFIED, Verifier.check(value, c))
+    }
+  }
+
+  test("n5: ordinals up to fiftieth (and beyond) are checked") {
+    import Verifier.wordsToDigits as w
+    assert(
+      w(
+        "eleventh, twelfth, nineteenth, twentieth, twenty-first, forty-ninth, fiftieth, sixtieth"
+      ) ==
+        "11th, 12th, 19th, 20th, 21st, 49th, 50th, 60th"
+    )
+    context("Which researchers have the most distinct coauthors?") { (c, _) =>
+      val ranking = c.bundle.graphEvidence.find(_.evidenceType == EvidenceType.RANKING_RECORD).get
+      val k = (1 to 3).find(i => ranking.facts(s"rank.$i.researcherId") == grace).get
+      val d = draft(
+        ClaimKind.RANKING,
+        "Grace Hopper ranks twelfth by distinct coauthors in all-years.",
+        Vector(ranking.evidenceId),
+        Map(s"rank.$k.storedRank" -> k.toString, s"rank.$k.researcherId" -> grace),
+        subjects = Vector(grace)
+      )
+      assert(status(d, c) == UNSUPPORTED && failed(d, c) == Set("numbers-in-text"))
+    }
+  }
+
+  test(
+    "n6: the prompt's measure names verify: coauthors per paper, intensity in joint publications"
+  ) {
+    context(pairQ) { (c, _) =>
+      val avg = draft(
+        ClaimKind.METRIC_VALUE,
+        "In all-years, Ada Lovelace has an average of 0.3 coauthors per paper.",
+        Vector(adaMetric),
+        Map("averageCoauthorsPerPaper" -> "0.3")
+      )
+      assert(status(avg, c) == VERIFIED, Verifier.check(avg, c))
+      val intensity = draft(
+        ClaimKind.METRIC_VALUE,
+        "In all-years, Grace Hopper has a collaboration intensity of 3 joint publications.",
+        Vector(graceMetric),
+        Map("weightedDegree" -> "3"),
+        subjects = Vector(grace)
+      )
+      assert(status(intensity, c) == VERIFIED, Verifier.check(intensity, c))
+      // Another measure's name still fails.
+      assert(
+        status(
+          avg.copy(text = "In all-years, Ada Lovelace has 0.3 publications."),
+          c
+        ) == UNSUPPORTED
+      )
+    }
+  }
+
+  test("review 2 n3: a name inside a longer bundle text, or cut by a one-word text, is flagged") {
+    context(pairQ) { (c0, _) =>
+      val (c, _) = withFacet(
+        c0,
+        Map("entry.4.name" -> "Barbara Liskov Systems Group", "entry.5.name" -> "Turing")
+      )
+      // Barbara Liskov is a corpus researcher outside this bundle; only a longer text holds her name.
+      assert(!c.researcherNames("Barbara Liskov"))
+      assert(
+        Verifier.unknownNames("Ada Lovelace met Barbara Liskov.", c).map(_._1) == Vector(
+          "Barbara Liskov"
+        )
+      )
+      // "Turing" alone is a bundle text; it no longer cuts "Alan Turing" to one word.
+      assert(
+        Verifier.unknownNames("Ada Lovelace met Alan Turing.", c).map(_._1) == Vector("Alan Turing")
+      )
+      // Whole bundle texts still pass.
+      assert(Verifier.unknownNames("Barbara Liskov Systems Group studies Turing.", c).isEmpty)
+      assert(Verifier.unknownNames("Fault Tolerance and Cloud Computing Systems.", c).isEmpty)
+    }
+  }
+
+  test("n7: the audit records removed claims and left-out lines with their reasons") {
+    val bad = edgeClaim.copy(
+      claimId = "claim-1",
+      text = "Ada Lovelace and Grace Hopper have three joint publications in all-years."
+    )
+    val good = edgeClaim.copy(claimId = "claim-2")
+    val synth = SynthesisOutput(
+      RuntimeSchemas.SynthesisOutput,
+      "They have 5 joint publications.",
+      Vector(bad, good),
+      Vector("Alan Turing may be a coauthor.", "The window is all-years.")
+    )
+    val llm = RecordedLlm(Vector(Right("{}"), Right("{}"), Right(write(synth))))
+    withWorld(Some(llm)) { w =>
+      val r = ok(w.ask(pairQ))
+      val a = r.audit
+      assert(a.schemaVersion == "rag-audit-v3")
+      assert(!RuntimeApi.llmStubbed(a)) // a model client was given
+      assert(
+        a.removedClaims.map(x => (x.claimId, x.text, x.status)) == Vector(
+          ("claim-1", bad.text, UNSUPPORTED)
+        )
+      )
+      assert(a.removedClaims.head.failedChecks.map(_.rule) == Vector("numbers-in-text"))
+      assert(
+        a.droppedLines.map(x => (x.part, x.text)) ==
+          Vector(
+            LinePart.SUMMARY -> synth.summary,
+            LinePart.UNCERTAINTY -> "Alan Turing may be a coauthor."
+          )
+      )
+      assert(a.droppedLines(0).reasons.exists(_.contains("5 is not an asserted fact")))
+      assert(a.droppedLines(1).reasons.exists(_.contains("Alan Turing")))
+      // The written audit object holds them; the answer does not; the service view drops the text.
+      val stored = RuntimeApi.audit(a.queryId, w.setup, w.audit.reader).fold(fail(_), identity).get
+      assert(stored == a)
+      assert(!write(r.answer).contains("three joint publications"))
+      val view = RuntimeApi.withoutModelText(a)
+      assert(view.removedClaims.forall(_.text.isEmpty) && view.droppedLines.forall(_.text.isEmpty))
+      assert(view.removedClaims.head.failedChecks == a.removedClaims.head.failedChecks)
+    }
+  }
+
   test("ruling 29: the runtime run ID changes with the verifier version") {
     withWorld() { w =>
       val id = Workflow.runIdFor(config, Seq("g"), w.prompts, RuntimeMode.FAKE)
@@ -596,6 +916,125 @@ class VerifierSpec extends AnyFunSuite:
         v.uncertainty.tail == Vector(
           "2 drafted uncertainty line(s) were left out because they failed verification."
         )
+      )
+    }
+  }
+
+  test("work order 9, live B18 shape: a number written with digit-group commas is one number") {
+    assert(Verifier.ungroup("12,345 and 1,234,567.") == "12345 and 1234567.")
+    // Only exact groups of three digits: a year list or a short group stays apart.
+    assert(Verifier.ungroup("2001,2002 and 1,23 and 12,3456") == "2001,2002 and 1,23 and 12,3456")
+    context(pairQ) { (c0, _) =>
+      // Ada's metric item with a component size of 12345 (the failure shape: a COMPONENT claim
+      // citing a metric item, its componentSize written with a comma).
+      val b = c0.bundle
+      val c = c0.copy(bundle =
+        b.copy(graphEvidence =
+          b.graphEvidence.map(e =>
+            if e.evidenceId == adaMetric then e.copy(facts = e.facts + ("componentSize" -> "12345"))
+            else e
+          )
+        )
+      )
+      val size = Map("componentSize" -> "12345")
+      val claim = draft(
+        ClaimKind.COMPONENT,
+        "In all-years, Ada Lovelace is in a connected component of 12,345 researchers.",
+        Vector(adaMetric),
+        size
+      )
+      assert(status(claim, c) == VERIFIED, Verifier.check(claim, c).checks)
+      // A wrong grouped number, or a malformed group, still fails.
+      val wrong = claim.copy(text =
+        "In all-years, Ada Lovelace is in a connected component of 12,346 researchers."
+      )
+      assert(status(wrong, c) == UNSUPPORTED)
+      assert(
+        Verifier
+          .check(wrong, c)
+          .checks
+          .exists(x => x.rule == "numbers-in-text" && x.detail.contains("12346 is not"))
+      )
+      val broken = claim.copy(text =
+        "In all-years, Ada Lovelace is in a connected component of 1,2345 researchers."
+      )
+      assert(status(broken, c) == UNSUPPORTED)
+    }
+  }
+
+  test(
+    "work order 9, live B22 shape: a claim on one side of a stored comparison may take that side's window"
+  ) {
+    context(pairQ) { (c0, r) =>
+      val changeEv =
+        ev(EvidenceType.TEMPORAL_CHANGE, Seq(grace, "CHANGE#2000-2014>2015-2026"), metricRun)
+      val change = scholarchain.core.EvidenceItem(
+        scholarchain.core.SchemaVersions.EvidenceItem,
+        changeEv,
+        EvidenceType.TEMPORAL_CHANGE,
+        Vector(grace),
+        None,
+        s"dynamodb:ResearcherMetricCache/$grace/CHANGE#2000-2014>2015-2026",
+        None,
+        None,
+        None,
+        None,
+        None,
+        Map(
+          "window" -> "2000-2014>2015-2026",
+          "fromWindow" -> "2000-2014",
+          "toWindow" -> "2015-2026",
+          "researcherId" -> grace,
+          "displayName" -> "Grace Hopper",
+          "fromDistinctCoauthorCount" -> "2",
+          "toDistinctCoauthorCount" -> "3",
+          "deltaDistinctCoauthorCount" -> "1"
+        ),
+        r.answer.response.provenance
+      )
+      val c = c0.copy(bundle = c0.bundle.copy(graphEvidence = c0.bundle.graphEvidence :+ change))
+      def d(text: String, window: String, values: Map[String, String]) =
+        draft(ClaimKind.METRIC_VALUE, text, Vector(changeEv), values, Some(window), Vector(grace))
+      val to = Map("toDistinctCoauthorCount" -> "3")
+      val from = Map("fromDistinctCoauthorCount" -> "2")
+      // The to side in the to window, and the from side in the from window, verify.
+      val toClaim = d("In 2015-2026, Grace Hopper had 3 distinct coauthors.", "2015-2026", to)
+      assert(status(toClaim, c) == VERIFIED, Verifier.check(toClaim, c).checks)
+      assert(
+        status(d("In 2000-2014, Grace Hopper had 2 distinct coauthors.", "2000-2014", from), c) ==
+          VERIFIED
+      )
+      // The other side's window, or a delta (a fact of the pair), keeps the comparison window only.
+      assert(
+        status(d("In 2000-2014, Grace Hopper had 3 distinct coauthors.", "2000-2014", to), c) ==
+          CONFLICTING
+      )
+      assert(
+        status(
+          d(
+            "In 2015-2026, Grace Hopper had 3 distinct coauthors, 1 more.",
+            "2015-2026",
+            to + ("deltaDistinctCoauthorCount" -> "1")
+          ),
+          c
+        ) == CONFLICTING
+      )
+      assert(
+        status(
+          d("In 2015-2026, Grace Hopper had 3 distinct coauthors.", "2015-2026", to ++ from),
+          c
+        ) == CONFLICTING
+      )
+      // The comparison window still verifies a claim on both sides.
+      assert(
+        status(
+          d(
+            "Grace Hopper's distinct coauthors went from 2 in 2000-2014 to 3 in 2015-2026.",
+            "2000-2014>2015-2026",
+            to ++ from
+          ),
+          c
+        ) == VERIFIED
       )
     }
   }

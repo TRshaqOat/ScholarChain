@@ -1,0 +1,794 @@
+openapi: 3.0.3
+info:
+  title: ScholarChain REST services
+  version: v1
+  description: |
+    Three deployables built from modules/services (Phase 10 ruling 1):
+    query-api (POST /v1/query, GET /v1/jobs/{jobId}, GET /v1/jobs/{jobId}/result,
+    GET /v1/explain/{queryId}), graph-evidence-api (GET /v1/evidence/{evidenceId},
+    GET /v1/graph/nodes/{nodeId}, GET /v1/graph/nodes/{nodeId}/neighbors), and worker (an SQS
+    consumer with no API routes). Every service also serves GET /healthz, GET /readyz, and GET /metrics.
+
+    Async jobs (ruling 7): POST /v1/query with "execution": "async" writes a QUEUED job record and
+    sends one queue message holding only the job and query IDs. The worker moves the job
+    QUEUED -> RUNNING -> SUCCEEDED or FAILED with conditional writes (only the worker whose
+    QUEUED -> RUNNING write passed runs it, so a redelivered message never runs a job twice), runs
+    it under runtime.question.deadline-ms, and deletes the message only after a final state is
+    written. A job still RUNNING at its message's last delivery (services.queue.max-receive-count)
+    is moved to FAILED (DEADLINE_EXCEEDED). Malformed messages, and messages whose job does not
+    exist, are never run or deleted: the queue's redrive policy moves them to the dead-letter queue.
+
+    Conventions:
+    - JSON only (Content-Type application/json on POST), path versioning /v1.
+    - Every response carries X-Request-Id and X-Trace-Id. A client value of 1 to 128 characters of
+      [A-Za-z0-9._:-] is echoed; otherwise one is generated (req-<32 hex>, trace-<32 hex>).
+    - Every error body is ErrorBody: a typed error code, message, traceId, requestId, retryable.
+    - Authentication: one API key in X-Api-Key, compared in constant time with the value of the
+      environment variable named by services.api-key-env. Missing or wrong key: 401. /healthz and
+      /readyz need no key. 403 FORBIDDEN is reserved and unused in the single-key deployment.
+    - Malformed IDs are answered 404 without a store read.
+    - Option fields of response bodies are always present, null when absent.
+
+    Every example under openapi/examples/ was produced by the fake-mode test fixture world
+    (ServiceFixtures, three fictional researchers), except the two query-request examples, which are
+    hand-written (the first is the spec request). They are not results of the deployed corpus.
+    ServicesContractSpec parses every example against the Scala models.
+servers:
+  - url: http://127.0.0.1:8080
+    description: query-api in local fake mode (services.query-api.port)
+  - url: http://127.0.0.1:8081
+    description: graph-evidence-api in local fake mode (services.graph-evidence-api.port)
+  - url: http://127.0.0.1:8082
+    description: worker in local fake mode (services.worker.port; /healthz, /readyz, /metrics only)
+security:
+  - apiKey: []
+paths:
+  /v1/query:
+    post:
+      summary: Answer a collaboration question, now (sync) or as a job (async) (query-api)
+      description: |
+        Validates the body, mints a query ID, and claims the Idempotency-Key when one is sent.
+        "execution": "sync" (default) runs the Phase 9 workflow inline under
+        operations.synchronous-deadline-ms (a hard timeout at the same value backs the runtime's
+        cooperative deadline) and answers 200. "execution": "async" writes a QUEUED job and one queue
+        message and answers 202 with the job reference; if the message cannot be sent the job is
+        moved to FAILED at once and the answer is 502. Structured fields override the planner
+        (Phase 9 ruling 4). Rate limited per instance by services.query-api.query-rate-per-minute
+        (sync and async alike).
+        With an Idempotency-Key: the same key and canonical body replays the stored response
+        (header Idempotent-Replay: true): the job reference (202, with the job's current state) when
+        the first request was async, otherwise the stored answer (200). A different body (including
+        a different execution) is 409; a claimed sync key whose answer is not stored (still running,
+        or failed) is 409. Without a key every POST is a new query.
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/RequestId'
+        - $ref: '#/components/parameters/TraceId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QueryBody'
+            examples:
+              spec:
+                externalValue: openapi/examples/query-request.json
+              minimal:
+                externalValue: openapi/examples/query-request-minimal.json
+              async:
+                externalValue: openapi/examples/query-request-async.json
+      responses:
+        '200':
+          description: The answer (possibly an abstention) with verified claims and links
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SyncQueryResponse'
+              examples:
+                answered:
+                  externalValue: openapi/examples/query-response-sync.json
+        '202':
+          description: Async request accepted; poll statusUrl
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AsyncQueryResponse'
+              examples:
+                queued:
+                  externalValue: openapi/examples/query-response-async.json
+        '400':
+          description: MALFORMED_JSON, INVALID_FIELD, or REQUEST_TOO_LARGE (services.max-body-bytes)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorBody'
+              examples:
+                malformed:
+                  externalValue: openapi/examples/error-malformed-json.json
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          description: IDEMPOTENCY_CONFLICT
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorBody'
+              examples:
+                conflict:
+                  externalValue: openapi/examples/error-idempotency-conflict.json
+        '422':
+          description: UNSUPPORTED_CONSTRAINT (unknown constraint or analysis field, unranked or unknown rankingMetric, too many or too long filter terms) or UNSUPPORTED_RETRIEVAL_MODE (unknown retrieval field, a limit above its configured maximum)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorBody'
+              examples:
+                constraint:
+                  externalValue: openapi/examples/error-unsupported-constraint.json
+                retrieval:
+                  externalValue: openapi/examples/error-unsupported-retrieval-mode.json
+        '429':
+          description: RATE_LIMITED, with Retry-After 60
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorBody'
+              examples:
+                limited:
+                  externalValue: openapi/examples/error-rate-limited.json
+        '502':
+          description: DOWNSTREAM_FAILURE (a workflow stage or store failed, or the async job message could not be sent)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorBody'
+              examples:
+                failed:
+                  externalValue: openapi/examples/error-downstream-failure.json
+        '503':
+          $ref: '#/components/responses/Unavailable'
+        '504':
+          description: DEADLINE_EXCEEDED (the synchronous deadline passed; an abstention audit may still be recorded) or DOWNSTREAM_TIMEOUT
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorBody'
+              examples:
+                deadline:
+                  externalValue: openapi/examples/error-deadline-exceeded.json
+        '500':
+          $ref: '#/components/responses/Internal'
+  /v1/jobs/{jobId}:
+    get:
+      summary: The state of an async job (query-api)
+      description: |
+        State (QUEUED, RUNNING, SUCCEEDED, FAILED), stage (the first workflow stage once RUNNING,
+        the last one when SUCCEEDED, the failing one when FAILED and known), UTC timestamps, the
+        typed error when FAILED, and resultUrl when SUCCEEDED. The stored request is never returned.
+        Jobs expire after services.ttl.job-hours.
+      parameters:
+        - $ref: '#/components/parameters/JobId'
+        - $ref: '#/components/parameters/RequestId'
+        - $ref: '#/components/parameters/TraceId'
+      responses:
+        '200':
+          description: The job
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobResponse'
+              examples:
+                succeeded:
+                  externalValue: openapi/examples/job-response.json
+                failed:
+                  externalValue: openapi/examples/job-response-failed.json
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/JobNotFound'
+        '502':
+          $ref: '#/components/responses/DownstreamFailure'
+        '503':
+          $ref: '#/components/responses/Unavailable'
+        '504':
+          $ref: '#/components/responses/Timeout'
+  /v1/jobs/{jobId}/result:
+    get:
+      summary: The answer of an async job (query-api)
+      description: |
+        SUCCEEDED: the stored answer (as the sync response, mode "asynchronous"). QUEUED or RUNNING:
+        409 JOB_NOT_FINISHED (retryable; poll the job). FAILED: the job's typed error with that
+        code's status, for example 502 DOWNSTREAM_FAILURE, 504 DEADLINE_EXCEEDED (the job deadline
+        passed, or the job was still RUNNING at its message's last delivery), or 500 INTERNAL_ERROR
+        (the stored request did not decode).
+      parameters:
+        - $ref: '#/components/parameters/JobId'
+        - $ref: '#/components/parameters/RequestId'
+        - $ref: '#/components/parameters/TraceId'
+      responses:
+        '200':
+          description: The answer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SyncQueryResponse'
+              examples:
+                answered:
+                  externalValue: openapi/examples/job-result-response.json
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/JobNotFound'
+        '409':
+          description: JOB_NOT_FINISHED (QUEUED or RUNNING)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorBody'
+              examples:
+                running:
+                  externalValue: openapi/examples/error-job-not-finished.json
+        '500':
+          $ref: '#/components/responses/Internal'
+        '502':
+          $ref: '#/components/responses/DownstreamFailure'
+        '503':
+          $ref: '#/components/responses/Unavailable'
+        '504':
+          description: DEADLINE_EXCEEDED (the failed job's error) or DOWNSTREAM_TIMEOUT
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorBody'
+  /v1/explain/{queryId}:
+    get:
+      summary: The observable derivation of an answer (query-api)
+      description: |
+        The audit record of a query of this runtime run: QueryPlan (operations, window, topic, venue,
+        and institution filters, semantic indexes, limits), stages with outcome and latency,
+        template IDs and calls, vector indexes, prompt and model versions, evidence IDs, verification
+        counts, removed claims and left-out lines (IDs, kinds, statuses, failed rule names, reason
+        counts; never their text or check details), model and embedding call records, budget, and
+        counters. llm is STUBBED (rule planner and template synthesis) or LIVE. The runtime has no
+        cache, so counters.cacheHits is 0. No question, prompt, retrieved, or model text and no
+        credentials. The vector metadata filter text is not in the audit.
+      parameters:
+        - name: queryId
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^qry-[0-9a-f]{32}$'
+        - $ref: '#/components/parameters/RequestId'
+        - $ref: '#/components/parameters/TraceId'
+      responses:
+        '200':
+          description: The explain view
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExplainResponse'
+              examples:
+                answered:
+                  externalValue: openapi/examples/explain-response.json
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: QUERY_NOT_FOUND (also for a malformed ID)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorBody'
+              examples:
+                missing:
+                  externalValue: openapi/examples/error-query-not-found.json
+        '502':
+          $ref: '#/components/responses/DownstreamFailure'
+        '503':
+          $ref: '#/components/responses/Unavailable'
+        '504':
+          $ref: '#/components/responses/Timeout'
+  /v1/evidence/{evidenceId}:
+    get:
+      summary: One evidence item by ID (graph-evidence-api)
+      description: |
+        The EvidenceBundle item (storage GSI evidenceById) decoded by the runtime, with provenance,
+        source URI, graph path or chunk pointer, facts, and text cut to
+        services.evidence-max-content-chars (textTruncated; textHash is of the full text). The GSI is
+        eventually consistent, so evidence written a moment ago can briefly be 404.
+      parameters:
+        - name: evidenceId
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^ev-[0-9a-f]{32}$'
+        - $ref: '#/components/parameters/RequestId'
+        - $ref: '#/components/parameters/TraceId'
+      responses:
+        '200':
+          description: The evidence item
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvidenceResponse'
+              examples:
+                identity:
+                  externalValue: openapi/examples/evidence-response.json
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: EVIDENCE_NOT_FOUND (also for a malformed ID)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorBody'
+              examples:
+                missing:
+                  externalValue: openapi/examples/error-evidence-not-found.json
+        '502':
+          $ref: '#/components/responses/DownstreamFailure'
+        '503':
+          $ref: '#/components/responses/Unavailable'
+        '504':
+          $ref: '#/components/responses/Timeout'
+  /v1/graph/nodes/{nodeId}:
+    get:
+      summary: One graph node (graph-evidence-api)
+      description: The node through the GraphReadPort vertex template (graph.vertex). Percent-encode the ID (work IDs hold slashes).
+      parameters:
+        - $ref: '#/components/parameters/NodeId'
+        - $ref: '#/components/parameters/RequestId'
+        - $ref: '#/components/parameters/TraceId'
+      responses:
+        '200':
+          description: The node with its properties (provenance included)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NodeResponse'
+              examples:
+                researcher:
+                  externalValue: openapi/examples/node-response.json
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NodeNotFound'
+        '502':
+          $ref: '#/components/responses/DownstreamFailure'
+        '503':
+          $ref: '#/components/responses/Unavailable'
+        '504':
+          $ref: '#/components/responses/Timeout'
+  /v1/graph/nodes/{nodeId}/neighbors:
+    get:
+      summary: A bounded neighborhood page (graph-evidence-api)
+      description: |
+        The GraphReadPort neighbors template. All of direction, depth, limit, and edgeTypes are
+        required; each parameter at most once; any other parameter is 400. Pages follow the walk
+        order of the storage port (level by level, discovery order) and concatenate to the whole
+        walk; at most graph-read.max-results nodes in all. nextCursor is an opaque cursor bound to
+        (node, direction, depth, edge types); it is present when truncated and a full page was
+        returned. The cursor is recomputed from the start, so pages are consistent while the graph
+        does not change.
+      parameters:
+        - $ref: '#/components/parameters/NodeId'
+        - name: direction
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [in, out, both]
+        - name: depth
+          in: query
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 3
+          description: 1 to graph-read.neighbors-max-depth (3)
+        - name: limit
+          in: query
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 200
+          description: 1 to graph-read.neighbors-max-limit (200)
+        - name: edgeTypes
+          in: query
+          required: true
+          description: Comma-separated, non-empty subset of the storage edge labels (NeptuneContract.Edges), a set (order and repeats ignored)
+          schema:
+            type: string
+            example: COAUTHORED_WITH,AUTHORED,HAS_TOPIC,AFFILIATED_WITH,PUBLISHED_IN
+        - name: cursor
+          in: query
+          required: false
+          schema:
+            type: string
+        - $ref: '#/components/parameters/RequestId'
+        - $ref: '#/components/parameters/TraceId'
+      responses:
+        '200':
+          description: One page of nodes and the traversed edges touching them
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NeighborsResponse'
+              examples:
+                page:
+                  externalValue: openapi/examples/neighbors-response.json
+        '400':
+          description: INVALID_FIELD (a parameter missing, repeated, unknown, or out of bounds; a cursor of another walk)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorBody'
+              examples:
+                depth:
+                  externalValue: openapi/examples/error-invalid-field.json
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NodeNotFound'
+        '502':
+          $ref: '#/components/responses/DownstreamFailure'
+        '503':
+          $ref: '#/components/responses/Unavailable'
+        '504':
+          $ref: '#/components/responses/Timeout'
+  /healthz:
+    get:
+      summary: Liveness (every service); no key; depends on no downstream
+      security: []
+      responses:
+        '200':
+          description: The process serves requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+              examples:
+                ok:
+                  externalValue: openapi/examples/status-healthz.json
+        '503':
+          $ref: '#/components/responses/Unavailable'
+  /readyz:
+    get:
+      summary: Readiness (every service); no key
+      description: Probe reads of each downstream the service uses (a key or ID no store holds) through the same timeouts and breakers, and no open breaker. The 503 message names downstreams only (s3, dynamodb, neptune, runtime), never endpoints or configuration.
+      security: []
+      responses:
+        '200':
+          description: Ready
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+              examples:
+                ready:
+                  externalValue: openapi/examples/status-readyz.json
+        '503':
+          description: NOT_READY
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorBody'
+              examples:
+                notReady:
+                  externalValue: openapi/examples/error-not-ready.json
+  /metrics:
+    get:
+      summary: In-process counters (every service; API key required)
+      description: Request counts by route template and status, latency percentiles over the last 1024 requests per route, and counters (timeouts, answers, abstentions, model requests and tokens, verification status counts, queueReceives, jobsQueued, jobsSucceeded, jobsFailed, duplicateDeliveries, poisonMessages, stuckJobsFailed, circuitOpened.<downstream>). Each service counts its own work (the worker counts receives and jobs). Present when services.metrics-enabled is true.
+      responses:
+        '200':
+          description: Counters
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [requests, latencyMs, counters]
+              examples:
+                counters:
+                  externalValue: openapi/examples/metrics-response.json
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+components:
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      in: header
+      name: X-Api-Key
+  parameters:
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: false
+      description: 1 to 255 visible ASCII characters; stored hashed; expires after services.ttl.idempotency-hours
+      schema:
+        type: string
+    RequestId:
+      name: X-Request-Id
+      in: header
+      required: false
+      schema:
+        type: string
+        pattern: '^[A-Za-z0-9._:-]{1,128}$'
+    TraceId:
+      name: X-Trace-Id
+      in: header
+      required: false
+      schema:
+        type: string
+        pattern: '^[A-Za-z0-9._:-]{1,128}$'
+    JobId:
+      name: jobId
+      in: path
+      required: true
+      description: job-<32 hex> (IdFormat.isJobId); a malformed ID is 404 without a store read
+      schema:
+        type: string
+        pattern: '^job-[0-9a-f]{32}$'
+    NodeId:
+      name: nodeId
+      in: path
+      required: true
+      description: A stable node ID (IdFormat.isNodeId), percent-encoded
+      schema:
+        type: string
+  responses:
+    BadRequest:
+      description: INVALID_FIELD (for example a query parameter on a route that takes none)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorBody'
+    Unauthorized:
+      description: UNAUTHORIZED (missing or wrong X-Api-Key)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorBody'
+          examples:
+            unauthorized:
+              externalValue: openapi/examples/error-unauthorized.json
+    JobNotFound:
+      description: JOB_NOT_FOUND (also for a malformed or expired ID)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorBody'
+          examples:
+            missing:
+              externalValue: openapi/examples/error-job-not-found.json
+    NodeNotFound:
+      description: NODE_NOT_FOUND (also for a malformed ID)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorBody'
+    DownstreamFailure:
+      description: DOWNSTREAM_FAILURE
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorBody'
+    Unavailable:
+      description: CIRCUIT_OPEN (a downstream breaker is open) or OVERLOADED (request threads and queue full, every workflow slot busy, or a downstream call that could not start within its timeout; never counted against a breaker; SERVICES.md section 3)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorBody'
+    Timeout:
+      description: DOWNSTREAM_TIMEOUT
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorBody'
+    Internal:
+      description: INTERNAL_ERROR (unexpected; traceId, no stack trace)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorBody'
+  schemas:
+    ErrorBody:
+      type: object
+      required: [error, message, traceId, requestId, retryable]
+      properties:
+        error:
+          type: string
+          description: scholarchain.core.ErrorCode (status and retryable are fixed per code)
+          enum: [MALFORMED_JSON, INVALID_FIELD, REQUEST_TOO_LARGE, UNAUTHORIZED, FORBIDDEN, ROUTE_NOT_FOUND, QUERY_NOT_FOUND, JOB_NOT_FOUND, NODE_NOT_FOUND, EVIDENCE_NOT_FOUND, IDEMPOTENCY_CONFLICT, JOB_NOT_FINISHED, UNSUPPORTED_CONSTRAINT, UNSUPPORTED_RETRIEVAL_MODE, RATE_LIMITED, DOWNSTREAM_FAILURE, NOT_READY, CIRCUIT_OPEN, OVERLOADED, DEADLINE_EXCEEDED, DOWNSTREAM_TIMEOUT, INTERNAL_ERROR]
+        message:
+          type: string
+        traceId:
+          type: string
+        requestId:
+          type: string
+        retryable:
+          type: boolean
+    QueryBody:
+      type: object
+      required: [question]
+      additionalProperties: false
+      properties:
+        question:
+          type: string
+          description: 1 to runtime.question.max-chars characters after NFC normalization; no control characters but tab and newline
+        constraints:
+          type: object
+          additionalProperties: false
+          nullable: true
+          properties:
+            yearFrom: {type: integer, nullable: true}
+            yearTo: {type: integer, nullable: true}
+            topics: {type: array, items: {type: string}, nullable: true}
+            institutions: {type: array, items: {type: string}, nullable: true}
+            venues: {type: array, items: {type: string}, nullable: true}
+        analysis:
+          type: object
+          additionalProperties: false
+          nullable: true
+          properties:
+            rankingMetric:
+              type: string
+              nullable: true
+              enum: [PUBLICATION_COUNT, DISTINCT_COAUTHOR_COUNT, MAXIMUM_COAUTHORS_ON_ONE_PAPER, CROSS_COMMUNITY_DEGREE, COMMUNITIES_CONNECTED, PARTICIPATION_COEFFICIENT, CORENESS]
+            includeTeamSize: {type: boolean, nullable: true}
+            includeBridgeMetrics: {type: boolean, nullable: true}
+            includeCommunities: {type: boolean, nullable: true}
+            includePaths: {type: boolean, nullable: true}
+        retrieval:
+          type: object
+          additionalProperties: false
+          nullable: true
+          description: Each limit 1 to its configured maximum (retrieval.graph-limit, vector-limit, max-path-depth); above it is 422
+          properties:
+            graphLimit: {type: integer, nullable: true}
+            vectorLimit: {type: integer, nullable: true}
+            maxPathDepth: {type: integer, nullable: true}
+        output:
+          type: object
+          additionalProperties: false
+          nullable: true
+          description: Accepted for the spec contract; the answer always carries its claims' evidence IDs
+          properties:
+            includeEvidence: {type: boolean, default: true}
+            includeScores: {type: boolean, default: true}
+            includeUncertainty: {type: boolean, default: true}
+        execution:
+          type: string
+          enum: [sync, async]
+          default: sync
+    SyncQueryResponse:
+      type: object
+      required: [queryId, mode, answer, claims, links]
+      properties:
+        queryId: {type: string}
+        mode: {type: string, enum: [synchronous, asynchronous], description: asynchronous for GET /v1/jobs/{jobId}/result}
+        answer:
+          type: object
+          required: [summary, abstained, abstention, uncertainty, window, resolutions, verification, answerHash]
+          description: abstention is the rag Abstention (reason, detail); window the rag WindowSelection; resolutions rag ResolutionSummary; verification the rag VerificationCounts (modules/rag/RUNTIME.md)
+        claims:
+          type: array
+          description: core AnswerClaim records (claimId, text, evidenceIds, verificationStatus, uncertainty, provenance)
+          items: {type: object}
+        links:
+          type: object
+          required: [explain, evidence]
+          properties:
+            explain: {type: string}
+            evidence: {type: array, items: {type: string}}
+    AsyncQueryResponse:
+      type: object
+      required: [jobId, queryId, mode, state, statusUrl]
+      properties:
+        jobId: {type: string, pattern: '^job-[0-9a-f]{32}$'}
+        queryId: {type: string, pattern: '^qry-[0-9a-f]{32}$'}
+        mode: {type: string, enum: [asynchronous]}
+        state: {$ref: '#/components/schemas/JobState'}
+        statusUrl: {type: string}
+    JobState:
+      type: string
+      enum: [QUEUED, RUNNING, SUCCEEDED, FAILED]
+      description: QUEUED -> RUNNING -> SUCCEEDED or FAILED; QUEUED -> FAILED for a job that never ran. SUCCEEDED and FAILED are final.
+    JobResponse:
+      type: object
+      required: [jobId, queryId, state, stage, createdAt, updatedAt, startedAt, finishedAt, error, statusUrl, resultUrl]
+      properties:
+        jobId: {type: string}
+        queryId: {type: string}
+        state: {$ref: '#/components/schemas/JobState'}
+        stage: {type: string, nullable: true, description: a workflow stage name}
+        createdAt: {type: string, format: date-time}
+        updatedAt: {type: string, format: date-time}
+        startedAt: {type: string, format: date-time, nullable: true}
+        finishedAt: {type: string, format: date-time, nullable: true}
+        error:
+          type: object
+          nullable: true
+          required: [error, message, retryable]
+          properties:
+            error: {type: string, description: an ErrorBody error code}
+            message: {type: string}
+            retryable: {type: boolean}
+        statusUrl: {type: string}
+        resultUrl: {type: string, nullable: true, description: present only when SUCCEEDED}
+    ExplainResponse:
+      type: object
+      description: Fields as in the example; nested records are the rag runtime records of the same names (modules/rag/RUNTIME.md)
+      required: [queryId, runId, createdAt, auditSchemaVersion, mode, llm, plan, resolutions, stages, templateIds, templateCalls, vectorIndexes, embeddingModelVersion, promptVersions, modelIds, graphEvidenceIds, semanticEvidenceIds, metricVersions, graphRunId, verification, removedClaims, droppedLines, abstained, abstentionReason, llmCalls, embeddingCalls, budget, counters, answerHash]
+      properties:
+        llm: {type: string, enum: [STUBBED, LIVE]}
+        mode: {type: string, enum: [FAKE, LIVE]}
+    EvidenceResponse:
+      type: object
+      required: [evidenceId, evidenceType, subjectIds, workId, sourceUri, chunkId, graphPath, score, text, textTruncated, textHash, facts, provenance]
+      properties:
+        evidenceId: {type: string}
+        evidenceType: {type: string}
+        subjectIds: {type: array, items: {type: string}}
+        workId: {type: string, nullable: true}
+        sourceUri: {type: string}
+        chunkId: {type: string, nullable: true}
+        graphPath: {type: array, items: {type: string}, nullable: true}
+        score: {type: number, nullable: true}
+        text: {type: string, nullable: true}
+        textTruncated: {type: boolean}
+        textHash: {type: string, nullable: true}
+        facts: {type: object, additionalProperties: {type: string}}
+        provenance: {type: object, description: core Provenance}
+    NodeView:
+      type: object
+      required: [nodeId, label, properties]
+      properties:
+        nodeId: {type: string}
+        label: {type: string}
+        properties: {type: object}
+    EdgeView:
+      type: object
+      required: [edgeId, edgeType, fromId, toId, properties]
+      properties:
+        edgeId: {type: string}
+        edgeType: {type: string}
+        fromId: {type: string}
+        toId: {type: string}
+        properties: {type: object}
+    NodeResponse:
+      type: object
+      required: [node]
+      properties:
+        node:
+          $ref: '#/components/schemas/NodeView'
+    NeighborsResponse:
+      type: object
+      required: [nodeId, direction, depth, limit, edgeTypes, nodes, edges, truncated, nextCursor]
+      properties:
+        nodeId: {type: string}
+        direction: {type: string, enum: [in, out, both]}
+        depth: {type: integer}
+        limit: {type: integer}
+        edgeTypes: {type: array, items: {type: string}}
+        nodes: {type: array, items: {$ref: '#/components/schemas/NodeView'}}
+        edges: {type: array, items: {$ref: '#/components/schemas/EdgeView'}}
+        truncated: {type: boolean}
+        nextCursor: {type: string, nullable: true}
+    Status:
+      type: object
+      required: [status]
+      properties:
+        status: {type: string, enum: [ok, ready]}

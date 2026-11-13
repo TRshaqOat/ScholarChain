@@ -39,11 +39,16 @@ object Verifier:
     "Context only: descriptive text retrieved by vector similarity; it is not verified against the graph."
 
   /** The rule version, part of the runtime run ID so a rule change never resumes earlier results
-    * (ruling 29): v1 work order 4, v2 repair-01, v3 repair-02 (number words, asserted names).
+    * (ruling 29): v1 work order 4, v2 repair-01, v3 repair-02 (number words, asserted names), v4
+    * Phase 10 work order 1 (list positions, measure phrases, ranks, names, removal records), v5
+    * Phase 10 work order 9 (digit-group commas, the side window of a stored comparison, corpus
+    * measure names).
     */
-  val Version = "verifier-v3"
+  val Version = "verifier-v5"
 
   private val NumberRe = "\\d+(?:\\.\\d+)?".r
+  private val OrdinalSuffix = "(?:st|nd|rd|th)\\b".r
+  private val ListPosition = "(?:hop|entry|member|neighbor)\\.(\\d+)\\..+".r
   private val Quoted = "[\"“”]([^\"“”]+)[\"“”]".r
   private val YearRange =
     "\\b((?:19|20)\\d{2})\\s*(?:-|–|—|to|until|through)\\s*((?:19|20)\\d{2})\\b".r
@@ -93,14 +98,43 @@ object Verifier:
     "seventh",
     "eighth",
     "ninth",
-    "tenth"
+    "tenth",
+    "eleventh",
+    "twelfth",
+    "thirteenth",
+    "fourteenth",
+    "fifteenth",
+    "sixteenth",
+    "seventeenth",
+    "eighteenth",
+    "nineteenth"
+  )
+  private val TensOrdinals = Vector(
+    "twentieth",
+    "thirtieth",
+    "fortieth",
+    "fiftieth",
+    "sixtieth",
+    "seventieth",
+    "eightieth",
+    "ninetieth"
   )
   private val WordValue: Map[String, Int] =
     Small.zipWithIndex.toMap ++ Tens.zipWithIndex.map((w, i) => w -> (20 + 10 * i))
+  private val OrdinalValue: Map[String, Int] =
+    Ordinals.zipWithIndex.map((w, i) => w -> (i + 1)).toMap ++
+      TensOrdinals.zipWithIndex.map((w, i) => w -> (20 + 10 * i))
   private def ci(s: String) = s"(?i)\\b(?:$s)\\b".r
   // Zero expressions attached to a measure or relation count as 0; "0 joint" binds to a stored joint
   // publication count of 0 (or edgeExists false). "No coauthorship path" is a path status, not 0.
   private val ZeroRules: Seq[(Regex, String)] = Seq(
+    // R3-2: the measure's own name ("98 authors on one paper") and fixed phrases are not counts.
+    ci(
+      "(teams?|authors?|co-?authors?|collaborators?)\\s+(on|in|of|for)\\s+(?:one|a\\s+single)\\s+" +
+        "(papers?|publications?|works?|articles?)"
+    ) -> "$1 $2 a $3",
+    ci("once\\s+again") -> "again",
+    ci("twice\\s+as") -> "as",
     ci("no one") -> "nobody",
     ci(
       "(?:never|not)\\s+(?:\\w+ly\\s+)?(?:co-?authored|co-?author|collaborated|collaborate|" +
@@ -116,25 +150,54 @@ object Verifier:
     ci("a\\s+single|once") -> "1",
     ci("twice") -> "2"
   )
-  // An ordinal followed within four words by a year is a time marker ("first in 2001"), not a rank.
   private val OrdinalRe =
-    s"(?i)\\b(${Ordinals.mkString("|")})\\b(?!(?:\\s+[\\p{L}-]+){0,4}\\s+(?:19|20)\\d{2}\\b)".r
+    s"(?i)\\b(?:(${Tens.mkString("|")})[- ])?(${OrdinalValue.keys.mkString("|")})\\b".r
+  private val YearAhead = "(?:\\s+[\\p{L}-]+){0,4}\\s+(?:19|20)\\d{2}\\b".r
+  // A sentence-initial "First," or "Second," orders the text; it states no position or rank.
+  private val Discourse =
+    "(?i)(?:^|(?<=[.;:!?]\\s{1,3})|(?<=\\n))(?:first|second|third|fourth|fifth)(?:ly)?,".r
+
+  // Work order 9 (live B18): a number written with digit-group commas ("141,367") is one number.
+  // Exactly three digits after every comma, so "2001,2002" or "1,23" stay apart.
+  private val Grouped = "(?<![\\d.,])\\d{1,3}(?:,\\d{3})+(?![\\d,])".r
+
+  /** Digit-group commas removed: "141,367" becomes "141367". */
+  def ungroup(text: String): String = Grouped.replaceAllIn(text, _.matched.replace(",", ""))
+
+  /** Rank words: in their clause, an ordinal is a rank (never a time marker or a list position). */
+  val RankWord: Regex = "(?i)\\b(?:rank\\w*|places?|placed|position\\w*)\\b|#".r
   private val CompoundRe =
     s"(?i)\\b(${Tens.mkString("|")})[- ](${Small.slice(1, 10).mkString("|")})\\b".r
   private val CardinalRe = s"(?i)\\b(${WordValue.keys.mkString("|")})\\b".r
 
+  private def ranked(t: String, from: Int, to: Int): Boolean =
+    val (s, e) = clause(t, from, to)
+    RankWord.findFirstIn(t.substring(s, e)).isDefined
+
   /** Number words written as digits, so they are bound like digits (ruling 29, N1): zero
-    * expressions as 0, "a single" and "once" as 1, "twice" as 2, ordinals first to tenth as 1st to
-    * 10th (the rank measure), cardinals zero to nineteen, the tens twenty to ninety, and tens-unit
-    * compounds. "a" and "an" are articles, not 1.
+    * expressions as 0, "a single" and "once" as 1, "twice" as 2, ordinals first to ninety-ninth as
+    * 1st to 99th (a rank or a list position), cardinals zero to nineteen, the tens twenty to
+    * ninety, and tens-unit compounds. "a" and "an" are articles, not 1. Not numbers: the measure
+    * name "on one paper", "once again", "twice as", a sentence-initial "First,", and "first"
+    * followed within four words by a year in a clause without a rank word ("first in 2001", a time
+    * marker).
     */
   def wordsToDigits(text: String): String =
-    val zero = ZeroRules.foldLeft(text)((t, r) => r._1.replaceAllIn(t, r._2))
+    val zero = ZeroRules.foldLeft(Discourse.replaceAllIn(ungroup(text), ""))((t, r) =>
+      r._1.replaceAllIn(t, r._2)
+    )
     val ordinal = OrdinalRe.replaceAllIn(
       zero,
       m =>
-        val n = Ordinals.indexOf(m.group(1).toLowerCase) + 1
-        s"$n${n match { case 1 => "st"; case 2 => "nd"; case 3 => "rd"; case _ => "th" }}"
+        val word = m.group(2).toLowerCase
+        val n = Option(m.group(1)).fold(0)(t => WordValue(t.toLowerCase)) + OrdinalValue(word)
+        val time = m.group(1) == null && word == "first" &&
+          YearAhead.findPrefixOf(zero.substring(m.end)).isDefined && !ranked(zero, m.start, m.end)
+        if time then Regex.quoteReplacement(m.matched)
+        else
+          val suffix = if n % 100 / 10 == 1 then "th"
+          else n % 10 match { case 1 => "st"; case 2 => "nd"; case 3 => "rd"; case _ => "th" }
+          s"$n$suffix"
     )
     val compound = CompoundRe.replaceAllIn(
       ordinal,
@@ -172,9 +235,10 @@ object Verifier:
       "distinct co-?authors?|unique co-?authors?|co-?authors?|collaborators?|breadth"
     ),
     "occurrences" -> words("co-?author(?:ship)? occurrences?|occurrences?"),
-    "average" -> words("average|mean|per paper"),
+    // n6: the synthesis prompt's own names ("coauthors per paper"; intensity in joint publications).
+    "average" -> words("average|mean|co-?authors? per paper|per paper"),
     "team" -> words("team size|teams?|authors?"),
-    "weighted" -> words("weighted degree|weighted|intensity"),
+    "weighted" -> words("weighted degree|weighted|intensity|joint publications?"),
     "degree" -> words("degree|co-?authors?|neighbou?rs?"),
     "component" -> words("components?|researchers?|members?|nodes?|size"),
     "community" -> words("communit(?:y|ies)|members?|researchers?|size"),
@@ -192,7 +256,14 @@ object Verifier:
     "confidence" -> words("confidence"),
     "rank" -> "(?i)\\b(?:rank\\w*|top|place|position|first|second|third)\\b|#|(?<=\\d)(?:st|nd|rd|th)\\b".r,
     "list" -> words("top|entries|researchers?|listed|stored|first"),
-    "retention" -> words("retention|retained|kept|stayed")
+    "retention" -> words("retention|retained|kept|stayed"),
+    // Work order 9 (F2): corpus window summaries.
+    "components" -> words("connected components?|components?"),
+    "researchers" -> words("researchers?|nodes?"),
+    "singletons" -> words("singletons?|isolated"),
+    "minSize" -> words("size|members?|or more|at least"),
+    "rounds" -> words("rounds?|iterations?"),
+    "span" -> words("years?")
   )
   private val FacetCount = words("publications?|papers?|works?|affiliat\\w*|mentions?|counts?")
   private val Base: Map[String, String] = Map(
@@ -226,7 +297,21 @@ object Verifier:
     "storedRank" -> "rank",
     "returnedSize" -> "list",
     "storedSize" -> "list",
-    "communityRetention" -> "retention"
+    "communityRetention" -> "retention",
+    "researchers" -> "researchers",
+    "components" -> "components",
+    "largestComponentSize" -> "component",
+    "largestComponentFraction" -> "share",
+    "singletonResearchers" -> "singletons",
+    "coauthorEdges" -> "edges",
+    "communities" -> "communities",
+    "largestCommunitySize" -> "community",
+    "largestCommunityFraction" -> "share",
+    "singletonCommunities" -> "singletons",
+    "communitiesAtLeastMinSize" -> "communities",
+    "communityMinSize" -> "minSize",
+    "communityRounds" -> "rounds",
+    "years" -> "span"
   )
   private val Years =
     Set("year", "firstCollaborationYear", "lastCollaborationYear", "firstYear", "lastYear")
@@ -422,6 +507,7 @@ object Verifier:
   private def textProblems(
       text: String,
       bindings: Seq[Binding],
+      positions: Set[Int],
       allowed: Seq[(String, Int, Int)],
       extraRanges: Set[(Int, Int)],
       freeNumbers: Set[String],
@@ -436,19 +522,18 @@ object Verifier:
       .foreach(w => windowProblems += s"names the window ${w.name}")
     def yearFact(y: String) =
       bindings.exists(b => b.scope == Scope.YEAR && b.binds(y)) || freeNumbers(y)
-    val t2 = wordsToDigits(
-      YearRange.replaceAllIn(
-        t,
-        m =>
-          val (a, b) = (m.group(1).toInt, m.group(2).toInt)
-          val ok = allowed.exists((_, s, e) => s == a && e == b) || extraRanges((a, b)) ||
-            (yearFact(m.group(1)) && yearFact(m.group(2)))
-          if !ok then
-            windowProblems += s"names $a-$b, which is not the window ${
-                if allowed.isEmpty then "(none)" else allowed.map(_._1).mkString(" or ")
-              }"
-          " " * m.matched.length
-      )
+    // Number words first, so "first collaborated in 2009-2012" still sees its year (R3-1).
+    val t2 = YearRange.replaceAllIn(
+      wordsToDigits(t),
+      m =>
+        val (a, b) = (m.group(1).toInt, m.group(2).toInt)
+        val ok = allowed.exists((_, s, e) => s == a && e == b) || extraRanges((a, b)) ||
+          (yearFact(m.group(1)) && yearFact(m.group(2)))
+        if !ok then
+          windowProblems += s"names $a-$b, which is not the window ${
+              if allowed.isEmpty then "(none)" else allowed.map(_._1).mkString(" or ")
+            }"
+        " " * m.matched.length
     )
     val numberProblems = NumberRe
       .findAllMatchIn(t2)
@@ -456,7 +541,21 @@ object Verifier:
       .flatMap { m =>
         val n = m.matched
         val bound = bindings.filter(_.binds(n))
-        if freeNumbers(n) || bound.exists(_.scope == Scope.YEAR) then None
+        val ordinal = OrdinalSuffix.findPrefixOf(t2.substring(m.end)).isDefined
+        lazy val near = nearest(t2, m.start, m.end)
+        // A rank or a list position (R3-1, review 2 n2, n4): an ordinal, or a number whose nearest
+        // measure word is a rank word. It binds only to a stored rank the claim may assert
+        // (rank.<k>.storedRank, which needs rank.<k>.researcherId) or, for an ordinal, to the index k
+        // of an asserted hop, entry, member, or neighbor fact; never to a listed value or a year.
+        if ordinal || (near("rank") && !near("list")) then
+          if bound.exists(_.family == "rank") then None
+          else if ordinal && n.toIntOption.exists(positions) then None
+          else if ordinal && !ranked(t2, m.start, m.end) then
+            Some(
+              s"ordinal $n is not the position k of an asserted hop, entry, member, or neighbor fact"
+            )
+          else Some(s"$n is a rank, and no asserted rank.<k>.storedRank of its researcher binds it")
+        else if freeNumbers(n) || bound.exists(_.scope == Scope.YEAR) then None
         else if bound.isEmpty then Some(s"$n is not an asserted fact of a cited item")
         else if bound.exists(b => b.scope == Scope.WHOLE && b.regex.findFirstIn(t2).isDefined)
         then None
@@ -469,7 +568,7 @@ object Verifier:
     (numberProblems, windowProblems.result())
 
   private def numbersIn(text: String, c: Context): Set[String] =
-    NumberRe.findAllIn(wordsToDigits(YearRange.replaceAllIn(c.strip(text), " "))).toSet
+    NumberRe.findAllIn(YearRange.replaceAllIn(wordsToDigits(c.strip(text)), " ")).toSet
 
   private def rangesIn(text: String, c: Context): Set[(Int, Int)] =
     YearRange.findAllMatchIn(c.strip(text)).map(m => (m.group(1).toInt, m.group(2).toInt)).toSet
@@ -553,10 +652,14 @@ object Verifier:
     * bundle (ruling 20): each with whether it is a corpus researcher name.
     */
   def unknownNames(text: String, c: Context): Vector[(String, Boolean)] =
-    val stripped = c.knownAll.foldLeft(text)((t, v) => t.replace(v, " "))
+    // Review 2 n3: only bundle texts of two or more words are removed first, so a one-word bundle
+    // text never cuts a span short, and a span left over must be a whole bundle text, not a part of
+    // one (a name inside a title or inside a longer display name is still flagged).
+    val stripped =
+      c.knownAll.filter(_.exists(_.isWhitespace)).foldLeft(text)((t, v) => t.replace(v, " "))
     RulePlanner
       .names(stripped)
-      .filterNot(s => c.knownAll.exists(_.contains(s)))
+      .filterNot(c.knownAll.contains)
       .map(s => (s, c.corpusName(s)))
 
   private def titlesBad(text: String, cited: Seq[EvidenceItem]): Vector[String] =
@@ -589,6 +692,16 @@ object Verifier:
         .exists(id => cited.exists(_.facts.get(s"rank.$n.researcherId").contains(id)))
     case _ => true
 
+  /** R3-1: the list positions k of the hop, entry, member, and neighbor facts a claim asserts with
+    * an equal value; an ordinal k may state that position.
+    */
+  private def positions(d: ClaimDraft, cited: Seq[EvidenceItem]): Set[Int] =
+    d.values.toVector.flatMap {
+      case (k @ ListPosition(i), v) if cited.exists(_.facts.get(k).exists(same(v, _))) =>
+        i.toIntOption
+      case _ => None
+    }.toSet
+
   private def bindings(d: ClaimDraft, cited: Seq[EvidenceItem]): Vector[Binding] =
     d.values.toVector.sortBy(_._1).flatMap { (k, v) =>
       val holders = cited.filter(_.facts.contains(k))
@@ -606,6 +719,24 @@ object Verifier:
   // edgeExists false: the pair has 0 joint publications in the window ("never coauthored" binds).
   private def stored(k: String, v: String): Option[String] =
     if k != "edgeExists" then Some(v) else Option.when(v == "false")("0")
+
+  private val SideKey = "(from|to)[A-Z]\\w*".r
+
+  /** The windows a cited item covers for a claim: its window, and for a stored comparison `a>b`
+    * also a when every fact the claim asserts from the item is a from<Fact>, or b when every one is
+    * a to<Fact> (verifier-v5, live B22: "in 2015-2026 ... had 251 distinct coauthors" asserting
+    * only the to side). A delta or any other fact of the pair keeps the comparison window only.
+    */
+  def windowsOf(d: ClaimDraft, e: EvidenceItem): Vector[String] =
+    e.facts.get("window").toVector.flatMap { w =>
+      val asserted = d.values.keys.filter(k => !isWindowKey(k) && e.facts.contains(k)).toVector
+      val sides = asserted.collect { case SideKey(p) => p }.distinct
+      val side = w.split('>') match
+        case Array(a, b) if sides.size == 1 && asserted.forall(k => SideKey.matches(k)) =>
+          Some(if sides.head == "from" then a else b)
+        case _ => None
+      w +: side.toVector
+    }
 
   def check(d: ClaimDraft, c: Context): ClaimCheck =
     val cited = d.evidenceIds.flatMap(c.graph.get)
@@ -659,7 +790,7 @@ object Verifier:
 
     val bound = bindings(d, cited)
     val (badNumbers, badWindows) =
-      textProblems(d.text, bound, c.windows(d.window), Set.empty, Set.empty, c)
+      textProblems(d.text, bound, positions(d, cited), c.windows(d.window), Set.empty, Set.empty, c)
     if material || badNumbers.nonEmpty then
       add(
         "numbers-in-text",
@@ -668,7 +799,7 @@ object Verifier:
         else badNumbers.mkString("; ")
       )
 
-    val windowed = cited.flatMap(_.facts.get("window")).distinct
+    val windowed = cited.flatMap(windowsOf(d, _)).distinct
     if material && d.kind != ClaimKind.IDENTITY && windowed.nonEmpty then
       d.window match
         case None                            => add("window", MISSING, "the claim names no window")
@@ -762,31 +893,39 @@ object Verifier:
       case _                                      => ClaimAction.REMOVED
     ClaimCheck(d.claimId, status, rs, action)
 
-  /** A summary or uncertainty line passes the claims' numbers, windows, names, and titles rules
-    * (ruling 20): its numbers are facts the kept claims asserted (or numbers of the fixed notes),
-    * its windows are the answer's or the kept claims' (or ranges of the fixed notes), and every
-    * researcher name is one the kept claims may write (ruling 29, N2).
+  /** The problems of a summary or uncertainty line under the claims' numbers, windows, names, and
+    * titles rules (ruling 20): its numbers are facts the kept claims asserted (or numbers of the
+    * fixed notes), its windows are the answer's or the kept claims' (or ranges of the fixed notes),
+    * and every researcher name is one the kept claims may write (ruling 29, N2). Empty: it passes.
     */
-  private def lineOk(
+  private def lineProblems(
       text: String,
       evidence: Seq[EvidenceItem],
       names: Set[String],
       bound: Seq[Binding],
+      positions: Set[Int],
       allowed: Seq[(String, Int, Int)],
       ranges: Set[(Int, Int)],
       free: Set[String],
       c: Context
-  ): Boolean =
+  ): Vector[String] =
     val (foreign, unresolved) = namesBad(text, names, evidence, c)
-    val (badNumbers, badWindows) = textProblems(text, bound, allowed, ranges, free, c)
-    badNumbers.isEmpty && badWindows.isEmpty && foreign.isEmpty && unresolved.isEmpty &&
-    unknownNames(text, c).isEmpty && titlesBad(text, evidence).isEmpty
+    val (badNumbers, badWindows) = textProblems(text, bound, positions, allowed, ranges, free, c)
+    val spans = unknownNames(text, c)
+    val titles = titlesBad(text, evidence)
+    badNumbers ++ badWindows.map(w => s"the text $w") ++
+      foreign.map(n => s"names $n, whom no kept claim may name") ++
+      unresolved.map(n => s"uses the unresolved name $n") ++
+      Option.when(spans.nonEmpty)(s"names ${describe(spans)}") ++
+      Option.when(titles.nonEmpty)(s"${titles.size} quoted title(s) are not titles of cited works")
 
   final case class Result(
       report: VerificationReport,
       claims: Vector[AnswerClaim],
       summary: String,
-      uncertainty: Vector[String]
+      uncertainty: Vector[String],
+      removed: Vector[RemovedClaim],
+      dropped: Vector[DroppedLine]
   )
 
   def verify(out: SynthesisOutput, c: Context, queryId: String, prov: Provenance): Result =
@@ -813,41 +952,52 @@ object Verifier:
         prov
       )
     }
-    val keptEvidence = keptDrafts.flatMap(_.evidenceIds).flatMap(c.graph.get).distinct
-    val keptBindings = keptDrafts.flatMap(d => bindings(d, d.evidenceIds.flatMap(c.graph.get)))
-    val keptNames =
-      keptDrafts.flatMap(d => allowedNames(d, d.evidenceIds.flatMap(c.graph.get), c)).toSet
+    // n7: what was removed or left out, and why (audit only).
+    val removed = out.claims.filter(d => byId(d.claimId).action == ClaimAction.REMOVED).map { d =>
+      val k = byId(d.claimId)
+      RemovedClaim(d.claimId, d.kind, d.text, k.status, k.checks.filter(_.outcome != PASS))
+    }
+    def cited(d: ClaimDraft) = d.evidenceIds.flatMap(c.graph.get)
+    val keptEvidence = keptDrafts.flatMap(cited).distinct
+    val keptBindings = keptDrafts.flatMap(d => bindings(d, cited(d)))
+    val keptPositions = keptDrafts.flatMap(d => positions(d, cited(d))).toSet
+    val keptNames = keptDrafts.flatMap(d => allowedNames(d, cited(d), c)).toSet
     val answerWindows =
       (c.bundle.windows.map(w => Option(w.window).filter(_.nonEmpty)) ++ keptDrafts.map(_.window))
         .flatMap(c.windows)
         .distinct
-    val summary =
-      if keptDrafts.nonEmpty && lineOk(
+    val summaryProblems =
+      if keptDrafts.isEmpty then Vector("no claim was kept")
+      else
+        lineProblems(
           out.summary,
           keptEvidence,
           keptNames,
           keptBindings,
+          keptPositions,
           answerWindows,
           Set.empty,
           Set.empty,
           c
         )
-      then out.summary
-      else keptDrafts.map(_.text).mkString(" ")
+    val summary =
+      if summaryProblems.isEmpty then out.summary else keptDrafts.map(_.text).mkString(" ")
     val noteRanges = c.notes.flatMap(rangesIn(_, c)).toSet
     val noteNumbers = c.notes.flatMap(numbersIn(_, c)).toSet
-    val (lines, dropped) = out.uncertainty.partition(
-      lineOk(
-        _,
+    val judged = out.uncertainty.map(u =>
+      u -> lineProblems(
+        u,
         c.bundle.graphEvidence,
         keptNames,
         keptBindings,
+        keptPositions,
         answerWindows,
         noteRanges,
         noteNumbers,
         c
       )
     )
+    val dropped = judged.filter(_._2.nonEmpty)
     val counts = VerificationCounts(
       checks.count(_.status == VerificationStatus.VERIFIED),
       checks.count(_.status == VerificationStatus.PARTIALLY_SUPPORTED),
@@ -858,7 +1008,11 @@ object Verifier:
       VerificationReport(RuntimeSchemas.Verification, queryId, checks, counts),
       claims,
       summary,
-      lines ++ Option.when(dropped.nonEmpty)(
+      judged.filter(_._2.isEmpty).map(_._1) ++ Option.when(dropped.nonEmpty)(
         s"${dropped.size} drafted uncertainty line(s) were left out because they failed verification."
-      )
+      ),
+      removed,
+      Option
+        .when(summaryProblems.nonEmpty)(DroppedLine(LinePart.SUMMARY, out.summary, summaryProblems))
+        .toVector ++ dropped.map((u, ps) => DroppedLine(LinePart.UNCERTAINTY, u, ps))
     )

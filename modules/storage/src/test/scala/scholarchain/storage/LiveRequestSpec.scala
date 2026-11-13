@@ -236,7 +236,8 @@ class LiveRequestSpec extends AnyFunSuite:
       LiveAws.s3(t, o),
       LiveAws.dynamo(t, o),
       LiveAws.vectors(t, o),
-      LiveAws.neptune(t, "neptune.invalid", 8182, o)
+      LiveAws.neptune(t, "neptune.invalid", 8182, o),
+      LiveAws.sqs(t, o)
     )
     try
       clients.foreach { k =>

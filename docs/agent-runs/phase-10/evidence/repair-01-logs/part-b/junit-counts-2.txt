@@ -1,0 +1,8 @@
+core: tests 185, failures 0, errors 0, suites 4, report times 17:57:49..17:57:49
+entityResolution: tests 111, failures 0, errors 0, suites 10, report times 17:57:51..17:57:52
+hadoop: tests 70, failures 0, errors 0, suites 6, report times 17:57:49..18:02:08
+rag: tests 102, failures 0, errors 0, suites 14, report times 17:57:52..17:57:53
+services: tests 43, failures 0, errors 0, suites 8, report times 17:57:50..17:58:11
+sparkAnalytics: tests 46, failures 0, errors 0, suites 8, report times 17:58:21..17:59:33
+storage: tests 108, failures 0, errors 0, suites 11, report times 17:57:53..17:57:54
+total: tests 665, failures 0, errors 0, suites 61

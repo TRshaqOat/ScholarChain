@@ -1,0 +1,48 @@
+{
+  "nodeId": "scr:canon-v1.er-v2:3bb726d3da683ea3732d02907753c921",
+  "direction": "both",
+  "depth": 1,
+  "limit": 1,
+  "edgeTypes": [
+    "COAUTHORED_WITH"
+  ],
+  "nodes": [
+    {
+      "nodeId": "scr:canon-v1.er-v2:3ed012c7e9d38ac0dc513403ec31176a",
+      "label": "Researcher",
+      "properties": {
+        "displayName": "Ada Lovelace",
+        "dblpAnchored": true,
+        "mentionCount": 3,
+        "assignedTier": "TIER1",
+        "snapshot": "2026-10-03",
+        "identityConfidence": 0.99,
+        "schemaVersion": "neptune-researcher-v1",
+        "runId": "run-b8a212f955daaeb0275f11f93e36c70a"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "edgeId": "cae-3a0a11a6a9c53031bd28a4b12e492344",
+      "edgeType": "COAUTHORED_WITH",
+      "fromId": "scr:canon-v1.er-v2:3bb726d3da683ea3732d02907753c921",
+      "toId": "scr:canon-v1.er-v2:3ed012c7e9d38ac0dc513403ec31176a",
+      "properties": {
+        "window": "all-years",
+        "lastCollaborationYear": 2002,
+        "windowStartYear": 2000,
+        "supportingWorkIds": "dblp:conf/fx/W1 dblp:conf/fx/W2",
+        "snapshot": "2026-10-03",
+        "schemaVersion": "neptune-coauthored-with-v1",
+        "runId": "run-b8a212f955daaeb0275f11f93e36c70a",
+        "firstCollaborationYear": 2001,
+        "jointPublicationCount": 2,
+        "windowEndYear": 2026,
+        "policyVersion": "graph-v1"
+      }
+    }
+  ],
+  "truncated": true,
+  "nextCursor": "djEuMS44YTZmMTlkZjRhM2Q1NDJlNGM5MzZhMTEzMTNiNDAyNQ"
+}

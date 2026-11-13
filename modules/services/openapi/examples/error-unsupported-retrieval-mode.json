@@ -1,0 +1,7 @@
+{
+  "error": "UNSUPPORTED_RETRIEVAL_MODE",
+  "message": "retrieval.graphLimit above 100 is not supported in this deployment",
+  "traceId": "trace-example-1",
+  "requestId": "req-example-1",
+  "retryable": false
+}

@@ -395,7 +395,8 @@ final case class ClaimDraft(
     values: Map[String, String]
 ) derives ReadWriter
 
-/** The JSON object the synthesis model must return (prompts/synthesis, schema synthesis-output-v1).
+/** The JSON object the synthesis model must return (prompts/synthesis; the schema the prompt file
+  * names: synthesis-output-v1, -v2, or -v3, RUNTIME.md section 11).
   */
 final case class SynthesisOutput(
     schemaVersion: String,
@@ -421,6 +422,19 @@ final case class VerificationCounts(
     unsupported: Int,
     conflicting: Int
 ) derives ReadWriter
+
+/** A claim verification removed (n7, audit only): its text and the checks that did not pass. */
+final case class RemovedClaim(
+    claimId: String,
+    kind: ClaimKind,
+    text: String,
+    status: VerificationStatus,
+    failedChecks: Vector[CheckResult]
+) derives ReadWriter
+
+/** A model summary or uncertainty line verification left out (n7, audit only), with its reasons. */
+final case class DroppedLine(part: LinePart, text: String, reasons: Vector[String])
+    derives ReadWriter
 
 final case class VerificationReport(
     schemaVersion: String,
@@ -488,7 +502,10 @@ final case class ResolutionSummary(
 ) derives ReadWriter
 
 /** Write-once audit object (logs/ prefix). Holds no question text (only its hash and length), no
-  * prompt text, no model output text, and no credentials.
+  * prompt text, no raw model output, and no credentials. v3 (n7) adds removedClaims and
+  * droppedLines: the parsed text of each removed claim and left-out line with why, for review only;
+  * they are never logged, and a service view of the audit leaves their text out
+  * (RuntimeApi.withoutModelText).
   */
 final case class AuditRecord(
     schemaVersion: String,
@@ -515,6 +532,8 @@ final case class AuditRecord(
     stages: Vector[StageTiming],
     budget: BundleBudget,
     verification: VerificationCounts,
+    removedClaims: Vector[RemovedClaim],
+    droppedLines: Vector[DroppedLine],
     abstained: Boolean,
     abstentionReason: Option[AbstentionReason],
     answerHash: String,

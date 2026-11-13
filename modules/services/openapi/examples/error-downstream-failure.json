@@ -1,0 +1,7 @@
+{
+  "error": "DOWNSTREAM_FAILURE",
+  "message": "runtime failed",
+  "traceId": "trace-example-1",
+  "requestId": "req-example-1",
+  "retryable": true
+}

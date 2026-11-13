@@ -1,0 +1,40 @@
+disable D5-probe-key-at-bucket-root: modules/services/src/main/scala/scholarchain/services/Services.scala
+  replaced: s"${Audit.base("logs", setup.snapshot, setup.runId)}/readiness-probe"
+  with:     "readiness-probe"
+sha256 before: a45ebab17fb1c9c7bdf9cbfd1dbcfe17e47b4ce6322d730a3a763185173a4fc1
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] compiling 2 Scala sources to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/services/target/scala-3.3.7/classes ...
+[info] done compiling
+[info] QueryApiSpec:
+[info] - a synchronous query returns an evidence-backed answer with links; IDs are echoed
+[info] - malformed JSON, invalid fields, a wrong Content-Type, and an oversized body are 400
+[info] - valid JSON with unsupported constraints or retrieval limits is 422
+[info] - Idempotency-Key: the same body replays the stored answer; a different body is 409
+[info] - a passed deadline is 504 (cooperative and hard); a failing store is 502; breakers open
+[info] - missing or wrong API key is 401 everywhere except /healthz and /readyz
+[info] - health and readiness differ; neither reveals configuration
+[info] - explain returns the plan, stages, versions, evidence, and counters; never hidden text
+[info] - POST /v1/query is rate limited per instance (429 with Retry-After)
+[info] - metrics: counts by route and status, latency percentiles, and answer counters
+[info] - no API key, question, or store error text appears in any log line or response
+[info] - launcher: fake mode starts on localhost; a missing key or incomplete live arguments stop it
+[info] - readiness probes S3 under the audit prefix query-api and the worker read (repair-01 m1) *** FAILED ***
+[info]   Vector("readiness-probe") did not equal Vector("logs/rag-runtime/snapshot=2026-10-03/run=run-1c1fb6d5c49e8b1e2a5982f80a878de3/readiness-probe") (QueryApiSpec.scala:452)
+[info]   Analysis:
+[info]   Vector1(0: "readiness-probe" -> "logs/rag-runtime/snapshot=2026-10-03/run=run-1c1fb6d5c49e8b1e2a5982f80a878de3/readiness-probe")
+[info] Run completed in 1 second, 921 milliseconds.
+[info] Total number of tests run: 13
+[info] Suites: completed 1, aborted 0
+[info] Tests: succeeded 12, failed 1, canceled 0, ignored 0, pending 0
+[info] *** 1 TEST FAILED ***
+[error] Failed tests:
+[error] 	scholarchain.services.QueryApiSpec
+[error] (services / Test / testOnly) sbt.TestsFailedException: Tests unsuccessful
+[error] Total time: 5 s, completed Nov 12, 2026, 5:18:16 PM
+sbt exit 1
+restored sha256: a45ebab17fb1c9c7bdf9cbfd1dbcfe17e47b4ce6322d730a3a763185173a4fc1 OK

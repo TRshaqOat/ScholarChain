@@ -1,0 +1,238 @@
+{
+  "schemaVersion": "rag-audit-v3",
+  "queryId": "qry-83028148bfb27c2f9446ee2723365f2a",
+  "sessionId": null,
+  "runId": "run-422d912ac162f340f5f31a1b63b65e19",
+  "createdAt": "2026-11-13T02:19:03.992681Z",
+  "mode": "LIVE",
+  "questionHash": "sha256:efeb4f16f543d26c637c17f6802516f52768ba73663bae1f7d89b28270bb317f",
+  "questionChars": 116,
+  "plan": {
+    "schemaVersion": "rag-query-plan-v1",
+    "queryId": "qry-83028148bfb27c2f9446ee2723365f2a",
+    "operations": [
+      {
+        "operation": "COMPONENT_LOOKUP",
+        "scope": "CORPUS",
+        "researchers": [],
+        "metric": null,
+        "topN": null
+      }
+    ],
+    "researcherNames": [],
+    "metrics": [],
+    "window": {
+      "requested": {
+        "kind": "NAMED",
+        "name": "2000-2014",
+        "yearFrom": null,
+        "yearTo": null
+      },
+      "window": "2000-2014",
+      "startYear": 2000,
+      "endYear": 2014,
+      "exact": true,
+      "note": null
+    },
+    "comparison": null,
+    "topics": [],
+    "venues": [],
+    "institutions": [],
+    "semanticIndexes": [],
+    "limits": {
+      "graphLimit": 100,
+      "vectorLimit": 50,
+      "maxPathDepth": 6,
+      "topK": 5
+    },
+    "source": "MODEL",
+    "overriddenFields": [],
+    "rejectedItems": [],
+    "promptVersion": "planner-v2",
+    "modelId": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "RUNTIME",
+      "sourceRecordId": "qry-83028148bfb27c2f9446ee2723365f2a",
+      "snapshot": "2026-10-03",
+      "runId": "run-422d912ac162f340f5f31a1b63b65e19",
+      "policyVersion": null,
+      "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+    }
+  },
+  "resolutions": [],
+  "graphEvidenceIds": [
+    "ev-b0de284ed5b7a6dd4680db3a6dabcf76"
+  ],
+  "semanticEvidenceIds": [],
+  "metricVersions": [
+    "spark-corpus-window-summary-v1@run-1de2293597c338227290eb382de16957"
+  ],
+  "graphRunId": "run-1d6a86491812ff94887270c1ab885e69",
+  "vectorIndexes": [],
+  "embeddingModelVersion": null,
+  "promptVersions": {
+    "planner.schema": "planner-output-v1",
+    "synthesis.schema": "synthesis-output-v3",
+    "synthesis": "synthesis-v3",
+    "planner.schema.sha256": "sha256:3ff40901f3f625204eaaa3ddc525b844c96178ad36629666ebc96f9fe91c1368",
+    "synthesis.schema.sha256": "sha256:44eb22cc2e428a1e90884bcd115b6aac031c9c95f199efd4c42729fada880d02",
+    "planner.sha256": "sha256:c7354f86ece47e7aa01481f6c893a9721a9f13e3d24716bc73942ef49e81e655",
+    "planner": "planner-v2",
+    "synthesis.sha256": "sha256:5755fb97ab563ed8bbe19cded139818194bef346e1718d2ed5df4cc8c4953e2e"
+  },
+  "modelIds": {
+    "planner": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "synthesis": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "embedding": "amazon.titan-embed-text-v2:0|1024|normalized|rendering-v1"
+  },
+  "llmCalls": [
+    {
+      "stage": "QUERY_PLANNING",
+      "modelId": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+      "promptVersion": "planner-v2",
+      "schemaVersion": "planner-output-v1",
+      "attempt": 1,
+      "outcome": "OK",
+      "requests": 1,
+      "inputTokens": 2531,
+      "outputTokens": 168,
+      "latencyMs": 1575,
+      "throttleWaitMs": 6276,
+      "failure": null
+    },
+    {
+      "stage": "ANSWER_SYNTHESIS",
+      "modelId": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+      "promptVersion": "synthesis-v3",
+      "schemaVersion": "synthesis-output-v3",
+      "attempt": 1,
+      "outcome": "OK",
+      "requests": 1,
+      "inputTokens": 2381,
+      "outputTokens": 431,
+      "latencyMs": 1912,
+      "throttleWaitMs": 5918,
+      "failure": null
+    }
+  ],
+  "embeddingCalls": [],
+  "templateCalls": [
+    {
+      "templateId": "obj.window-summary",
+      "latencyMs": 0,
+      "resultCount": 1,
+      "truncated": false
+    }
+  ],
+  "stages": [
+    {
+      "stage": "QUERY_PLANNING",
+      "outcome": "OK",
+      "latencyMs": 7851
+    },
+    {
+      "stage": "RESEARCHER_RESOLUTION",
+      "outcome": "OK",
+      "latencyMs": 0
+    },
+    {
+      "stage": "COLLABORATION_METRICS",
+      "outcome": "SKIPPED",
+      "latencyMs": 0
+    },
+    {
+      "stage": "PATH_FINDING",
+      "outcome": "OK",
+      "latencyMs": 5
+    },
+    {
+      "stage": "COMMUNITY_ANALYSIS",
+      "outcome": "SKIPPED",
+      "latencyMs": 0
+    },
+    {
+      "stage": "SEMANTIC_CONTEXT",
+      "outcome": "SKIPPED",
+      "latencyMs": 0
+    },
+    {
+      "stage": "EVIDENCE_BUILDING",
+      "outcome": "OK",
+      "latencyMs": 2
+    },
+    {
+      "stage": "ANSWER_SYNTHESIS",
+      "outcome": "OK",
+      "latencyMs": 7830
+    },
+    {
+      "stage": "CLAIM_VERIFICATION",
+      "outcome": "OK",
+      "latencyMs": 9
+    },
+    {
+      "stage": "AUDIT",
+      "outcome": "OK",
+      "latencyMs": 0
+    }
+  ],
+  "budget": {
+    "tokenBudget": 11000,
+    "graphTokens": 216,
+    "semanticTokens": 0,
+    "omittedGraphItems": 0,
+    "omittedSemanticItems": 0
+  },
+  "verification": {
+    "verified": 1,
+    "partiallySupported": 0,
+    "unsupported": 1,
+    "conflicting": 0
+  },
+  "removedClaims": [
+    {
+      "claimId": "claim-2",
+      "kind": "COMPONENT",
+      "text": "The largest connected component contains 46062 researchers, representing 69.4% of the 66350 researchers in the graph.",
+      "status": "UNSUPPORTED",
+      "failedChecks": [
+        {
+          "rule": "numbers-in-text",
+          "outcome": "FAIL",
+          "detail": "69.4 is not an asserted fact of a cited item"
+        }
+      ]
+    }
+  ],
+  "droppedLines": [
+    {
+      "part": "SUMMARY",
+      "text": "In 2000-2014, the collaboration graph has 7709 connected components. The largest component contains 46062 researchers, which is 69.4% of the 66350 researchers in the graph.",
+      "reasons": [
+        "46062 is not an asserted fact of a cited item",
+        "69.4 is not an asserted fact of a cited item",
+        "66350 is not an asserted fact of a cited item"
+      ]
+    },
+    {
+      "part": "UNCERTAINTY",
+      "text": "Graph nodes are researchers with at least one DBLP publication in 2000-2014; researchers with only OpenAlex or Crossref authorship are not included.",
+      "reasons": [
+        "1 is not an asserted fact of a cited item"
+      ]
+    }
+  ],
+  "abstained": false,
+  "abstentionReason": null,
+  "answerHash": "sha256:54ff9bf738c412e556d99d8e91996ee4b915dcaa954fba510ea7fe0135f68b0a",
+  "provenance": {
+    "schemaVersion": "provenance-v1",
+    "sourceDataset": "RUNTIME",
+    "sourceRecordId": "qry-83028148bfb27c2f9446ee2723365f2a",
+    "snapshot": "2026-10-03",
+    "runId": "run-422d912ac162f340f5f31a1b63b65e19",
+    "policyVersion": "fusion-v1",
+    "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+  }
+}

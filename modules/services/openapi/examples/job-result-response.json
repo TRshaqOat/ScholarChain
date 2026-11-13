@@ -1,0 +1,136 @@
+{
+  "queryId": "qry-0a83cf6903ee3d6914629c8acc8a4d7c",
+  "mode": "asynchronous",
+  "answer": {
+    "summary": "Template answer (fake mode; no language model was called). 'Ada Lovelace' was linked to Ada Lovelace (scr:canon-v1.er-v2:3ed012c7e9d38ac0dc513403ec31176a) by dominant-name-v1: 10 of 11 works among researchers with this display name. 'Grace Hopper' was linked to Grace Hopper (scr:canon-v1.er-v2:3bb726d3da683ea3732d02907753c921) by dominant-name-v1: 6 of 6 works among researchers with this display name. Grace Hopper and Ada Lovelace have 2 joint publications in all-years, first in 2001 and last in 2002. Their joint publications include: \"Paper W1\" (2001); \"Paper W2\" (2002).",
+    "abstained": false,
+    "abstention": null,
+    "uncertainty": "Ada Lovelace was linked to scr:canon-v1.er-v2:3ed012c7e9d38ac0dc513403ec31176a by dominant-name-v1: 0.9091 of 11 works among 2 researchers with this display name. Grace Hopper was linked to scr:canon-v1.er-v2:3bb726d3da683ea3732d02907753c921 by dominant-name-v1: 1.0000 of 6 works among 1 researchers with this display name. No researcher-profile-v1 document matched the filters. No paper-abstract-v1 document matched the filters.",
+    "window": {
+      "requested": {
+        "kind": "DEFAULT",
+        "name": null,
+        "yearFrom": null,
+        "yearTo": null
+      },
+      "window": "all-years",
+      "startYear": 2000,
+      "endYear": 2026,
+      "exact": true,
+      "note": null
+    },
+    "resolutions": [
+      {
+        "name": "Ada Lovelace",
+        "decision": "RESOLVED_DOMINANT",
+        "researcherId": "scr:canon-v1.er-v2:3ed012c7e9d38ac0dc513403ec31176a",
+        "topShare": 0.9090909090909091,
+        "candidateCount": 2
+      },
+      {
+        "name": "Grace Hopper",
+        "decision": "RESOLVED_DOMINANT",
+        "researcherId": "scr:canon-v1.er-v2:3bb726d3da683ea3732d02907753c921",
+        "topShare": 1,
+        "candidateCount": 1
+      }
+    ],
+    "verification": {
+      "verified": 4,
+      "partiallySupported": 0,
+      "unsupported": 0,
+      "conflicting": 0
+    },
+    "answerHash": "sha256:fda109c968ba1a3ba1a6be25b38c76251ad8ad1b78bb5d9bf040aa3431782fb9"
+  },
+  "claims": [
+    {
+      "schemaVersion": "answer-claim-v1",
+      "claimId": "claim-1",
+      "text": "'Ada Lovelace' was linked to Ada Lovelace (scr:canon-v1.er-v2:3ed012c7e9d38ac0dc513403ec31176a) by dominant-name-v1: 10 of 11 works among researchers with this display name.",
+      "evidenceIds": [
+        "ev-c6ce519f6d2765cea755628bc7901ab1"
+      ],
+      "verificationStatus": "VERIFIED",
+      "uncertainty": null,
+      "provenance": {
+        "schemaVersion": "provenance-v1",
+        "sourceDataset": "RUNTIME",
+        "sourceRecordId": "qry-0a83cf6903ee3d6914629c8acc8a4d7c",
+        "snapshot": "2026-10-03",
+        "runId": "run-98591b9ce475391d60616430c38d7b75",
+        "policyVersion": null,
+        "modelVersion": null
+      }
+    },
+    {
+      "schemaVersion": "answer-claim-v1",
+      "claimId": "claim-2",
+      "text": "'Grace Hopper' was linked to Grace Hopper (scr:canon-v1.er-v2:3bb726d3da683ea3732d02907753c921) by dominant-name-v1: 6 of 6 works among researchers with this display name.",
+      "evidenceIds": [
+        "ev-062ac826d9a7e900e95230cb190fd0c8"
+      ],
+      "verificationStatus": "VERIFIED",
+      "uncertainty": null,
+      "provenance": {
+        "schemaVersion": "provenance-v1",
+        "sourceDataset": "RUNTIME",
+        "sourceRecordId": "qry-0a83cf6903ee3d6914629c8acc8a4d7c",
+        "snapshot": "2026-10-03",
+        "runId": "run-98591b9ce475391d60616430c38d7b75",
+        "policyVersion": null,
+        "modelVersion": null
+      }
+    },
+    {
+      "schemaVersion": "answer-claim-v1",
+      "claimId": "claim-3",
+      "text": "Grace Hopper and Ada Lovelace have 2 joint publications in all-years, first in 2001 and last in 2002.",
+      "evidenceIds": [
+        "ev-146cd018ccf1e41f7a3c8a8b5d7dc5c8"
+      ],
+      "verificationStatus": "VERIFIED",
+      "uncertainty": null,
+      "provenance": {
+        "schemaVersion": "provenance-v1",
+        "sourceDataset": "RUNTIME",
+        "sourceRecordId": "qry-0a83cf6903ee3d6914629c8acc8a4d7c",
+        "snapshot": "2026-10-03",
+        "runId": "run-98591b9ce475391d60616430c38d7b75",
+        "policyVersion": null,
+        "modelVersion": null
+      }
+    },
+    {
+      "schemaVersion": "answer-claim-v1",
+      "claimId": "claim-4",
+      "text": "Their joint publications include: \"Paper W1\" (2001); \"Paper W2\" (2002).",
+      "evidenceIds": [
+        "ev-146cd018ccf1e41f7a3c8a8b5d7dc5c8",
+        "ev-562ba72d97ca7067606b28fc8f7f565f",
+        "ev-36e8b60d3d6ec46df6f0b06fc0417e21"
+      ],
+      "verificationStatus": "VERIFIED",
+      "uncertainty": null,
+      "provenance": {
+        "schemaVersion": "provenance-v1",
+        "sourceDataset": "RUNTIME",
+        "sourceRecordId": "qry-0a83cf6903ee3d6914629c8acc8a4d7c",
+        "snapshot": "2026-10-03",
+        "runId": "run-98591b9ce475391d60616430c38d7b75",
+        "policyVersion": null,
+        "modelVersion": null
+      }
+    }
+  ],
+  "links": {
+    "explain": "/v1/explain/qry-0a83cf6903ee3d6914629c8acc8a4d7c",
+    "evidence": [
+      "/v1/evidence/ev-c6ce519f6d2765cea755628bc7901ab1",
+      "/v1/evidence/ev-062ac826d9a7e900e95230cb190fd0c8",
+      "/v1/evidence/ev-146cd018ccf1e41f7a3c8a8b5d7dc5c8",
+      "/v1/evidence/ev-562ba72d97ca7067606b28fc8f7f565f",
+      "/v1/evidence/ev-36e8b60d3d6ec46df6f0b06fc0417e21"
+    ]
+  }
+}

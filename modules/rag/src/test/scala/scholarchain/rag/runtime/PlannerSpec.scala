@@ -44,7 +44,7 @@ class PlannerSpec extends AnyFunSuite:
       Vector.empty
     )
   private val prompts = PromptSet
-    .load(Paths.get(cfg.runtime.promptsDir), "planner-v2", "synthesis-v2")
+    .load(Paths.get(cfg.runtime.promptsDir), "planner-v2", "synthesis-v3")
     .fold(sys.error, identity)
 
   test("the rule planner extracts names, windows, and operations of benchmark-style questions") {

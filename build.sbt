@@ -7,6 +7,8 @@
 //
 // Aliases: fmt, check (the definition of done), packageJobs, dockerLocal. check never needs Docker or AWS.
 
+import com.typesafe.sbt.packager.MappingsHelper.directory
+
 ThisBuild / organization := "scholarchain"
 ThisBuild / version := "0.1.0"
 ThisBuild / scalaVersion := Versions.scala
@@ -117,11 +119,26 @@ lazy val storage = module("storage", "storage")
 lazy val rag = module("rag", "rag")
   .dependsOn(core, storage)
 
+// The three deployables (phase-10 ruling 1). Each main gets bin/<kebab-case simple name>:
+// bin/query-api, bin/graph-evidence-api, bin/worker. The local runner is not packaged.
+val ServiceMains =
+  Seq("QueryApi", "GraphEvidenceApi", "Worker").map(m => s"scholarchain.services.main.$m")
+
 lazy val services = module("services", "services")
   .dependsOn(core, rag, storage)
   .enablePlugins(JavaAppPackaging, DockerPlugin)
   .settings(
     libraryDependencies += Dependencies.logback,
+    // Package start scripts for the three deployables only; with none compiled yet, none are made.
+    Compile / discoveredMainClasses ~= (_.filter(ServiceMains.contains)),
+    // The runtime reads prompts from runtime.prompts-dir (default "prompts", relative to the working
+    // directory). Ship them at <package root>/prompts, the image's WORKDIR /opt/docker (FU3).
+    Universal / mappings ++= directory((ThisBuild / baseDirectory).value / "prompts"),
+    // runMain (e.g. the local runner) forks with the repository root as working directory, so
+    // prompts/ and scratch/ resolve as in the CLIs; heap capped well under 6g (phase-10 ruling 14).
+    run / fork := true,
+    run / baseDirectory := (ThisBuild / baseDirectory).value,
+    run / javaOptions += "-Xmx2g",
     dockerBaseImage := Versions.javaRuntimeImage,
     Docker / packageName := "scholarchain-services",
     Docker / version := sys.env.getOrElse(ImageTagEnv, "unset"),

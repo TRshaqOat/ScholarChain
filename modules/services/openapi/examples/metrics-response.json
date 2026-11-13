@@ -1,0 +1,66 @@
+{
+  "requests": {
+    "/healthz": {
+      "200": 1
+    },
+    "/v1/jobs/{jobId}": {
+      "200": 1,
+      "404": 1
+    },
+    "/v1/jobs/{jobId}/result": {
+      "200": 1,
+      "409": 1
+    },
+    "/v1/query": {
+      "200": 1,
+      "202": 1,
+      "400": 1,
+      "422": 1
+    }
+  },
+  "latencyMs": {
+    "/healthz": {
+      "count": 1,
+      "p50": 17,
+      "p95": 17,
+      "p99": 17
+    },
+    "/v1/jobs/{jobId}": {
+      "count": 2,
+      "p50": 0,
+      "p95": 2,
+      "p99": 2
+    },
+    "/v1/jobs/{jobId}/result": {
+      "count": 2,
+      "p50": 2,
+      "p95": 3,
+      "p99": 3
+    },
+    "/v1/query": {
+      "count": 4,
+      "p50": 1,
+      "p95": 110,
+      "p99": 110
+    }
+  },
+  "counters": {
+    "timeouts": 0,
+    "answers": 1,
+    "abstentions": 0,
+    "llmRequests": 0,
+    "llmInputTokens": 0,
+    "llmOutputTokens": 0,
+    "verifiedClaims": 4,
+    "partiallySupportedClaims": 0,
+    "unsupportedClaims": 0,
+    "conflictingClaims": 0,
+    "queueReceives": 0,
+    "jobsQueued": 1,
+    "jobsSucceeded": 0,
+    "jobsFailed": 0,
+    "duplicateDeliveries": 0,
+    "poisonMessages": 0,
+    "stuckJobsFailed": 0
+  }
+}

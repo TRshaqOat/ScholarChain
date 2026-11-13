@@ -1,0 +1,154 @@
+{
+  "schemaVersion": "rag-benchmark-result-v2",
+  "questionId": "B12",
+  "category": "shortest_path",
+  "mode": "LIVE",
+  "runtimeRunId": "run-d94e077cc52fa2fbfa628f21a4c4adaa",
+  "queryId": "qry-ff1c93ea1d05b753aa337686e2604f53",
+  "planSource": "MODEL",
+  "operations": [
+    "SHORTEST_PATH/PAIR"
+  ],
+  "metrics": [],
+  "window": "all-years",
+  "resolutions": [
+    {
+      "name": "Jack J. Dongarra",
+      "decision": "RESOLVED_DOMINANT",
+      "researcherId": "scr:canon-v1.er-v2:6de4012bbe8608f1d49d18cf9a40a763",
+      "topShare": 0.9575596816976127,
+      "candidateCount": 17
+    },
+    {
+      "name": "Elena Vasquez-Marlowe",
+      "decision": "UNKNOWN_RESEARCHER",
+      "researcherId": null,
+      "topShare": null,
+      "candidateCount": 0
+    }
+  ],
+  "abstained": true,
+  "abstentionReason": "UNKNOWN_RESEARCHER",
+  "verification": {
+    "verified": 0,
+    "partiallySupported": 0,
+    "unsupported": 0,
+    "conflicting": 0
+  },
+  "claims": 0,
+  "graph": {
+    "reads": 21,
+    "readsByTemplate": {
+      "kv.entity-link": 2,
+      "graph.researcher-institutions": 1,
+      "graph.coauthors": 17,
+      "graph.authored-counts": 1
+    },
+    "rows": 57,
+    "truncatedReads": 1,
+    "evidenceItems": 0,
+    "tokens": 0,
+    "omittedItems": 0,
+    "latencyMs": 0,
+    "pathStatuses": []
+  },
+  "semantic": {
+    "embeddingCalls": 0,
+    "embeddingInputTokens": 0,
+    "indexes": [],
+    "hits": 0,
+    "tokens": 0,
+    "omittedItems": 0,
+    "latencyMs": 0,
+    "outcome": "SKIPPED"
+  },
+  "llm": {
+    "attempts": 1,
+    "requests": 1,
+    "attemptsByStage": {
+      "QUERY_PLANNING": 1
+    },
+    "outcomes": {
+      "OK": 1
+    },
+    "inputTokens": 2529,
+    "outputTokens": 191,
+    "throttleWaitMs": 1326
+  },
+  "latencyMs": 2996,
+  "stageLatencyMs": {
+    "COLLABORATION_METRICS": 0,
+    "PATH_FINDING": 0,
+    "EVIDENCE_BUILDING": 0,
+    "AUDIT": 0,
+    "QUERY_PLANNING": 2972,
+    "SEMANTIC_CONTEXT": 0,
+    "COMMUNITY_ANALYSIS": 0,
+    "CLAIM_VERIFICATION": 0,
+    "RESEARCHER_RESOLUTION": 18,
+    "ANSWER_SYNTHESIS": 0
+  },
+  "checks": [
+    {
+      "name": "plan-operations",
+      "outcome": "PASS",
+      "detail": "needs SHORTEST_PATH; plan [SHORTEST_PATH/PAIR]"
+    },
+    {
+      "name": "researcher-names",
+      "outcome": "PASS",
+      "detail": "expected [Jack J. Dongarra; Elena Vasquez-Marlowe], extracted [Elena Vasquez-Marlowe; Jack J. Dongarra]"
+    },
+    {
+      "name": "resolution",
+      "outcome": "PASS",
+      "detail": "Jack J. Dongarra: expected RESOLVED_DOMINANT, got RESOLVED_DOMINANT; Elena Vasquez-Marlowe: expected UNKNOWN_RESEARCHER, got UNKNOWN_RESEARCHER"
+    },
+    {
+      "name": "abstention",
+      "outcome": "PASS",
+      "detail": "expected abstain (UNKNOWN_RESEARCHER), got abstain (UNKNOWN_RESEARCHER)"
+    },
+    {
+      "name": "claim-evidence",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no claim"
+    },
+    {
+      "name": "verification",
+      "outcome": "PASS",
+      "detail": "abstained with no verified claim kept; counts 0/0/0/0; final claims 0 verified of 0"
+    },
+    {
+      "name": "bundle-budget",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no bundle"
+    },
+    {
+      "name": "llm-budget",
+      "outcome": "PASS",
+      "detail": "1 attempts, 1 requests (QUERY_PLANNING 1), tokens in 2529 out 191"
+    },
+    {
+      "name": "embedding-budget",
+      "outcome": "PASS",
+      "detail": "0 embedding calls for 0 indexes queried"
+    },
+    {
+      "name": "path-hops",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no path evidence in the bundle"
+    },
+    {
+      "name": "pair-edges",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no bundle edge has stored path evidence"
+    },
+    {
+      "name": "deadline",
+      "outcome": "PASS",
+      "detail": "2996 ms of 180000"
+    }
+  ],
+  "answerHash": "sha256:5df8cef8078b2bb29bb6711cfa99575e79fa9ef28b2a39bfd97bb5e3903135d1"
+}

@@ -1,0 +1,68 @@
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] compiling 1 Scala source to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/rag/target/scala-3.3.7/classes ...
+[info] done compiling
+[info] running scholarchain.rag.cli.BenchmarkCli --questions experiments/benchmark/benchmark-questions-v1.csv --path-evidence scratch/stores/work/neptune-check/snapshot=2026-10-03/run=run-ee4ffd21aa20dbe4c078a4be96fe8c9f/expect-benchmark.csv --graph scratch/stores/s3/graph/neptune/snapshot=2026-10-03/run=run-1d6a86491812ff94887270c1ab885e69 --items scratch/stores/s3/curated/dynamodb/snapshot=2026-10-03/run=run-1d6a86491812ff94887270c1ab885e69 --objects scratch/stores/s3 --vectors scratch/stores/s3vectors --out scratch/runtime/wo9 --window-summary-root scratch/runtime/wo8/s3 --window-summary-run run-6fbad498beb0d8f570df67665fb97544
+runtime run run-824b0a2eaf72183a533e55c9e07b9297 (fake mode), snapshot 2026-10-03
+window summaries: curated/window-summary/snapshot=2026-10-03/run=run-6fbad498beb0d8f570df67665fb97544/part-00000.jsonl
+graph loaded: 511920 vertices, 3123311 edges in 34229 ms; heap in use 3807 MiB
+items indexed: 876228 in 16350 ms; heap in use 3950 MiB
+fake mode: rule planner, template synthesizer, hashing embedder (no AWS call)
+benchmark run run-396fa84df47be7a2579b491bec64356c: 30 questions, 0 already done, answering 30 now
+B01 answered; 3 verified; graph 21 reads, 2 items; semantic 1 hits; llm 0 attempts 0 requests; 807 ms; checks pass
+B02 answered; 3 verified; graph 15 reads, 2 items; semantic 1 hits; llm 0 attempts 0 requests; 26 ms; checks pass
+B03 answered; 1 verified; graph 2 reads, 1 items; semantic 5 hits; llm 0 attempts 0 requests; 264 ms; checks pass
+B04 answered; 1 verified; graph 2 reads, 1 items; semantic 0 hits; llm 0 attempts 0 requests; 10 ms; checks pass
+B05 answered; 3 verified; graph 15 reads, 3 items; semantic 1 hits; llm 0 attempts 0 requests; 80 ms; checks pass
+B06 answered; 3 verified; graph 22 reads, 3 items; semantic 2 hits; llm 0 attempts 0 requests; 23 ms; checks pass
+B07 answered; 4 verified; graph 33 reads, 28 items; semantic 3 hits; llm 0 attempts 0 requests; 34 ms; checks pass
+B08 answered; 4 verified; graph 25 reads, 8 items; semantic 3 hits; llm 0 attempts 0 requests; 27 ms; checks pass
+B09 abstained AMBIGUOUS_RESEARCHER; 0 verified; graph 572 reads, 0 items; semantic 0 hits; llm 0 attempts 0 requests; 61 ms; checks pass
+B10 answered; 9 verified; graph 35 reads, 13 items; semantic 3 hits; llm 0 attempts 0 requests; 66 ms; checks pass
+B11 answered; 9 verified; graph 28 reads, 37 items; semantic 3 hits; llm 0 attempts 0 requests; 43 ms; checks pass
+B12 abstained UNKNOWN_RESEARCHER; 0 verified; graph 21 reads, 0 items; semantic 0 hits; llm 0 attempts 0 requests; 4 ms; checks pass
+B13 answered; 2 verified; graph 1 reads, 1 items; semantic 0 hits; llm 0 attempts 0 requests; 6 ms; checks pass
+B14 answered; 4 verified; graph 17 reads, 4 items; semantic 1 hits; llm 0 attempts 0 requests; 17 ms; checks pass
+B15 answered; 2 verified; graph 1 reads, 1 items; semantic 0 hits; llm 0 attempts 0 requests; 4 ms; checks pass
+B16 answered; 3 verified; graph 25 reads, 4 items; semantic 1 hits; llm 0 attempts 0 requests; 386 ms; checks pass
+B17 answered; 2 verified; graph 1 reads, 1 items; semantic 0 hits; llm 0 attempts 0 requests; 13 ms; checks pass
+B18 answered; 3 verified; graph 19 reads, 4 items; semantic 2 hits; llm 0 attempts 0 requests; 256 ms; checks pass
+B19 answered; 1 verified; graph 2 reads, 1 items; semantic 0 hits; llm 0 attempts 0 requests; 6 ms; checks pass
+B20 answered; 3 verified; graph 15 reads, 12 items; semantic 1 hits; llm 0 attempts 0 requests; 30 ms; checks pass
+B21 answered; 1 verified; graph 2 reads, 1 items; semantic 0 hits; llm 0 attempts 0 requests; 5 ms; checks pass
+B22 answered; 5 verified; graph 22 reads, 3 items; semantic 1 hits; llm 0 attempts 0 requests; 13 ms; checks pass
+B23 answered; 3 verified; graph 15 reads, 3 items; semantic 1 hits; llm 0 attempts 0 requests; 12 ms; checks pass
+B24 answered; 4 verified; graph 3 reads, 2 items; semantic 0 hits; llm 0 attempts 0 requests; 13 ms; checks pass
+B25 answered; 2 verified; graph 22 reads, 3 items; semantic 1 hits; llm 0 attempts 0 requests; 18 ms; checks pass
+B26 answered; 1 verified; graph 2 reads, 1 items; semantic 5 hits; llm 0 attempts 0 requests; 342 ms; checks pass
+B27 answered; 2 verified; graph 16 reads, 3 items; semantic 1 hits; llm 0 attempts 0 requests; 13 ms; checks pass
+B28 abstained UNSUPPORTED_REQUEST; 0 verified; graph 8 reads, 0 items; semantic 0 hits; llm 0 attempts 0 requests; 8 ms; checks pass
+B29 answered; 4 verified; graph 33 reads, 28 items; semantic 3 hits; llm 0 attempts 0 requests; 22 ms; checks pass
+B30 answered; 9 verified; graph 28 reads, 37 items; semantic 3 hits; llm 0 attempts 0 requests; 43 ms; checks pass
+done 30 of 30 (fake mode)
+  check abstention: 30 pass, 0 fail, 0 n/a
+  check bundle-budget: 27 pass, 0 fail, 3 n/a
+  check claim-evidence: 27 pass, 0 fail, 3 n/a
+  check deadline: 30 pass, 0 fail, 0 n/a
+  check embedding-budget: 30 pass, 0 fail, 0 n/a
+  check llm-budget: 30 pass, 0 fail, 0 n/a
+  check pair-edges: 6 pass, 0 fail, 24 n/a
+  check path-hops: 3 pass, 0 fail, 27 n/a
+  check plan-operations: 30 pass, 0 fail, 0 n/a
+  check researcher-names: 30 pass, 0 fail, 0 n/a
+  check resolution: 21 pass, 0 fail, 9 n/a
+  check verification: 30 pass, 0 fail, 0 n/a
+plan sources: RULES 30; outcomes: AMBIGUOUS_RESEARCHER 1, ANSWERED 27, UNKNOWN_RESEARCHER 1, UNSUPPORTED_REQUEST 1
+resolutions: AMBIGUOUS 2, RESOLVED_DOMINANT 26, UNKNOWN_RESEARCHER 1
+verification: 91 verified, 28 partial, 0 unsupported, 0 conflicting; 119 final claims
+graph retrieval: 1023 reads in 30 questions, 3736 rows, 180 truncated, 207 evidence items, 40788 tokens; paths FOUND 3; p50 1 ms, p95 229 ms, max 331 ms
+semantic retrieval: 20 embedding calls in 20 questions, 42 hits in 20 questions, 19192 tokens; indexes collaboration-community-v1 2, collaboration-path-v1 3, paper-abstract-v1 5, researcher-profile-v1 18, topic-institution-summary-v1 2; p50 3 ms, p95 284 ms, max 677 ms
+llm: 0 attempts, 0 requests (), outcomes , tokens in 0 out 0, throttle wait 0 ms
+question latency: p50 22 ms, p95 386 ms, max 807 ms, total 2652 ms
+summary: scratch/runtime/wo9/s3/reports/rag-benchmark/snapshot=2026-10-03/run=run-396fa84df47be7a2579b491bec64356c/summary-030.json
+[success] Total time: 60 s, completed Nov 12, 2026, 1:46:11 PM
+exit 0

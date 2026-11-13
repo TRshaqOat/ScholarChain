@@ -1,0 +1,152 @@
+{
+  "schemaVersion": "rag-benchmark-result-v2",
+  "questionId": "B27",
+  "category": "institutions",
+  "mode": "LIVE",
+  "runtimeRunId": "run-422d912ac162f340f5f31a1b63b65e19",
+  "queryId": "qry-ac16655a4d19a1e0d0df4d07d6614fba",
+  "planSource": "MODEL",
+  "operations": [
+    "INSTITUTION_FILTER/RESEARCHER"
+  ],
+  "metrics": [],
+  "window": "all-years",
+  "resolutions": [
+    {
+      "name": "Rachid Guerraoui",
+      "decision": "RESOLVED_DOMINANT",
+      "researcherId": "scr:canon-v1.er-v2:ba10a85f922c075c3cfdbf5a040332b8",
+      "topShare": 0.9615384615384616,
+      "candidateCount": 11
+    }
+  ],
+  "abstained": false,
+  "abstentionReason": null,
+  "verification": {
+    "verified": 1,
+    "partiallySupported": 0,
+    "unsupported": 0,
+    "conflicting": 0
+  },
+  "claims": 1,
+  "graph": {
+    "reads": 16,
+    "readsByTemplate": {
+      "kv.metrics.window": 1,
+      "graph.authored-counts": 1,
+      "graph.coauthors": 11,
+      "kv.entity-link": 1,
+      "graph.researcher-institutions": 2
+    },
+    "rows": 40,
+    "truncatedReads": 1,
+    "evidenceItems": 3,
+    "tokens": 784,
+    "omittedItems": 0,
+    "latencyMs": 3,
+    "pathStatuses": []
+  },
+  "semantic": {
+    "embeddingCalls": 1,
+    "embeddingInputTokens": 0,
+    "indexes": [
+      "researcher-profile-v1"
+    ],
+    "hits": 1,
+    "tokens": 566,
+    "omittedItems": 0,
+    "latencyMs": 272,
+    "outcome": "OK"
+  },
+  "llm": {
+    "attempts": 3,
+    "requests": 3,
+    "attemptsByStage": {
+      "QUERY_PLANNING": 2,
+      "ANSWER_SYNTHESIS": 1
+    },
+    "outcomes": {
+      "INVALID_OUTPUT": 1,
+      "OK": 2
+    },
+    "inputTokens": 8750,
+    "outputTokens": 912,
+    "throttleWaitMs": 12684
+  },
+  "latencyMs": 18275,
+  "stageLatencyMs": {
+    "COLLABORATION_METRICS": 1,
+    "PATH_FINDING": 0,
+    "EVIDENCE_BUILDING": 1,
+    "AUDIT": 0,
+    "QUERY_PLANNING": 8630,
+    "SEMANTIC_CONTEXT": 272,
+    "COMMUNITY_ANALYSIS": 2,
+    "CLAIM_VERIFICATION": 8,
+    "RESEARCHER_RESOLUTION": 13,
+    "ANSWER_SYNTHESIS": 9342
+  },
+  "checks": [
+    {
+      "name": "plan-operations",
+      "outcome": "PASS",
+      "detail": "needs INSTITUTION_FILTER; plan [INSTITUTION_FILTER/RESEARCHER]"
+    },
+    {
+      "name": "researcher-names",
+      "outcome": "PASS",
+      "detail": "expected [Rachid Guerraoui], extracted [Rachid Guerraoui]"
+    },
+    {
+      "name": "resolution",
+      "outcome": "PASS",
+      "detail": "Rachid Guerraoui: expected RESOLVED_DOMINANT, got RESOLVED_DOMINANT"
+    },
+    {
+      "name": "abstention",
+      "outcome": "PASS",
+      "detail": "expected answer, got answer"
+    },
+    {
+      "name": "claim-evidence",
+      "outcome": "PASS",
+      "detail": "1 claims cite bundle IDs; 1 material claims each cite a graph item; 0 descriptive"
+    },
+    {
+      "name": "verification",
+      "outcome": "PASS",
+      "detail": "answer has a verified claim; counts 1/0/0/0; final claims 1 verified of 1"
+    },
+    {
+      "name": "bundle-budget",
+      "outcome": "PASS",
+      "detail": "graph 784/8000 tokens, semantic 566/3000, items 4/300"
+    },
+    {
+      "name": "llm-budget",
+      "outcome": "PASS",
+      "detail": "3 attempts, 3 requests (ANSWER_SYNTHESIS 1, QUERY_PLANNING 2), tokens in 8750 out 912"
+    },
+    {
+      "name": "embedding-budget",
+      "outcome": "PASS",
+      "detail": "1 embedding calls for 1 indexes queried"
+    },
+    {
+      "name": "path-hops",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no path evidence in the bundle"
+    },
+    {
+      "name": "pair-edges",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no bundle edge has stored path evidence"
+    },
+    {
+      "name": "deadline",
+      "outcome": "PASS",
+      "detail": "18275 ms of 180000"
+    }
+  ],
+  "answerHash": "sha256:eab71aa2e3ab7bb49ca7ab84662aeb1617aa926472a1597767e16c402758364c"
+}

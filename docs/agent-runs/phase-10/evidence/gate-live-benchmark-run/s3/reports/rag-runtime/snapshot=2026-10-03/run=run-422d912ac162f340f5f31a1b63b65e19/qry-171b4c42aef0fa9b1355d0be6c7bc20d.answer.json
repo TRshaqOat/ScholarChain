@@ -1,0 +1,740 @@
+{
+  "schemaVersion": "rag-answer-v1",
+  "response": {
+    "schemaVersion": "answer-response-v1",
+    "queryId": "qry-171b4c42aef0fa9b1355d0be6c7bc20d",
+    "summary": "Ian T. Foster and Daniel S. Katz collaborated on 16 joint publications from 2010 to 2024, including \"Swift/T: Large-Scale Application Composition via Distributed-Memory Dataflow Processing.\" Daniel S. Katz and Enrique S. Quintana-Ortí collaborated on 1 joint publication in 2001: \"Fault-Tolerant High-Performance Matrix Multiplication: Theory and Practice.\" Enrique S. Quintana-Ortí and José Duato collaborated on 12 joint publications from 2009 to 2021, including \"Theoretical Scalability Analysis of Distributed Deep Convolutional Neural Networks.\"",
+    "claims": [
+      {
+        "schemaVersion": "answer-claim-v1",
+        "claimId": "claim-1",
+        "text": "Ian T. Foster and Daniel S. Katz collaborated on 16 joint publications from 2010 to 2024, including \"Swift/T: Large-Scale Application Composition via Distributed-Memory Dataflow Processing.\"",
+        "evidenceIds": [
+          "ev-1ee4b58f6432c64c86eaebcfb7d6ff13",
+          "ev-9a520e3bd9504a5bcebf0f05b8d38772",
+          "ev-76eaf2e804a82fac2366dbee3e22f8e9"
+        ],
+        "verificationStatus": "VERIFIED",
+        "uncertainty": null,
+        "provenance": {
+          "schemaVersion": "provenance-v1",
+          "sourceDataset": "RUNTIME",
+          "sourceRecordId": "qry-171b4c42aef0fa9b1355d0be6c7bc20d",
+          "snapshot": "2026-10-03",
+          "runId": "run-422d912ac162f340f5f31a1b63b65e19",
+          "policyVersion": null,
+          "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+        }
+      },
+      {
+        "schemaVersion": "answer-claim-v1",
+        "claimId": "claim-2",
+        "text": "Daniel S. Katz and Enrique S. Quintana-Ortí collaborated on 1 joint publication in 2001: \"Fault-Tolerant High-Performance Matrix Multiplication: Theory and Practice.\"",
+        "evidenceIds": [
+          "ev-1ee4b58f6432c64c86eaebcfb7d6ff13",
+          "ev-b22b4ba94a60e08fc2aa70f20f777e2f",
+          "ev-fb66a3d30ce402d7fbe7f42c62f267aa"
+        ],
+        "verificationStatus": "VERIFIED",
+        "uncertainty": null,
+        "provenance": {
+          "schemaVersion": "provenance-v1",
+          "sourceDataset": "RUNTIME",
+          "sourceRecordId": "qry-171b4c42aef0fa9b1355d0be6c7bc20d",
+          "snapshot": "2026-10-03",
+          "runId": "run-422d912ac162f340f5f31a1b63b65e19",
+          "policyVersion": null,
+          "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+        }
+      },
+      {
+        "schemaVersion": "answer-claim-v1",
+        "claimId": "claim-3",
+        "text": "Enrique S. Quintana-Ortí and José Duato collaborated on 12 joint publications from 2009 to 2021, including \"Theoretical Scalability Analysis of Distributed Deep Convolutional Neural Networks.\"",
+        "evidenceIds": [
+          "ev-1ee4b58f6432c64c86eaebcfb7d6ff13",
+          "ev-07b7ab2e4556591bf88ff381af83344d",
+          "ev-274dc3fa07fcf0796b9aa4130f49ec33"
+        ],
+        "verificationStatus": "VERIFIED",
+        "uncertainty": null,
+        "provenance": {
+          "schemaVersion": "provenance-v1",
+          "sourceDataset": "RUNTIME",
+          "sourceRecordId": "qry-171b4c42aef0fa9b1355d0be6c7bc20d",
+          "snapshot": "2026-10-03",
+          "runId": "run-422d912ac162f340f5f31a1b63b65e19",
+          "policyVersion": null,
+          "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+        }
+      }
+    ],
+    "abstained": false,
+    "uncertainty": "Ian T. Foster was linked to scr:canon-v1.er-v2:8c41e7402418b6a74ad89d1b987f6f44 by dominant-name-v1: 0.9680 of 281 works among 10 researchers with this display name. José Duato was linked to scr:canon-v1.er-v2:410e0336ad1b7732771b1c91b8be2bed by dominant-name-v1: 0.9871 of 232 works among 3 researchers with this display name. The bundle does not contain the complete list of supporting papers for each hop; only sample papers are cited in the evidence.",
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "RUNTIME",
+      "sourceRecordId": "qry-171b4c42aef0fa9b1355d0be6c7bc20d",
+      "snapshot": "2026-10-03",
+      "runId": "run-422d912ac162f340f5f31a1b63b65e19",
+      "policyVersion": "fusion-v1",
+      "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+    }
+  },
+  "plan": {
+    "schemaVersion": "rag-query-plan-v1",
+    "queryId": "qry-171b4c42aef0fa9b1355d0be6c7bc20d",
+    "operations": [
+      {
+        "operation": "SHORTEST_PATH",
+        "scope": "PAIR",
+        "researchers": [
+          0,
+          1
+        ],
+        "metric": null,
+        "topN": null
+      }
+    ],
+    "researcherNames": [
+      {
+        "name": "Ian T. Foster",
+        "offset": 59
+      },
+      {
+        "name": "José Duato",
+        "offset": 77
+      }
+    ],
+    "metrics": [],
+    "window": {
+      "requested": {
+        "kind": "DEFAULT",
+        "name": null,
+        "yearFrom": null,
+        "yearTo": null
+      },
+      "window": "all-years",
+      "startYear": 2000,
+      "endYear": 2026,
+      "exact": true,
+      "note": null
+    },
+    "comparison": null,
+    "topics": [],
+    "venues": [],
+    "institutions": [],
+    "semanticIndexes": [
+      "researcher-profile-v1",
+      "collaboration-path-v1"
+    ],
+    "limits": {
+      "graphLimit": 100,
+      "vectorLimit": 50,
+      "maxPathDepth": 6,
+      "topK": 5
+    },
+    "source": "MODEL",
+    "overriddenFields": [],
+    "rejectedItems": [],
+    "promptVersion": "planner-v2",
+    "modelId": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "RUNTIME",
+      "sourceRecordId": "qry-171b4c42aef0fa9b1355d0be6c7bc20d",
+      "snapshot": "2026-10-03",
+      "runId": "run-422d912ac162f340f5f31a1b63b65e19",
+      "policyVersion": null,
+      "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+    }
+  },
+  "resolutions": [
+    {
+      "schemaVersion": "researcher-resolution-v1",
+      "name": "Ian T. Foster",
+      "nameKey": "name-v1:ian t foster",
+      "policyVersion": "dominant-name-v1",
+      "dominantShare": 0.9,
+      "minWorks": 5,
+      "decision": "RESOLVED_DOMINANT",
+      "researcherId": "scr:canon-v1.er-v2:8c41e7402418b6a74ad89d1b987f6f44",
+      "topShare": 0.9679715302491103,
+      "totalWorks": 281,
+      "candidateCount": 10,
+      "candidates": [
+        {
+          "researcherId": "scr:canon-v1.er-v2:8c41e7402418b6a74ad89d1b987f6f44",
+          "displayName": "Ian T. Foster",
+          "matchedName": "Ian T. Foster",
+          "works": 272,
+          "share": 0.9679715302491103,
+          "identityConfidence": 0.9300527553067827,
+          "mentionCount": 782,
+          "dblpAnchored": true,
+          "orcid": "0000-0003-2129-5269",
+          "institutions": [
+            {
+              "id": "ringgold:1291",
+              "name": "Argonne National Laboratory",
+              "count": null
+            },
+            {
+              "id": "ringgold:2462",
+              "name": "The University of Chicago",
+              "count": null
+            },
+            {
+              "id": "ror:00rs6vg23",
+              "name": "The Ohio State University",
+              "count": null
+            }
+          ],
+          "topCoauthors": [
+            {
+              "id": "scr:canon-v1.er-v2:2e230e1997b21b0c8c8b37343f737316",
+              "name": "Kyle Chard",
+              "count": 70
+            },
+            {
+              "id": "scr:canon-v1.er-v2:d04fce9e8727001e30ec1d4a881afc65",
+              "name": "Rajkumar Kettimuthu",
+              "count": 38
+            },
+            {
+              "id": "scr:canon-v1.er-v2:3d465eeb56aec324f1828630a5fba5ca",
+              "name": "Ryan Chard",
+              "count": 33
+            }
+          ],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:0536ae2e1a2f0cc3b7489331d93d7c95",
+          "displayName": "Ian T. Foster",
+          "matchedName": "Ian T. Foster",
+          "works": 1,
+          "share": 0.0035587188612099642,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:10eace63333ee3ae1376da2eb6226695",
+          "displayName": "Ian T. Foster",
+          "matchedName": "Ian T. Foster",
+          "works": 1,
+          "share": 0.0035587188612099642,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:11abaad890ee528c3a062d1e06f27abd",
+          "displayName": "Ian T. Foster",
+          "matchedName": "Ian T. Foster",
+          "works": 1,
+          "share": 0.0035587188612099642,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [
+            {
+              "id": "scr:canon-v1.er-v2:68b2fd632af09d66da1ec2e0081ff900",
+              "name": "Kihyeon Cho",
+              "count": 1
+            },
+            {
+              "id": "scr:canon-v1.er-v2:3d00fc1ff0c84f9d1a940250e2ad3fa7",
+              "name": "Alan DeSmet",
+              "count": 1
+            },
+            {
+              "id": "scr:canon-v1.er-v2:2469ac7e105a3907b3b50b027f1730db",
+              "name": "Yong Zhao 0009",
+              "count": 1
+            }
+          ],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:17bc6dd9f244f2506d61c5ae05619db3",
+          "displayName": "Ian T. Foster",
+          "matchedName": "Ian T. Foster",
+          "works": 1,
+          "share": 0.0035587188612099642,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:2882fb6574e77869c16f84cb4a72b291",
+          "displayName": "Ian T. Foster",
+          "matchedName": "Ian T. Foster",
+          "works": 1,
+          "share": 0.0035587188612099642,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:36d926d5f6898ab1ed224f8fda1eb3cb",
+          "displayName": "Ian T. Foster",
+          "matchedName": "Ian T. Foster",
+          "works": 1,
+          "share": 0.0035587188612099642,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [
+            {
+              "id": "scr:canon-v1.er-v2:ee11724eae6b8499317651c2f91be9da",
+              "name": "John R. Johnson",
+              "count": 1
+            }
+          ],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:39a3b7086fdf18c5341a6a10f7673bb6",
+          "displayName": "Ian T. Foster",
+          "matchedName": "Ian T. Foster",
+          "works": 1,
+          "share": 0.0035587188612099642,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:4f4475b11d7fad9b535031df93a8e705",
+          "displayName": "Ian T. Foster",
+          "matchedName": "Ian T. Foster",
+          "works": 1,
+          "share": 0.0035587188612099642,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:7280ea5169b29a188a9ed211d177afb2",
+          "displayName": "Ian T. Foster",
+          "matchedName": "Ian T. Foster",
+          "works": 1,
+          "share": 0.0035587188612099642,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [
+            {
+              "id": "scr:canon-v1.er-v2:7d6a4697f4b4698197e83f2cd45e85b1",
+              "name": "David E. Culler",
+              "count": 1
+            },
+            {
+              "id": "scr:canon-v1.er-v2:db628f25dd40701efdb4763b4f3d97d6",
+              "name": "Harvey B. Newman",
+              "count": 1
+            },
+            {
+              "id": "scr:canon-v1.er-v2:c91499cbc8a6b8717dd60aed28238616",
+              "name": "Rick L. Stevens",
+              "count": 1
+            }
+          ],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        }
+      ],
+      "otherNameMatches": [],
+      "truncated": false,
+      "evidenceId": "ev-6128f267040ccebc39d52a341f6a706a"
+    },
+    {
+      "schemaVersion": "researcher-resolution-v1",
+      "name": "José Duato",
+      "nameKey": "name-v1:jose duato",
+      "policyVersion": "dominant-name-v1",
+      "dominantShare": 0.9,
+      "minWorks": 5,
+      "decision": "RESOLVED_DOMINANT",
+      "researcherId": "scr:canon-v1.er-v2:410e0336ad1b7732771b1c91b8be2bed",
+      "topShare": 0.9870689655172413,
+      "totalWorks": 232,
+      "candidateCount": 3,
+      "candidates": [
+        {
+          "researcherId": "scr:canon-v1.er-v2:410e0336ad1b7732771b1c91b8be2bed",
+          "displayName": "José Duato",
+          "matchedName": "José Duato",
+          "works": 229,
+          "share": 0.9870689655172413,
+          "identityConfidence": 0.9302742075633305,
+          "mentionCount": 678,
+          "dblpAnchored": true,
+          "orcid": "0000-0002-7785-0607",
+          "institutions": [
+            {
+              "id": "ror:00vn06n10",
+              "name": "Simula Research Laboratory",
+              "count": null
+            },
+            {
+              "id": "ror:01460j859",
+              "name": "Universitat Politècnica de València",
+              "count": null
+            },
+            {
+              "id": "ror:01n002310",
+              "name": "Institute of Electrical and Electronics Engineers",
+              "count": null
+            }
+          ],
+          "topCoauthors": [
+            {
+              "id": "scr:canon-v1.er-v2:cee45b0a531da8636a9dfb7f5623419b",
+              "name": "José Flich",
+              "count": 56
+            },
+            {
+              "id": "scr:canon-v1.er-v2:d36a949b75753a3bde87438171ed7d98",
+              "name": "Pedro López 0001",
+              "count": 55
+            },
+            {
+              "id": "scr:canon-v1.er-v2:3ff705cc9ff01ead39d9df0f07101028",
+              "name": "Antonio Robles",
+              "count": 34
+            }
+          ],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:00f884d9902e7135125c9e9bda000b7e",
+          "displayName": "José Duato",
+          "matchedName": "José Duato",
+          "works": 2,
+          "share": 0.008620689655172414,
+          "identityConfidence": 0.9811090380629611,
+          "mentionCount": 4,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [
+            {
+              "id": "ror:00rs6vg23",
+              "name": "The Ohio State University",
+              "count": null
+            }
+          ],
+          "topCoauthors": [
+            {
+              "id": "scr:canon-v1.er-v2:6c5fc452ebb56826c254a79b5bdae377",
+              "name": "Dhabaleswar K. Panda 0001",
+              "count": 2
+            },
+            {
+              "id": "scr:canon-v1.er-v2:6528703ea0f10c26297c2dc3cd1ee4b7",
+              "name": "Praveen Holenarsipur",
+              "count": 1
+            },
+            {
+              "id": "scr:canon-v1.er-v2:de09537bda0d6661377a60ddba5067c8",
+              "name": "P. Sadayappan",
+              "count": 1
+            }
+          ],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:030dee9989a4ced64884edbd13607b2b",
+          "displayName": "José Duato",
+          "matchedName": "José Duato",
+          "works": 1,
+          "share": 0.004310344827586207,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        }
+      ],
+      "otherNameMatches": [
+        {
+          "researcherId": "scr:canon-v1.er-v2:ce1f03c2530716ca65e092b446f9b5a4",
+          "displayName": "Jose Duato",
+          "matchedName": "Jose Duato",
+          "works": 1,
+          "share": null,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": false,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        }
+      ],
+      "truncated": false,
+      "evidenceId": "ev-5bbd3a44393d7579f805b4350204fda7"
+    }
+  ],
+  "verification": {
+    "schemaVersion": "claim-verification-v1",
+    "queryId": "qry-171b4c42aef0fa9b1355d0be6c7bc20d",
+    "checks": [
+      {
+        "claimId": "claim-1",
+        "status": "VERIFIED",
+        "checks": [
+          {
+            "rule": "evidence-exists",
+            "outcome": "PASS",
+            "detail": "all cited items are in the bundle"
+          },
+          {
+            "rule": "graph-evidence-required",
+            "outcome": "PASS",
+            "detail": "3 graph item(s) cited"
+          },
+          {
+            "rule": "kind-matches-type",
+            "outcome": "PASS",
+            "detail": "PATH_HOP needs GRAPH_PATH"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "hop.1.firstYear"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "hop.1.from"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "hop.1.jointPublicationCount"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "hop.1.lastYear"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "hop.1.to"
+          },
+          {
+            "rule": "numbers-in-text",
+            "outcome": "PASS",
+            "detail": "every number is an asserted, named fact"
+          },
+          {
+            "rule": "window",
+            "outcome": "PASS",
+            "detail": "all-years"
+          },
+          {
+            "rule": "identity",
+            "outcome": "PASS",
+            "detail": "every subject and name is resolved or cited"
+          },
+          {
+            "rule": "path-hops",
+            "outcome": "PASS",
+            "detail": "hop 1"
+          }
+        ],
+        "action": "KEPT"
+      },
+      {
+        "claimId": "claim-2",
+        "status": "VERIFIED",
+        "checks": [
+          {
+            "rule": "evidence-exists",
+            "outcome": "PASS",
+            "detail": "all cited items are in the bundle"
+          },
+          {
+            "rule": "graph-evidence-required",
+            "outcome": "PASS",
+            "detail": "3 graph item(s) cited"
+          },
+          {
+            "rule": "kind-matches-type",
+            "outcome": "PASS",
+            "detail": "PATH_HOP needs GRAPH_PATH"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "hop.2.firstYear"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "hop.2.from"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "hop.2.jointPublicationCount"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "hop.2.lastYear"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "hop.2.to"
+          },
+          {
+            "rule": "numbers-in-text",
+            "outcome": "PASS",
+            "detail": "every number is an asserted, named fact"
+          },
+          {
+            "rule": "window",
+            "outcome": "PASS",
+            "detail": "all-years"
+          },
+          {
+            "rule": "identity",
+            "outcome": "PASS",
+            "detail": "every subject and name is resolved or cited"
+          },
+          {
+            "rule": "path-hops",
+            "outcome": "PASS",
+            "detail": "hop 2"
+          }
+        ],
+        "action": "KEPT"
+      },
+      {
+        "claimId": "claim-3",
+        "status": "VERIFIED",
+        "checks": [
+          {
+            "rule": "evidence-exists",
+            "outcome": "PASS",
+            "detail": "all cited items are in the bundle"
+          },
+          {
+            "rule": "graph-evidence-required",
+            "outcome": "PASS",
+            "detail": "3 graph item(s) cited"
+          },
+          {
+            "rule": "kind-matches-type",
+            "outcome": "PASS",
+            "detail": "PATH_HOP needs GRAPH_PATH"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "hop.3.firstYear"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "hop.3.from"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "hop.3.jointPublicationCount"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "hop.3.lastYear"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "hop.3.to"
+          },
+          {
+            "rule": "numbers-in-text",
+            "outcome": "PASS",
+            "detail": "every number is an asserted, named fact"
+          },
+          {
+            "rule": "window",
+            "outcome": "PASS",
+            "detail": "all-years"
+          },
+          {
+            "rule": "identity",
+            "outcome": "PASS",
+            "detail": "every subject and name is resolved or cited"
+          },
+          {
+            "rule": "path-hops",
+            "outcome": "PASS",
+            "detail": "hop 3"
+          }
+        ],
+        "action": "KEPT"
+      }
+    ],
+    "counts": {
+      "verified": 3,
+      "partiallySupported": 0,
+      "unsupported": 0,
+      "conflicting": 0
+    }
+  },
+  "abstention": null,
+  "answerHash": "sha256:c1530e04d7c1f1965b2f69ec9c3d7a9aea9b1da5bb4d87d49d4997aaac3e93cd"
+}

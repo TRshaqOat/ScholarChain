@@ -160,6 +160,63 @@ class WireContractSpec extends AnyFunSuite:
       )
   }
 
+  test("Phase 10 JobState: frozen names, wire form, and the only allowed transitions") {
+    import JobState.*
+    assert(
+      JobState.values.map(_.toString).toVector == Vector("QUEUED", "RUNNING", "SUCCEEDED", "FAILED")
+    )
+    assert(upickle.default.write(RUNNING) == "\"RUNNING\"")
+    assert(upickle.default.read[JobState]("\"SUCCEEDED\"") == SUCCEEDED)
+    assert(scala.util.Try(upickle.default.read[JobState]("\"DONE\"")).isFailure)
+    val allowed = for a <- JobState.values; b <- JobState.values if a.canMoveTo(b) yield (a, b)
+    assert(
+      allowed.toSet == Set(
+        QUEUED -> RUNNING,
+        QUEUED -> FAILED,
+        RUNNING -> SUCCEEDED,
+        RUNNING -> FAILED
+      )
+    )
+    assert(JobState.values.filter(_.isFinal).toSet == Set(SUCCEEDED, FAILED))
+  }
+
+  test("Phase 10 ErrorCode: frozen names, HTTP statuses (ruling 6), and retryable defaults") {
+    // Appending a code is compatible; renaming or removing one breaks stored FAILED jobs.
+    val expected = Vector(
+      ("MALFORMED_JSON", 400, false),
+      ("INVALID_FIELD", 400, false),
+      ("REQUEST_TOO_LARGE", 400, false),
+      ("UNAUTHORIZED", 401, false),
+      ("FORBIDDEN", 403, false),
+      ("ROUTE_NOT_FOUND", 404, false),
+      ("QUERY_NOT_FOUND", 404, false),
+      ("JOB_NOT_FOUND", 404, false),
+      ("NODE_NOT_FOUND", 404, false),
+      ("EVIDENCE_NOT_FOUND", 404, false),
+      ("IDEMPOTENCY_CONFLICT", 409, false),
+      ("JOB_NOT_FINISHED", 409, true),
+      ("UNSUPPORTED_CONSTRAINT", 422, false),
+      ("UNSUPPORTED_RETRIEVAL_MODE", 422, false),
+      ("RATE_LIMITED", 429, true),
+      ("DOWNSTREAM_FAILURE", 502, true),
+      ("NOT_READY", 503, true),
+      ("CIRCUIT_OPEN", 503, true),
+      ("OVERLOADED", 503, true),
+      ("DEADLINE_EXCEEDED", 504, true),
+      ("DOWNSTREAM_TIMEOUT", 504, true),
+      ("INTERNAL_ERROR", 500, false)
+    )
+    assert(ErrorCode.values.map(e => (e.toString, e.httpStatus, e.retryable)).toVector == expected)
+    // Every status of the spec error model has a code.
+    assert(
+      ErrorCode.values.map(_.httpStatus).toSet ==
+        Set(400, 401, 403, 404, 409, 422, 429, 502, 503, 504, 500)
+    )
+    assert(upickle.default.write(ErrorCode.CIRCUIT_OPEN) == "\"CIRCUIT_OPEN\"")
+    assert(upickle.default.read[ErrorCode]("\"RATE_LIMITED\"") == ErrorCode.RATE_LIMITED)
+    assert(scala.util.Try(upickle.default.read[ErrorCode]("\"TEAPOT\"")).isFailure)
+  }
+
   test("malformed JSON is rejected, not thrown") {
     assert(WireCodec.decode[WorkRecord]("{not json").isLeft)
   }

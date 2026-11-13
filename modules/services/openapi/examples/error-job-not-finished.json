@@ -1,0 +1,7 @@
+{
+  "error": "JOB_NOT_FINISHED",
+  "message": "the job is QUEUED; poll /v1/jobs/job-556ed8f2ae50ecd0b13e685232544ddc until it is SUCCEEDED or FAILED",
+  "traceId": "trace-example-1",
+  "requestId": "req-example-1",
+  "retryable": true
+}

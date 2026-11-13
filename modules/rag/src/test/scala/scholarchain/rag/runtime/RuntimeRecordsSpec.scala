@@ -535,6 +535,19 @@ class RuntimeRecordsSpec extends AnyFunSuite:
         Stage.values.toVector.map(s => StageTiming(s, StageOutcome.OK, 1L)),
         budget,
         counts,
+        Vector(
+          RemovedClaim(
+            "claim-2",
+            ClaimKind.PATH_HOP,
+            "The second hop links A and B.",
+            VerificationStatus.UNSUPPORTED,
+            Vector(CheckResult("numbers-in-text", CheckOutcome.FAIL, "2 is not bound"))
+          )
+        ),
+        Vector(
+          DroppedLine(LinePart.SUMMARY, "They have 3 papers.", Vector("3 is not bound")),
+          DroppedLine(LinePart.UNCERTAINTY, "Maybe.", Vector("names X"))
+        ),
         abstained = false,
         None,
         StableIds.textHash("answer"),

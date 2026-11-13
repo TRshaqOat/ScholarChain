@@ -1,0 +1,29 @@
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] scalafmt: Formatting 5 Scala sources (/Users/achyutpatel/Developer/Cloud/ScholarChain/modules/services)...
+[info] scalafmt: Formatting 5 Scala sources (/Users/achyutpatel/Developer/Cloud/ScholarChain/modules/services)...
+[info] scalafmt: Reformatted 5 Scala sources
+[info] scalafmt: Reformatted 3 Scala sources
+[success] Total time: 1 s, completed Nov 12, 2026, 5:15:31 PM
+[success] Total time: 0 s, completed Nov 12, 2026, 5:15:31 PM
+[info] compiling 5 Scala sources to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/services/target/scala-3.3.7/classes ...
+[info] done compiling
+[info] compiling 11 Scala sources to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/services/target/scala-3.3.7/classes ...
+[info] done compiling
+[info] compiling 9 Scala sources to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/services/target/scala-3.3.7/test-classes ...
+[error] -- [E051] Reference Error: /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/services/src/test/scala/scholarchain/services/BuildingBlocksSpec.scala:120:9 
+[error] 120 |      bg.submit(() => ds.call(CallPolicy("s3", 5000)) { busy.countDown(); Thread.sleep(300) })
+[error]     |      ^^^^^^^^^
+[error]     |Ambiguous overload. The overloaded alternatives of method submit in trait ExecutorService with types
+[error]     | (x$0: Runnable): java.util.concurrent.Future[?]
+[error]     | [T](x$0: java.util.concurrent.Callable[T]): java.util.concurrent.Future[T]
+[error]     |both match arguments (() => Unit)
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] one error found
+[error] (services / Test / compileIncremental) Compilation failed
+[error] Total time: 7 s, completed Nov 12, 2026, 5:15:38 PM

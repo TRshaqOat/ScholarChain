@@ -1,0 +1,42 @@
+disable D7-iae-is-400: modules/services/src/main/scala/scholarchain/services/Resilience.scala
+  replaced: throw ApiError(ErrorCode.INTERNAL_ERROR, "unexpected internal failure")
+  with:     throw ApiError(ErrorCode.INVALID_FIELD, "a parameter is out of range")
+sha256 before: 7607aafd7c1713c3aae76942e63f39ca90fc93a53dc050a50c4b7162205ded53
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] compiling 2 Scala sources to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/services/target/scala-3.3.7/classes ...
+[info] done compiling
+[info] BuildingBlocksSpec:
+[info] - breaker: opens after the threshold, fails fast while open, half-opens after the interval
+[info] - downstream calls: timeout, retries only for retryable reads, breaker per downstream *** FAILED ***
+[info]   INVALID_FIELD did not equal INTERNAL_ERROR (BuildingBlocksSpec.scala:80)
+[info] - waiting to start is no downstream failure: 503 OVERLOADED, no breaker (repair-01 F1)
+[info] - rate limiter: a sliding minute
+[info] - cursor: round trip, bound to its walk, and opaque garbage rejected
+[info] - IDs: valid client values echoed, anything else replaced
+[info] - API key: exact match only, any length; the key is never printed
+[info] GraphEvidenceApiSpec:
+[info] - query to evidence: every evidence ID an answer cites resolves with provenance
+[info] - missing evidence is 404; a malformed ID never reaches the store
+[info] - graph node: found with properties, unknown 404, encoded IDs with slashes work
+[info] - neighbors: bounded parameters, allowlisted edge types, and bound cursors
+[info] - a slow store is 504, a failing one 502, then the breaker fails fast and readiness drops
+[info] - an IllegalArgumentException inside a downstream call is 500 with no detail (repair-01 m5) *** FAILED ***
+[info]   400 did not equal 500 {"error":"INVALID_FIELD","message":"a parameter is out of range","traceId":"trace-ce48c55b6cce49bfa978c53d9d124bec","requestId":"req-d44cb8f391054b56aff76612b2e94795","retryable":false} (ServiceFixtures.scala:406)
+[info] - beyond its threads and queue a service sheds load with 503 OVERLOADED
+[info] Run completed in 1 second, 205 milliseconds.
+[info] Total number of tests run: 14
+[info] Suites: completed 2, aborted 0
+[info] Tests: succeeded 12, failed 2, canceled 0, ignored 0, pending 0
+[info] *** 2 TESTS FAILED ***
+[error] Failed tests:
+[error] 	scholarchain.services.BuildingBlocksSpec
+[error] 	scholarchain.services.GraphEvidenceApiSpec
+[error] (services / Test / testOnly) sbt.TestsFailedException: Tests unsuccessful
+[error] Total time: 4 s, completed Nov 12, 2026, 5:18:48 PM
+sbt exit 1
+restored sha256: 7607aafd7c1713c3aae76942e63f39ca90fc93a53dc050a50c4b7162205ded53 OK

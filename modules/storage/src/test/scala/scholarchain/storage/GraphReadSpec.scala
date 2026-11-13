@@ -306,6 +306,36 @@ class GraphReadSpec extends AnyFunSuite:
     }
   }
 
+  test("neighbors pages: fixed order, pages concatenate to the whole walk, offset bounds") {
+    withGraph { (graph, _) =>
+      val r = graph.reader(limits)
+      val types = Seq("COAUTHORED_WITH", "AUTHORED")
+      val all = r.neighbors(a, Direction.BOTH, 2, 50, types)
+      assert(all.nodes.size >= 4 && !all.truncated)
+      assert(r.neighbors(a, Direction.BOTH, 2, 50, types) == all) // same store, same order
+      val pages =
+        all.nodes.indices.map(k => r.neighbors(a, Direction.BOTH, 2, 1, types, offset = k))
+      assert(pages.flatMap(_.nodes) == all.nodes)
+      assert(pages.init.forall(_.truncated) && !pages.last.truncated)
+      assert(pages.flatMap(_.edges).map(_.id).toSet == all.edges.map(_.id).toSet)
+      pages.foreach(p =>
+        assert(p.edges.forall(e => p.nodes.exists(n => n.id == e.from || n.id == e.to)))
+      )
+      val two = r.neighbors(a, Direction.BOTH, 2, 2, types, offset = 2)
+      assert(two.nodes == all.nodes.slice(2, 4))
+      assert(r.neighbors(a, Direction.BOTH, 2, 5, types, offset = all.nodes.size).nodes.isEmpty)
+      assertThrows[IllegalArgumentException](
+        r.neighbors(a, Direction.BOTH, 2, 5, types, offset = -1)
+      )
+      assertThrows[IllegalArgumentException](
+        r.neighbors(a, Direction.BOTH, 2, 5, types, offset = limits.maxResults - 4)
+      )
+      assert(
+        r.neighbors(a, Direction.BOTH, 2, 5, types, offset = limits.maxResults - 5).nodes.isEmpty
+      )
+    }
+  }
+
   test("user text is only a bound value: an injection string in a lookup changes no element") {
     withGraph { (graph, _) =>
       val r = graph.reader(limits)

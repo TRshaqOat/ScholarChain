@@ -1,0 +1,8 @@
+modules/core/target/test-reports: tests=185 failures=0 errors=0 suites=4
+modules/entity-resolution/target/test-reports: tests=111 failures=0 errors=0 suites=10
+modules/hadoop/target/test-reports: tests=70 failures=0 errors=0 suites=6
+modules/rag/target/test-reports: tests=102 failures=0 errors=0 suites=14
+modules/services/target/test-reports: tests=37 failures=0 errors=0 suites=7
+modules/spark/target/test-reports: tests=46 failures=0 errors=0 suites=8
+modules/storage/target/test-reports: tests=108 failures=0 errors=0 suites=11
+TOTAL: tests=659 failures=0 errors=0 suites=60

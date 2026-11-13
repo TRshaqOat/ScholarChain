@@ -19,6 +19,7 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.neptunedata.NeptunedataClient
 import software.amazon.awssdk.services.s3.S3Client
 import software.amazon.awssdk.services.s3vectors.S3VectorsClient
+import software.amazon.awssdk.services.sqs.SqsClient
 import software.amazon.awssdk.utils.SdkAutoCloseable
 
 import java.net.URI
@@ -84,6 +85,13 @@ object LiveAws:
     .apiCallTimeout(Duration.ofSeconds(120))
     .build()
 
+  /** overrides with the per-call timeout of one downstream (services.timeouts.*, Phase 10 ruling
+    * 9).
+    */
+  def overridesWithTimeout(timeoutMs: Long): ClientOverrideConfiguration =
+    require(timeoutMs >= 1, s"timeout $timeoutMs ms")
+    overrides.toBuilder.apiCallTimeout(Duration.ofMillis(timeoutMs)).build()
+
   private val profiles = TrieMap.empty[String, RefreshingCredentials]
 
   /** The one refreshing provider of t's profile, created on first request. build replaces the
@@ -112,6 +120,8 @@ object LiveAws:
     configure(DynamoDbClient.builder(), t, o).build()
   def vectors(t: LiveTarget, o: ClientOverrideConfiguration = overrides): S3VectorsClient =
     configure(S3VectorsClient.builder(), t, o).build()
+  def sqs(t: LiveTarget, o: ClientOverrideConfiguration = overrides): SqsClient =
+    configure(SqsClient.builder(), t, o).build()
   def neptune(
       t: LiveTarget,
       endpoint: String,

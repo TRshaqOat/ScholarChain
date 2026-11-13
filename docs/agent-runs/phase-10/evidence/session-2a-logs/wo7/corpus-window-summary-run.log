@@ -1,0 +1,52 @@
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] running (fork) scholarchain.spark.CorpusWindowSummaryJob --input scratch/spark/snapshot=2026-10-03/run=run-0375535e0174b7330b18a78988c07211 --code-version src-db536eecfe78 --out scratch/runtime/wo7/spark --checkpoint-dir scratch/runtime/wo7/checkpoints
+[error] WARNING: Using incubator modules: jdk.incubator.vector
+[error] Using Spark's default log4j profile: org/apache/spark/log4j2-defaults.properties
+[error] 26/11/12 12:52:34 INFO SparkContext: Running Spark version 4.0.2
+[error] 26/11/12 12:52:34 INFO SparkContext: OS info Mac OS X, 27.2.1, aarch64
+[error] 26/11/12 12:52:34 INFO SparkContext: Java version 17.0.21
+[error] 26/11/12 12:52:34 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+[error] 26/11/12 12:52:34 INFO ResourceUtils: ==============================================================
+[error] 26/11/12 12:52:34 INFO ResourceUtils: No custom resources configured for spark.driver.
+[error] 26/11/12 12:52:34 INFO ResourceUtils: ==============================================================
+[error] 26/11/12 12:52:34 INFO SparkContext: Submitted application: spark-corpus-window-summary
+[error] 26/11/12 12:52:34 INFO ResourceProfile: Default ResourceProfile created, executor resources: Map(cores -> name: cores, amount: 1, script: , vendor: , memory -> name: memory, amount: 1024, script: , vendor: , offHeap -> name: offHeap, amount: 0, script: , vendor: ), task resources: Map(cpus -> name: cpus, amount: 1.0)
+[error] 26/11/12 12:52:34 INFO ResourceProfile: Limiting resource is cpu
+[error] 26/11/12 12:52:34 INFO ResourceProfileManager: Added ResourceProfile id: 0
+[error] 26/11/12 12:52:35 INFO SecurityManager: Changing view acls to: achyutpatel
+[error] 26/11/12 12:52:35 INFO SecurityManager: Changing modify acls to: achyutpatel
+[error] 26/11/12 12:52:35 INFO SecurityManager: Changing view acls groups to: achyutpatel
+[error] 26/11/12 12:52:35 INFO SecurityManager: Changing modify acls groups to: achyutpatel
+[error] 26/11/12 12:52:35 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users with view permissions: achyutpatel groups with view permissions: EMPTY; users with modify permissions: achyutpatel; groups with modify permissions: EMPTY; RPC SSL disabled
+[error] 26/11/12 12:52:35 INFO Utils: Successfully started service 'sparkDriver' on port 58027.
+[error] 26/11/12 12:52:35 INFO SparkEnv: Registering MapOutputTracker
+[error] 26/11/12 12:52:35 INFO SparkEnv: Registering BlockManagerMaster
+[error] 26/11/12 12:52:35 INFO BlockManagerMasterEndpoint: Using org.apache.spark.storage.DefaultTopologyMapper for getting topology information
+[error] 26/11/12 12:52:35 INFO BlockManagerMasterEndpoint: BlockManagerMasterEndpoint up
+[error] 26/11/12 12:52:35 INFO SparkEnv: Registering BlockManagerMasterHeartbeat
+[error] 26/11/12 12:52:35 INFO DiskBlockManager: Created local directory at /private/var/folders/s4/bckpjsjs77bbl17cf5_h4fjw0000gn/T/blockmgr-25dd0aad-28c3-4675-aa8a-7ced3f3a96dc
+[error] 26/11/12 12:52:35 INFO SparkEnv: Registering OutputCommitCoordinator
+[error] 26/11/12 12:52:35 INFO SecurityManager: Changing view acls to: achyutpatel
+[error] 26/11/12 12:52:35 INFO SecurityManager: Changing modify acls to: achyutpatel
+[error] 26/11/12 12:52:35 INFO SecurityManager: Changing view acls groups to: achyutpatel
+[error] 26/11/12 12:52:35 INFO SecurityManager: Changing modify acls groups to: achyutpatel
+[error] 26/11/12 12:52:35 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users with view permissions: achyutpatel groups with view permissions: EMPTY; users with modify permissions: achyutpatel; groups with modify permissions: EMPTY; RPC SSL disabled
+[error] 26/11/12 12:52:35 INFO Executor: Starting executor ID driver on host localhost
+[error] 26/11/12 12:52:35 INFO Executor: OS info Mac OS X, 27.2.1, aarch64
+[error] 26/11/12 12:52:35 INFO Executor: Java version 17.0.21
+[error] 26/11/12 12:52:35 INFO Executor: Starting executor with user classpath (userClassPathFirst = false): ''
+[error] 26/11/12 12:52:35 INFO Executor: Created or updated repl class loader org.apache.spark.util.MutableURLClassLoader@527937d0 for default.
+[error] 26/11/12 12:52:35 INFO Utils: Successfully started service 'org.apache.spark.network.netty.NettyBlockTransferService' on port 58028.
+[error] 26/11/12 12:52:35 INFO NettyBlockTransferService: Server created on localhost:58028
+[error] 26/11/12 12:52:35 INFO BlockManager: Using org.apache.spark.storage.RandomBlockReplicationPolicy for block replication policy
+[error] 26/11/12 12:52:35 INFO BlockManagerMaster: Registering BlockManager BlockManagerId(driver, localhost, 58028, None)
+[error] 26/11/12 12:52:35 INFO BlockManagerMasterEndpoint: Registering block manager localhost:58028 with 3.4 GiB RAM, BlockManagerId(driver, localhost, 58028, None)
+[error] 26/11/12 12:52:35 INFO BlockManagerMaster: Registered BlockManager BlockManagerId(driver, localhost, 58028, None)
+[error] 26/11/12 12:52:35 INFO BlockManager: Initialized BlockManager: BlockManagerId(driver, localhost, 58028, None)
+[info] runId=run-1de2293597c338227290eb382de16957 attempt=1 runDir=scratch/runtime/wo7/spark/snapshot=2026-10-03/run=run-1de2293597c338227290eb382de16957
+[success] Total time: 6 s, completed Nov 12, 2026, 12:52:39 PM

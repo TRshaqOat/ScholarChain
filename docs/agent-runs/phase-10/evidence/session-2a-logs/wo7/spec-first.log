@@ -1,0 +1,75 @@
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] scalafmt: Formatting 1 Scala sources (/Users/achyutpatel/Developer/Cloud/ScholarChain/modules/spark)...
+[info] scalafmt: Reformatted 1 Scala sources
+[success] Total time: 1 s, completed Nov 12, 2026, 12:48:20 PM
+[info] scalafmt: Formatting 1 Scala sources (/Users/achyutpatel/Developer/Cloud/ScholarChain/modules/spark)...
+[info] scalafmt: Reformatted 1 Scala sources
+[success] Total time: 0 s, completed Nov 12, 2026, 12:48:20 PM
+[info] compiling 1 Scala source to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/spark/target/scala-3.3.7/classes ...
+[info] done compiling
+[info] compiling 1 Scala source to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/spark/target/scala-3.3.7/test-classes ...
+[info] done compiling
+WARNING: Using incubator modules: jdk.incubator.vector
+Using Spark's default log4j profile: org/apache/spark/log4j2-defaults.properties
+26/11/12 12:48:26 INFO SparkContext: Running Spark version 4.0.2
+26/11/12 12:48:26 INFO SparkContext: OS info Mac OS X, 27.2.1, aarch64
+26/11/12 12:48:26 INFO SparkContext: Java version 17.0.21
+26/11/12 12:48:26 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+26/11/12 12:48:26 INFO ResourceUtils: ==============================================================
+26/11/12 12:48:26 INFO ResourceUtils: No custom resources configured for spark.driver.
+26/11/12 12:48:26 INFO ResourceUtils: ==============================================================
+26/11/12 12:48:26 INFO SparkContext: Submitted application: sparkAnalytics-tests
+26/11/12 12:48:26 INFO ResourceProfile: Default ResourceProfile created, executor resources: Map(cores -> name: cores, amount: 1, script: , vendor: , memory -> name: memory, amount: 1024, script: , vendor: , offHeap -> name: offHeap, amount: 0, script: , vendor: ), task resources: Map(cpus -> name: cpus, amount: 1.0)
+26/11/12 12:48:26 INFO ResourceProfile: Limiting resource is cpu
+26/11/12 12:48:26 INFO ResourceProfileManager: Added ResourceProfile id: 0
+26/11/12 12:48:26 INFO SecurityManager: Changing view acls to: achyutpatel
+26/11/12 12:48:26 INFO SecurityManager: Changing modify acls to: achyutpatel
+26/11/12 12:48:26 INFO SecurityManager: Changing view acls groups to: achyutpatel
+26/11/12 12:48:26 INFO SecurityManager: Changing modify acls groups to: achyutpatel
+26/11/12 12:48:26 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users with view permissions: achyutpatel groups with view permissions: EMPTY; users with modify permissions: achyutpatel; groups with modify permissions: EMPTY; RPC SSL disabled
+26/11/12 12:48:26 INFO Utils: Successfully started service 'sparkDriver' on port 58003.
+26/11/12 12:48:26 INFO SparkEnv: Registering MapOutputTracker
+26/11/12 12:48:26 INFO SparkEnv: Registering BlockManagerMaster
+26/11/12 12:48:26 INFO BlockManagerMasterEndpoint: Using org.apache.spark.storage.DefaultTopologyMapper for getting topology information
+26/11/12 12:48:26 INFO BlockManagerMasterEndpoint: BlockManagerMasterEndpoint up
+26/11/12 12:48:26 INFO SparkEnv: Registering BlockManagerMasterHeartbeat
+26/11/12 12:48:26 INFO DiskBlockManager: Created local directory at /private/var/folders/s4/bckpjsjs77bbl17cf5_h4fjw0000gn/T/blockmgr-2f6bbc76-0858-41d7-873c-4f69da551057
+26/11/12 12:48:26 INFO SparkEnv: Registering OutputCommitCoordinator
+26/11/12 12:48:26 INFO SecurityManager: Changing view acls to: achyutpatel
+26/11/12 12:48:26 INFO SecurityManager: Changing modify acls to: achyutpatel
+26/11/12 12:48:26 INFO SecurityManager: Changing view acls groups to: achyutpatel
+26/11/12 12:48:26 INFO SecurityManager: Changing modify acls groups to: achyutpatel
+26/11/12 12:48:26 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users with view permissions: achyutpatel groups with view permissions: EMPTY; users with modify permissions: achyutpatel; groups with modify permissions: EMPTY; RPC SSL disabled
+26/11/12 12:48:26 INFO Executor: Starting executor ID driver on host localhost
+26/11/12 12:48:26 INFO Executor: OS info Mac OS X, 27.2.1, aarch64
+26/11/12 12:48:26 INFO Executor: Java version 17.0.21
+26/11/12 12:48:26 INFO Executor: Starting executor with user classpath (userClassPathFirst = false): ''
+26/11/12 12:48:26 INFO Executor: Created or updated repl class loader org.apache.spark.util.MutableURLClassLoader@4d4289d8 for default.
+26/11/12 12:48:26 INFO Utils: Successfully started service 'org.apache.spark.network.netty.NettyBlockTransferService' on port 58004.
+26/11/12 12:48:26 INFO NettyBlockTransferService: Server created on localhost:58004
+26/11/12 12:48:26 INFO BlockManager: Using org.apache.spark.storage.RandomBlockReplicationPolicy for block replication policy
+26/11/12 12:48:26 INFO BlockManagerMaster: Registering BlockManager BlockManagerId(driver, localhost, 58004, None)
+26/11/12 12:48:26 INFO BlockManagerMasterEndpoint: Registering block manager localhost:58004 with 1048.8 MiB RAM, BlockManagerId(driver, localhost, 58004, None)
+26/11/12 12:48:26 INFO BlockManagerMaster: Registered BlockManager BlockManagerId(driver, localhost, 58004, None)
+26/11/12 12:48:26 INFO BlockManager: Initialized BlockManager: BlockManagerId(driver, localhost, 58004, None)
+[info] CorpusWindowSummarySpec:
+[info] - per window: nodes, edges, components, largest component, singletons, communities
+[info] - checks: member sums and every shared value against the Phase 6 window summary *** FAILED ***
+[info]   HashSet(("PHASE6_WINDOW_SUMMARY_MISMATCH", "l", "communitiesAtLeastMinSize"), ("PHASE6_WINDOW_SUMMARY_MISMATCH", "e", "communitiesAtLeastMinSize"), ("PHASE6_WINDOW_SUMMARY_MISMATCH", "z", "communitiesAtLeastMinSize")) did not equal Set(("PHASE6_WINDOW_SUMMARY_MISMATCH", "e", "communitiesAtLeastMinSize")) (CorpusWindowSummarySpec.scala:118)
+[info]   Analysis:
+[info]   HashSet(missingInRight: [("PHASE6_WINDOW_SUMMARY_MISMATCH", "l", "communitiesAtLeastMinSize"), ("PHASE6_WINDOW_SUMMARY_MISMATCH", "z", "communitiesAtLeastMinSize")])
+[info] - the job writes a new run equal to the Phase 6 window summary, with provenance
+[info] Run completed in 1 minute, 50 seconds.
+[info] Total number of tests run: 3
+[info] Suites: completed 1, aborted 0
+[info] Tests: succeeded 2, failed 1, canceled 0, ignored 0, pending 0
+[info] *** 1 TEST FAILED ***
+[error] Failed tests:
+[error] 	scholarchain.spark.CorpusWindowSummarySpec
+[error] (sparkAnalytics / Test / testOnly) sbt.TestsFailedException: Tests unsuccessful
+[error] Total time: 115 s (0:01:55.0), completed Nov 12, 2026, 12:50:16 PM

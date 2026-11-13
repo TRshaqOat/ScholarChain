@@ -1,0 +1,15 @@
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] running scholarchain.storage.cli.LoadWindowSummaryCli --spark-run scratch/runtime/wo7/spark/snapshot=2026-10-03/run=run-1de2293597c338227290eb382de16957 --out scratch/runtime/wo8
+load run run-6fbad498beb0d8f570df67665fb97544 from spark run run-1de2293597c338227290eb382de16957 snapshot 2026-10-03
+object curated/window-summary/snapshot=2026-10-03/run=run-6fbad498beb0d8f570df67665fb97544/part-00000.jsonl Unchanged
+manifest runs/load-window-summary/snapshot=2026-10-03/run=run-6fbad498beb0d8f570df67665fb97544/manifest.json Unchanged
+window all-years researchers 191318 components 16091 largestComponentFraction 0.7389111322510167 singletonResearchers 4849 communitiesAtLeastMinSize 23635 (min 3) runId run-1de2293597c338227290eb382de16957
+window 2000-2014 researchers 66350 components 7709 largestComponentFraction 0.6942275810097965 singletonResearchers 3119 communitiesAtLeastMinSize 8075 (min 3) runId run-1de2293597c338227290eb382de16957
+window 2015-2026 researchers 139432 components 10746 largestComponentFraction 0.7086751965115612 singletonResearchers 1798 communitiesAtLeastMinSize 18315 (min 3) runId run-1de2293597c338227290eb382de16957
+violations 0
+[success] Total time: 1 s, completed Nov 12, 2026, 1:13:09 PM

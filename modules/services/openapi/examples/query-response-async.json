@@ -1,0 +1,7 @@
+{
+  "jobId": "job-556ed8f2ae50ecd0b13e685232544ddc",
+  "queryId": "qry-0a83cf6903ee3d6914629c8acc8a4d7c",
+  "mode": "asynchronous",
+  "state": "QUEUED",
+  "statusUrl": "/v1/jobs/job-556ed8f2ae50ecd0b13e685232544ddc"
+}

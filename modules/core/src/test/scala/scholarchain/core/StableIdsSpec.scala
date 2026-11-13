@@ -155,6 +155,28 @@ class StableIdsSpec extends AnyFunSuite:
     assert(!IdFormat.isQueryId("qry-" + "A" * 32) && !IdFormat.isQueryId("qry-123"))
   }
 
+  test("Phase 10 job ID: frozen value, one job per query, shape, and guard") {
+    val q = "qry-e605c59cdcfda782444ceae12233ca77"
+    val j = StableIds.jobId(q)
+    // Computed independently: sha256("job" U+001F q), first 32 hex digits.
+    assert(j == "job-4adb9f615f3369c2e77c2dac2d758ec4")
+    assert(StableIds.jobId(q) == j)
+    assert(StableIds.jobId("qry-" + "0" * 32) != j)
+    assert(IdFormat.isJobId(j) && !IdFormat.isQueryId(j) && !IdFormat.isJobId(q))
+    assert(!IdFormat.isJobId("job-01J") && !IdFormat.isJobId("job-" + "A" * 32))
+    assertThrows[IllegalArgumentException](StableIds.jobId("job-01J"))
+  }
+
+  test("Phase 10 node ID: every GraphNode ID shape is a node ID; other text is not") {
+    for id <- Seq(researcherA, workId, mention1.mentionId, profileChunkId, "ror:03yrm5c26") do
+      assert(IdFormat.isNodeId(id), id)
+    assert(
+      IdFormat.isNodeId(StableIds.communityId("graph-v1", "all-years", 2000, 2026, researcherA))
+    )
+    for bad <- Seq("", "Researcher", "a b:c", "qry-e605c59cdcfda782444ceae12233ca77", "../etc") do
+      assert(!IdFormat.isNodeId(bad), bad)
+  }
+
   test("ID format checks accept well-formed and reject malformed IDs") {
     assert(IdFormat.isWorkId(workId))
     assert(IdFormat.isWorkId("doi:10.1145/1542275.1542359"))

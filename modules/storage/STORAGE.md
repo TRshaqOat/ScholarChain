@@ -27,6 +27,7 @@ Key rules (`S3Layout.keyProblems`): at most 1,024 UTF-8 bytes; characters only f
 | | `curated/dynamodb/snapshot=<d>/run=<r>/<Table>/part-*.jsonl` | DynamoDB item files |
 | | `curated/coauthor-evidence/snapshot=<d>/run=<r>/window=<w>/<edgeId>.json` | Long COAUTHORED_WITH evidence lists |
 | | `curated/mention-map/snapshot=<d>/run=<r>/...` | Mention-level identity data (RESOLVES_TO), S3 only |
+| | `curated/window-summary/snapshot=<d>/run=<r>/part-00000.jsonl` | Corpus window summaries, one JSON line per window (see "Window summaries") |
 | `graph/` | `graph/neptune/snapshot=<d>/run=<r>/{vertices,edges}/<name>/part-*.csv` | Neptune bulk-load CSV. This prefix is the loader `source`, so it holds nothing else |
 | `semantic-context/` | `semantic-context/text/snapshot=<d>/run=<r>/<index>/<vectorKey>.txt` | Rendered text, one object per vector |
 | | `semantic-context/candidates/snapshot=<d>/run=<r>/<index>/part-*.jsonl` | Embedding-candidate files (the work queue) |
@@ -162,7 +163,11 @@ Rules for every template:
 | `graph.lookup.Topic`/`.Venue`/`.Institution` | `lookup(label, text, limit)`: text 1 to `runtime.planner.max-term-chars` characters (trimmed), limit 1 to `graph-read.lookup-limit` | vertices whose `name` contains the text, case-insensitive (`toLower`), by name, then ID |
 | `graph.authored-counts` | `authoredCounts(ids)`: 1 to `id-batch-size` IDs | AUTHORED edge count per requested ID (0 when none or unknown); the M9 interim works source until follow-up F1 |
 | `graph.expand.OUT`/`.IN`/`.BOTH` | (used by `neighbors`) ids, edge types, fetch `max-results` + 1 | `(edge, other node)`, by edge ID, then node ID |
-| (composite over `graph.expand`) | `neighbors(nodeId, direction, depth, limit, edgeTypes)`: depth 1 to `graph-read.neighbors-max-depth`, limit 1 to `graph-read.neighbors-max-limit`, edgeTypes a non-empty subset of the six loaded edge types | `Neighborhood(start, nodes, edges, truncated)`: nodes within depth (start excluded), at most limit, expanded level by level; only reached nodes are expanded, so at most limit nodes are ever read; edges are those traversed between kept nodes |
+| (composite over `graph.expand`) | `neighbors(nodeId, direction, depth, limit, edgeTypes, offset = 0)`: depth 1 to `graph-read.neighbors-max-depth`, limit 1 to `graph-read.neighbors-max-limit`, edgeTypes a non-empty subset of the six loaded edge types, offset 0 to `graph-read.max-results` - limit | `Neighborhood(start, nodes, edges, truncated)`: one page of the walk (see "Neighbor pages"); only reached nodes are expanded, so at most offset + limit nodes are ever read; edges are the traversed edges between the start or walked nodes that touch a node of the page |
+
+**Node lookup (Phase 10).** `GET /v1/graph/nodes/{nodeId}` uses `vertex(id)`, template `graph.vertex` (`MATCH (n) WHERE id(n) = $id RETURN n`): one fixed text, the ID bound as `$id`, at most one row, behind the query timeout hint. It returns any label (Researcher, Work, Venue, Institution, Topic, Community) with its provenance properties. No new template was needed. The service checks `IdFormat.isNodeId` first.
+
+**Neighbor pages (Phase 10 ruling 8).** The walk order is fixed for an unchanged store: level by level; within a level, discovery order, meaning the previous level in its own order, read in batches of `graph-read.id-batch-size`, each batch's `graph.expand` rows by edge ID, then node ID. A walk capped at n nodes keeps exactly the first n nodes of any walk with a larger cap. So page (offset, limit) is the walk capped at offset + limit with the first offset nodes dropped, and consecutive pages concatenate to the whole walk (tested). The total cap `offset + limit <= graph-read.max-results` (1000) bounds every page; the store reads at most offset + limit nodes. `truncated` on a page means more nodes may follow, so the service may offer the next cursor (offset + limit) while that stays within the cap. The cursor itself (opaque encoding, binding it to the node, direction, depth, and edge types) belongs to the service.
 
 **Shortest path.** Neptune openCypher does not support `shortestPath()` ([openCypher compliance](https://docs.aws.amazon.com/neptune/latest/userguide/feature-opencypher-compliance.html), accessed 2026-11-06), so the port runs a bounded bidirectional breadth-first search over `graph.frontier`, in ID batches. Full levels are expanded from the side with the smaller frontier until the two balls meet; that gives the length L. The path is then read back from the target with the Spark job 5 rule: each step takes the smallest neighbor whose distance from the source is one less (`modules/spark/JOBS.md`). Inside the source ball that distance is known. Beyond it, the shortest-path layers are built forward from the meeting layer over the neighbor lists read on the target side (a neighbor of a shortest-path node with the right target distance is itself on a shortest path). So a FOUND path equals the Spark path for the same pair and window. A single-source search was tried first: with the default `path-max-frontier` of 50,000 it stopped at SEARCH_LIMIT on all 54 benchmark pairs, even a 3-hop one, because hubs reach most of the largest component within a few hops. Statuses:
 - `UNKNOWN_RESEARCHER`: either end is not a Researcher vertex;
@@ -181,7 +186,7 @@ Rules for every template:
 
 ## DynamoDB (ruling 6)
 
-All six tables use on-demand capacity and string keys. Writes are single conditional `PutItem` calls (`attribute_not_exists(<partition key>)`), because `BatchWriteItem` cannot carry conditions ([BatchWriteItem](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchWriteItem.html), accessed 2026-11-05). The loader runs them concurrently, bounded by the retry policy below.
+All seven tables (the six below plus ServiceState, Phase 10; see "Service state") use on-demand capacity and string keys. Writes are single conditional `PutItem` calls (`attribute_not_exists(<partition key>)`), because `BatchWriteItem` cannot carry conditions ([BatchWriteItem](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchWriteItem.html), accessed 2026-11-05). The loader runs them concurrently, bounded by the retry policy below.
 
 A failed condition still consumes write units ([read and write operations](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/read-write-operations.html), accessed 2026-11-05). A reload therefore first checks ArtifactRegistry: when `RUN#<runId>` for that table already records the same `contentHash`, the whole file is skipped.
 
@@ -232,6 +237,8 @@ Item schema versions (`DynamoContract.itemSchemaVersion`; the validator and the 
 | ResearcherMetricCache | `RANKING#<metric>` / `TOP#<window>` | `researcher-ranking-v1` |
 | QuerySession | every item | `rag-query-session-v1` |
 | EvidenceBundle | `BUNDLE` and `EV#<evidenceId>` | `rag-evidence-bundle-item-v1` |
+| ServiceState | `JOB` | `service-job-v1` |
+| ServiceState | `IDEMPOTENCY` | `service-idempotency-v1` |
 
 Extra attributes the Spark items carry beyond the required ones (allowed, not checked): `window` and `communityRunId` on `WINDOW#` items, `metricRunIds` on ranking items, and `stage`, `keyPrefix`, `objectCount` on ArtifactRegistry `RUN#` items.
   - `WINDOW#` items also need `windowStartYear`, `windowEndYear`, `publicationCount`, `distinctCoauthorCount`, `totalCoauthorOccurrences`, `averageCoauthorsPerPaper`, `maximumCoauthorsOnOnePaper`, `weightedDegree`, `componentId`, `componentSize`, `coreness`, `graphDegree`, and `maximumTeamWorkIds` (or `maximumTeamWorkIdsRef`). They take `communityId`, `communitySize`, `crossCommunityDegree`, `communitiesConnected`, and `participationCoefficient` from `analytics/researcher-communities`, joined on researcherId and window. The window years must match the configured window.
@@ -261,9 +268,9 @@ Access pattern: Get(`RANKING#<metric>`, `TOP#<window>`). A `RANKING#` partition 
 
 The DynamoDB loader records each loaded table in ArtifactRegistry as `artifactKey = loaded/dynamodb/<Table>`, `versionKey = RUN#<source run>` (the run in the item-file path), with `contentHash` (sha256 over every file's relative name and sha256), `rowCount`, and `manifestKey = runs/store-conversion/snapshot=<d>/run=<source run>/manifest.json`, the run manifest the Spark store-conversion run writes. A reload of the same content skips the table without writes; different content under the same source run is a conflict and nothing is written. The `loaded/` artifact keys never collide with ArtifactRegistry items that Spark writes. The loader never sets `ACTIVE`; switching the serving run is a separate, deliberate step.
 
-TTL applies only to QuerySession and EvidenceBundle (`expiresAt`). Every other table rejects the attribute. DynamoDB deletes expired items within a few days ([TTL](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/TTL.html), accessed 2026-11-05), so reads filter expired items (`DynamoContract.unexpired`), in the fake and the live adapter alike. Retention is 30 days (ruling 22); the runtime writer sets `expiresAt = createdAt + 30 days`. Runtime audit records are write-once objects under `logs/`, not a table (ruling 22).
+TTL applies only to QuerySession, EvidenceBundle, and ServiceState (`expiresAt`). Every other table rejects the attribute. DynamoDB deletes expired items within a few days ([TTL](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/TTL.html), accessed 2026-11-05), so reads filter expired items (`DynamoContract.unexpired`), in the fake and the live adapter alike. Retention is 30 days (ruling 22); the runtime writer sets `expiresAt = createdAt + 30 days`. Runtime audit records are write-once objects under `logs/`, not a table (ruling 22).
 
-Kept in S3, not DynamoDB, because no runtime access pattern needs a key lookup: works, authored, coauthor edges (Neptune serves them), components, path evidence and path-length estimates, communities (the Community vertex carries the size), window summaries and comparisons (4 rows, read as small S3 objects), community transitions, the mention and work maps, refusals, self-pairs, and violations.
+Kept in S3, not DynamoDB, because no runtime access pattern needs a key lookup: works, authored, coauthor edges (Neptune serves them), components, path evidence and path-length estimates, communities (the Community vertex carries the size), window summaries and comparisons (a few rows, read as small S3 objects; the corpus window summaries have a read port, see "Window summaries"), community transitions, the mention and work maps, refusals, self-pairs, and violations.
 
 Expected item counts and write units for one full load:
 
@@ -475,8 +482,158 @@ Since repair-01:
 | `BedrockTitanEmbedder(client, modelId)` | Embedder | InvokeModel, one text per call. A `ValidationException` rejects the document. |
 
 | `NeptuneGraphReader(client, limits)` | GraphReadPort | ExecuteOpenCypherQuery with the fixed templates of "Graph read templates", parameters as JSON, behind the query timeout hint. Read-only credentials. |
+| `DynamoServiceStateTable(client, tablePrefix, now, policy, sleep)` | ServiceStateTable | See "Service state". GetItem (consistent), retried by `policy`; the two conditional PutItem calls are single attempts. |
+| `DynamoEvidenceLookup(client, tablePrefix, now, policy, sleep)` | EvidenceLookupPort | Query on the `evidenceById` GSI, retried by `policy`. |
+| `SqsJobQueue(client, queueUrl, timeoutMs)` | JobQueuePort | SendMessage, ReceiveMessage, DeleteMessage, ChangeMessageVisibility; see "Job queue". |
 
 Configuration (Phase 7 M10, closed for these two keys by Phase 9 work order 2): DynamoDB table names are the table prefix plus the logical name, and the prefix is `--table-prefix` or else `dynamodb.table-prefix` (`SCHOLARCHAIN_DYNAMODB_TABLE_PREFIX`). The Neptune loader IAM role is `--loader-role-arn` or else `neptune.loader-role-arn` (`SCHOLARCHAIN_NEPTUNE_LOADER_ROLE_ARN`). Live runs need a non-local configuration, which refuses the placeholder values.
+
+## Service state, evidence by ID, and the job queue (Phase 10 work order 4)
+
+Code: `ServiceState.scala`, `JobQueue.scala`, `Dynamo.scala` (`EvidenceLookupPort`), `live/ServiceLive.scala`, `live/LiveAws.scala` (`sqs`, `overridesWithTimeout`). Tests: `ServiceStateSpec`, `JobQueueSpec`, `GraphReadSpec` (neighbor pages), `LiveRequestSpec` (SQS client credentials). All tests are network-free; the live adapters run against stub SDK clients.
+
+### Service state (rulings 7 and 11)
+
+**Decision: one new table, `ServiceState`.** The existing runtime tables do not fit:
+- QuerySession and EvidenceBundle are create-only rag runtime records (the audit trail), and a job needs conditional state updates.
+- Their keys are (sessionId, turnKey) and (queryId, itemKey). `GET /v1/jobs/{jobId}` has only the job ID, a one-way hash of the query ID, and an idempotency lookup has only the client's key.
+- Their item schema versions belong to rag-engineer.
+
+Phase 12 (infra-engineer) must create the table: on-demand, partition key `recordKey` (S), sort key `recordType` (S), TTL enabled on `expiresAt`. Physical name: `dynamodb.table-prefix` + `ServiceState`. The query-api and worker roles need `dynamodb:GetItem` and `dynamodb:PutItem` on it.
+
+| `recordType` | `recordKey` | Attributes | `schemaVersion` | Writer |
+|---|---|---|---|---|
+| `JOB` | the job ID, `StableIds.jobId(queryId)` | `queryId`, `state` (core `JobState`), `request` (canonical JSON of the POST body, a JSON object), `createdAt`, `updatedAt`, optional `stage` (`[A-Za-z][A-Za-z0-9_.-]{0,63}`), `startedAt`, `finishedAt`, `errorCode` (core `ErrorCode`) with `errorMessage` (1 to 500 characters), `resultRef` (S3 key), `expiresAt` | `service-job-v1` | `JobStore` |
+| `IDEMPOTENCY` | `idem-` + 64 hex of SHA-256 of the Idempotency-Key header value (the value itself is never stored) | `requestHash` (`sha256:<64 hex>` of the canonical body, computed by the service), `queryId`, `createdAt`, `expiresAt` | `service-idempotency-v1` | `IdempotencyStore` |
+
+Timestamps are ISO-8601 UTC strings with milliseconds. `expiresAt` is epoch seconds: createdAt + `services.ttl.job-hours` (168) for jobs, createdAt + `services.ttl.idempotency-hours` (24) for keys, fixed at creation. Reads hide expired items (DynamoDB deletes them only within a few days), and an expired key or job can be created again. Item budget: 96 KB, because a job holds its request and `services.max-body-bytes` is 64 KiB. Every other table keeps 32 KB. A write costs up to 96 WRU for the largest request; a typical request is under 1 KB.
+
+Job record rules (`ServiceStateContract.job`, checked on every write and every read):
+- `recordKey` equals `jobId(queryId)`;
+- `error` is present if and only if the state is FAILED;
+- `finishedAt` is present if and only if the state is final;
+- RUNNING and SUCCEEDED have `startedAt`, and QUEUED does not;
+- `resultRef` is allowed only on SUCCEEDED and must be a valid S3 key.
+
+The loader and the rag runtime writer refuse the table. `DynamoItemFile.tableDirs` refuses it as a load input.
+
+**Conditional writes.** Ports: `ServiceStateTable` (fake `LocalServiceStateTable`, live `DynamoServiceStateTable`), with the typed stores `JobStore` and `IdempotencyStore` over it.
+- **Create** (`JobStore.create`, `IdempotencyStore.claim`): PutItem with `attribute_not_exists(#pk) OR #e <= :now` and `ReturnValuesOnConditionCheckFailure = ALL_OLD`. A failed condition returns the stored record. The outcome is then:
+  - `Unchanged` for a job with the same queryId and request, or a key with the same requestHash (replay the stored queryId);
+  - `Conflict` otherwise. For a key this means 409 IDEMPOTENCY_CONFLICT. Nothing is written.
+- **Transition** (`JobStore.transition(jobId, from, to, stage, error, resultRef)`):
+  - `Left` when `from.canMoveTo(to)` is false (only QUEUED->RUNNING, QUEUED->FAILED, RUNNING->SUCCEEDED, RUNNING->FAILED) or when the new record breaks a rule.
+  - Otherwise the store reads the job, then writes the whole new record with PutItem `#s = :from` (ALL_OLD on failure).
+  - `Moved(job)` on success; `Refused(current)` when the job is missing or not in `from`.
+  - The transition graph has no cycle, so a job in state `from` has not been written since it entered `from`, and the read-then-put cannot lose an update.
+  - A redelivered message's second QUEUED->RUNNING is `Refused`. So a job never runs twice (tested with 8 racing threads: exactly one `Moved`).
+  - RUNNING sets `startedAt`; SUCCEEDED and FAILED set `finishedAt`; `stage`, when given, replaces the stored one.
+- **Stuck RUNNING.** A worker that dies while RUNNING leaves the job RUNNING. The redelivered message's QUEUED->RUNNING is refused. The worker may then move it RUNNING->FAILED (for example once `receiveCount` reaches `services.queue.max-receive-count`) and delete the message. That policy belongs to the service.
+- **Retries (ruling 9).** Reads (GetItem) are retried by the `RetryPolicy` the caller passes (build it from `services.resilience`; the live adapters have no default policy). Conditional puts are never retried. After a `TransientStoreException` from a put, the outcome is unknown: read the record back.
+- **Result.** The rag workflow already writes the answer object (`RuntimeApi.storedAnswer(queryId)`). `resultRef` lets the worker also record that object's key on SUCCEEDED.
+
+**Fakes** (thread-safe; inject the clock):
+```scala
+LocalServiceStateTable(log: Option[java.nio.file.Path], now: () => java.time.Instant)
+JobStore(table: ServiceStateTable, ttlHours: Int, now: () => Instant)          // cfg.services.ttl.jobHours
+IdempotencyStore(table: ServiceStateTable, ttlHours: Int, now: () => Instant)  // cfg.services.ttl.idempotencyHours
+```
+- `log = None` is in memory only.
+- `log = Some(file)`, for example `scratch/services/<runId>/ServiceState.jsonl`, appends every accepted write as one item-file line before applying it, and replays the log on open; the last line of a key wins.
+- A torn last line (crash) is cut on open. Any other unreadable line stops the open with `IllegalStateException`.
+- One table instance can back both stores, and all services in one JVM should share it.
+
+### Evidence by ID (work order 1, item 5)
+
+**Decision: a GSI on EvidenceBundle over existing attributes.** No rag write-path change is needed, so nothing is blocked on rag-engineer.
+- Index `evidenceById` (`DynamoContract.EvidenceByIdIndex`): partition key `itemKey` (S), sort key `queryId` (S), projection ALL.
+- Phase 12 Terraform must add it to the EvidenceBundle table, and the graph-evidence-api role needs `dynamodb:Query` on `<table ARN>/index/evidenceById`.
+- An evidence ID is `H(evidenceType, runId, subjectIds)`, so the same fact in several queries of one run has one ID. `EvidenceLookupPort.evidenceItem(evidenceId)` returns the unexpired `EV#<evidenceId>` item of the smallest queryId. Decode it with rag `RuntimeApi.evidenceOf(item, objects)`.
+- A malformed evidence ID returns None and no key is built.
+- Live: Query `#k = :k` with filter `#e > :now`, ascending, one page of at most 100 evaluated items (shortcut). A GSI read is eventually consistent, so evidence written a moment ago may briefly be missing (404).
+- The `BUNDLE` header items all share the GSI partition `BUNDLE`, which takes one write per query. That is far below the per-partition write limit at the ruling 10 rates.
+- Fakes: `InMemoryDynamo.evidenceLookup` and `FileRuntimeRecords.evidenceLookup` scan the EvidenceBundle items in (queryId, itemKey) order.
+
+Audit by query ID is a rag read over `ObjectReadPort` (`RuntimeApi.audit`). Storage adds nothing for it.
+
+### Job queue (ruling 7)
+
+```scala
+final case class JobMessage(jobId: String, queryId: String)   // JobMessage.of(queryId); wire form job-message-v1
+final case class ReceivedJob(messageId: String, receiptHandle: String, receiveCount: Int,
+                             message: Either[String, JobMessage])
+trait JobQueuePort:
+  def send(message: JobMessage): String
+  def receive(maxMessages: Int, waitSeconds: Int, visibilitySeconds: Int): Vector[ReceivedJob]
+  def delete(receiptHandle: String): Boolean
+  def changeVisibility(receiptHandle: String, seconds: Int): Boolean
+InMemoryJobQueue(maxReceiveCount: Int, now: () => Instant = () => Instant.now())  // + sendRaw, deadLetters, size
+SqsJobQueue(client: SqsClient, queueUrl: String, timeoutMs: Long)                 // LiveAws.sqs(target, o)
+```
+- **Message body.** Exactly `{"schemaVersion":"job-message-v1","jobId","queryId"}`, with `jobId = StableIds.jobId(queryId)`. Any other body is received as `message = Left(...)`, a poison message: never run it.
+- **Bounds** (`JobQueueLimits`, the same in the fake and live): maxMessages 1 to 10, waitSeconds 0 to 20, visibility 0 to 43200 s. Pass `services.worker.visibility-timeout-seconds` on every receive, so the receive does not depend on the queue default.
+- **Fake semantics:**
+  - A receive hides each returned message until now + visibility, increments its receive count, and issues a new receipt handle.
+  - Only the latest handle deletes it or changes its visibility. A stale handle returns false and changes nothing; the message comes back after its timeout.
+  - `changeVisibility` works only on an in-flight message.
+  - A message already received `maxReceiveCount` times (`services.queue.max-receive-count`) moves to `deadLetters` on the next receive attempt instead of being delivered. This models the SQS redrive policy.
+  - Delivery is in send order. Long polls wait in real time, rechecking every 50 ms, and a send wakes them.
+  - Retention and SQS duplicate delivery are not modelled.
+- **Live semantics:**
+  - Every request carries `apiCallTimeout = services.timeouts.sqs-ms`; a receive adds its wait, because the HTTP call must outlive `WaitTimeSeconds`.
+  - The receive requests `ApproximateReceiveCount` and reads it; 1 when absent.
+  - `delete` returns false only for `ReceiptHandleIsInvalid`. SQS answers success for an old handle without deleting.
+  - `changeVisibility` returns false for `ReceiptHandleIsInvalid` or `MessageNotInflight`.
+  - Credentials: the shared `RefreshingCredentials` of the profile through `LiveAws.sqs`, with the expired-token refresh of `LiveAws.guarded`. SDK retries are off. No SQS call is retried here: none is a pure read (ruling 9), the worker's poll loop retries, and the job store makes a duplicate send or delivery harmless.
+- Phase 12 Terraform: a standard queue with visibility timeout 300 s, a redrive policy with maxReceiveCount 3 to the dead-letter queue (the same as configuration), and DLQ retention longer than the source queue's. The worker role needs `sqs:ReceiveMessage`, `sqs:DeleteMessage`, and `sqs:ChangeMessageVisibility`; the query-api role needs `sqs:SendMessage`.
+
+Client timeouts for the DynamoDB adapters come from the client: `LiveAws.dynamo(target, LiveAws.overridesWithTimeout(cfg.services.timeouts.dynamodbMs))`.
+
+## Window summaries (Phase 10 work order 8, follow-up F2)
+
+Code: `WindowSummaries.scala` (record, port, validator, converter), `cli/LoadWindowSummaryCli.scala`. Test: `WindowSummarySpec`. Input contract: Spark `corpus/window-summary`, `spark-corpus-window-summary-v1` (modules/spark/JOBS.md, "CorpusWindowSummaryJob").
+
+**Decision: one small S3 object, no DynamoDB table and no GSI.** It follows the coauthor-evidence pattern: a validated JSON object under `curated/`, written once and read through `ObjectReadPort`. Three rows (one per configured window) need no key lookup, so they stay in S3 (see "Kept in S3" above). Phase 12 needs no new table, index, or IAM action beyond `s3:GetObject` on the key for the role that runs the rag runtime.
+
+| Item | Value |
+|---|---|
+| Key | `S3Layout.windowSummary(snapshot, runId)` = `curated/window-summary/snapshot=<d>/run=<load run>/part-00000.jsonl` |
+| Run manifest | `runs/load-window-summary/snapshot=<d>/run=<load run>/manifest.json` (`store-run-manifest-v1`); `sourceRef` names the Spark table, Spark run, and the sha256 of its `_manifest.json` |
+| Load run ID | `StableIds.runId("load-window-summary", "load-window-summary-v1", configVersion, ["source=<spark run>", <sha256 of _manifest.json>], 1)` |
+| Line | one JSON object per window, ordered by start year, end year, window: exactly the 25 Spark columns (`WindowSummaries.Fields`, from `SparkSchema`), `sourceRuns` and `provenance` as nested objects, null IDs and fractions as JSON null |
+| Row provenance | `provenance.runId` is the Spark run that computed the row (general rule); the load run is in the key and the run manifest |
+
+Record and port (storage-local mirror of the Spark contract; no core record is needed):
+
+```scala
+final case class WindowSummarySourceRuns(temporalSummaryExportRunId: String, communityPathRunId: String,
+    researcherAnalyticsRunId: String, canonicalGraphRunId: String, inputHadoopRunId: String,
+    matchPolicyVersion: String)
+final case class WindowSummary(window: String, windowStartYear: Int, windowEndYear: Int,
+    researchers: Long, coauthorEdges: Long, sumJointPublicationCount: Long, components: Long,
+    largestComponentSize: Long, singletonResearchers: Long, communities: Long,
+    largestCommunitySize: Long, singletonCommunities: Long, communitiesAtLeastMinSize: Long,
+    largestComponentId: Option[String], largestCommunityId: Option[String], years: Int,
+    largestComponentFraction: Option[Double], largestCommunityFraction: Option[Double],
+    communityMinSize: Int, communityConverged: Boolean, communityRounds: Int, nodeBasis: String,
+    sourceRuns: WindowSummarySourceRuns, provenance: Provenance, schemaVersion: String)
+trait WindowSummaryReadPort:
+  def windowSummary(window: String): Option[WindowSummary]
+WindowSummaries.open(objects: ObjectReadPort, key: String, windows: Seq[TimeWindow])
+  : Either[Vector[Violation], WindowSummaryReadPort]
+```
+
+- **Open.** One `get` of the key, then `parse`; any violation refuses the whole object (nothing half-opened). The rows are then answered from memory. Fake: `FileObjectStore(root).reader`. Live: `S3ObjectStore(...).reader` (one GetObject, the existing adapter, no new live code). Both stores are write-once, so the copy never goes stale.
+- **Read.** `windowSummary(window)` returns the row or None for a name with no row. The benchmark alias `all` is not a stored name: the caller maps it to the first configured window (`all-years`), as BenchmarkPathJob does.
+- **Validation** (`WindowSummaries.parse`, codes): `BAD_KEY` (key rules, or not under `curated/window-summary/`); `MALFORMED` (not JSON, a field missing or extra, a wrong type), so long text or any other extra field is refused; `BAD_ROW` (schema version; a configured window with its years; `years`; counts non-negative and consistent; when researchers > 0, `comp-`/`comm-` IDs, largest sizes from 1 to researchers, and each fraction equal to size / researchers within 1e-12; when researchers = 0, no IDs, no fractions, sizes 0; `communityMinSize` at least 1; non-empty `nodeBasis`; `sourceRuns` run IDs and match-policy version; provenance `provenance-v1`, DERIVED, `sourceRecordId` = window, run ID, snapshot, a policy version, null model version); `DUPLICATE_WINDOW`; `MISSING_WINDOW` (every configured window must be present); `PROVENANCE` (rows from more than one run, or a key snapshot that differs from the rows'); `OBJECT_MISSING`.
+- **Conversion** (`WindowSummaries.fromSparkManifest`). Storage has no Parquet reader, so the loader reads the Spark run's `_manifest.json`. Its `counts.windowSummary` holds every column except `nodeBasis`, `sourceRuns`, and `provenance`. Those come from `settings.nodeBasis` and `sourceRuns`, and provenance is rebuilt as the job builds it (spark `Canonical.provenance`: `provenance-v1`, DERIVED, the window, the run's snapshot and run ID, `settings.graphPolicy`, null model). The manifest must have schema `spark-run-manifest-v1`, stage `spark-corpus-window-summary`, the `corpus/window-summary` table with exactly `SparkSchema`, `spark-corpus-window-summary-v1`, and a row count equal to the rows, and no integrity violation (`INTEGRITY_VIOLATIONS`); otherwise `BAD_MANIFEST`. A Spark column change therefore stops the loader. This is a shortcut until spark-engineer writes the store object directly.
+- **Idempotency.** The same Spark run gives the same load run ID and the same bytes, so a reload is `Unchanged`; different bytes under the key are a `Conflict`, are not written, and exit 1.
+
+**Phase 10 local store** (work order 8): from the work order 7 run `scratch/runtime/wo7/spark/snapshot=2026-10-03/run=run-1de2293597c338227290eb382de16957`, load run `run-6fbad498beb0d8f570df67665fb97544`, root `scratch/runtime/wo8/s3`:
+- object `curated/window-summary/snapshot=2026-10-03/run=run-6fbad498beb0d8f570df67665fb97544/part-00000.jsonl` (4,320 bytes, 3 rows);
+- manifest `runs/load-window-summary/snapshot=2026-10-03/run=run-6fbad498beb0d8f570df67665fb97544/manifest.json`.
+
+Wiring for the rag runtime: `WindowSummaries.open(FileObjectStore(Paths.get("scratch/runtime/wo8/s3")).reader, S3Layout.windowSummary("2026-10-03", "run-6fbad498beb0d8f570df67665fb97544"), cfg.graph.windows)`, once at startup; a `Left` stops startup. It is a separate object root from `scratch/stores/s3`, so it needs its own `FileObjectStore`. In the cloud the same call takes the `S3ObjectStore` reader and the same key.
 
 ## CLIs (`sbt "storage/runMain <class> ..."`)
 
@@ -489,6 +646,7 @@ All CLIs run from the repository root, default to local fakes under `scratch/sto
 | `scholarchain.storage.cli.LoadNeptuneCli --dir <out>/s3/graph/neptune/snapshot=<d>/run=<r> [--out scratch/stores] [--passes n] [--expect-coauthor <csv>]` | Dry run: validate, then load into the in-memory graph `--passes` times. `--expect-coauthor` (dry run only) then looks up every row of a CSV `window,researcherX,researcherY,jointPublicationCount,firstCollaborationYear,lastCollaborationYear` with `coauthorEdge` and prints `edge-check OK|MISSING|MISMATCH` with the found edge ID; any miss exits 1. Live: `--live --profile <name> [--loader-role-arn <arn>]` (default `neptune.loader-role-arn`) validates the local copy, then checks content hashes against the store-conversion run manifest (`runs/store-conversion/snapshot=<d>/run=<r>/manifest.json`, M3): the local copy and the live bucket must both hold exactly the manifest's objects under the load prefix, the local files must hash to the manifest's SHA-256, and each live object's stored SHA-256 checksum (HeadObject, written by `LoadS3Cli`) must equal it. Any difference prints `pre-load:` lines and exits 1 before a load starts. Then it starts one load; `--live --profile <name> --status <loadId>` reads its status. |
 | `scholarchain.storage.cli.LoadDynamoCli --dir <out>/s3/curated/dynamodb/snapshot=<d>/run=<r> [--out scratch/stores] [--passes n] [--recheck]` | Dry run: in-memory fake. Live: `--live --profile <name> [--table-prefix <p>] [--concurrency 1..32, default 8]` (prefix default `dynamodb.table-prefix`). Runtime tables (QuerySession, EvidenceBundle) are refused. |
 | `scholarchain.storage.cli.LoadVectorsCli --input <out>/s3/vectors/backup/snapshot=<d>/run=<r> [--out scratch/stores] [--batch-size 1..500] [--supersede]` | Dry run: file vector store `<out>/s3vectors/`. Live: `--live --profile <name>` into `s3-vectors.vector-bucket`. |
+| `scholarchain.storage.cli.LoadWindowSummaryCli --spark-run <out>/snapshot=<d>/run=<spark run> --out <new root>` | Converts one CorpusWindowSummaryJob run into the window-summary store object and its run manifest in `<out>/s3` (write-once), then reopens it through the read port and prints each window. `--out` is required (no default), so it never writes into `scratch/stores/`. No live mode; `LoadS3Cli` copies the manifest's objects. |
 | `scholarchain.storage.cli.LoadS3Cli --manifest runs/<stage>/snapshot=<d>/run=<r>/manifest.json [--root scratch/stores/s3]` | Dry run: verifies the manifest against the file store. Live: `--live --profile <name>` writes every listed object write-once, then the manifest, then verifies the manifest against the bucket. |
 
 `sbt` runs `storage/runMain` in its own JVM (the storage project does not fork). For the in-memory graph or DynamoDB dry runs on full data, start sbt with a larger heap, at most 6 GB (ruling 27): `sbt -J-Xmx6g "storage/runMain ..."`.
@@ -527,6 +685,11 @@ Loader run IDs: `StableIds.runId("load-<store>", "load-<store>-v1", configVersio
 | DynamoDB Number | up to 38 digits of precision; "Leading and trailing zeroes are trimmed" (accessed 2026-11-06) | https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html |
 | DynamoDB failed-condition item | `ReturnValuesOnConditionCheckFailure = ALL_OLD` returns the stored item | https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/WorkingWithItems.html |
 | Neptune loader status | `overallStatus.status` (`LOAD_COMPLETED` on success), `totalRecords`, `totalDuplicates`, `parsingErrors`, `datatypeMismatchErrors`, `insertErrors` | https://docs.aws.amazon.com/neptune/latest/userguide/load-api-reference-status-response.html |
+| SQS ReceiveMessage | MaxNumberOfMessages 1 to 10; WaitTimeSeconds long poll (the HTTP response timeout must exceed it); VisibilityTimeout per receive; `ApproximateReceiveCount` via MessageSystemAttributeNames (accessed 2026-11-12) | https://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/API_ReceiveMessage.html |
+| SQS ChangeMessageVisibility | 0 to 43,200 s; errors `MessageNotInflight`, `ReceiptHandleIsInvalid` (accessed 2026-11-12) | https://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/API_ChangeMessageVisibility.html |
+| SQS DeleteMessage | each receive gives a new receipt handle; an old handle "will succeed, but the message might not be deleted"; `ReceiptHandleIsInvalid` (accessed 2026-11-12) | https://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/API_DeleteMessage.html |
+| SQS redrive policy | `maxReceiveCount`: receives from the source queue before the message moves to the dead-letter queue; keep DLQ retention longer than the source (accessed 2026-11-12) | https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-dead-letter-queues.html |
+| DynamoDB GSI reads | global secondary indexes support eventually consistent reads only (accessed 2026-11-12) | https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/LSIJavaDocumentAPI.html |
 | S3 Vectors filter syntax | `$eq` (matches any element of a list), `$ne`, `$gt`, `$gte`, `$lt`, `$lte`, `$startsWith` (ENHANCED), `$in`, `$nin`, `$exists`, `$and`, `$or`; 100 constraints per query (ENHANCED) | https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-vectors-metadata-filtering.html |
 
 ## Cleanup (run-scoped test data only)

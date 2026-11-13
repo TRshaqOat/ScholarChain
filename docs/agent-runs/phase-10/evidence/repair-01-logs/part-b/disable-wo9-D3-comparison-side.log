@@ -1,0 +1,51 @@
+== disable wo9-D3-comparison-side: modules/rag/src/main/scala/scholarchain/rag/runtime/Verifier.scala
+738c738
+<       w +: side.toVector
+---
+>       w +: Vector.empty[String]
+== sbt -batch -J-Xmx4g "rag/testOnly scholarchain.rag.runtime.VerifierSpec"
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] compiling 1 Scala source to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/rag/target/scala-3.3.7/classes ...
+[info] done compiling
+[info] VerifierSpec:
+[info] - numbers: integers exact, decimals equal or rounded half-up from at least 2 decimals
+[info] - F1 (a): a number must be bound to the named fact it states, not to any fact or to none
+[info] - F1 (a): a rank number verifies only in a RANKING claim, against that researcher's rank
+[info] - F1 (b): PATH_HOP asserts every fact of its hop, and the joint count is the hop's
+[info] - F1 (c): a decimal never verifies as a rounded integer
+[info] - F2: a window name or year range in the text must be the claim's window
+[info] - F3: a semantic-only claim is never VERIFIED: context only, or removed
+[info] - F4: a name outside the bundle fails, whether a corpus researcher or absent from the corpus
+[info] - N1 (ruling 29): number words are written as digits before binding
+[info] - N1 (ruling 29): a wrong count written as words fails; the right word form verifies
+[info] - N2 (ruling 29): every name in a claim is a researcher of the facts its values assert
+[info] - R3-1: a list-position ordinal binds to the index k of an asserted hop or entry
+[info] - R3-1: an ordering word is no count, and an ordinal outside a ranking is no rank
+[info] - R3-2: the measure name 'on one paper' and fixed phrases are not counts
+[info] - n4 and review 2 n2: a rank is checked against a stored rank, never a year or a listed value
+[info] - n5: ordinals up to fiftieth (and beyond) are checked
+[info] - n6: the prompt's measure names verify: coauthors per paper, intensity in joint publications
+[info] - review 2 n3: a name inside a longer bundle text, or cut by a one-word text, is flagged
+[info] - n7: the audit records removed claims and left-out lines with their reasons
+[info] - ruling 29: the runtime run ID changes with the verifier version
+[info] - ruling 20: summary and uncertainty lines get the numbers, windows, names, and titles checks
+[info] - work order 9, live B18 shape: a number written with digit-group commas is one number
+[info] - work order 9, live B22 shape: a claim on one side of a stored comparison may take that side's window *** FAILED ***
+[info]   CONFLICTING did not equal VERIFIED Vector(CheckResult(evidence-exists,PASS,all cited items are in the bundle), CheckResult(graph-evidence-required,PASS,1 graph item(s) cited), CheckResult(kind-matches-type,PASS,METRIC_VALUE needs METRIC_RECORD or RANKING_RECORD or TEMPORAL_CHANGE), CheckResult(asserted-values,PASS,toDistinctCoauthorCount), CheckResult(numbers-in-text,PASS,every number is an asserted, named fact), CheckResult(window,CONFLICT,the claim says 2015-2026, the evidence covers 2000-2014>2015-2026), CheckResult(identity,PASS,every subject and name is resolved or cited)) (VerifierSpec.scala:1002)
+[info] Run completed in 1 second, 161 milliseconds.
+[info] Total number of tests run: 23
+[info] Suites: completed 1, aborted 0
+[info] Tests: succeeded 22, failed 1, canceled 0, ignored 0, pending 0
+[info] *** 1 TEST FAILED ***
+[error] Failed tests:
+[error] 	scholarchain.rag.runtime.VerifierSpec
+[error] (rag / Test / testOnly) sbt.TestsFailedException: Tests unsuccessful
+[error] Total time: 4 s, completed Nov 12, 2026, 5:52:46 PM
+== sbt exit 1
+== restored modules/rag/src/main/scala/scholarchain/rag/runtime/Verifier.scala; sha256 check against the pre-disable manifest:
+modules/rag/src/main/scala/scholarchain/rag/runtime/Verifier.scala: OK

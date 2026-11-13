@@ -1,0 +1,4 @@
+30 audit files
+qry-6c055ad1b9bbf4d0 ANSWER_SYNTHESIS 1 INVALID_OUTPUT output-is-json: the output is not exactly one JSON object (no prose, no second object; one enclosing code fence is tolerated) (output 10274 chars, starts with '`', ends with a letter, stop reason max_tokens)
+qry-ac16655a4d19a1e0 QUERY_PLANNING 1 INVALID_OUTPUT rule-2 operations: none, and no metric for a named researcher; allowed: at least one operation, or a metric and a researcher name (output 319 chars, starts with '`', ends with '`', stop reason end_turn)
+qry-decc11a5aecc033d ANSWER_SYNTHESIS 1 INVALID_OUTPUT schema: $.claims[2].evidenceIds: too few items (output 1900 chars, starts with '`', ends with '`', stop reason end_turn)

@@ -1,0 +1,17 @@
+{
+  "jobId": "job-6d0b212d6153dd84927939c7e52a4f1b",
+  "queryId": "qry-2076cb07c83574fab82dfb454fbaef38",
+  "state": "FAILED",
+  "stage": "RESEARCHER_RESOLUTION",
+  "createdAt": "2026-11-12T08:52:48.080Z",
+  "updatedAt": "2026-11-12T08:52:48.083Z",
+  "startedAt": "2026-11-12T08:52:48.082Z",
+  "finishedAt": "2026-11-12T08:52:48.083Z",
+  "error": {
+    "error": "DOWNSTREAM_FAILURE",
+    "message": "the RESEARCHER_RESOLUTION stage failed",
+    "retryable": true
+  },
+  "statusUrl": "/v1/jobs/job-6d0b212d6153dd84927939c7e52a4f1b",
+  "resultUrl": null
+}

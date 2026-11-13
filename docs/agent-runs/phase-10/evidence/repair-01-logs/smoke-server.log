@@ -1,0 +1,70 @@
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] compiling 1 Scala source to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/services/target/scala-3.3.7/classes ...
+[info] done compiling
+[info] running (fork) scholarchain.services.main.LocalRun --graph scratch/services/smoke-wo6-20261112T025709/stores/graph/snapshot=2026-10-03/run=run-b8a212f955daaeb0275f11f93e36c70a --items scratch/services/smoke-wo6-20261112T025709/stores/items/snapshot=2026-10-03/run=run-b8a212f955daaeb0275f11f93e36c70a --objects scratch/services/smoke-wo6-20261112T025709/stores/s3 --vectors scratch/services/smoke-wo6-20261112T025709/stores/vectors --out scratch/services/smoke-repair01-20261112/out --window-summary-root scratch/runtime/wo8/s3
+[info] window summaries: curated/window-summary/snapshot=2026-10-03/run=run-6fbad498beb0d8f570df67665fb97544/part-00000.jsonl
+[info] fake mode: runtime run run-d21e6d611181c34f6794f91d28416e1b, snapshot 2026-10-03, outputs under scratch/services/smoke-repair01-20261112/out
+[info] {"ts":"2026-11-12T23:22:18.624063Z","type":"event","service":"query-api","event":"started","port":8080}
+[info] {"ts":"2026-11-12T23:22:18.625856Z","type":"event","service":"graph-evidence-api","event":"started","port":8081}
+[info] {"ts":"2026-11-12T23:22:18.626257Z","type":"event","service":"worker","event":"started","port":8082}
+[info] {"ts":"2026-11-12T23:22:24.355505Z","type":"request","service":"query-api","traceId":"smoke-trace-wo11","requestId":"smoke-wo11","method":"GET","route":"/healthz","status":200,"latencyMs":14,"error":null}
+[info] {"ts":"2026-11-12T23:22:24.357678Z","type":"request","service":"query-api","traceId":"smoke-trace-wo11","requestId":"smoke-wo11","method":"GET","route":"/readyz","status":200,"latencyMs":2,"error":null}
+[info] {"ts":"2026-11-12T23:22:24.358357Z","type":"request","service":"graph-evidence-api","traceId":"smoke-trace-wo11","requestId":"smoke-wo11","method":"GET","route":"/healthz","status":200,"latencyMs":0,"error":null}
+[info] {"ts":"2026-11-12T23:22:24.359444Z","type":"request","service":"graph-evidence-api","traceId":"smoke-trace-wo11","requestId":"smoke-wo11","method":"GET","route":"/readyz","status":200,"latencyMs":0,"error":null}
+[info] {"ts":"2026-11-12T23:22:24.360033Z","type":"request","service":"worker","traceId":"smoke-trace-wo11","requestId":"smoke-wo11","method":"GET","route":"/healthz","status":200,"latencyMs":0,"error":null}
+[info] {"ts":"2026-11-12T23:22:24.360936Z","type":"request","service":"worker","traceId":"smoke-trace-wo11","requestId":"smoke-wo11","method":"GET","route":"/readyz","status":200,"latencyMs":0,"error":null}
+[info] {"ts":"2026-11-12T23:22:24.469481Z","type":"stage","traceId":"smoke-trace-wo11","requestId":"smoke-wo11","queryId":"qry-2412227a1e1b5692ab053201110420c8","stage":"QUERY_PLANNING","outcome":"OK","latencyMs":9}
+[info] {"ts":"2026-11-12T23:22:24.469572Z","type":"stage","traceId":"smoke-trace-wo11","requestId":"smoke-wo11","queryId":"qry-2412227a1e1b5692ab053201110420c8","stage":"RESEARCHER_RESOLUTION","outcome":"OK","latencyMs":9}
+[info] {"ts":"2026-11-12T23:22:24.469624Z","type":"stage","traceId":"smoke-trace-wo11","requestId":"smoke-wo11","queryId":"qry-2412227a1e1b5692ab053201110420c8","stage":"COLLABORATION_METRICS","outcome":"OK","latencyMs":3}
+[info] {"ts":"2026-11-12T23:22:24.469671Z","type":"stage","traceId":"smoke-trace-wo11","requestId":"smoke-wo11","queryId":"qry-2412227a1e1b5692ab053201110420c8","stage":"PATH_FINDING","outcome":"OK","latencyMs":6}
+[info] {"ts":"2026-11-12T23:22:24.469708Z","type":"stage","traceId":"smoke-trace-wo11","requestId":"smoke-wo11","queryId":"qry-2412227a1e1b5692ab053201110420c8","stage":"COMMUNITY_ANALYSIS","outcome":"SKIPPED","latencyMs":0}
+[info] {"ts":"2026-11-12T23:22:24.469743Z","type":"stage","traceId":"smoke-trace-wo11","requestId":"smoke-wo11","queryId":"qry-2412227a1e1b5692ab053201110420c8","stage":"SEMANTIC_CONTEXT","outcome":"OK","latencyMs":8}
+[info] {"ts":"2026-11-12T23:22:24.469782Z","type":"stage","traceId":"smoke-trace-wo11","requestId":"smoke-wo11","queryId":"qry-2412227a1e1b5692ab053201110420c8","stage":"EVIDENCE_BUILDING","outcome":"OK","latencyMs":6}
+[info] {"ts":"2026-11-12T23:22:24.469814Z","type":"stage","traceId":"smoke-trace-wo11","requestId":"smoke-wo11","queryId":"qry-2412227a1e1b5692ab053201110420c8","stage":"ANSWER_SYNTHESIS","outcome":"OK","latencyMs":5}
+[info] {"ts":"2026-11-12T23:22:24.469856Z","type":"stage","traceId":"smoke-trace-wo11","requestId":"smoke-wo11","queryId":"qry-2412227a1e1b5692ab053201110420c8","stage":"CLAIM_VERIFICATION","outcome":"OK","latencyMs":23}
+[info] {"ts":"2026-11-12T23:22:24.469896Z","type":"stage","traceId":"smoke-trace-wo11","requestId":"smoke-wo11","queryId":"qry-2412227a1e1b5692ab053201110420c8","stage":"AUDIT","outcome":"OK","latencyMs":0}
+[info] {"ts":"2026-11-12T23:22:24.472139Z","type":"request","service":"query-api","traceId":"smoke-trace-wo11","requestId":"smoke-wo11","method":"POST","route":"/v1/query","status":200,"latencyMs":110,"error":null}
+[info] {"ts":"2026-11-12T23:22:24.487885Z","type":"stage","traceId":"smoke-trace-wo11","requestId":"smoke-wo11","queryId":"qry-25a1e907d3948abea2da150599e6ec40","stage":"QUERY_PLANNING","outcome":"OK","latencyMs":1}
+[info] {"ts":"2026-11-12T23:22:24.487956Z","type":"stage","traceId":"smoke-trace-wo11","requestId":"smoke-wo11","queryId":"qry-25a1e907d3948abea2da150599e6ec40","stage":"RESEARCHER_RESOLUTION","outcome":"OK","latencyMs":0}
+[info] {"ts":"2026-11-12T23:22:24.487994Z","type":"stage","traceId":"smoke-trace-wo11","requestId":"smoke-wo11","queryId":"qry-25a1e907d3948abea2da150599e6ec40","stage":"COLLABORATION_METRICS","outcome":"SKIPPED","latencyMs":0}
+[info] {"ts":"2026-11-12T23:22:24.488025Z","type":"stage","traceId":"smoke-trace-wo11","requestId":"smoke-wo11","queryId":"qry-25a1e907d3948abea2da150599e6ec40","stage":"PATH_FINDING","outcome":"OK","latencyMs":1}
+[info] {"ts":"2026-11-12T23:22:24.488057Z","type":"stage","traceId":"smoke-trace-wo11","requestId":"smoke-wo11","queryId":"qry-25a1e907d3948abea2da150599e6ec40","stage":"COMMUNITY_ANALYSIS","outcome":"SKIPPED","latencyMs":0}
+[info] {"ts":"2026-11-12T23:22:24.488087Z","type":"stage","traceId":"smoke-trace-wo11","requestId":"smoke-wo11","queryId":"qry-25a1e907d3948abea2da150599e6ec40","stage":"SEMANTIC_CONTEXT","outcome":"SKIPPED","latencyMs":0}
+[info] {"ts":"2026-11-12T23:22:24.488113Z","type":"stage","traceId":"smoke-trace-wo11","requestId":"smoke-wo11","queryId":"qry-25a1e907d3948abea2da150599e6ec40","stage":"EVIDENCE_BUILDING","outcome":"OK","latencyMs":2}
+[info] {"ts":"2026-11-12T23:22:24.488140Z","type":"stage","traceId":"smoke-trace-wo11","requestId":"smoke-wo11","queryId":"qry-25a1e907d3948abea2da150599e6ec40","stage":"ANSWER_SYNTHESIS","outcome":"OK","latencyMs":1}
+[info] {"ts":"2026-11-12T23:22:24.488166Z","type":"stage","traceId":"smoke-trace-wo11","requestId":"smoke-wo11","queryId":"qry-25a1e907d3948abea2da150599e6ec40","stage":"CLAIM_VERIFICATION","outcome":"OK","latencyMs":6}
+[info] {"ts":"2026-11-12T23:22:24.488190Z","type":"stage","traceId":"smoke-trace-wo11","requestId":"smoke-wo11","queryId":"qry-25a1e907d3948abea2da150599e6ec40","stage":"AUDIT","outcome":"OK","latencyMs":0}
+[info] {"ts":"2026-11-12T23:22:24.488567Z","type":"request","service":"query-api","traceId":"smoke-trace-wo11","requestId":"smoke-wo11","method":"POST","route":"/v1/query","status":200,"latencyMs":15,"error":null}
+[info] {"ts":"2026-11-12T23:22:24.492172Z","type":"request","service":"graph-evidence-api","traceId":"smoke-trace-wo11","requestId":"smoke-wo11","method":"GET","route":"/v1/evidence/{evidenceId}","status":200,"latencyMs":2,"error":null}
+[info] {"ts":"2026-11-12T23:22:24.500112Z","type":"event","service":"query-api","event":"job-queued","traceId":"smoke-trace-wo11","requestId":"smoke-wo11","jobId":"job-afadb79adc9b27bbc39f858ec9dc5cd9","queryId":"qry-784f317c7c52c93fdeaf5e7f9fe41ea2"}
+[info] {"ts":"2026-11-12T23:22:24.501095Z","type":"request","service":"query-api","traceId":"smoke-trace-wo11","requestId":"smoke-wo11","method":"POST","route":"/v1/query","status":202,"latencyMs":8,"error":null}
+[info] {"ts":"2026-11-12T23:22:24.503150Z","type":"request","service":"query-api","traceId":"smoke-trace-wo11","requestId":"smoke-wo11","method":"POST","route":"/v1/query","status":202,"latencyMs":1,"error":null}
+[info] {"ts":"2026-11-12T23:22:24.516427Z","type":"stage","jobId":"job-afadb79adc9b27bbc39f858ec9dc5cd9","queryId":"qry-784f317c7c52c93fdeaf5e7f9fe41ea2","stage":"QUERY_PLANNING","outcome":"OK","latencyMs":0}
+[info] {"ts":"2026-11-12T23:22:24.516482Z","type":"stage","jobId":"job-afadb79adc9b27bbc39f858ec9dc5cd9","queryId":"qry-784f317c7c52c93fdeaf5e7f9fe41ea2","stage":"RESEARCHER_RESOLUTION","outcome":"OK","latencyMs":2}
+[info] {"ts":"2026-11-12T23:22:24.516509Z","type":"stage","jobId":"job-afadb79adc9b27bbc39f858ec9dc5cd9","queryId":"qry-784f317c7c52c93fdeaf5e7f9fe41ea2","stage":"COLLABORATION_METRICS","outcome":"OK","latencyMs":0}
+[info] {"ts":"2026-11-12T23:22:24.516539Z","type":"stage","jobId":"job-afadb79adc9b27bbc39f858ec9dc5cd9","queryId":"qry-784f317c7c52c93fdeaf5e7f9fe41ea2","stage":"PATH_FINDING","outcome":"OK","latencyMs":1}
+[info] {"ts":"2026-11-12T23:22:24.516563Z","type":"stage","jobId":"job-afadb79adc9b27bbc39f858ec9dc5cd9","queryId":"qry-784f317c7c52c93fdeaf5e7f9fe41ea2","stage":"COMMUNITY_ANALYSIS","outcome":"SKIPPED","latencyMs":0}
+[info] {"ts":"2026-11-12T23:22:24.516588Z","type":"stage","jobId":"job-afadb79adc9b27bbc39f858ec9dc5cd9","queryId":"qry-784f317c7c52c93fdeaf5e7f9fe41ea2","stage":"SEMANTIC_CONTEXT","outcome":"OK","latencyMs":0}
+[info] {"ts":"2026-11-12T23:22:24.516612Z","type":"stage","jobId":"job-afadb79adc9b27bbc39f858ec9dc5cd9","queryId":"qry-784f317c7c52c93fdeaf5e7f9fe41ea2","stage":"EVIDENCE_BUILDING","outcome":"OK","latencyMs":1}
+[info] {"ts":"2026-11-12T23:22:24.516631Z","type":"stage","jobId":"job-afadb79adc9b27bbc39f858ec9dc5cd9","queryId":"qry-784f317c7c52c93fdeaf5e7f9fe41ea2","stage":"ANSWER_SYNTHESIS","outcome":"OK","latencyMs":0}
+[info] {"ts":"2026-11-12T23:22:24.516652Z","type":"stage","jobId":"job-afadb79adc9b27bbc39f858ec9dc5cd9","queryId":"qry-784f317c7c52c93fdeaf5e7f9fe41ea2","stage":"CLAIM_VERIFICATION","outcome":"OK","latencyMs":6}
+[info] {"ts":"2026-11-12T23:22:24.516671Z","type":"stage","jobId":"job-afadb79adc9b27bbc39f858ec9dc5cd9","queryId":"qry-784f317c7c52c93fdeaf5e7f9fe41ea2","stage":"AUDIT","outcome":"OK","latencyMs":0}
+[info] {"ts":"2026-11-12T23:22:24.517839Z","type":"event","service":"worker","event":"job-finished","messageId":"msg-00000001","receiveCount":1,"jobId":"job-afadb79adc9b27bbc39f858ec9dc5cd9","queryId":"qry-784f317c7c52c93fdeaf5e7f9fe41ea2","state":"SUCCEEDED","error":null,"latencyMs":15}
+[info] {"ts":"2026-11-12T23:22:25.019739Z","type":"request","service":"query-api","traceId":"smoke-trace-wo11","requestId":"smoke-wo11","method":"GET","route":"/v1/jobs/{jobId}","status":200,"latencyMs":8,"error":null}
+[info] {"ts":"2026-11-12T23:22:25.023589Z","type":"request","service":"query-api","traceId":"smoke-trace-wo11","requestId":"smoke-wo11","method":"GET","route":"/v1/jobs/{jobId}","status":200,"latencyMs":2,"error":null}
+[info] {"ts":"2026-11-12T23:22:25.033814Z","type":"request","service":"query-api","traceId":"smoke-trace-wo11","requestId":"smoke-wo11","method":"GET","route":"/v1/jobs/{jobId}/result","status":200,"latencyMs":8,"error":null}
+[info] {"ts":"2026-11-12T23:22:25.036195Z","type":"request","service":"graph-evidence-api","traceId":"smoke-trace-wo11","requestId":"smoke-wo11","method":"GET","route":"/v1/evidence/{evidenceId}","status":200,"latencyMs":1,"error":null}
+[info] {"ts":"2026-11-12T23:22:25.044959Z","type":"request","service":"query-api","traceId":"smoke-trace-wo11","requestId":"smoke-wo11","method":"GET","route":"/v1/explain/{queryId}","status":200,"latencyMs":7,"error":null}
+[info] {"ts":"2026-11-12T23:22:25.047539Z","type":"request","service":"query-api","traceId":"smoke-trace-wo11","requestId":"smoke-wo11","method":"GET","route":"/v1/explain/{queryId}","status":200,"latencyMs":1,"error":null}
+[info] {"ts":"2026-11-12T23:22:25.049427Z","type":"request","service":"query-api","traceId":"smoke-trace-wo11","requestId":"smoke-wo11","method":"POST","route":"unmatched","status":401,"latencyMs":1,"error":"UNAUTHORIZED"}
+[info] {"ts":"2026-11-12T23:22:25.050158Z","type":"request","service":"worker","traceId":"smoke-trace-wo11","requestId":"smoke-wo11","method":"GET","route":"unmatched","status":401,"latencyMs":0,"error":"UNAUTHORIZED"}
+[info] {"ts":"2026-11-12T23:22:25.053088Z","type":"request","service":"worker","traceId":"smoke-trace-wo11","requestId":"smoke-wo11","method":"GET","route":"/metrics","status":200,"latencyMs":2,"error":null}
+[info] {"ts":"2026-11-12T23:22:25.054267Z","type":"request","service":"query-api","traceId":"smoke-trace-wo11","requestId":"smoke-wo11","method":"GET","route":"/metrics","status":200,"latencyMs":0,"error":null}
+[error] nonzero exit code returned from runner: 143
+[error] (services / Compile / runMain) nonzero exit code returned from runner: 143
+[error] Total time: 28 s, completed Nov 12, 2026, 5:22:44 PM

@@ -1,0 +1,39 @@
+{
+  "evidenceId": "ev-c6ce519f6d2765cea755628bc7901ab1",
+  "evidenceType": "IDENTITY_RESOLUTION",
+  "subjectIds": [
+    "scr:canon-v1.er-v2:3ed012c7e9d38ac0dc513403ec31176a"
+  ],
+  "workId": null,
+  "sourceUri": "dynamodb:EntityLinkCache/name-v1:ada lovelace/scr:canon-v1.er-v2:3ed012c7e9d38ac0dc513403ec31176a",
+  "chunkId": null,
+  "graphPath": null,
+  "score": null,
+  "text": null,
+  "textTruncated": false,
+  "textHash": null,
+  "facts": {
+    "displayName": "Ada Lovelace",
+    "works": "10",
+    "name": "Ada Lovelace",
+    "candidateCount": "2",
+    "minWorks": "5",
+    "decision": "RESOLVED_DOMINANT",
+    "topShare": "0.9090909090909091",
+    "identityConfidence": "0.99",
+    "policyVersion": "dominant-name-v1",
+    "dominantShare": "0.9",
+    "totalWorks": "11",
+    "nameKey": "name-v1:ada lovelace",
+    "researcherId": "scr:canon-v1.er-v2:3ed012c7e9d38ac0dc513403ec31176a"
+  },
+  "provenance": {
+    "schemaVersion": "provenance-v1",
+    "sourceDataset": "RUNTIME",
+    "sourceRecordId": "name-v1:ada lovelace",
+    "snapshot": "2026-10-03",
+    "runId": "run-d9e224804ab561d467097d9d05db718f",
+    "policyVersion": "dominant-name-v1",
+    "modelVersion": null
+  }
+}

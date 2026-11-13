@@ -1,0 +1,70 @@
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] scalafmt: Formatting 1 Scala sources (/Users/achyutpatel/Developer/Cloud/ScholarChain/modules/services)...
+[success] Total time: 1 s, completed Nov 12, 2026, 5:16:27 PM
+[success] Total time: 0 s, completed Nov 12, 2026, 5:16:27 PM
+[info] compiling 1 Scala source to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/services/target/scala-3.3.7/test-classes ...
+[info] done compiling
+[info] ServicesContractSpec:
+[info] - every example is referenced, exists, and parses against its model
+[info] - the documented paths and methods are exactly the routes of query-api, graph-evidence-api, and worker
+[info] WorkerSpec:
+[info] - a redelivered or duplicated message never runs a job twice
+[info] - a message is deleted only after a final state; a stuck RUNNING job fails at its last delivery
+[info] - poison messages are never run or deleted; redrive moves them to the dead-letter queue
+[info] - a failing, late, or undecodable job ends FAILED with its typed error; its message is deleted
+[info] - async POST: 202 job reference, job IDs checked first, a send failure fails the job
+[info] - worker service: liveness, readiness, key-protected metrics, and the poll loop
+[info] QueryApiSpec:
+[info] - a synchronous query returns an evidence-backed answer with links; IDs are echoed
+[info] - malformed JSON, invalid fields, a wrong Content-Type, and an oversized body are 400
+[info] - valid JSON with unsupported constraints or retrieval limits is 422
+[info] - Idempotency-Key: the same body replays the stored answer; a different body is 409
+[info] - a passed deadline is 504 (cooperative and hard); a failing store is 502; breakers open
+[info] - missing or wrong API key is 401 everywhere except /healthz and /readyz
+[info] - health and readiness differ; neither reveals configuration
+[info] - explain returns the plan, stages, versions, evidence, and counters; never hidden text
+[info] - POST /v1/query is rate limited per instance (429 with Retry-After)
+[info] - metrics: counts by route and status, latency percentiles, and answer counters
+[info] - no API key, question, or store error text appears in any log line or response
+[info] - launcher: fake mode starts on localhost; a missing key or incomplete live arguments stop it
+[info] - readiness probes S3 under the audit prefix query-api and the worker read (repair-01 m1)
+[info] BuildingBlocksSpec:
+[info] - breaker: opens after the threshold, fails fast while open, half-opens after the interval
+[info] - downstream calls: timeout, retries only for retryable reads, breaker per downstream
+[info] - waiting to start is no downstream failure: 503 OVERLOADED, no breaker (repair-01 F1)
+[info] - rate limiter: a sliding minute
+[info] - cursor: round trip, bound to its walk, and opaque garbage rejected
+[info] - IDs: valid client values echoed, anything else replaced
+[info] - API key: exact match only, any length; the key is never printed
+[info] GraphEvidenceApiSpec:
+[info] - query to evidence: every evidence ID an answer cites resolves with provenance
+[info] - missing evidence is 404; a malformed ID never reaches the store
+[info] - graph node: found with properties, unknown 404, encoded IDs with slashes work
+[info] - neighbors: bounded parameters, allowlisted edge types, and bound cursors
+[info] - a slow store is 504, a failing one 502, then the breaker fails fast and readiness drops
+[info] - an IllegalArgumentException inside a downstream call is 500 with no detail (repair-01 m5)
+[info] - beyond its threads and queue a service sheds load with 503 OVERLOADED
+[info] SaturationSpec:
+[info] - query-api: with every workflow slot held, jobs, explain, and readiness still answer
+[info] - worker: an overrun job holds only its workflow slot; no job is claimed until it frees
+[info] CorpusQuerySpec:
+[info] - B13 shape: corpus components in 2000-2014 answered with VERIFIED claims from the summary
+[info]   + claim-1 VERIFIED: In 2000-2014, the coauthorship graph has 33 connected components; the largest connected component has 252 researchers out of 400 researchers, a share of 0.6300. 
+[info]   + claim-2 VERIFIED: In 2000-2014, 13 singleton researchers (researchers without any coauthor edge in that window) are among the 400 researchers of the coauthorship graph. 
+[info] - an empty runtime.window-summary.load-run leaves the port unset: corpus questions abstain
+[info] - LocalRun passes --window-summary-root through; a bad or missing object stops startup
+[info] - graph-evidence-api never opens the window-summary object; same runtime run (repair-01 m3)
+[info] LifecycleSpec:
+[info] - query to evidence: sync and async answers, cited evidence, and explain
+[info] - local runner: three services on one backend, fake mode only
+[info] Run completed in 21 seconds, 732 milliseconds.
+[info] Total number of tests run: 43
+[info] Suites: completed 8, aborted 0
+[info] Tests: succeeded 43, failed 0, canceled 0, ignored 0, pending 0
+[info] All tests passed.
+[success] Total time: 24 s, completed Nov 12, 2026, 5:16:51 PM

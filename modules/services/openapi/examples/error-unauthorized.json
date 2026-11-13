@@ -1,0 +1,7 @@
+{
+  "error": "UNAUTHORIZED",
+  "message": "missing or invalid API key",
+  "traceId": "trace-example-1",
+  "requestId": "req-example-1",
+  "retryable": false
+}

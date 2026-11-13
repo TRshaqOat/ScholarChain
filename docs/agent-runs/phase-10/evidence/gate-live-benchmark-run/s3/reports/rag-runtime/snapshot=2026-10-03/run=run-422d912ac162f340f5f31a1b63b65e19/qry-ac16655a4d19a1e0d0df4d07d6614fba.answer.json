@@ -1,0 +1,437 @@
+{
+  "schemaVersion": "rag-answer-v1",
+  "response": {
+    "schemaVersion": "answer-response-v1",
+    "queryId": "qry-ac16655a4d19a1e0d0df4d07d6614fba",
+    "summary": "Rachid Guerraoui is affiliated with ABB (Switzerland), Huawei German Research Center, MIT Computer Science and Artificial Intelligence Laboratory, National University of Singapore, École Polytechnique Fédérale de Lausanne, Massachusetts Institute of Technology, ETH Zurich, York University, and École Polytechnique.",
+    "claims": [
+      {
+        "schemaVersion": "answer-claim-v1",
+        "claimId": "claim-1",
+        "text": "Rachid Guerraoui is affiliated with ABB (Switzerland), Huawei German Research Center, MIT Computer Science and Artificial Intelligence Laboratory, National University of Singapore, École Polytechnique Fédérale de Lausanne, Massachusetts Institute of Technology, ETH Zurich, York University, and École Polytechnique.",
+        "evidenceIds": [
+          "ev-8dde6c82fd1262a1ad690c2cb9eecfc7"
+        ],
+        "verificationStatus": "VERIFIED",
+        "uncertainty": null,
+        "provenance": {
+          "schemaVersion": "provenance-v1",
+          "sourceDataset": "RUNTIME",
+          "sourceRecordId": "qry-ac16655a4d19a1e0d0df4d07d6614fba",
+          "snapshot": "2026-10-03",
+          "runId": "run-422d912ac162f340f5f31a1b63b65e19",
+          "policyVersion": null,
+          "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+        }
+      }
+    ],
+    "abstained": false,
+    "uncertainty": "Rachid Guerraoui was linked to scr:canon-v1.er-v2:ba10a85f922c075c3cfdbf5a040332b8 by dominant-name-v1: 0.9615 of 260 works among 11 researchers with this display name. 2 drafted uncertainty line(s) were left out because they failed verification.",
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "RUNTIME",
+      "sourceRecordId": "qry-ac16655a4d19a1e0d0df4d07d6614fba",
+      "snapshot": "2026-10-03",
+      "runId": "run-422d912ac162f340f5f31a1b63b65e19",
+      "policyVersion": "fusion-v1",
+      "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+    }
+  },
+  "plan": {
+    "schemaVersion": "rag-query-plan-v1",
+    "queryId": "qry-ac16655a4d19a1e0d0df4d07d6614fba",
+    "operations": [
+      {
+        "operation": "INSTITUTION_FILTER",
+        "scope": "RESEARCHER",
+        "researchers": [
+          0
+        ],
+        "metric": null,
+        "topN": null
+      }
+    ],
+    "researcherNames": [
+      {
+        "name": "Rachid Guerraoui",
+        "offset": 22
+      }
+    ],
+    "metrics": [],
+    "window": {
+      "requested": {
+        "kind": "DEFAULT",
+        "name": null,
+        "yearFrom": null,
+        "yearTo": null
+      },
+      "window": "all-years",
+      "startYear": 2000,
+      "endYear": 2026,
+      "exact": true,
+      "note": null
+    },
+    "comparison": null,
+    "topics": [],
+    "venues": [],
+    "institutions": [],
+    "semanticIndexes": [
+      "researcher-profile-v1"
+    ],
+    "limits": {
+      "graphLimit": 100,
+      "vectorLimit": 50,
+      "maxPathDepth": 6,
+      "topK": 5
+    },
+    "source": "MODEL",
+    "overriddenFields": [],
+    "rejectedItems": [],
+    "promptVersion": "planner-v2",
+    "modelId": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "RUNTIME",
+      "sourceRecordId": "qry-ac16655a4d19a1e0d0df4d07d6614fba",
+      "snapshot": "2026-10-03",
+      "runId": "run-422d912ac162f340f5f31a1b63b65e19",
+      "policyVersion": null,
+      "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+    }
+  },
+  "resolutions": [
+    {
+      "schemaVersion": "researcher-resolution-v1",
+      "name": "Rachid Guerraoui",
+      "nameKey": "name-v1:rachid guerraoui",
+      "policyVersion": "dominant-name-v1",
+      "dominantShare": 0.9,
+      "minWorks": 5,
+      "decision": "RESOLVED_DOMINANT",
+      "researcherId": "scr:canon-v1.er-v2:ba10a85f922c075c3cfdbf5a040332b8",
+      "topShare": 0.9615384615384616,
+      "totalWorks": 260,
+      "candidateCount": 11,
+      "candidates": [
+        {
+          "researcherId": "scr:canon-v1.er-v2:ba10a85f922c075c3cfdbf5a040332b8",
+          "displayName": "Rachid Guerraoui",
+          "matchedName": "Rachid Guerraoui",
+          "works": 250,
+          "share": 0.9615384615384616,
+          "identityConfidence": 0.9300527553067827,
+          "mentionCount": 671,
+          "dblpAnchored": true,
+          "orcid": "0000-0002-4794-8902",
+          "institutions": [
+            {
+              "id": "ror:00ks5vt51",
+              "name": "ABB (Switzerland)",
+              "count": null
+            },
+            {
+              "id": "ror:00z59w514",
+              "name": "Huawei German Research Center",
+              "count": null
+            },
+            {
+              "id": "ror:01e85r662",
+              "name": "MIT Computer Science and Artificial Intelligence Laboratory",
+              "count": null
+            }
+          ],
+          "topCoauthors": [
+            {
+              "id": "scr:canon-v1.er-v2:cd5916ae2f9b58227c3ca80ca743a423",
+              "name": "Anne-Marie Kermarrec",
+              "count": 31
+            },
+            {
+              "id": "scr:canon-v1.er-v2:f900d9ce1c8902792d74b7c76c6112cc",
+              "name": "Seth Gilbert",
+              "count": 22
+            },
+            {
+              "id": "scr:canon-v1.er-v2:7412187dfb1102cbc2616a1706368c84",
+              "name": "Vincent Gramoli",
+              "count": 17
+            }
+          ],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:176e3ef5c64dd83ba44e96e641669946",
+          "displayName": "Rachid Guerraoui",
+          "matchedName": "Rachid Guerraoui",
+          "works": 1,
+          "share": 0.0038461538461538464,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:327edd9e40d0a9bdb4932755d65b6271",
+          "displayName": "Rachid Guerraoui",
+          "matchedName": "Rachid Guerraoui",
+          "works": 1,
+          "share": 0.0038461538461538464,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": false,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:35811d0559a1c77f4af90ffa11099a32",
+          "displayName": "Rachid Guerraoui",
+          "matchedName": "Rachid Guerraoui",
+          "works": 1,
+          "share": 0.0038461538461538464,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": false,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:393b56b673558118a8503af3d864f636",
+          "displayName": "Rachid Guerraoui",
+          "matchedName": "Rachid Guerraoui",
+          "works": 1,
+          "share": 0.0038461538461538464,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": false,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:3fc50de6d4bd122fd2367b12a1947c42",
+          "displayName": "Rachid Guerraoui",
+          "matchedName": "Rachid Guerraoui",
+          "works": 1,
+          "share": 0.0038461538461538464,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": false,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:570ed17db06af0a25ec7b3f9bec5deb0",
+          "displayName": "Rachid Guerraoui",
+          "matchedName": "Rachid Guerraoui",
+          "works": 1,
+          "share": 0.0038461538461538464,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": false,
+          "orcid": null,
+          "institutions": [
+            {
+              "id": "sci:affn-v1:8002b7ea5bd569bf14b7e3396fd278de",
+              "name": "Communication Systems Department, Swiss Federal Institute of Technology, CH 1015 Lausanne",
+              "count": null
+            }
+          ],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:942a91408c2cd21547430f0788e05ac5",
+          "displayName": "Rachid Guerraoui",
+          "matchedName": "Rachid Guerraoui",
+          "works": 1,
+          "share": 0.0038461538461538464,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:a63755197ee7390144e369ceb3b80ba4",
+          "displayName": "Rachid Guerraoui",
+          "matchedName": "Rachid Guerraoui",
+          "works": 1,
+          "share": 0.0038461538461538464,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:caaece9f826a0178332534dc927679f4",
+          "displayName": "Rachid Guerraoui",
+          "matchedName": "Rachid Guerraoui",
+          "works": 1,
+          "share": 0.0038461538461538464,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": false,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:dce72d89d9f3f8bd32e5339abcb0b8fd",
+          "displayName": "Rachid Guerraoui",
+          "matchedName": "Rachid Guerraoui",
+          "works": 1,
+          "share": 0.0038461538461538464,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [
+            {
+              "id": "scr:canon-v1.er-v2:68f79f6e2d45a9b88e7e874e57bdfa9d",
+              "name": "Bernadette Charron-Bost",
+              "count": 1
+            },
+            {
+              "id": "scr:canon-v1.er-v2:0dc38d3bce709d3455ebffc7ee5df64d",
+              "name": "André Schiper",
+              "count": 1
+            }
+          ],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        }
+      ],
+      "otherNameMatches": [],
+      "truncated": false,
+      "evidenceId": "ev-e99f17432559f4dc52f420553c1c4291"
+    }
+  ],
+  "verification": {
+    "schemaVersion": "claim-verification-v1",
+    "queryId": "qry-ac16655a4d19a1e0d0df4d07d6614fba",
+    "checks": [
+      {
+        "claimId": "claim-1",
+        "status": "VERIFIED",
+        "checks": [
+          {
+            "rule": "evidence-exists",
+            "outcome": "PASS",
+            "detail": "all cited items are in the bundle"
+          },
+          {
+            "rule": "graph-evidence-required",
+            "outcome": "PASS",
+            "detail": "1 graph item(s) cited"
+          },
+          {
+            "rule": "kind-matches-type",
+            "outcome": "PASS",
+            "detail": "FACET needs FACET_RECORD"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "entry.1.name"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "entry.2.name"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "entry.3.name"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "entry.4.name"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "entry.5.name"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "entry.6.name"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "entry.7.name"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "entry.8.name"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "entry.9.name"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "returnedSize"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "truncated"
+          },
+          {
+            "rule": "numbers-in-text",
+            "outcome": "PASS",
+            "detail": "every number is an asserted, named fact"
+          },
+          {
+            "rule": "identity",
+            "outcome": "PASS",
+            "detail": "every subject and name is resolved or cited"
+          }
+        ],
+        "action": "KEPT"
+      }
+    ],
+    "counts": {
+      "verified": 1,
+      "partiallySupported": 0,
+      "unsupported": 0,
+      "conflicting": 0
+    }
+  },
+  "abstention": null,
+  "answerHash": "sha256:eab71aa2e3ab7bb49ca7ab84662aeb1617aa926472a1597767e16c402758364c"
+}

@@ -1,0 +1,25 @@
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] compiling 1 Scala source to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/services/target/scala-3.3.7/classes ...
+[info] done compiling
+[info] compiling 1 Scala source to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/services/target/scala-3.3.7/test-classes ...
+[info] done compiling
+[info] CorpusQuerySpec:
+[info] - B13 shape: corpus components in 2000-2014 answered with VERIFIED claims from the summary *** FAILED ***
+[info]   a.answer.abstained was true AnswerView(This request is not supported by the stored data: Corpus-level component lookup statistics are not stored in this version.,true,Some(Abstention(UNSUPPORTED_REQUEST,This request is not supported by the stored data: Corpus-level component lookup statistics are not stored in this version.)),Some(Corpus-level component lookup statistics are not stored in this version.),WindowSelection(WindowRequest(RANGE,None,Some(2000),Some(2014)),2000-2014,2000,2014,true,None),Vector(),VerificationCounts(0,0,0,0),sha256:7408c10bc68773538ed268dfda30bb302a105cea64afd2ac09bd9a6c6a80c17d) (CorpusQuerySpec.scala:30)
+[info] - an empty runtime.window-summary.load-run leaves the port unset: corpus questions abstain
+[info] - LocalRun passes --window-summary-root through; a bad or missing object stops startup
+[info] Run completed in 20 seconds, 555 milliseconds.
+[info] Total number of tests run: 3
+[info] Suites: completed 1, aborted 0
+[info] Tests: succeeded 2, failed 1, canceled 0, ignored 0, pending 0
+[info] *** 1 TEST FAILED ***
+[error] Failed tests:
+[error] 	scholarchain.services.CorpusQuerySpec
+[error] (services / Test / testOnly) sbt.TestsFailedException: Tests unsuccessful
+[error] Total time: 24 s, completed Nov 12, 2026, 3:59:09 PM
+modules/services/src/main/scala/scholarchain/services/Composition.scala: OK

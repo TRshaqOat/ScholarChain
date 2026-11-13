@@ -1,0 +1,7 @@
+{
+  "error": "NOT_READY",
+  "message": "not ready: s3 unavailable",
+  "traceId": "trace-example-1",
+  "requestId": "req-example-1",
+  "retryable": true
+}

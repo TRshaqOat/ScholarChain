@@ -1,0 +1,21 @@
+wo1-D1-positions: 1 failed tests; [info] Tests: succeeded 32, failed 1, canceled 0, ignored 0, pending 0; modules/rag/src/main/scala/scholarchain/rag/runtime/Verifier.scala: OK
+wo1-D2-order: 1 failed tests; [info] Tests: succeeded 32, failed 1, canceled 0, ignored 0, pending 0; modules/rag/src/main/scala/scholarchain/rag/runtime/Verifier.scala: OK
+wo1-D3-discourse: 1 failed tests; [info] Tests: succeeded 32, failed 1, canceled 0, ignored 0, pending 0; modules/rag/src/main/scala/scholarchain/rag/runtime/Verifier.scala: OK
+wo1-D4-measure-name: 1 failed tests; [info] Tests: succeeded 32, failed 1, canceled 0, ignored 0, pending 0; modules/rag/src/main/scala/scholarchain/rag/runtime/Verifier.scala: OK
+wo1-D5-fixed-phrases: 1 failed tests; [info] Tests: succeeded 32, failed 1, canceled 0, ignored 0, pending 0; modules/rag/src/main/scala/scholarchain/rag/runtime/Verifier.scala: OK
+wo1-D6-year-exception: 1 failed tests; [info] Tests: succeeded 32, failed 1, canceled 0, ignored 0, pending 0; modules/rag/src/main/scala/scholarchain/rag/runtime/Verifier.scala: OK
+wo1-D7-ordinals-to-tenth: 2 failed tests; [info] Tests: succeeded 31, failed 2, canceled 0, ignored 0, pending 0; modules/rag/src/main/scala/scholarchain/rag/runtime/Verifier.scala: OK
+wo1-D8-average-vocabulary: 1 failed tests; [info] Tests: succeeded 32, failed 1, canceled 0, ignored 0, pending 0; modules/rag/src/main/scala/scholarchain/rag/runtime/Verifier.scala: OK
+wo1-D9-intensity-vocabulary: 1 failed tests; [info] Tests: succeeded 32, failed 1, canceled 0, ignored 0, pending 0; modules/rag/src/main/scala/scholarchain/rag/runtime/Verifier.scala: OK
+wo1-D10-rank-numbers: 2 failed tests; [info] Tests: succeeded 31, failed 2, canceled 0, ignored 0, pending 0; modules/rag/src/main/scala/scholarchain/rag/runtime/Verifier.scala: OK
+wo1-D11-unknown-names: 1 failed tests; [info] Tests: succeeded 32, failed 1, canceled 0, ignored 0, pending 0; modules/rag/src/main/scala/scholarchain/rag/runtime/Verifier.scala: OK
+wo1-D12-audit-removals: 1 failed tests; [info] Tests: succeeded 32, failed 1, canceled 0, ignored 0, pending 0; modules/rag/src/main/scala/scholarchain/rag/runtime/Workflow.scala: OK
+wo1-D13-service-view: 1 failed tests; [info] Tests: succeeded 32, failed 1, canceled 0, ignored 0, pending 0; modules/rag/src/main/scala/scholarchain/rag/runtime/RuntimeApi.scala: OK
+wo1-D14-v3-rank-ids: 1 failed tests; [info] Tests: succeeded 32, failed 1, canceled 0, ignored 0, pending 0; modules/rag/src/main/scala/scholarchain/rag/runtime/Synthesis.scala: OK
+wo1-D15-deadline-param: 1 failed tests; [info] Tests: succeeded 32, failed 1, canceled 0, ignored 0, pending 0; modules/rag/src/main/scala/scholarchain/rag/runtime/Workflow.scala: OK
+wo9-D1-cutoff-retry: 1 failed tests; [info] Tests: succeeded 5, failed 1, canceled 0, ignored 0, pending 0; modules/rag/src/main/scala/scholarchain/rag/runtime/Workflow.scala: OK
+wo9-D2-digit-groups: 1 failed tests; [info] Tests: succeeded 22, failed 1, canceled 0, ignored 0, pending 0; modules/rag/src/main/scala/scholarchain/rag/runtime/Verifier.scala: OK
+wo9-D3-comparison-side: 1 failed tests; [info] Tests: succeeded 22, failed 1, canceled 0, ignored 0, pending 0; modules/rag/src/main/scala/scholarchain/rag/runtime/Verifier.scala: OK
+wo9-D4-corpus-port: 5 failed tests; [info] Tests: succeeded 1, failed 5, canceled 0, ignored 0, pending 0; modules/rag/src/main/scala/scholarchain/rag/runtime/Workflow.scala: OK
+== full manifest check
+files not OK: 0
