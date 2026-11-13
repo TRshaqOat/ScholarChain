@@ -95,3 +95,9 @@ Also check: test-engineer edited no production code and no existing test file; e
 Verify every candidate finding against the actual files before reporting it.
 For each finding provide severity, file and line, concrete failure input, expected impact, and owning agent.
 Return APPROVE or REQUEST_CHANGES. Do not edit any file.
+
+## Human rulings after session 1
+
+11. test-engineer territory (amends ruling 4): tests/** only. guard-paths.sh is correct; ruling 4's grant of modules/*/src/test/scala/**/adversarial/ is withdrawn. No factory change.
+12. Spark and Hadoop adversarial coverage (the WO3 BLOCKED-ON build-engineer item). In repair-01, build-engineer gives the tests project the Spark and Hadoop libraries on its Test classpath, plus the fork and JVM options the Spark and Hadoop module tests use. No production scope and no job jar may change. In the test-engineer rerun after repair-01, test-engineer adds the uncovered categories: components, bridges, k-core, and communities known-graph cases; empty and disconnected graphs on the Spark side; CoauthorGraph unresolved or conflicting endpoints; and the DBLP record reader (truncation, splits, and "<article " inside an XML comment). A full sbt check stays under about 8 minutes.
+13. The pending defects D1 to D13 from WO3 are routed with code review 1's findings in repair-01. Code review 1 confirms or changes each one's severity and owner. Recorded deviation: in WO2, a read-only find walked the directory entries of scratch/stores-live/ and scratch/er/adjudication-live/ without pruning them; nothing from them was printed or read. Any later find over scratch/ must prune both paths.
