@@ -1,0 +1,796 @@
+{
+  "schemaVersion": "rag-answer-v1",
+  "response": {
+    "schemaVersion": "answer-response-v1",
+    "queryId": "qry-1005bf6756ac5486558afefc26be798d",
+    "summary": "Distributed systems and fault tolerance is Franck Cappello's most common topic with 80 works. Advanced Data Compression Techniques is his second most common topic with 48 works. Parallel Computing and Optimization Techniques is his third most common topic with 31 works. Distributed and Parallel Computing Systems is his fourth most common topic with 27 works. Algorithms and Data Compression is his fifth most common topic with 16 works.",
+    "claims": [
+      {
+        "schemaVersion": "answer-claim-v1",
+        "claimId": "claim-1",
+        "text": "Distributed systems and fault tolerance is Franck Cappello's most common topic with 80 works.",
+        "evidenceIds": [
+          "ev-8123a551a8e747f2057d5b876eaa1ec9"
+        ],
+        "verificationStatus": "VERIFIED",
+        "uncertainty": null,
+        "provenance": {
+          "schemaVersion": "provenance-v1",
+          "sourceDataset": "RUNTIME",
+          "sourceRecordId": "qry-1005bf6756ac5486558afefc26be798d",
+          "snapshot": "2026-10-03",
+          "runId": "run-da948201a77e0fe136727d99a55c2b89",
+          "policyVersion": null,
+          "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+        }
+      },
+      {
+        "schemaVersion": "answer-claim-v1",
+        "claimId": "claim-2",
+        "text": "Advanced Data Compression Techniques is his second most common topic with 48 works.",
+        "evidenceIds": [
+          "ev-8123a551a8e747f2057d5b876eaa1ec9"
+        ],
+        "verificationStatus": "VERIFIED",
+        "uncertainty": null,
+        "provenance": {
+          "schemaVersion": "provenance-v1",
+          "sourceDataset": "RUNTIME",
+          "sourceRecordId": "qry-1005bf6756ac5486558afefc26be798d",
+          "snapshot": "2026-10-03",
+          "runId": "run-da948201a77e0fe136727d99a55c2b89",
+          "policyVersion": null,
+          "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+        }
+      },
+      {
+        "schemaVersion": "answer-claim-v1",
+        "claimId": "claim-3",
+        "text": "Parallel Computing and Optimization Techniques is his third most common topic with 31 works.",
+        "evidenceIds": [
+          "ev-8123a551a8e747f2057d5b876eaa1ec9"
+        ],
+        "verificationStatus": "VERIFIED",
+        "uncertainty": null,
+        "provenance": {
+          "schemaVersion": "provenance-v1",
+          "sourceDataset": "RUNTIME",
+          "sourceRecordId": "qry-1005bf6756ac5486558afefc26be798d",
+          "snapshot": "2026-10-03",
+          "runId": "run-da948201a77e0fe136727d99a55c2b89",
+          "policyVersion": null,
+          "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+        }
+      },
+      {
+        "schemaVersion": "answer-claim-v1",
+        "claimId": "claim-4",
+        "text": "Distributed and Parallel Computing Systems is his fourth most common topic with 27 works.",
+        "evidenceIds": [
+          "ev-8123a551a8e747f2057d5b876eaa1ec9"
+        ],
+        "verificationStatus": "VERIFIED",
+        "uncertainty": null,
+        "provenance": {
+          "schemaVersion": "provenance-v1",
+          "sourceDataset": "RUNTIME",
+          "sourceRecordId": "qry-1005bf6756ac5486558afefc26be798d",
+          "snapshot": "2026-10-03",
+          "runId": "run-da948201a77e0fe136727d99a55c2b89",
+          "policyVersion": null,
+          "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+        }
+      },
+      {
+        "schemaVersion": "answer-claim-v1",
+        "claimId": "claim-5",
+        "text": "Algorithms and Data Compression is his fifth most common topic with 16 works.",
+        "evidenceIds": [
+          "ev-8123a551a8e747f2057d5b876eaa1ec9"
+        ],
+        "verificationStatus": "VERIFIED",
+        "uncertainty": null,
+        "provenance": {
+          "schemaVersion": "provenance-v1",
+          "sourceDataset": "RUNTIME",
+          "sourceRecordId": "qry-1005bf6756ac5486558afefc26be798d",
+          "snapshot": "2026-10-03",
+          "runId": "run-da948201a77e0fe136727d99a55c2b89",
+          "policyVersion": null,
+          "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+        }
+      }
+    ],
+    "abstained": false,
+    "uncertainty": "Franck Cappello was linked to scr:canon-v1.er-v2:84a0a600f9fc8efeb0a87b085e316bfd by dominant-name-v1: 0.9392 of 263 works among 17 researchers with this display name. 1 drafted uncertainty line(s) were left out because they failed verification.",
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "RUNTIME",
+      "sourceRecordId": "qry-1005bf6756ac5486558afefc26be798d",
+      "snapshot": "2026-10-03",
+      "runId": "run-da948201a77e0fe136727d99a55c2b89",
+      "policyVersion": "fusion-v1",
+      "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+    }
+  },
+  "plan": {
+    "schemaVersion": "rag-query-plan-v1",
+    "queryId": "qry-1005bf6756ac5486558afefc26be798d",
+    "operations": [
+      {
+        "operation": "TOPIC_FILTER",
+        "scope": "RESEARCHER",
+        "researchers": [
+          0
+        ],
+        "metric": null,
+        "topN": null
+      }
+    ],
+    "researcherNames": [
+      {
+        "name": "Franck Cappello",
+        "offset": 35
+      }
+    ],
+    "metrics": [],
+    "window": {
+      "requested": {
+        "kind": "DEFAULT",
+        "name": null,
+        "yearFrom": null,
+        "yearTo": null
+      },
+      "window": "all-years",
+      "startYear": 2000,
+      "endYear": 2026,
+      "exact": true,
+      "note": null
+    },
+    "comparison": null,
+    "topics": [],
+    "venues": [],
+    "institutions": [],
+    "semanticIndexes": [
+      "researcher-profile-v1"
+    ],
+    "limits": {
+      "graphLimit": 100,
+      "vectorLimit": 50,
+      "maxPathDepth": 6,
+      "topK": 5
+    },
+    "source": "MODEL",
+    "overriddenFields": [],
+    "rejectedItems": [],
+    "promptVersion": "planner-v2",
+    "modelId": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "RUNTIME",
+      "sourceRecordId": "qry-1005bf6756ac5486558afefc26be798d",
+      "snapshot": "2026-10-03",
+      "runId": "run-da948201a77e0fe136727d99a55c2b89",
+      "policyVersion": null,
+      "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+    }
+  },
+  "resolutions": [
+    {
+      "schemaVersion": "researcher-resolution-v1",
+      "name": "Franck Cappello",
+      "nameKey": "name-v1:franck cappello",
+      "policyVersion": "dominant-name-v1",
+      "dominantShare": 0.9,
+      "minWorks": 5,
+      "decision": "RESOLVED_DOMINANT",
+      "researcherId": "scr:canon-v1.er-v2:84a0a600f9fc8efeb0a87b085e316bfd",
+      "topShare": 0.9391634980988594,
+      "totalWorks": 263,
+      "candidateCount": 17,
+      "candidates": [
+        {
+          "researcherId": "scr:canon-v1.er-v2:84a0a600f9fc8efeb0a87b085e316bfd",
+          "displayName": "Franck Cappello",
+          "matchedName": "Franck Cappello",
+          "works": 247,
+          "share": 0.9391634980988594,
+          "identityConfidence": 0.9300527553067827,
+          "mentionCount": 713,
+          "dblpAnchored": true,
+          "orcid": "0000-0002-7890-3934",
+          "institutions": [
+            {
+              "id": "ror:008xxew50",
+              "name": "Vrije Universiteit Amsterdam",
+              "count": null
+            },
+            {
+              "id": "ror:020f3ap87",
+              "name": "University of Tennessee at Knoxville",
+              "count": null
+            },
+            {
+              "id": "ror:024mw5h28",
+              "name": "University of Chicago",
+              "count": null
+            }
+          ],
+          "topCoauthors": [
+            {
+              "id": "scr:canon-v1.er-v2:cc22044dba7981d2b0d0625d4a891b47",
+              "name": "Xin Liang 0001",
+              "count": 37
+            },
+            {
+              "id": "scr:canon-v1.er-v2:bc45476ad3e6c62cd9382708690eb9be",
+              "name": "Dingwen Tao",
+              "count": 35
+            },
+            {
+              "id": "scr:canon-v1.er-v2:2dbe78d4cae13d3b700602b908800456",
+              "name": "Kai Zhao 0008",
+              "count": 33
+            }
+          ],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:0320e06ad4f4eca26cd93cefecdde0f2",
+          "displayName": "Franck Cappello",
+          "matchedName": "Franck Cappello",
+          "works": 1,
+          "share": 0.0038022813688212928,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:31f0cf0315bb4666b44a8d04a7956abf",
+          "displayName": "Franck Cappello",
+          "matchedName": "Franck Cappello",
+          "works": 1,
+          "share": 0.0038022813688212928,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": false,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:4712e367df0b51f1a206479bb544c568",
+          "displayName": "Franck Cappello",
+          "matchedName": "Franck Cappello",
+          "works": 1,
+          "share": 0.0038022813688212928,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [
+            {
+              "id": "scr:canon-v1.er-v2:06788b3d4bce0cf3de62dccd6afe5773",
+              "name": "Sheng Di",
+              "count": 1
+            }
+          ],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:53c1abb4ed318f274310fd189b8d95bd",
+          "displayName": "Franck Cappello",
+          "matchedName": "Franck Cappello",
+          "works": 1,
+          "share": 0.0038022813688212928,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": false,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:61046a665e155929bb75ea77c57ed674",
+          "displayName": "Franck Cappello",
+          "matchedName": "Franck Cappello",
+          "works": 1,
+          "share": 0.0038022813688212928,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [
+            {
+              "id": "scr:canon-v1.er-v2:94aa9b35c11105bc86337d2d89d7089e",
+              "name": "Yoshiaki Aida",
+              "count": 1
+            },
+            {
+              "id": "scr:canon-v1.er-v2:dc0f26ef1b982bfaa7ba14a51c7bd3d5",
+              "name": "Taisuke Boku",
+              "count": 1
+            },
+            {
+              "id": "scr:canon-v1.er-v2:0b4949f0d7577d092342dbd778a57d1a",
+              "name": "Yoshihiro Nakajima",
+              "count": 1
+            }
+          ],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:643324b2fd4d2d50e1a544525967237a",
+          "displayName": "Franck Cappello",
+          "matchedName": "Franck Cappello",
+          "works": 1,
+          "share": 0.0038022813688212928,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": false,
+          "orcid": null,
+          "institutions": [
+            {
+              "id": "sci:affn-v1:d01b0854b1a902d7ef36c611edb2a1f7",
+              "name": "Argonne National Laboratory, Lemont, IL, USA",
+              "count": null
+            }
+          ],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:68ff7fea2b35857dcc3a8bb065e9d723",
+          "displayName": "Franck Cappello",
+          "matchedName": "Franck Cappello",
+          "works": 1,
+          "share": 0.0038022813688212928,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:70b22efe9b352da28c1bef468f358e05",
+          "displayName": "Franck Cappello",
+          "matchedName": "Franck Cappello",
+          "works": 1,
+          "share": 0.0038022813688212928,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": false,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:76bb6f27139345705da8b125d5b6a771",
+          "displayName": "Franck Cappello",
+          "matchedName": "Franck Cappello",
+          "works": 1,
+          "share": 0.0038022813688212928,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [
+            {
+              "id": "scr:canon-v1.er-v2:cfa187c6020f643cfd87f729f86d0a26",
+              "name": "Sheng Di",
+              "count": 1
+            }
+          ],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:79b09d03b9ed0d893a0f976c0cdad586",
+          "displayName": "Franck Cappello",
+          "matchedName": "Franck Cappello",
+          "works": 1,
+          "share": 0.0038022813688212928,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [
+            {
+              "id": "scr:canon-v1.er-v2:4f8b8c5c6e56b0f3a704279fe5aa0768",
+              "name": "Sheng Di",
+              "count": 1
+            }
+          ],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:7b0513adc94458b5961d2c76e35c5ae7",
+          "displayName": "Franck Cappello",
+          "matchedName": "Franck Cappello",
+          "works": 1,
+          "share": 0.0038022813688212928,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:ae7729afcd555a1a56bbbc9aaa1b051d",
+          "displayName": "Franck Cappello",
+          "matchedName": "Franck Cappello",
+          "works": 1,
+          "share": 0.0038022813688212928,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": false,
+          "orcid": null,
+          "institutions": [
+            {
+              "id": "sci:affn-v1:64379731f4590649c03488e9a7cac216",
+              "name": "INRIA AND UIUC, THOMAS M. SIEBEL CENTER FOR COMPUTER\rSCIENCE, 201 N GOODWIN AVE, URBANA, IL 61801-2302, USA,",
+              "count": null
+            }
+          ],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:d31fd58cc1a4c1b070771ecb43f7b7d4",
+          "displayName": "Franck Cappello",
+          "matchedName": "Franck Cappello",
+          "works": 1,
+          "share": 0.0038022813688212928,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:e1021684fd3c57dc4bce3165fee12c5f",
+          "displayName": "Franck Cappello",
+          "matchedName": "Franck Cappello",
+          "works": 1,
+          "share": 0.0038022813688212928,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": false,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:e4d2263eb4bf2b575f14a57a06a33137",
+          "displayName": "Franck Cappello",
+          "matchedName": "Franck Cappello",
+          "works": 1,
+          "share": 0.0038022813688212928,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [
+            {
+              "id": "scr:canon-v1.er-v2:aefbdaec9f4ddf625d8059c4b3964a09",
+              "name": "Pierre Fraigniaud",
+              "count": 1
+            },
+            {
+              "id": "scr:canon-v1.er-v2:feb79776d736ceae7121355ff0a72e1f",
+              "name": "Arnold L. Rosenberg",
+              "count": 1
+            },
+            {
+              "id": "scr:canon-v1.er-v2:2b60068dcd00fc48891ee91dd28271b0",
+              "name": "Bernard Mans",
+              "count": 1
+            }
+          ],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:f73d9be069019a5b3d8a52f91a8ba30d",
+          "displayName": "Franck Cappello",
+          "matchedName": "Franck Cappello",
+          "works": 1,
+          "share": 0.0038022813688212928,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": false,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        }
+      ],
+      "otherNameMatches": [],
+      "truncated": false,
+      "evidenceId": "ev-4c3d00e0be397c3199c63cc553d803a2"
+    }
+  ],
+  "verification": {
+    "schemaVersion": "claim-verification-v1",
+    "queryId": "qry-1005bf6756ac5486558afefc26be798d",
+    "checks": [
+      {
+        "claimId": "claim-1",
+        "status": "VERIFIED",
+        "checks": [
+          {
+            "rule": "evidence-exists",
+            "outcome": "PASS",
+            "detail": "all cited items are in the bundle"
+          },
+          {
+            "rule": "graph-evidence-required",
+            "outcome": "PASS",
+            "detail": "1 graph item(s) cited"
+          },
+          {
+            "rule": "kind-matches-type",
+            "outcome": "PASS",
+            "detail": "FACET needs FACET_RECORD"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "entry.1.count"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "entry.1.name"
+          },
+          {
+            "rule": "numbers-in-text",
+            "outcome": "PASS",
+            "detail": "every number is an asserted, named fact"
+          },
+          {
+            "rule": "window",
+            "outcome": "PASS",
+            "detail": "all-years"
+          },
+          {
+            "rule": "identity",
+            "outcome": "PASS",
+            "detail": "every subject and name is resolved or cited"
+          }
+        ],
+        "action": "KEPT"
+      },
+      {
+        "claimId": "claim-2",
+        "status": "VERIFIED",
+        "checks": [
+          {
+            "rule": "evidence-exists",
+            "outcome": "PASS",
+            "detail": "all cited items are in the bundle"
+          },
+          {
+            "rule": "graph-evidence-required",
+            "outcome": "PASS",
+            "detail": "1 graph item(s) cited"
+          },
+          {
+            "rule": "kind-matches-type",
+            "outcome": "PASS",
+            "detail": "FACET needs FACET_RECORD"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "entry.2.count"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "entry.2.name"
+          },
+          {
+            "rule": "numbers-in-text",
+            "outcome": "PASS",
+            "detail": "every number is an asserted, named fact"
+          },
+          {
+            "rule": "window",
+            "outcome": "PASS",
+            "detail": "all-years"
+          },
+          {
+            "rule": "identity",
+            "outcome": "PASS",
+            "detail": "every subject and name is resolved or cited"
+          }
+        ],
+        "action": "KEPT"
+      },
+      {
+        "claimId": "claim-3",
+        "status": "VERIFIED",
+        "checks": [
+          {
+            "rule": "evidence-exists",
+            "outcome": "PASS",
+            "detail": "all cited items are in the bundle"
+          },
+          {
+            "rule": "graph-evidence-required",
+            "outcome": "PASS",
+            "detail": "1 graph item(s) cited"
+          },
+          {
+            "rule": "kind-matches-type",
+            "outcome": "PASS",
+            "detail": "FACET needs FACET_RECORD"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "entry.3.count"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "entry.3.name"
+          },
+          {
+            "rule": "numbers-in-text",
+            "outcome": "PASS",
+            "detail": "every number is an asserted, named fact"
+          },
+          {
+            "rule": "window",
+            "outcome": "PASS",
+            "detail": "all-years"
+          },
+          {
+            "rule": "identity",
+            "outcome": "PASS",
+            "detail": "every subject and name is resolved or cited"
+          }
+        ],
+        "action": "KEPT"
+      },
+      {
+        "claimId": "claim-4",
+        "status": "VERIFIED",
+        "checks": [
+          {
+            "rule": "evidence-exists",
+            "outcome": "PASS",
+            "detail": "all cited items are in the bundle"
+          },
+          {
+            "rule": "graph-evidence-required",
+            "outcome": "PASS",
+            "detail": "1 graph item(s) cited"
+          },
+          {
+            "rule": "kind-matches-type",
+            "outcome": "PASS",
+            "detail": "FACET needs FACET_RECORD"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "entry.4.count"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "entry.4.name"
+          },
+          {
+            "rule": "numbers-in-text",
+            "outcome": "PASS",
+            "detail": "every number is an asserted, named fact"
+          },
+          {
+            "rule": "window",
+            "outcome": "PASS",
+            "detail": "all-years"
+          },
+          {
+            "rule": "identity",
+            "outcome": "PASS",
+            "detail": "every subject and name is resolved or cited"
+          }
+        ],
+        "action": "KEPT"
+      },
+      {
+        "claimId": "claim-5",
+        "status": "VERIFIED",
+        "checks": [
+          {
+            "rule": "evidence-exists",
+            "outcome": "PASS",
+            "detail": "all cited items are in the bundle"
+          },
+          {
+            "rule": "graph-evidence-required",
+            "outcome": "PASS",
+            "detail": "1 graph item(s) cited"
+          },
+          {
+            "rule": "kind-matches-type",
+            "outcome": "PASS",
+            "detail": "FACET needs FACET_RECORD"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "entry.5.count"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "entry.5.name"
+          },
+          {
+            "rule": "numbers-in-text",
+            "outcome": "PASS",
+            "detail": "every number is an asserted, named fact"
+          },
+          {
+            "rule": "window",
+            "outcome": "PASS",
+            "detail": "all-years"
+          },
+          {
+            "rule": "identity",
+            "outcome": "PASS",
+            "detail": "every subject and name is resolved or cited"
+          }
+        ],
+        "action": "KEPT"
+      }
+    ],
+    "counts": {
+      "verified": 5,
+      "partiallySupported": 0,
+      "unsupported": 0,
+      "conflicting": 0
+    }
+  },
+  "abstention": null,
+  "answerHash": "sha256:e91641a5a1b77266b16928698d4fb92677ae804e0338886d11fa6f354c8a5915"
+}

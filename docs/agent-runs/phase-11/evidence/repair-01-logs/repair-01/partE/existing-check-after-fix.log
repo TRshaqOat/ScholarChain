@@ -1,0 +1,15 @@
+Note: /private/tmp/claude-501/-Users-achyutpatel-Developer-Cloud-ScholarChain/d0c5ca25-a016-4894-ab6a-845196da978b/scratchpad/partE/CheckExisting.java uses or overrides a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+object curated/window-summary/snapshot=2026-10-03/run=run-6fbad498beb0d8f570df67665fb97544/part-00000.jsonl bytes 4320 sha256 d713f227f609b4a46638f208445dd077fd889b904a3b126b57f885c9b4848348
+windows Vector(TimeWindow(all-years,2000,2026), TimeWindow(2000-2014,2000,2014), TimeWindow(2015-2026,2015,2026))
+OPEN_STORE_OBJECT OK
+store-object row 2000-2014 researchers=66350 edges=217957 components=7709 largestComponent=46062 singletons=3119 communities=15312 largestCommunity=323 singletonCommunities=3247 atLeastMin=8075 minSize=3 problems=List()
+store-object row all-years researchers=191318 edges=787726 components=16091 largestComponent=141367 singletons=4849 communities=38034 largestCommunity=621 singletonCommunities=5137 atLeastMin=23635 minSize=3 problems=List()
+store-object row 2015-2026 researchers=139432 edges=585071 components=10746 largestComponent=98812 singletons=1798 communities=26394 largestCommunity=400 singletonCommunities=1971 atLeastMin=18315 minSize=3 problems=List()
+store-object ROWS 3 WITH_PROBLEMS 0
+spark-manifest row 2000-2014 researchers=66350 edges=217957 components=7709 largestComponent=46062 singletons=3119 communities=15312 largestCommunity=323 singletonCommunities=3247 atLeastMin=8075 minSize=3 problems=List()
+spark-manifest row all-years researchers=191318 edges=787726 components=16091 largestComponent=141367 singletons=4849 communities=38034 largestCommunity=621 singletonCommunities=5137 atLeastMin=23635 minSize=3 problems=List()
+spark-manifest row 2015-2026 researchers=139432 edges=585071 components=10746 largestComponent=98812 singletons=1798 communities=26394 largestCommunity=400 singletonCommunities=1971 atLeastMin=18315 minSize=3 problems=List()
+spark-manifest ROWS 3 WITH_PROBLEMS 0
+STORE_ROWS_EQUAL_MANIFEST_ROWS true
+exit 0

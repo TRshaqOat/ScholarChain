@@ -1,0 +1,9 @@
+label: ctl-converge
+file: modules/rag/src/main/scala/scholarchain/rag/runtime/Verifier.scala
+sha256 before: a4aebe1e4a15f14feab942c401f950fbd11a8f1bb610677edbf4fe879b5a802c
+patched sha256: edcf3450e6a2a7b6ff28a21457a1d72d825bf93377d5a77f6ccfa2089b37b0a1
+sbt exit: 1
+[info] - B17 shape: communities of at least the stored minimum size; non-convergence is stated *** FAILED ***
+[info] Tests: succeeded 110, failed 1, canceled 0, ignored 0, pending 0
+sha256 restored: a4aebe1e4a15f14feab942c401f950fbd11a8f1bb610677edbf4fe879b5a802c
+RESTORE OK

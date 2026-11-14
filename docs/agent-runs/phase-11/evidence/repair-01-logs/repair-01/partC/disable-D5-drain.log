@@ -1,0 +1,27 @@
+# D5-drain: modules/services/src/main/scala/scholarchain/services/Http.scala
+# patch: '    System.setProperty("sun.net.httpserver.drainAmount", "0")\n' -> '    ()\n'
+# cmd: sbt -J-Xmx4g -batch services/testOnly scholarchain.services.RequestReadSpec
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] compiling 1 Scala source to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/services/target/scala-3.3.7/classes ...
+[info] done compiling
+[info] RequestReadSpec:
+[info] - D5: a refused or unread body that never arrives does not hold the exchange or the thread *** FAILED ***
+[info]   raw.exists(((r: scala.Predef.String) => RequestReadSpec.this.status(r).==(expected).&&(RequestReadSpec.this.error(r).==(code)))) was false over the cap, with the key: None (RequestReadSpec.scala:74)
+[info] - D5: a body or header slower than the read timeout loses its connection; threads freed
+[info] Run completed in 35 seconds, 636 milliseconds.
+[info] Total number of tests run: 2
+[info] Suites: completed 1, aborted 0
+[info] Tests: succeeded 1, failed 1, canceled 0, ignored 0, pending 0
+[info] *** 1 TEST FAILED ***
+[error] Failed tests:
+[error] 	scholarchain.services.RequestReadSpec
+[error] (services / Test / testOnly) sbt.TestsFailedException: Tests unsuccessful
+[error] Total time: 38 s, completed Nov 13, 2026, 10:30:12 PM
+# exit 1
+# sha256 before e369fad65061731716adc1b0e31f932f171231d657ac813015387cbf471a9554
+# sha256 after  e369fad65061731716adc1b0e31f932f171231d657ac813015387cbf471a9554 OK

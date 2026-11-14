@@ -1,0 +1,154 @@
+{
+  "schemaVersion": "rag-benchmark-result-v2",
+  "questionId": "B22",
+  "category": "temporal",
+  "mode": "LIVE",
+  "runtimeRunId": "run-da948201a77e0fe136727d99a55c2b89",
+  "queryId": "qry-5f1132fc03d76c1997672ef94baa78e2",
+  "planSource": "MODEL",
+  "operations": [
+    "TEMPORAL_COMPARISON/RESEARCHER"
+  ],
+  "metrics": [
+    "DISTINCT_COAUTHOR_COUNT"
+  ],
+  "window": "2000-2014",
+  "resolutions": [
+    {
+      "name": "Jack J. Dongarra",
+      "decision": "RESOLVED_DOMINANT",
+      "researcherId": "scr:canon-v1.er-v2:6de4012bbe8608f1d49d18cf9a40a763",
+      "topShare": 0.9575596816976127,
+      "candidateCount": 17
+    }
+  ],
+  "abstained": false,
+  "abstentionReason": null,
+  "verification": {
+    "verified": 4,
+    "partiallySupported": 0,
+    "unsupported": 0,
+    "conflicting": 0
+  },
+  "claims": 4,
+  "graph": {
+    "reads": 22,
+    "readsByTemplate": {
+      "kv.metrics.window": 1,
+      "kv.metrics.change": 1,
+      "graph.authored-counts": 1,
+      "graph.coauthors": 17,
+      "kv.entity-link": 1,
+      "graph.researcher-institutions": 1
+    },
+    "rows": 59,
+    "truncatedReads": 1,
+    "evidenceItems": 3,
+    "tokens": 963,
+    "omittedItems": 0,
+    "latencyMs": 2,
+    "pathStatuses": []
+  },
+  "semantic": {
+    "embeddingCalls": 1,
+    "embeddingInputTokens": 0,
+    "indexes": [
+      "researcher-profile-v1"
+    ],
+    "hits": 1,
+    "tokens": 589,
+    "omittedItems": 0,
+    "latencyMs": 231,
+    "outcome": "OK"
+  },
+  "llm": {
+    "attempts": 2,
+    "requests": 2,
+    "attemptsByStage": {
+      "QUERY_PLANNING": 1,
+      "ANSWER_SYNTHESIS": 1
+    },
+    "outcomes": {
+      "OK": 2
+    },
+    "inputTokens": 6429,
+    "outputTokens": 1179,
+    "throttleWaitMs": 5864
+  },
+  "latencyMs": 11855,
+  "stageLatencyMs": {
+    "COLLABORATION_METRICS": 2,
+    "PATH_FINDING": 0,
+    "EVIDENCE_BUILDING": 1,
+    "AUDIT": 0,
+    "QUERY_PLANNING": 1368,
+    "SEMANTIC_CONTEXT": 231,
+    "COMMUNITY_ANALYSIS": 0,
+    "CLAIM_VERIFICATION": 11,
+    "RESEARCHER_RESOLUTION": 36,
+    "ANSWER_SYNTHESIS": 10198
+  },
+  "checks": [
+    {
+      "name": "plan-operations",
+      "outcome": "PASS",
+      "detail": "needs TEMPORAL_COMPARISON; plan [TEMPORAL_COMPARISON/RESEARCHER]"
+    },
+    {
+      "name": "researcher-names",
+      "outcome": "PASS",
+      "detail": "expected [Jack J. Dongarra], extracted [Jack J. Dongarra]"
+    },
+    {
+      "name": "resolution",
+      "outcome": "PASS",
+      "detail": "Jack J. Dongarra: expected RESOLVED_DOMINANT, got RESOLVED_DOMINANT"
+    },
+    {
+      "name": "abstention",
+      "outcome": "PASS",
+      "detail": "expected answer, got answer"
+    },
+    {
+      "name": "claim-evidence",
+      "outcome": "PASS",
+      "detail": "4 claims cite bundle IDs; 4 material claims each cite a graph item; 0 descriptive"
+    },
+    {
+      "name": "verification",
+      "outcome": "PASS",
+      "detail": "answer has a verified claim; counts 4/0/0/0; final claims 4 verified of 4"
+    },
+    {
+      "name": "bundle-budget",
+      "outcome": "PASS",
+      "detail": "graph 963/8000 tokens, semantic 589/3000, items 4/300"
+    },
+    {
+      "name": "llm-budget",
+      "outcome": "PASS",
+      "detail": "2 attempts, 2 requests (ANSWER_SYNTHESIS 1, QUERY_PLANNING 1), tokens in 6429 out 1179"
+    },
+    {
+      "name": "embedding-budget",
+      "outcome": "PASS",
+      "detail": "1 embedding calls for 1 indexes queried"
+    },
+    {
+      "name": "path-hops",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no path evidence in the bundle"
+    },
+    {
+      "name": "pair-edges",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no bundle edge has stored path evidence"
+    },
+    {
+      "name": "deadline",
+      "outcome": "PASS",
+      "detail": "11855 ms of 180000"
+    }
+  ],
+  "answerHash": "sha256:34a55d85ed46c43c42b946f16ae5e1972adf2e71ab70ec353561081467a81d74"
+}

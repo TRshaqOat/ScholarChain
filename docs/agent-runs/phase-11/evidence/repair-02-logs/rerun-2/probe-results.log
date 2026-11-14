@@ -1,0 +1,69 @@
+WO5PROBE|DOC|VERIFIED|In all-years, Ada Lovelace has past 10 publications.|
+WO5PROBE|DOC|VERIFIED|In all-years, Ada Lovelace is missing 10 publications.|
+WO5PROBE|DOC|VERIFIED|In all-years, Ada Lovelace has a minimum of 10 publications.|
+WO5PROBE|DOC|VERIFIED|In all-years, Ada Lovelace has a maximum of 10 publications.|
+WO5PROBE|DOC|VERIFIED|In all-years, Ada Lovelace has within 10 publications.|
+WO5PROBE|DOC|VERIFIED|In all-years, Ada Lovelace is heading toward 10 publications.|
+WO5PROBE|DOC|VERIFIED|In all-years, Ada Lovelace is pushing 10 publications.|
+WO5PROBE|DOC|VERIFIED|In all-years, Ada Lovelace has the better part of 10 publications.|
+WO5PROBE|DOC|VERIFIED|In all-years, besides Ada Lovelace, each researcher has 10 publications.|
+WO5PROBE|DOC|VERIFIED|In all-years, apart from Ada Lovelace, each researcher has 10 publications.|
+WO5PROBE|DOC|VERIFIED|In all-years, other than Ada Lovelace, each researcher has 10 publications.|
+WO5PROBE|DOC|UNSUPPORTED|In all-years, none of Ada Lovelace's 10 publications exist.|numbers-in-text:0 is not an asserted fact of a cited item
+WO5PROBE|DOC|VERIFIED|In all-years, nobody, Ada Lovelace included, has 10 publications.|
+WO5PROBE|DOC|VERIFIED|In all-years, nothing shows Ada Lovelace has 10 publications.|
+WO5PROBE|DOC|UNSUPPORTED|In all-years, Ada Lovelace has publications that exceed the stored total of 10.|numbers-in-text:10 is not written next to the name of publicationCount
+WO5PROBE|DOC|VERIFIED|In all-years, Ada Lovelace has 10 publications and counting.|
+WO5PROBE|DOC|VERIFIED|In all-years, Ada Lovelace has 10 publications at minimum.|
+WO5PROBE|DOC|VERIFIED|In all-years, Ada Lovelace has a mere 10 publications.|
+WO5PROBE|RULE|VERIFIED|In all-years, 10 publications are absent from Ada Lovelace's record.|
+WO5PROBE|RULE|VERIFIED|In all-years, Ada Lovelace has publications above 10.|
+WO5PROBE|RULE|VERIFIED|In all-years, Ada Lovelace (whose publications are not indexed) has 10 publications.|
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has more or less 10 publications.|
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has 10 publications, more or less.|
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has 10 publications, give or take.|
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has give or take 10 publications.|
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has in the region of 10 publications.|
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has on the order of 10 publications.|
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has practically 10 publications.|
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has virtually 10 publications.|
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has essentially 10 publications.|
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has an estimated 10 publications.|
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has possibly 10 publications.|
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has perhaps 10 publications.|
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has maybe 10 publications.|
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has 10 more publications than her coauthor.|
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has 10 fewer publications than her coauthor.|
+WO5PROBE|CAND|UNSUPPORTED|In all-years, Ada Lovelace has 10 times as many publications as her coauthor.|numbers-in-text:10 is not written next to the name of publicationCount; 'many' states a quantity in words, not a stored value
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has at the very least 10 publications.|
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has 10 publications at the least.|
+WO5PROBE|CAND|UNSUPPORTED|In all-years, Ada Lovelace has 10-something publications.|numbers-in-text:10 is not written next to the name of publicationCount
+WO5PROBE|CAND|UNSUPPORTED|In all-years, Ada Lovelace has not quite 10 publications.|numbers-in-text:10 is negated ('not')
+WO5PROBE|CAND|VERIFIED|In all-years, it is unlikely that Ada Lovelace has 10 publications.|
+WO5PROBE|CAND|VERIFIED|In all-years, it is unclear whether Ada Lovelace has 10 publications.|
+WO5PROBE|CAND|VERIFIED|In all-years, it is doubtful that Ada Lovelace has 10 publications.|
+WO5PROBE|CAND|VERIFIED|In all-years, the records dispute that Ada Lovelace has 10 publications.|
+WO5PROBE|CAND|UNSUPPORTED|In all-years, Ada Lovelace has just about 10 publications.|numbers-in-text:10 is qualified ('about'), so it does not state the stored value exactly
+WO5PROBE|CAND|UNSUPPORTED|In all-years, Ada Lovelace has nearly-10 publications.|numbers-in-text:10 is qualified ('nearly-'), so it does not state the stored value exactly
+WO5PROBE|CAND|UNSUPPORTED|In all-years, Ada Lovelace has under-10 publications.|numbers-in-text:10 is qualified ('under-'), so it does not state the stored value exactly
+WO5PROBE|CAND|UNSUPPORTED|In all-years, Ada Lovelace has 10 or thereabouts publications.|numbers-in-text:10 is qualified ('or thereabouts'), so it does not state the stored value exactly
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has upto 10 publications.|
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has less than or equal to 10 publications.|
+WO5PROBE|CAND|UNSUPPORTED|In all-years, Ada Lovelace has at least 10 publications.|numbers-in-text:10 is qualified ('at least'), so it does not state the stored value exactly
+WO5PROBE|CAND|UNSUPPORTED|In all-years, Ada Lovelace has ≈10 publications.|numbers-in-text:10 is qualified ('≈'), so it does not state the stored value exactly
+WO5PROBE|CAND|UNSUPPORTED|In all-years, Ada Lovelace has ~ 10 publications.|numbers-in-text:10 is qualified ('~'), so it does not state the stored value exactly
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has 10± publications.|
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has 10 publications at most.|
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has an approximate 10 publications.|
+WO5PROBE|CAND|UNSUPPORTED|In all-years, Ada Lovelace has 10 approximately publications.|numbers-in-text:10 is not written next to the name of publicationCount
+WO5PROBE|CAND|UNSUPPORTED|In all-years, Ada Lovelace has well over ten publications.|numbers-in-text:10 is qualified ('over'), so it does not state the stored value exactly
+WO5PROBE|CAND|UNSUPPORTED|In all-years, Ada Lovelace hasn’t 10 publications.|numbers-in-text:10 is negated ('n’t')
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has no 10 publications.|
+WO5PROBE|CAND|UNSUPPORTED|In all-years, Ada Lovelace has zero of 10 publications.|numbers-in-text:0 is not an asserted fact of a cited item
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has 10 publications, though fewer in fact.|
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has 10 publications or nearly so.|
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has 10 publications or close to it.|
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has 10 publications, roughly.|
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has 10 publications, approximately.|
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has 10 publications or less.|
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has 10 publications or more.|

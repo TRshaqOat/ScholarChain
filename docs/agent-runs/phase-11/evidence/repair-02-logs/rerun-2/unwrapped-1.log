@@ -1,0 +1,58 @@
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] compiling 2 Scala sources to /Users/achyutpatel/Developer/Cloud/ScholarChain/tests/target/scala-3.3.7/test-classes ...
+[info] done compiling
+WARNING: Using incubator modules: jdk.incubator.vector
+[info] UnsupportedClaimAdversarialSpec:
+[info] - controls: the stored values verify; a wrong digit, a fabricated ID, or a semantic-only claim do not
+[info] - a multiplier word after the stored digits (10 hundred, 10 thousand) is not that number
+[info] - a quantity stated only in words (hundreds of, dozens of, a dozen) is not verified
+[info] - a comparison the stored value contradicts (more than 10, fewer than 10) is not verified
+[info] - a negated statement of the stored value (does not have 10) is not verified
+[info] - verifier-v7 breadth: other comparison, approximation, vague-quantity, and negation wordings are not verified
+[info] - verifier-v7 controls: exact statements of the stored value still verify
+[info] - a comparison or negation outside the verifier-v7 word lists (short of 10, lacks 10) is not verified
+[info] - verifier-v8 breadth: the comparison words, the filler, and the after-number words repair-02 added are not verified
+[info] - verifier-v8 breadth: the negation words repair-02 added, and asides that must not hide them, are not verified
+[info] - verifier-v8 controls: exact statements of the stored value still verify
+[info] - verifier-v8 through the services composition: the corpus template's 'without' aside and 'did not converge' stay VERIFIED; v8 wordings on corpus counts do not
+[info] - a difference from another count, or a disputed or doubted statement of the stored value, is not verified *** FAILED ***
+[info]   Vector("In all-years, Ada Lovelace has 10 more publications than her coauthor.", "In all-years, Ada Lovelace has 10 fewer publications than her coauthor.", "In all-years, the records dispute that Ada Lovelace has 10 publications.", "In all-years, it is unlikely that Ada Lovelace has 10 publications.", "In all-years, it is doubtful that Ada Lovelace has 10 publications.") was not empty kept as VERIFIED: Vector(In all-years, Ada Lovelace has 10 more publications than her coauthor., In all-years, Ada Lovelace has 10 fewer publications than her coauthor., In all-years, the records dispute that Ada Lovelace has 10 publications., In all-years, it is unlikely that Ada Lovelace has 10 publications., In all-years, it is doubtful that Ada Lovelace has 10 publications.) (UnsupportedClaimAdversarialSpec.scala:673)
+[info] - an approximation idiom before the stored value (more or less, give or take, on the order of) is not verified *** FAILED ***
+[info]   Vector("In all-years, Ada Lovelace has more or less 10 publications.", "In all-years, Ada Lovelace has give or take 10 publications.", "In all-years, Ada Lovelace has in the region of 10 publications.", "In all-years, Ada Lovelace has on the order of 10 publications.", "In all-years, Ada Lovelace has practically 10 publications.", "In all-years, Ada Lovelace has virtually 10 publications.", "In all-years, Ada Lovelace has an estimated 10 publications.", "In all-years, Ada Lovelace has possibly 10 publications.", "In all-years, Ada Lovelace has perhaps 10 publications.", "In all-years, it is unclear whether Ada Lovelace has 10 publications.") was not empty kept as VERIFIED: Vector(In all-years, Ada Lovelace has more or less 10 publications., In all-years, Ada Lovelace has give or take 10 publications., In all-years, Ada Lovelace has in the region of 10 publications., In all-years, Ada Lovelace has on the order of 10 publications., In all-years, Ada Lovelace has practically 10 publications., In all-years, Ada Lovelace has virtually 10 publications., In all-years, Ada Lovelace has an estimated 10 publications., In all-years, Ada Lovelace has possibly 10 publications., In all-years, Ada Lovelace has perhaps 10 publications., In all-years, it is unclear whether Ada Lovelace has 10 publications.) (UnsupportedClaimAdversarialSpec.scala:700)
+[info] RagModelOutputAdversarialSpec:
+[info] - injected title, name, profile, and abstract reach the synthesis prompt only escaped
+[info] - a synthesis that obeys the injection (999 coauthors, a fabricated evidence ID) keeps no claim of it
+[info] - a tampered chunk (text no longer matching its textHash) is dropped, never cited
+[info] - an injected question adds no operation, no unbound store call, and no asserted fact (fake mode)
+[info] - injection in the structured constraint fields stays a bound parameter of fixed templates
+[info] - injected filter terms reach the graph only as bound parameters of the live openCypher templates
+[info] - malformed or fabricated planner output: two attempts, then the rule planner; no model text kept
+[info] - malformed synthesis twice abstains BUDGET_EXHAUSTED with no claim; never a third attempt
+[info] - fabricated researcher and evidence IDs in an otherwise valid synthesis are removed
+[info] - verifier-v8 wordings in a recorded model synthesis: claims removed, summary replaced, uncertainty line left out
+[info] - a qualified or negated uncertainty line is left out even when its number also appears in a fixed note *** FAILED ***
+[info]   badLines.forall(((l: java.lang.String) => unc.contains(l).unary_!)) was false Ada Lovelace was linked to scr:canon-v1.er-v2:3ed012c7e9d38ac0dc513403ec31176a by dominant-name-v1: 0.9091 of 11 works among 2 researchers with this display name. Grace Hopper was linked to scr:canon-v1.er-v2:3bb726d3da683ea3732d02907753c921 by dominant-name-v1: 1.0000 of 6 works among 1 researchers with this display name. Ada Lovelace and Grace Hopper have barely 2 joint publications in all-years. Ada Lovelace and Grace Hopper have more than 2 joint publications in all-years. Ada Lovelace and Grace Hopper lack 2 joint publications in all-years. (RagModelOutputAdversarialSpec.scala:510)
+[info] - a throttled or failing model is tried at most max-attempts-per-call times per call
+[info] - an exhausted input-token budget sends no model request at all
+[info] - an output-token budget below one synthesis request skips synthesis, never overspends
+[info] - a throttled vector query (once, or every time) does not fail an answer the graph supports
+[info] - repair-01 D4 detail: only the failed index degrades, to a note without the error, and every claim stays
+[info] - repair-01 D4 boundary: a deadline passing inside a vector query still ends the question
+[info] - a pair whose work has no abstract and a researcher with no profile still answer from the graph
+[info] - a researcher with no institution gets no institution claim; nothing is invented
+[info] - an unknown researcher abstains UNKNOWN_RESEARCHER; an ambiguous common name abstains AMBIGUOUS
+[info] Run completed in 2 seconds, 450 milliseconds.
+[info] Total number of tests run: 34
+[info] Suites: completed 2, aborted 0
+[info] Tests: succeeded 31, failed 3, canceled 0, ignored 0, pending 0
+[info] *** 3 TESTS FAILED ***
+[error] Failed tests:
+[error] 	scholarchain.tests.adversarial.RagModelOutputAdversarialSpec
+[error] 	scholarchain.tests.adversarial.UnsupportedClaimAdversarialSpec
+[error] (tests / Test / testOnly) sbt.TestsFailedException: Tests unsuccessful
+[error] Total time: 7 s, completed Nov 14, 2026, 1:32:43 AM

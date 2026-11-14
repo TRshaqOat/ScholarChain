@@ -1,0 +1,23 @@
+modules/core: suites 4, tests 190, failures 0, errors 0, skipped 0
+modules/entity-resolution: suites 10, tests 111, failures 0, errors 0, skipped 0
+modules/hadoop: suites 6, tests 70, failures 0, errors 0, skipped 0
+modules/rag: suites 14, tests 116, failures 0, errors 0, skipped 0
+modules/services: suites 9, tests 47, failures 0, errors 0, skipped 0
+modules/spark: suites 8, tests 46, failures 0, errors 0, skipped 0
+modules/storage: suites 11, tests 109, failures 0, errors 0, skipped 0
+tests: suites 20, tests 151, failures 0, errors 0, skipped 10
+TOTAL: suites 82, tests 840, failures 0, errors 0, skipped 10
+SKIPPED (pending) cases:
+  scholarchain.tests.adversarial.ApiBodyAdversarialSpec :: a body that is not valid UTF-8 is MALFORMED_JSON, never answered as a different question
+  scholarchain.tests.adversarial.ApiBodyAdversarialSpec :: a JSON-escaped lone surrogate in the question is a typed 400, never an answer
+  scholarchain.tests.adversarial.DblpRecordReaderAdversarialSpec :: a record start tag inside an XML comment is not a record, and the records after it stay intact
+  scholarchain.tests.adversarial.DblpXmlAdversarialSpec :: an author with no name (empty, blank, or markup only) is a schema-validation reject (JOBS.md)
+  scholarchain.tests.adversarial.IdentityAdversarialSpec :: invisible format characters inside a name do not split it or change its keys
+  scholarchain.tests.adversarial.IdentityAdversarialSpec :: DOI normalization is idempotent
+  scholarchain.tests.adversarial.IdentityAdversarialSpec :: a percent-encoded DOI URL (as DBLP writes SICI DOIs) is the same DOI as its plain form
+  scholarchain.tests.adversarial.RagModelOutputAdversarialSpec :: a qualified or negated uncertainty line is left out even when its number also appears in a fixed note
+  scholarchain.tests.adversarial.UnsupportedClaimAdversarialSpec :: a difference from another count, or a disputed or doubted statement of the stored value, is not verified
+  scholarchain.tests.adversarial.UnsupportedClaimAdversarialSpec :: an approximation idiom before the stored value (more or less, give or take, on the order of) is not verified
+STALE (not counted):
+  tests/target/test-reports/TEST-scholarchain.tests.adversarial.Wo4ProbeSpec.xml
+  tests/target/test-reports/TEST-scholarchain.tests.adversarial.Wo5ProbeSpec.xml

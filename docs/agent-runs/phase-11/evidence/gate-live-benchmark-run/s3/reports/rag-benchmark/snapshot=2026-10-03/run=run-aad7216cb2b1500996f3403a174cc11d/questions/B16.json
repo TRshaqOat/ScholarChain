@@ -1,0 +1,156 @@
+{
+  "schemaVersion": "rag-benchmark-result-v2",
+  "questionId": "B16",
+  "category": "communities",
+  "mode": "LIVE",
+  "runtimeRunId": "run-da948201a77e0fe136727d99a55c2b89",
+  "queryId": "qry-e9599635e3be73475245b18148761ddf",
+  "planSource": "MODEL",
+  "operations": [
+    "COMMUNITY_COMPARISON/RESEARCHER"
+  ],
+  "metrics": [],
+  "window": "2015-2026",
+  "resolutions": [
+    {
+      "name": "Jack J. Dongarra",
+      "decision": "RESOLVED_DOMINANT",
+      "researcherId": "scr:canon-v1.er-v2:6de4012bbe8608f1d49d18cf9a40a763",
+      "topShare": 0.9575596816976127,
+      "candidateCount": 17
+    }
+  ],
+  "abstained": false,
+  "abstentionReason": null,
+  "verification": {
+    "verified": 2,
+    "partiallySupported": 0,
+    "unsupported": 1,
+    "conflicting": 0
+  },
+  "claims": 2,
+  "graph": {
+    "reads": 25,
+    "readsByTemplate": {
+      "kv.metrics.window": 1,
+      "graph.community-facets": 1,
+      "graph.vertex": 1,
+      "graph.community-members": 1,
+      "graph.community-neighbors": 1,
+      "graph.authored-counts": 1,
+      "graph.coauthors": 17,
+      "kv.entity-link": 1,
+      "graph.researcher-institutions": 1
+    },
+    "rows": 124,
+    "truncatedReads": 3,
+    "evidenceItems": 4,
+    "tokens": 2846,
+    "omittedItems": 0,
+    "latencyMs": 262,
+    "pathStatuses": []
+  },
+  "semantic": {
+    "embeddingCalls": 1,
+    "embeddingInputTokens": 0,
+    "indexes": [
+      "researcher-profile-v1",
+      "collaboration-community-v1"
+    ],
+    "hits": 1,
+    "tokens": 589,
+    "omittedItems": 0,
+    "latencyMs": 1510,
+    "outcome": "OK"
+  },
+  "llm": {
+    "attempts": 2,
+    "requests": 2,
+    "attemptsByStage": {
+      "QUERY_PLANNING": 1,
+      "ANSWER_SYNTHESIS": 1
+    },
+    "outcomes": {
+      "OK": 2
+    },
+    "inputTokens": 9244,
+    "outputTokens": 2590,
+    "throttleWaitMs": 9906
+  },
+  "latencyMs": 29927,
+  "stageLatencyMs": {
+    "COLLABORATION_METRICS": 1,
+    "PATH_FINDING": 0,
+    "EVIDENCE_BUILDING": 4,
+    "AUDIT": 0,
+    "QUERY_PLANNING": 6500,
+    "SEMANTIC_CONTEXT": 1510,
+    "COMMUNITY_ANALYSIS": 261,
+    "CLAIM_VERIFICATION": 24,
+    "RESEARCHER_RESOLUTION": 33,
+    "ANSWER_SYNTHESIS": 21584
+  },
+  "checks": [
+    {
+      "name": "plan-operations",
+      "outcome": "PASS",
+      "detail": "needs COMMUNITY_COMPARISON; plan [COMMUNITY_COMPARISON/RESEARCHER]"
+    },
+    {
+      "name": "researcher-names",
+      "outcome": "PASS",
+      "detail": "expected [Jack J. Dongarra], extracted [Jack J. Dongarra]"
+    },
+    {
+      "name": "resolution",
+      "outcome": "PASS",
+      "detail": "Jack J. Dongarra: expected RESOLVED_DOMINANT, got RESOLVED_DOMINANT"
+    },
+    {
+      "name": "abstention",
+      "outcome": "PASS",
+      "detail": "expected answer, got answer"
+    },
+    {
+      "name": "claim-evidence",
+      "outcome": "PASS",
+      "detail": "2 claims cite bundle IDs; 2 material claims each cite a graph item; 0 descriptive"
+    },
+    {
+      "name": "verification",
+      "outcome": "PASS",
+      "detail": "answer has a verified claim; counts 2/0/1/0; final claims 2 verified of 2"
+    },
+    {
+      "name": "bundle-budget",
+      "outcome": "PASS",
+      "detail": "graph 2846/8000 tokens, semantic 589/3000, items 5/300"
+    },
+    {
+      "name": "llm-budget",
+      "outcome": "PASS",
+      "detail": "2 attempts, 2 requests (ANSWER_SYNTHESIS 1, QUERY_PLANNING 1), tokens in 9244 out 2590"
+    },
+    {
+      "name": "embedding-budget",
+      "outcome": "PASS",
+      "detail": "1 embedding calls for 2 indexes queried"
+    },
+    {
+      "name": "path-hops",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no path evidence in the bundle"
+    },
+    {
+      "name": "pair-edges",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no bundle edge has stored path evidence"
+    },
+    {
+      "name": "deadline",
+      "outcome": "PASS",
+      "detail": "29927 ms of 180000"
+    }
+  ],
+  "answerHash": "sha256:47275644c77acd320eca4a2d4e1ac53f5a9a66e672db680f5054b1cd1fa5888f"
+}

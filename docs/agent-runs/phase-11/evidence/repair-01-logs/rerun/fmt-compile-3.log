@@ -1,0 +1,13 @@
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] scalafmt: Formatting 2 Scala sources (/Users/achyutpatel/Developer/Cloud/ScholarChain/tests)...
+[info] scalafmt: Reformatted 1 Scala sources
+[success] Total time: 1 s, completed Nov 14, 2026, 12:23:22 AM
+[success] Total time: 0 s, completed Nov 14, 2026, 12:23:22 AM
+[info] compiling 2 Scala sources to /Users/achyutpatel/Developer/Cloud/ScholarChain/tests/target/scala-3.3.7/test-classes ...
+[info] done compiling
+[success] Total time: 4 s, completed Nov 14, 2026, 12:23:25 AM

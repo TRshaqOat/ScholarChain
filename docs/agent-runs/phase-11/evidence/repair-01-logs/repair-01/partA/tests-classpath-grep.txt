@@ -1,0 +1,9 @@
+scala3-library_3-3.3.7.jar
+spark-sql_2.13-4.0.2.jar
+hadoop-client-api-3.4.2.jar
+hadoop-client-runtime-3.4.2.jar
+scala-library-2.13.16.jar
+spark-core_2.13-4.0.2.jar
+scala-xml_2.13-2.3.0.jar
+spark-catalyst_2.13-4.0.2.jar
+spark-sql-api_2.13-4.0.2.jar

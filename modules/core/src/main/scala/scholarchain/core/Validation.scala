@@ -104,6 +104,7 @@ object Validator:
     schemaVersion(a.schemaVersion, SchemaVersions.AuthorshipRecord) ++
       id("researcherId", a.researcherId, IdFormat.isResearcherId) ++
       id("workId", a.workId, IdFormat.isWorkId) ++
+      check(a.position >= 1, s"author position must be >= 1, got ${a.position}") ++
       check(
         a.mentionId == s"${a.workId}#${a.position}",
         s"mentionId '${a.mentionId}' must equal workId#position"

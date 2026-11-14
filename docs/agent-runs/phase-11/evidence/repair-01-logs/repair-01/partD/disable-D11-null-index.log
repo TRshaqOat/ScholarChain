@@ -1,0 +1,52 @@
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] compiling 1 Scala source to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/core/target/scala-3.3.7/classes ...
+[info] done compiling
+[info] ConfigLoaderSpec:
+[info] - the reference file alone loads as a valid local configuration
+[info] - default graph windows are the three D-10 windows
+[info] - one bucket per environment with the eight ruling-7 prefixes
+[info] - a layer that still sets a removed per-purpose bucket key is rejected
+[info] - precedence: the config file overrides the reference
+[info] - precedence: environment variables override the config file and the reference
+[info] - unlisted environment variables are ignored
+[info] - an invalid bucket name or malformed or duplicate prefix is rejected
+[info] - every documented environment variable maps to a path in the reference
+[info] - a missing config file is an error, not a silent fallback
+[info] - a non-local environment must replace every placeholder
+[info] - a non-local environment with every value supplied loads
+[info] - phase 11 D11: an index entry set to null stops the load (no silently dropped index) *** FAILED ***
+[info]   loaded: ScholarChainConfig(config-v1,local,us-east-2,000000000000,StorageConfig(example-scholarchain,StoragePrefixes(raw/,curated/,graph/,semantic-context/,vectors/,reports/,logs/,runs/)),NeptuneConfig(neptune.example.invalid,8182,5000,arn:aws:iam::000000000000:role/example-neptune-loader),DynamoDbConfig(example-scholarchain-),S3VectorsConfig(example-scholarchain-vectors,Map(communities -> collaboration-community-v1, topic-institutions -> topic-institution-summary-v1, paths -> collaboration-path-v1, researchers -> researcher-profile-v1)),EntityResolutionConfig(er-v2,0.93,0.35,0.65,0.93,150,100),GraphConfig(graph-v1,100,Vector(TimeWindow(all-years,2000,2026), TimeWindow(2000-2014,2000,2014), TimeWindow(2015-2026,2015,2026))),AnalyticsConfig(label-propagation,10,100,5,Vector(CROSS_COMMUNITY_DEGREE, COMMUNITIES_CONNECTED, PARTICIPATION_COEFFICIENT),50),RetrievalConfig(100,50,6,12000,fusion-v1),ModelsConfig(example-embedding-model,us.anthropic.claude-haiku-4-5-20251001-v1:0,us.anthropic.claude-haiku-4-5-20251001-v1:0,example-verification-model,example-adjudication-model),OperationsConfig(40000,2,8),RuntimeConfig(prompts,QuestionConfig(2000,180000),PlannerConfig(planner-v2,800,6,4,200,5),SynthesisConfig(synthesis-v3,4000,20),LlmCallConfig(8,2,30000,0.0),EmbeddingCallConfig(50,10000),ResolverConfig(dominant-name-v1,0.9,5,500,3,3),RankingsConfig(10,1000),SemanticConfig(5,3),BudgetConfig(8000,3000,300,3,40000,9600),AuditConfig(30),WindowSummaryConfig()),GraphReadConfig(1000,100,50000,20000,100,20,2000,10,20,10,3,200),ServicesConfig(true,true,SCHOLARCHAIN_API_KEY,65536,64,QueryApiConfig(8080,8,10),GraphEvidenceApiConfig(8081,16),WorkerConfig(8082,2,1,20,300),JobQueueConfig(https://sqs.us-east-2.amazonaws.com/000000000000/example-scholarchain-jobs,https://sqs.us-east-2.amazonaws.com/000000000000/example-scholarchain-jobs-dlq,3),ServiceTtlConfig(24,168),2000,ResilienceConfig(3,100,1000,5,30000),DownstreamTimeouts(6000,2000,5000,5000,5000))) (ConfigLoaderSpec.scala:156)
+[info] - phase 11 D12: outside local, a blank value from a file or an empty variable is refused
+[info] - phase 11 D13: a fractional value for an integer key is refused, never truncated
+[info] - phase 11 finding 2: the core community-max-iterations equals the Spark value, 10
+[info] - Phase 10 work order 10: runtime.window-summary.load-run default, override, and rule
+[info] - Phase 10: services defaults (work order 2) and the sync deadline
+[info] - Phase 10: queue and stub-LLM environment overrides; fake queue URLs fail outside local
+[info] - Phase 10: the API key variable is a name only and never enters configuration
+[info] - Phase 10: services bounds and cross-key checks are enforced
+[info] - every services leaf in the reference is read by the loader
+[info] - M10: table prefix and Neptune loader role ARN are keys with env overrides
+[info] - M10: malformed prefixes and ARNs are rejected; placeholders are rejected outside local
+[info] - Phase 9: planner and synthesis models default to Haiku 4.5 and are env-overridable
+[info] - Phase 9: runtime, ranking, and graph-read defaults (RUNTIME.md section 20)
+[info] - Phase 9: runtime bounds and cross-key checks are enforced
+[info] - every runtime and graph-read leaf in the reference is read by the loader
+[info] - entity-resolution thresholds must be ordered within [0, 1]
+[info] - entity-resolution policy version defaults to er-v2 and is env-overridable
+[info] - entity-resolution block and conflict-group limits: defaults, env overrides, positive
+[info] - a window whose start year exceeds its end year is rejected
+[info] - an unsupported config version is rejected
+[info] Run completed in 422 milliseconds.
+[info] Total number of tests run: 33
+[info] Suites: completed 1, aborted 0
+[info] Tests: succeeded 32, failed 1, canceled 0, ignored 0, pending 0
+[info] *** 1 TEST FAILED ***
+[error] Failed tests:
+[error] 	scholarchain.core.config.ConfigLoaderSpec
+[error] (core / Test / testOnly) sbt.TestsFailedException: Tests unsuccessful
+[error] Total time: 4 s, completed Nov 13, 2026, 11:28:24 PM

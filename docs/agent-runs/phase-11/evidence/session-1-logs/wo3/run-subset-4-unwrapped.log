@@ -1,0 +1,51 @@
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] compiling 3 Scala sources to /Users/achyutpatel/Developer/Cloud/ScholarChain/tests/target/scala-3.3.7/test-classes ...
+[info] done compiling
+[info] IdempotencyRaceAdversarialSpec:
+[info] - same key and body while the first sync query runs: 409, one workflow, then the replay
+[info] - eight concurrent identical keyed POSTs run one workflow and share one query ID
+[info] - async: a racing replay before the job exists is 409; afterwards one job and one message
+[info] - N3 (documented): a keyed sync POST answered 503 OVERLOADED keeps its key; the retry is 409
+[info] - an expired Idempotency-Key is a new request; the stored record holds only the key hash
+[info] - job transitions are linearizable: of 16 racing QUEUED -> RUNNING claims exactly one wins
+[info] RagModelOutputAdversarialSpec:
+[info] - injected title, name, profile, and abstract reach the synthesis prompt only escaped
+[info] - a synthesis that obeys the injection (999 coauthors, a fabricated evidence ID) keeps no claim of it
+[info] - a tampered chunk (text no longer matching its textHash) is dropped, never cited
+[info] - an injected question adds no operation, no unbound store call, and no asserted fact (fake mode)
+[info] - injection in the structured constraint fields stays a bound parameter of fixed templates
+[info] - malformed or fabricated planner output: two attempts, then the rule planner; no model text kept
+[info] - malformed synthesis twice abstains BUDGET_EXHAUSTED with no claim; never a third attempt
+[info] - fabricated researcher and evidence IDs in an otherwise valid synthesis are removed
+[info] - a throttled or failing model is tried at most max-attempts-per-call times per call
+[info] - an exhausted input-token budget sends no model request at all
+[info] - an output-token budget below one synthesis request skips synthesis, never overspends
+[info] - a throttled vector query (once, or every time) does not fail an answer the graph supports *** FAILED ***
+[info]   Vector(("first query throttled", "FAILED at SEMANTIC_CONTEXT: TransientStoreException: ThrottlingException: Rate exceeded (SYNTHETIC)"), ("every query throttled", "FAILED at SEMANTIC_CONTEXT: TransientStoreException: ThrottlingException: Rate exceeded (SYNTHETIC)")) was not empty answers failed on a throttled vector query: Vector((first query throttled,FAILED at SEMANTIC_CONTEXT: TransientStoreException: ThrottlingException: Rate exceeded (SYNTHETIC)), (every query throttled,FAILED at SEMANTIC_CONTEXT: TransientStoreException: ThrottlingException: Rate exceeded (SYNTHETIC))) (RagModelOutputAdversarialSpec.scala:304)
+[info] - a pair whose work has no abstract and a researcher with no profile still answer from the graph
+[info] - a researcher with no institution gets no institution claim; nothing is invented
+[info] - an unknown researcher abstains UNKNOWN_RESEARCHER; an ambiguous common name abstains AMBIGUOUS
+[info] ApiBodyAdversarialSpec:
+[info] - deeply nested JSON within the size cap is a 400, not a stack overflow or a hang
+[info] - numbers outside the int range, fractions, strings, and booleans are 400 in int fields
+[info] - question text: control characters, blanks, length boundaries, and lone surrogates
+[info] - the body must be one JSON object with known fields; JSON nulls only where optional
+[info] - Content-Type, Content-Length, and chunked transfer abuse give typed 4xx errors
+[info] - a declared body that never arrives does not hold the exchange open (refused, 401, or unread) *** FAILED ***
+[info]   Vector("over the cap, with the key: SocketTimeoutException", "over the cap, no key: SocketTimeoutException", "unread body on /healthz, no key: SocketTimeoutException") was not empty exchanges not completed: over the cap, with the key: SocketTimeoutException; over the cap, no key: SocketTimeoutException; unread body on /healthz, no key: SocketTimeoutException (ApiBodyAdversarialSpec.scala:187)
+[info] - Idempotency-Key and request-ID headers: bounded, visible ASCII, never echoed when invalid
+[info] Run completed in 15 seconds, 932 milliseconds.
+[info] Total number of tests run: 28
+[info] Suites: completed 3, aborted 0
+[info] Tests: succeeded 26, failed 2, canceled 0, ignored 0, pending 0
+[info] *** 2 TESTS FAILED ***
+[error] Failed tests:
+[error] 	scholarchain.tests.adversarial.ApiBodyAdversarialSpec
+[error] 	scholarchain.tests.adversarial.RagModelOutputAdversarialSpec
+[error] (tests / Test / testOnly) sbt.TestsFailedException: Tests unsuccessful
+[error] Total time: 20 s, completed Nov 12, 2026, 11:15:18 PM

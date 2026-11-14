@@ -1,0 +1,149 @@
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] compiling 1 Scala source to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/rag/target/scala-3.3.7/classes ...
+[info] done compiling
+[info] TemplatesSpec:
+[info] - profile text is frozen for rendering-v1
+[info] - every document type renders; texts are deterministic and independent of key order
+[info] - path statuses, paper, community, and topic wording
+[info] - missing required facts fail; missing optional facts drop their sentence
+[info] - untrusted text is flattened, capped, and kept as data
+[info] SmokeSpec:
+[info] - structural smoke tests pass on the fake store with fake embeddings
+[info] - smoke queries use facts only, and a structural filter returns only matching documents
+[info] - smoke CLI: dry run passes; live needs --profile; unknown model is a usage error
+[info] - semantic context: evidence items, hash check, escaping, budget
+[info] AskCliSpec:
+[info] - fake mode answers one question, writes the audit, answer, records, and a manifest under --out
+[info] - usage errors: live needs a profile, and the Haiku rate is at most 8 per minute
+[info] RuntimeApiSpec:
+[info] - answer: one request under a deadline gives the answer, the audit, and the bundle
+[info] - answer: a passed deadline abstains and is flagged; the audit is still written
+[info] - lookups: audit and answer by query ID, evidence by query and evidence ID
+[info] - evidenceOf: a payloadRef object must match its payloadHash
+[info] RuntimeRecordsSpec:
+[info] - request and planner output round-trip, with absent and present optional fields
+[info] - query plan round-trips and enums are their case names on the wire
+[info] - an unknown enum value fails decoding
+[info] - resolution and every graph-fact record round-trip
+[info] - semantic result, bundle, synthesis output, and verification round-trip
+[info] - answer and audit record round-trip
+[info] - metric attributes cover every core metric, and the ranked ones are the stored rankings
+[info] - schema versions are distinct
+[info] CorpusSpec:
+[info] - B13 and B15 shapes: corpus component counts of a window, verified, with row provenance
+[info] - B17 shape: communities of at least the stored minimum size; non-convergence is stated
+[info] - B24 shape: the stored pair of windows, with deltas, and the window lengths stated
+[info] - a model claim on corpus evidence is still checked: wrong measure or value is removed
+[info] - Phase 11 work order 2, live B13 and B24 shape: a share written as a percentage
+[info] - Phase 11 work order 2, live B17 shape: 'collaboration communities' names the count
+[info] - without the window-summary port, corpus questions still abstain as NOT_STORED
+[info] - AskCli: --window-summary-root and --window-summary-run wire the port; bad use is refused
+[info] WorkflowSpec:
+[info] - a dominant name resolves with its share; every material claim cites bundle evidence and verifies
+[info] - a shortest path: the PATH and PATH_HOP claims equal the path evidence hop by hop
+[info] - an ambiguous name abstains with every candidate and makes no synthesis call
+[info] - unsupported requests and missing evidence abstain or are stated, never filled in
+[info] - verification statuses: VERIFIED kept, PARTIALLY_SUPPORTED labelled, UNSUPPORTED and CONFLICTING removed
+[info] - model synthesis: bad claims are removed, and with no verified claim the answer abstains
+[info] - prompt injection in the question, a name, a retrieved document, or a title changes no operation, store call, or claim
+[info] - the evidence token budget cuts whole groups, lists the omissions, and cited omitted items fail
+[info] - the audit record, QuerySession, and EvidenceBundle items hold the run facts and no question text
+[info] - m1: stages 3 to 5 are timed separately; a stage the plan gives nothing to do is SKIPPED
+[info] - m2: a candidate list cut at its limit is AMBIGUOUS with a truncation note, never unknown
+[info] - m7: the question deadline is checked before every stage and before every store read
+[info] - m8: request years with yearFrom after yearTo are an invalid plan, stated as reversed
+[info] - repair-01 D4: a failed vector query degrades semantic context; graph facts still answer
+[info] LlmSpec:
+[info] - one enclosing code fence is accepted; prose, two objects, or an unclosed fence are not
+[info] - a recorded Haiku body with a fenced, pretty-printed plan parses and validates
+[info] - a rejected output records its failed rules and shape, never its text; the retry names them
+[info] - synthesis-output-v3: any rank.<k> fact needs rank.<k>.researcherId; the retry names it
+[info] - every Bedrock request is counted, the expired-token retry included (m5)
+[info] - ruling 19a: a synthesis output cut off at max_tokens gets a retry that says so and asks for fewer claims
+[info] PlannerSpec:
+[info] - the rule planner extracts names, windows, and operations of benchmark-style questions
+[info] - validation enforces the operation allowlist: scopes, researcher indexes, metrics, topN
+[info] - a researcher name or filter term that does not occur in the question is rejected
+[info] - window selection: stored windows exact, other ranges widen with a note, no corpus year abstains
+[info] - request fields override the model; retrieval limits are clamped to configuration
+[info] - output schemas: exact keys, enums equal the Scala enums, only the supported keywords
+[info] - the model planner retries once with the failed rule names, then falls back to the rules
+[info] - every model attempt passes the throttle, and an attempt over the token budget is not sent
+[info] - ruling 30: the recorded rule-2 and rule-7 failures name what is allowed; the corrections validate
+[info] - ruling 30: the retry prompt and the audit carry the allowed values, never the model's text
+[info] - ruling 30: planner-v2 states each operation's scopes and metrics from the allowlist
+[info] - ruling 30: every planner rule failure names what is allowed
+[info] BenchmarkSpec:
+[info] - question CSV: quoted commas and escaped quotes parse; bad rows are refused
+[info] - stored path reference: the stored researcher sequence and hop lookup in either direction
+[info] - fake mode: --max 1 answers one question, a rerun resumes by question ID, and the checks pass
+[info] - a stored path that differs from the runtime path fails path-hops and pair-edges
+[info] - claim-evidence fails a material claim that cites only semantic context or an unknown ID
+[info] - a model that never answers is a call failure (no result is recorded); fake mode is not
+[info] - usage: questions and path evidence are required, --max is at least 1, live needs a profile
+[info] RenderSpec:
+[info] - model versioning and selection constants
+[info] - candidates with facts pass the storage candidate validator unchanged
+[info] - rendered documents pass RenderedDocuments.validate and follow the key and hash rules
+[info] - bad inputs: missing facts, facts that disagree, rank gaps, wrong policy, duplicates
+[info] - render CLI writes write-once files and a manifest; a rerun is Unchanged
+[info] - render CLI refuses an unknown model and bad candidates without writing
+[info] HaikuClientSpec:
+[info] - the request body is an Anthropic Messages body with temperature and no top_p
+[info] - the response parser joins text blocks and reads usage; other bodies are refused
+[info] - an expired token is retried once, after the caller's throttle hook, and both requests count
+[info] InjectionSpec:
+[info] - planner prompt: one <question> block, holding the injected question only escaped
+[info] - synthesis prompt: one block per delimiter; question, title, name, and document escaped
+[info] - the injected question changes no plan operation, store call, or claim
+[info] VerifierSpec:
+[info] - numbers: integers exact, decimals equal or rounded half-up from at least 2 decimals
+[info] - F1 (a): a number must be bound to the named fact it states, not to any fact or to none *** FAILED ***
+[info]   UNSUPPORTED did not equal VERIFIED (VerifierSpec.scala:86)
+[info] - F1 (a): a rank number verifies only in a RANKING claim, against that researcher's rank
+[info] - F1 (b): PATH_HOP asserts every fact of its hop, and the joint count is the hop's
+[info] - F1 (c): a decimal never verifies as a rounded integer
+[info] - F2: a window name or year range in the text must be the claim's window
+[info] - F3: a semantic-only claim is never VERIFIED: context only, or removed
+[info] - F4: a name outside the bundle fails, whether a corpus researcher or absent from the corpus
+[info] - N1 (ruling 29): number words are written as digits before binding
+[info] - N1 (ruling 29): a wrong count written as words fails; the right word form verifies
+[info] - N2 (ruling 29): every name in a claim is a researcher of the facts its values assert
+[info] - R3-1: a list-position ordinal binds to the index k of an asserted hop or entry
+[info] - R3-1: an ordering word is no count, and an ordinal outside a ranking is no rank
+[info] - R3-2: the measure name 'on one paper' and fixed phrases are not counts
+[info] - n4 and review 2 n2: a rank is checked against a stored rank, never a year or a listed value
+[info] - n5: ordinals up to fiftieth (and beyond) are checked
+[info] - n6: the prompt's measure names verify: coauthors per paper, intensity in joint publications
+[info] - review 2 n3: a name inside a longer bundle text, or cut by a one-word text, is flagged
+[info] - n7: the audit records removed claims and left-out lines with their reasons
+[info] - ruling 29: the runtime run ID changes with the verifier version
+[info] - ruling 20: summary and uncertainty lines get the numbers, windows, names, and titles checks
+[info] - work order 9, live B18 shape: a number written with digit-group commas is one number
+[info] - work order 9, live B22 shape: a claim on one side of a stored comparison may take that side's window
+[info] - Phase 11 work order 2, live B23 shape: totalWorks is named as the works of the name
+[info] - N5 (Phase 10 review 2): fixed notes are read with number words before year ranges
+[info] - repair-01 D1: a quantity in words (hundreds of, dozens of, a dozen) is not verified
+[info] - repair-01 D2: a qualified number (more than 10, about 10, 10 or more) is not verified *** FAILED ***
+[info]   UNSUPPORTED did not equal VERIFIED (VerifierSpec.scala:1163)
+[info] - repair-01 D3: a negated number (does not have 10, it is false that) is not verified
+[info] - repair-01 controls: bound qualifiers and the template's negations still verify *** FAILED ***
+[info]   texts.exists(((x$1: scala.Tuple2[scholarchain.core.VerificationStatus, scala.Predef.String]) => {
+[info]     val s: scholarchain.core.VerificationStatus = x$1._1
+[info]     val t: scala.Predef.String = x$1._2
+[info]     s.==(scholarchain.core.VerificationStatus.VERIFIED).&&(t.contains(wording))
+[info]   })) was false (How many distinct coauthors does Grace Hopper have?,Vector((VERIFIED,'Grace Hopper' was linked to Grace Hopper (scr:canon-v1.er-v2:3bb726d3da683ea3732d02907753c921) by dominant-name-v1: 6 of 6 works among researchers with this display name.), (VERIFIED,In all-years (2000-2026), Grace Hopper has 2 distinct coauthors (collaboration breadth).))) (VerifierSpec.scala:1242)
+[info] Run completed in 1 second, 794 milliseconds.
+[info] Total number of tests run: 111
+[info] Suites: completed 14, aborted 0
+[info] Tests: succeeded 108, failed 3, canceled 0, ignored 0, pending 0
+[info] *** 3 TESTS FAILED ***
+[error] Failed tests:
+[error] 	scholarchain.rag.runtime.VerifierSpec
+[error] (rag / Test / test) sbt.TestsFailedException: Tests unsuccessful
+[error] Total time: 5 s, completed Nov 13, 2026, 9:54:10 PM

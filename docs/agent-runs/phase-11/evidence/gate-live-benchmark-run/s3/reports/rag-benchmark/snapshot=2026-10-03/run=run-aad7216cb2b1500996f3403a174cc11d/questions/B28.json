@@ -1,0 +1,148 @@
+{
+  "schemaVersion": "rag-benchmark-result-v2",
+  "questionId": "B28",
+  "category": "institutions",
+  "mode": "LIVE",
+  "runtimeRunId": "run-da948201a77e0fe136727d99a55c2b89",
+  "queryId": "qry-eae40e0967ad24269154d262f9e22e6d",
+  "planSource": "MODEL",
+  "operations": [
+    "INSTITUTION_FILTER/RESEARCHER"
+  ],
+  "metrics": [],
+  "window": "2000-2014",
+  "resolutions": [
+    {
+      "name": "Albert Y. Zomaya",
+      "decision": "RESOLVED_DOMINANT",
+      "researcherId": "scr:canon-v1.er-v2:9c35232fa374c48fdc67309bfedd5f7c",
+      "topShare": 0.9901639344262295,
+      "candidateCount": 4
+    }
+  ],
+  "abstained": true,
+  "abstentionReason": "UNSUPPORTED_REQUEST",
+  "verification": {
+    "verified": 0,
+    "partiallySupported": 0,
+    "unsupported": 0,
+    "conflicting": 0
+  },
+  "claims": 0,
+  "graph": {
+    "reads": 8,
+    "readsByTemplate": {
+      "kv.metrics.window": 1,
+      "graph.authored-counts": 1,
+      "graph.coauthors": 4,
+      "kv.entity-link": 1,
+      "graph.researcher-institutions": 1
+    },
+    "rows": 17,
+    "truncatedReads": 1,
+    "evidenceItems": 0,
+    "tokens": 0,
+    "omittedItems": 0,
+    "latencyMs": 2,
+    "pathStatuses": []
+  },
+  "semantic": {
+    "embeddingCalls": 0,
+    "embeddingInputTokens": 0,
+    "indexes": [],
+    "hits": 0,
+    "tokens": 0,
+    "omittedItems": 0,
+    "latencyMs": 0,
+    "outcome": "SKIPPED"
+  },
+  "llm": {
+    "attempts": 1,
+    "requests": 1,
+    "attemptsByStage": {
+      "QUERY_PLANNING": 1
+    },
+    "outcomes": {
+      "OK": 1
+    },
+    "inputTokens": 2519,
+    "outputTokens": 183,
+    "throttleWaitMs": 4185
+  },
+  "latencyMs": 5349,
+  "stageLatencyMs": {
+    "COLLABORATION_METRICS": 1,
+    "PATH_FINDING": 0,
+    "EVIDENCE_BUILDING": 0,
+    "AUDIT": 0,
+    "QUERY_PLANNING": 5331,
+    "SEMANTIC_CONTEXT": 0,
+    "COMMUNITY_ANALYSIS": 1,
+    "CLAIM_VERIFICATION": 0,
+    "RESEARCHER_RESOLUTION": 12,
+    "ANSWER_SYNTHESIS": 0
+  },
+  "checks": [
+    {
+      "name": "plan-operations",
+      "outcome": "PASS",
+      "detail": "needs INSTITUTION_FILTER; plan [INSTITUTION_FILTER/RESEARCHER]"
+    },
+    {
+      "name": "researcher-names",
+      "outcome": "PASS",
+      "detail": "expected [Albert Y. Zomaya], extracted [Albert Y. Zomaya]"
+    },
+    {
+      "name": "resolution",
+      "outcome": "PASS",
+      "detail": "Albert Y. Zomaya: expected RESOLVED_DOMINANT, got RESOLVED_DOMINANT"
+    },
+    {
+      "name": "abstention",
+      "outcome": "PASS",
+      "detail": "expected abstain, got abstain (UNSUPPORTED_REQUEST)"
+    },
+    {
+      "name": "claim-evidence",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no claim"
+    },
+    {
+      "name": "verification",
+      "outcome": "PASS",
+      "detail": "abstained with no verified claim kept; counts 0/0/0/0; final claims 0 verified of 0"
+    },
+    {
+      "name": "bundle-budget",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no bundle"
+    },
+    {
+      "name": "llm-budget",
+      "outcome": "PASS",
+      "detail": "1 attempts, 1 requests (QUERY_PLANNING 1), tokens in 2519 out 183"
+    },
+    {
+      "name": "embedding-budget",
+      "outcome": "PASS",
+      "detail": "0 embedding calls for 0 indexes queried"
+    },
+    {
+      "name": "path-hops",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no path evidence in the bundle"
+    },
+    {
+      "name": "pair-edges",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no bundle edge has stored path evidence"
+    },
+    {
+      "name": "deadline",
+      "outcome": "PASS",
+      "detail": "5349 ms of 180000"
+    }
+  ],
+  "answerHash": "sha256:6dfa7de5fac90ac06f4c76fc497ef5569ab6b0f5d34780f33d2d50279d8ca76f"
+}

@@ -1,0 +1,29 @@
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] scalafmt: Formatting 1 Scala sources (/Users/achyutpatel/Developer/Cloud/ScholarChain/modules/rag)...
+[success] Total time: 3 s, completed Nov 13, 2026, 9:52:19 PM
+[info] compiling 1 Scala source to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/rag/target/scala-3.3.7/test-classes ...
+[info] done compiling
+[info] VerifierSpec:
+[info] - repair-01 D1: a quantity in words (hundreds of, dozens of, a dozen) is not verified
+[info] - repair-01 D2: a qualified number (more than 10, about 10, 10 or more) is not verified
+[info] - repair-01 D3: a negated number (does not have 10, it is false that) is not verified
+[info] - repair-01 controls: bound qualifiers and the template's negations still verify *** FAILED ***
+[info]   texts.exists(((x$1: scala.Tuple2[scholarchain.core.VerificationStatus, scala.Predef.String]) => {
+[info]     val s: scholarchain.core.VerificationStatus = x$1._1
+[info]     val t: scala.Predef.String = x$1._2
+[info]     s.==(scholarchain.core.VerificationStatus.VERIFIED).&&(t.contains(wording))
+[info]   })) was false (Which connected component is Ada Lovelace in?,Vector((VERIFIED,'Ada Lovelace' was linked to Ada Lovelace (scr:canon-v1.er-v2:3ed012c7e9d38ac0dc513403ec31176a) by dominant-name-v1: 10 of 11 works among researchers with this display name.), (VERIFIED,In all-years, Ada Lovelace is in connected component comp-468b188c4a19c919e7dfaa0ec98cfe69 of 3 researchers.), (PARTIALLY_SUPPORTED,Descriptive context was retrieved from researcher-profile-v1 by vector similarity (context only).))) (VerifierSpec.scala:1222)
+[info] Run completed in 758 milliseconds.
+[info] Total number of tests run: 4
+[info] Suites: completed 1, aborted 0
+[info] Tests: succeeded 3, failed 1, canceled 0, ignored 0, pending 0
+[info] *** 1 TEST FAILED ***
+[error] Failed tests:
+[error] 	scholarchain.rag.runtime.VerifierSpec
+[error] (rag / Test / testOnly) sbt.TestsFailedException: Tests unsuccessful
+[error] Total time: 5 s, completed Nov 13, 2026, 9:52:25 PM

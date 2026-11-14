@@ -1,0 +1,48 @@
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] scalafmt: Formatting 1 Scala sources (/Users/achyutpatel/Developer/Cloud/ScholarChain/modules/services)...
+[success] Total time: 1 s, completed Nov 13, 2026, 10:27:39 PM
+[success] Total time: 0 s, completed Nov 13, 2026, 10:27:39 PM
+[info] compiling 5 Scala sources to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/services/target/scala-3.3.7/test-classes ...
+[info] done compiling
+[info] GraphEvidenceApiSpec:
+[info] - query to evidence: every evidence ID an answer cites resolves with provenance (509 milliseconds)
+[info] - missing evidence is 404; a malformed ID never reaches the store (31 milliseconds)
+[info] - graph node: found with properties, unknown 404, encoded IDs with slashes work (25 milliseconds)
+[info] - neighbors: bounded parameters, allowlisted edge types, and bound cursors (109 milliseconds)
+[info] - a slow store is 504, a failing one 502, then the breaker fails fast and readiness drops (236 milliseconds)
+[info] - an IllegalArgumentException inside a downstream call is 500 with no detail (repair-01 m5) (20 milliseconds)
+[info] - beyond its threads and queue a service sheds load with 503 OVERLOADED (16 milliseconds)
+[info] SaturationSpec:
+[info] - query-api: with every workflow slot held, jobs, explain, and readiness still answer (1 second, 540 milliseconds)
+[info] - worker: an overrun job holds only its workflow slot; no job is claimed until it frees (2 seconds, 48 milliseconds)
+[info] BuildingBlocksSpec:
+[info] - breaker: opens after the threshold, fails fast while open, half-opens after the interval (8 milliseconds)
+[info] - downstream calls: timeout, retries only for retryable reads, breaker per downstream (83 milliseconds)
+[info] - waiting to start is no downstream failure: 503 OVERLOADED, no breaker (repair-01 F1) (4 seconds, 523 milliseconds)
+[info] - rate limiter: a sliding minute (1 millisecond)
+[info] - cursor: round trip, bound to its walk, and opaque garbage rejected (1 millisecond)
+[info] - IDs: valid client values echoed, anything else replaced (0 milliseconds)
+[info] - API key: exact match only, any length; the key is never printed (0 milliseconds)
+[info] CorpusQuerySpec:
+[info] - B13 shape: corpus components in 2000-2014 answered with VERIFIED claims from the summary (449 milliseconds)
+[info]   + claim-1 VERIFIED: In 2000-2014, the coauthorship graph has 33 connected components; the largest connected component has 252 researchers out of 400 researchers, a share of 0.6300. 
+[info]   + claim-2 VERIFIED: In 2000-2014, 13 singleton researchers (researchers without any coauthor edge in that window) are among the 400 researchers of the coauthorship graph. 
+[info] - an empty runtime.window-summary.load-run leaves the port unset: corpus questions abstain (47 milliseconds)
+[info] - LocalRun passes --window-summary-root through; a bad or missing object stops startup (20 seconds, 53 milliseconds)
+[info] - graph-evidence-api never opens the window-summary object; same runtime run (repair-01 m3) (53 milliseconds)
+[info] - the graph-evidence-api main itself passes answers = false (repair-01 Part C) (385 milliseconds)
+[info] RequestReadSpec:
+[info] - D5: a refused or unread body that never arrives does not hold the exchange or the thread (391 milliseconds)
+[info] - D5: a body or header slower than the read timeout loses its connection; threads freed (30 seconds, 155 milliseconds)
+[info] Run completed in 30 seconds, 637 milliseconds.
+[info] Total number of tests run: 23
+[info] Suites: completed 5, aborted 0
+[info] Tests: succeeded 23, failed 0, canceled 0, ignored 0, pending 0
+[info] All tests passed.
+[success] Total time: 34 s, completed Nov 13, 2026, 10:28:13 PM
+exit 0

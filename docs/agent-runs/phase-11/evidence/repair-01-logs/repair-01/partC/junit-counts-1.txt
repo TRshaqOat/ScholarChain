@@ -1,0 +1,14 @@
+core: tests 185 failures 0 errors 0 skipped 0 suites 4
+entity-resolution: tests 111 failures 0 errors 0 skipped 0 suites 10
+hadoop: tests 70 failures 0 errors 0 skipped 0 suites 6
+rag: tests 111 failures 0 errors 0 skipped 0 suites 14
+services: tests 46 failures 0 errors 0 skipped 0 suites 9
+spark: tests 46 failures 0 errors 0 skipped 0 suites 8
+storage: tests 108 failures 0 errors 0 skipped 0 suites 11
+tests: tests 108 failures 5 errors 0 skipped 9 suites 16
+TOTAL: tests 785 failures 5 errors 0 skipped 9 suites 78
+failure: scholarchain.tests.adversarial.ApiBodyAdversarialSpec :: a declared body that never arrives does not hold the exchange open (refused, 401, or unread) :: org.scalatest.exceptions.TestFailedException: A block of code that was marked pendingUntilFixed did not throw an exception. Remove "pendingUntilFixed" and the c
+failure: scholarchain.tests.adversarial.RagModelOutputAdversarialSpec :: a throttled vector query (once, or every time) does not fail an answer the graph supports :: org.scalatest.exceptions.TestFailedException: A block of code that was marked pendingUntilFixed did not throw an exception. Remove "pendingUntilFixed" and the c
+failure: scholarchain.tests.adversarial.UnsupportedClaimAdversarialSpec :: a quantity stated only in words (hundreds of, dozens of, a dozen) is not verified :: org.scalatest.exceptions.TestFailedException: A block of code that was marked pendingUntilFixed did not throw an exception. Remove "pendingUntilFixed" and the c
+failure: scholarchain.tests.adversarial.UnsupportedClaimAdversarialSpec :: a comparison the stored value contradicts (more than 10, fewer than 10) is not verified :: org.scalatest.exceptions.TestFailedException: A block of code that was marked pendingUntilFixed did not throw an exception. Remove "pendingUntilFixed" and the c
+failure: scholarchain.tests.adversarial.UnsupportedClaimAdversarialSpec :: a negated statement of the stored value (does not have 10) is not verified :: org.scalatest.exceptions.TestFailedException: A block of code that was marked pendingUntilFixed did not throw an exception. Remove "pendingUntilFixed" and the c

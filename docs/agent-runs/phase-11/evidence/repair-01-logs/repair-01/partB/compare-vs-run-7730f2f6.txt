@@ -1,0 +1,34 @@
+old run-7730f2f6f85f3bc22754e299a2136e16 runtime run-c2198066e1f52dcdbfbb6eafe6b2b4c3 questions 30
+new run-6acd1b5b8b39225000e9599b827f369d runtime run-bcc6454a98b785018d0df03546bf06bc questions 30
+B01 ans  V/P/U/C old [3, 1, 0, 0] new [3, 1, 0, 0] claims=True summary=True uncertainty=True abstention=True checks=True counts=True 
+B02 ans  V/P/U/C old [3, 1, 0, 0] new [3, 1, 0, 0] claims=True summary=True uncertainty=True abstention=True checks=True counts=True 
+B03 ans  V/P/U/C old [1, 1, 0, 0] new [1, 1, 0, 0] claims=True summary=True uncertainty=True abstention=True checks=True counts=True 
+B04 ans  V/P/U/C old [1, 0, 0, 0] new [1, 0, 0, 0] claims=True summary=True uncertainty=True abstention=True checks=True counts=True 
+B05 ans  V/P/U/C old [3, 1, 0, 0] new [3, 1, 0, 0] claims=True summary=True uncertainty=True abstention=True checks=True counts=True 
+B06 ans  V/P/U/C old [3, 2, 0, 0] new [3, 2, 0, 0] claims=True summary=True uncertainty=True abstention=True checks=True counts=True 
+B07 ans  V/P/U/C old [4, 2, 0, 0] new [4, 2, 0, 0] claims=True summary=True uncertainty=True abstention=True checks=True counts=True 
+B08 ans  V/P/U/C old [4, 2, 0, 0] new [4, 2, 0, 0] claims=True summary=True uncertainty=True abstention=True checks=True counts=True 
+B09 abst AMBIGUOUS_RESEARCHER V/P/U/C old [0, 0, 0, 0] new [0, 0, 0, 0] claims=True summary=True uncertainty=True abstention=True checks=True counts=True 
+B10 ans  V/P/U/C old [9, 2, 0, 0] new [9, 2, 0, 0] claims=True summary=True uncertainty=True abstention=True checks=True counts=True 
+B11 ans  V/P/U/C old [9, 2, 0, 0] new [9, 2, 0, 0] claims=True summary=True uncertainty=True abstention=True checks=True counts=True 
+B12 abst UNKNOWN_RESEARCHER V/P/U/C old [0, 0, 0, 0] new [0, 0, 0, 0] claims=True summary=True uncertainty=True abstention=True checks=True counts=True 
+B13 ans  V/P/U/C old [2, 0, 0, 0] new [2, 0, 0, 0] claims=True summary=True uncertainty=True abstention=True checks=True counts=True 
+B14 ans  V/P/U/C old [4, 1, 0, 0] new [4, 1, 0, 0] claims=True summary=True uncertainty=True abstention=True checks=True counts=True 
+B15 ans  V/P/U/C old [2, 0, 0, 0] new [2, 0, 0, 0] claims=True summary=True uncertainty=True abstention=True checks=True counts=True 
+B16 ans  V/P/U/C old [3, 1, 0, 0] new [3, 1, 0, 0] claims=True summary=True uncertainty=True abstention=True checks=True counts=True 
+B17 ans  V/P/U/C old [2, 0, 0, 0] new [2, 0, 0, 0] claims=True summary=True uncertainty=True abstention=True checks=True counts=True 
+B18 ans  V/P/U/C old [3, 2, 0, 0] new [3, 2, 0, 0] claims=True summary=True uncertainty=True abstention=True checks=True counts=True 
+B19 ans  V/P/U/C old [1, 0, 0, 0] new [1, 0, 0, 0] claims=True summary=True uncertainty=True abstention=True checks=True counts=True 
+B20 ans  V/P/U/C old [3, 1, 0, 0] new [3, 1, 0, 0] claims=True summary=True uncertainty=True abstention=True checks=True counts=True 
+B21 ans  V/P/U/C old [1, 0, 0, 0] new [1, 0, 0, 0] claims=True summary=True uncertainty=True abstention=True checks=True counts=True 
+B22 ans  V/P/U/C old [5, 1, 0, 0] new [5, 1, 0, 0] claims=True summary=True uncertainty=True abstention=True checks=True counts=True 
+B23 ans  V/P/U/C old [3, 1, 0, 0] new [3, 1, 0, 0] claims=True summary=True uncertainty=True abstention=True checks=True counts=True 
+B24 ans  V/P/U/C old [4, 0, 0, 0] new [4, 0, 0, 0] claims=True summary=True uncertainty=True abstention=True checks=True counts=True 
+B25 ans  V/P/U/C old [2, 1, 0, 0] new [2, 1, 0, 0] claims=True summary=True uncertainty=True abstention=True checks=True counts=True 
+B26 ans  V/P/U/C old [1, 1, 0, 0] new [1, 1, 0, 0] claims=True summary=True uncertainty=True abstention=True checks=True counts=True 
+B27 ans  V/P/U/C old [2, 1, 0, 0] new [2, 1, 0, 0] claims=True summary=True uncertainty=True abstention=True checks=True counts=True 
+B28 abst UNSUPPORTED_REQUEST V/P/U/C old [0, 0, 0, 0] new [0, 0, 0, 0] claims=True summary=True uncertainty=True abstention=True checks=True counts=True 
+B29 ans  V/P/U/C old [4, 2, 0, 0] new [4, 2, 0, 0] claims=True summary=True uncertainty=True abstention=True checks=True counts=True 
+B30 ans  V/P/U/C old [9, 2, 0, 0] new [9, 2, 0, 0] claims=True summary=True uncertainty=True abstention=True checks=True counts=True 
+totals V/P/U/C old [91, 28, 0, 0] new [91, 28, 0, 0]
+questions with any difference: 0

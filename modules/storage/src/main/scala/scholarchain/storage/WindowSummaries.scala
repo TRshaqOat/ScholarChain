@@ -94,6 +94,49 @@ object WindowSummaries:
   )
   private val ComponentId = "comp-[0-9a-f]{32}".r
 
+  /** Whether c groups, s of them of one member and the largest of l members, can partition r
+    * researchers (components and communities both do, singletons included). BigInt, so a tampered
+    * value cannot overflow into a pass.
+    */
+  private def partitionOk(r: BigInt, c: BigInt, l: BigInt, s: BigInt): Boolean =
+    val big = c - s // groups of two or more; the largest is one of them
+    if r == 0 then c == 0 && l == 0 && s == 0
+    else if l == 1 then s == c && c == r
+    else l >= 2 && big >= 1 && s + l + 2 * (big - 1) <= r && r - s <= l * big
+
+  /** Count identities of a real summary (Phase 11 D10): each partition is possible, the edges fit
+    * the components, and communitiesAtLeastMinSize fits the community sizes. Pairwise bounds alone
+    * accept counts no graph can have.
+    */
+  private def identityProblems(s: WindowSummary): List[String] =
+    val List(r, e, comps, lc, singles, c, l, sc, a, m) = List(
+      s.researchers,
+      s.coauthorEdges,
+      s.components,
+      s.largestComponentSize,
+      s.singletonResearchers,
+      s.communities,
+      s.largestCommunitySize,
+      s.singletonCommunities,
+      s.communitiesAtLeastMinSize,
+      s.communityMinSize.toLong
+    ).map(BigInt(_)): @unchecked
+    // a spanning forest needs researchers - components edges; a node has at most largest - 1
+    val edgesOk = r - comps <= e && 2 * e <= (r - singles) * (lc - 1).max(0)
+    // communities of at least m: all of them when m = 1, exactly the non-singletons when m = 2
+    val atMost = if m <= 1 then c else c - sc
+    val atLeastOk =
+      if l < m then a == 0
+      else a >= 1 && a <= atMost && (m > 2 || a == atMost) && (a - 1) * m + l + (c - a) <= r
+    List(
+      Option.unless(partitionOk(r, comps, lc, singles))(
+        "components cannot partition the researchers"
+      ),
+      Option.unless(partitionOk(r, c, l, sc))("communities cannot partition the researchers"),
+      Option.unless(edgesOk)("coauthorEdges do not fit the components"),
+      Option.unless(atLeastOk)("communitiesAtLeastMinSize does not fit the community sizes")
+    ).flatten
+
   /** Rule violations of one row; empty means valid. */
   def problems(s: WindowSummary, windows: Map[String, TimeWindow]): List[String] =
     def check(ok: Boolean, msg: => String) = if ok then Nil else List(msg)
@@ -133,6 +176,7 @@ object WindowSummaries:
           s.coauthorEdges <= s.sumJointPublicationCount,
         "counts are inconsistent"
       ) ++
+      identityProblems(s) ++
       (if s.researchers == 0 then
          check(
            s.largestComponentId.isEmpty && s.largestCommunityId.isEmpty &&

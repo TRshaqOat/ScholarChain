@@ -163,6 +163,84 @@ class WindowSummarySpec extends AnyFunSuite:
     )
   }
 
+  test("phase 11 D10: counts no graph can have are refused; real-shaped counts still open") {
+    val good = rows()
+    val lines = good.map(upickle.default.write(_))
+    def rowCodes(s: WindowSummary) =
+      WindowSummaries
+        .parse(
+          key,
+          lines.updated(0, upickle.default.write(s)).mkString("\n").getBytes(UTF_8),
+          windows
+        )
+        .left
+        .toOption
+        .toVector
+        .flatten
+    // The WO3 control row: 1,200 researchers, 45 components (largest 900, 28 singletons), 130
+    // communities (largest 60, 31 singletons), 64 of at least 3.
+    def sized(lc: Long, lcm: Long) =
+      good.head.copy(
+        researchers = 1200,
+        coauthorEdges = 2400,
+        sumJointPublicationCount = 3600,
+        components = 45,
+        largestComponentSize = lc,
+        singletonResearchers = 28,
+        communities = 130,
+        largestCommunitySize = lcm,
+        singletonCommunities = 31,
+        communitiesAtLeastMinSize = 64,
+        largestComponentFraction = Some(lc.toDouble / 1200),
+        largestCommunityFraction = Some(lcm.toDouble / 1200)
+      )
+    val control = sized(900, 60)
+    assert(rowCodes(control).isEmpty)
+    // the fixture row is a forest (edges = researchers - components); a clique of 5 plus 5
+    // singletons (edges at the degree bound) is real too
+    val g = good.head
+    assert(rowCodes(g).isEmpty && g.coauthorEdges == g.researchers - g.components)
+    assert(
+      rowCodes(
+        g.copy(
+          coauthorEdges = 10,
+          sumJointPublicationCount = 10,
+          components = 6,
+          singletonResearchers = 5
+        )
+      ).isEmpty
+    )
+    val impossible = Vector(
+      // the three WO3 failure inputs
+      "largest component 900 with 1,000 components" -> control.copy(components = 1000),
+      "1,100 communities with a largest of 60" -> control.copy(communities = 1100),
+      "64 communities of at least 3 when the largest has 2" -> sized(900, 2),
+      // the work order's identities one by one, and the edge bounds
+      "largest component above researchers - (components - 1)" ->
+        control.copy(components = 302, singletonResearchers = 0),
+      "largest community above researchers - (communities - 1)" ->
+        control.copy(communities = 1142, singletonCommunities = 1000),
+      // each of these community partitions is possible; only communitiesAtLeastMinSize is not
+      "communitiesAtLeastMinSize x communityMinSize above researchers" -> sized(900, 3)
+        .copy(communities = 500, singletonCommunities = 0, communitiesAtLeastMinSize = 401),
+      "communitiesAtLeastMinSize > 0 when the largest community is below the minimum" ->
+        sized(900, 2).copy(communities = 650, singletonCommunities = 100),
+      "more communities of at least 3 than communities of two or more" ->
+        control.copy(communitiesAtLeastMinSize = 100),
+      "fewer edges than a spanning forest" -> control.copy(coauthorEdges = 1154),
+      "more edges than the degree bound allows" ->
+        g.copy(coauthorEdges = 17, sumJointPublicationCount = 17),
+      "overflowing counts" -> control.copy(
+        coauthorEdges = Long.MaxValue,
+        sumJointPublicationCount = Long.MaxValue
+      )
+    )
+    impossible.foreach { (name, s) =>
+      val vs = rowCodes(s)
+      assert(vs.nonEmpty && vs.forall(_.code == "BAD_ROW"), s"$name: $vs")
+    }
+  }
+
   test("a manifest with integrity violations, another schema, or another row count is refused") {
     def from(m: ujson.Obj) = WindowSummaries.fromSparkManifest("m", m, windows)
     val v = sparkManifest();

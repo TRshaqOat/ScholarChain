@@ -1,0 +1,10 @@
+label: D2-qualifier
+file: modules/rag/src/main/scala/scholarchain/rag/runtime/Verifier.scala
+sha256 before: a4aebe1e4a15f14feab942c401f950fbd11a8f1bb610677edbf4fe879b5a802c
+patched sha256: 355605b93a5004af01293624be0e5fe40ad765f56dd096b28bc32ae36c986b21
+sbt exit: 1
+[info] - repair-01 D2: a qualified number (more than 10, about 10, 10 or more) is not verified *** FAILED ***
+[info] - repair-01 controls: bound qualifiers and the template's negations still verify *** FAILED ***
+[info] Tests: succeeded 109, failed 2, canceled 0, ignored 0, pending 0
+sha256 restored: a4aebe1e4a15f14feab942c401f950fbd11a8f1bb610677edbf4fe879b5a802c
+RESTORE OK

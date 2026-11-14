@@ -1,0 +1,152 @@
+{
+  "schemaVersion": "rag-benchmark-result-v2",
+  "questionId": "B18",
+  "category": "communities",
+  "mode": "LIVE",
+  "runtimeRunId": "run-da948201a77e0fe136727d99a55c2b89",
+  "queryId": "qry-d1ea19fe0a84dcfd0a4556d09b94bfdf",
+  "planSource": "MODEL",
+  "operations": [
+    "COMPONENT_LOOKUP/RESEARCHER",
+    "TOPIC_FILTER/CORPUS"
+  ],
+  "metrics": [],
+  "window": "all-years",
+  "resolutions": [
+    {
+      "name": "Rajkumar Buyya",
+      "decision": "RESOLVED_DOMINANT",
+      "researcherId": "scr:canon-v1.er-v2:bede83f65bedfab8f7fc802f295ee293",
+      "topShare": 0.964516129032258,
+      "candidateCount": 11
+    }
+  ],
+  "abstained": false,
+  "abstentionReason": null,
+  "verification": {
+    "verified": 3,
+    "partiallySupported": 0,
+    "unsupported": 1,
+    "conflicting": 0
+  },
+  "claims": 3,
+  "graph": {
+    "reads": 18,
+    "readsByTemplate": {
+      "kv.metrics.window": 1,
+      "graph.authored-counts": 1,
+      "graph.coauthors": 11,
+      "kv.entity-link": 4,
+      "graph.researcher-institutions": 1
+    },
+    "rows": 40,
+    "truncatedReads": 1,
+    "evidenceItems": 3,
+    "tokens": 577,
+    "omittedItems": 0,
+    "latencyMs": 4,
+    "pathStatuses": []
+  },
+  "semantic": {
+    "embeddingCalls": 1,
+    "embeddingInputTokens": 0,
+    "indexes": [
+      "researcher-profile-v1"
+    ],
+    "hits": 1,
+    "tokens": 618,
+    "omittedItems": 0,
+    "latencyMs": 206,
+    "outcome": "OK"
+  },
+  "llm": {
+    "attempts": 2,
+    "requests": 2,
+    "attemptsByStage": {
+      "QUERY_PLANNING": 1,
+      "ANSWER_SYNTHESIS": 1
+    },
+    "outcomes": {
+      "OK": 2
+    },
+    "inputTokens": 6022,
+    "outputTokens": 1122,
+    "throttleWaitMs": 11666
+  },
+  "latencyMs": 17611,
+  "stageLatencyMs": {
+    "COLLABORATION_METRICS": 2,
+    "PATH_FINDING": 2,
+    "EVIDENCE_BUILDING": 1,
+    "AUDIT": 0,
+    "QUERY_PLANNING": 6947,
+    "SEMANTIC_CONTEXT": 206,
+    "COMMUNITY_ANALYSIS": 0,
+    "CLAIM_VERIFICATION": 14,
+    "RESEARCHER_RESOLUTION": 39,
+    "ANSWER_SYNTHESIS": 10392
+  },
+  "checks": [
+    {
+      "name": "plan-operations",
+      "outcome": "FAIL",
+      "detail": "needs COMMUNITY_COMPARISON; plan [COMPONENT_LOOKUP/RESEARCHER, TOPIC_FILTER/CORPUS]"
+    },
+    {
+      "name": "researcher-names",
+      "outcome": "PASS",
+      "detail": "expected [Rajkumar Buyya], extracted [Rajkumar Buyya]"
+    },
+    {
+      "name": "resolution",
+      "outcome": "PASS",
+      "detail": "Rajkumar Buyya: expected RESOLVED_DOMINANT, got RESOLVED_DOMINANT"
+    },
+    {
+      "name": "abstention",
+      "outcome": "PASS",
+      "detail": "expected answer, got answer"
+    },
+    {
+      "name": "claim-evidence",
+      "outcome": "PASS",
+      "detail": "3 claims cite bundle IDs; 3 material claims each cite a graph item; 0 descriptive"
+    },
+    {
+      "name": "verification",
+      "outcome": "PASS",
+      "detail": "answer has a verified claim; counts 3/0/1/0; final claims 3 verified of 3"
+    },
+    {
+      "name": "bundle-budget",
+      "outcome": "PASS",
+      "detail": "graph 577/8000 tokens, semantic 618/3000, items 4/300"
+    },
+    {
+      "name": "llm-budget",
+      "outcome": "PASS",
+      "detail": "2 attempts, 2 requests (ANSWER_SYNTHESIS 1, QUERY_PLANNING 1), tokens in 6022 out 1122"
+    },
+    {
+      "name": "embedding-budget",
+      "outcome": "PASS",
+      "detail": "1 embedding calls for 1 indexes queried"
+    },
+    {
+      "name": "path-hops",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no path evidence in the bundle"
+    },
+    {
+      "name": "pair-edges",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no bundle edge has stored path evidence"
+    },
+    {
+      "name": "deadline",
+      "outcome": "PASS",
+      "detail": "17611 ms of 180000"
+    }
+  ],
+  "answerHash": "sha256:aaa917e4b7e01c61a9e6ed5cdcf37dd6a640d74407d25544f8b411ce56f82ebb"
+}

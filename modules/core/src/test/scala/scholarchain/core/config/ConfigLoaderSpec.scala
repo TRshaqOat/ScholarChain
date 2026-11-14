@@ -127,7 +127,12 @@ class ConfigLoaderSpec extends AnyFunSuite:
   }
 
   test("a non-local environment with every value supplied loads") {
-    val env = ConfigLoader.EnvOverrides.keys.map(k => k -> s"value-${k.toLowerCase}").toMap ++ Map(
+    assert(ConfigLoader.load(devEnv).map(_.environment) == Right("dev"))
+  }
+
+  /** A complete, valid non-local ("dev") environment from variables alone. */
+  private lazy val devEnv: Map[String, String] =
+    ConfigLoader.EnvOverrides.keys.map(k => k -> s"value-${k.toLowerCase}").toMap ++ Map(
       "SCHOLARCHAIN_ENVIRONMENT" -> "dev",
       "SCHOLARCHAIN_AWS_ACCOUNT_ID" -> "111111111111",
       "SCHOLARCHAIN_BUCKET" -> "scholarchain-dev-111111111111-us-east-2",
@@ -146,7 +151,77 @@ class ConfigLoaderSpec extends AnyFunSuite:
       "SCHOLARCHAIN_JOB_MAX_RECEIVE_COUNT" -> "5",
       "SCHOLARCHAIN_WINDOW_SUMMARY_RUN" -> summaryRun
     )
-    assert(ConfigLoader.load(env).map(_.environment) == Right("dev"))
+
+  private def errorsOf(env: Map[String, String]): String =
+    ConfigLoader.load(env).fold(_.mkString("; "), c => fail(s"loaded: $c"))
+
+  test("phase 11 D11: an index entry set to null stops the load (no silently dropped index)") {
+    for k <- Seq("abstracts", "communities", "paths", "researchers", "topic-institutions") do
+      val f = file(s"scholarchain.s3-vectors.indexes.$k = null")
+      assert(errorsOf(Map(ConfigLoader.ConfigFileEnv -> f.toString)).contains(k))
+  }
+
+  test("phase 11 D12: outside local, a blank value from a file or an empty variable is refused") {
+    val fileKeys = Seq(
+      "application.region",
+      "storage.bucket",
+      "neptune.endpoint",
+      "neptune.loader-role-arn",
+      "dynamodb.table-prefix",
+      "s3-vectors.vector-bucket",
+      "s3-vectors.indexes.researchers",
+      "models.embedding-model",
+      "models.planner-model",
+      "models.synthesis-model",
+      "graph.policy-version",
+      "entity-resolution.policy-version",
+      "retrieval.fusion-policy-version",
+      "runtime.prompts-dir",
+      "services.queue.url",
+      "services.api-key-env"
+    )
+    // The variable layer wins, so drop the variable that would otherwise set the same key.
+    val pathToVar = ConfigLoader.EnvOverrides.map(_.swap)
+    for k <- fileKeys; blank <- Seq("", "  ") do
+      val f = file(s"scholarchain.$k = \"$blank\"")
+      val env = devEnv -- pathToVar.get(k) + (ConfigLoader.ConfigFileEnv -> f.toString)
+      assert(errorsOf(env).contains(k), k)
+    for v <- Seq(
+        "SCHOLARCHAIN_AWS_REGION",
+        "SCHOLARCHAIN_NEPTUNE_ENDPOINT",
+        "SCHOLARCHAIN_VECTOR_BUCKET",
+        "SCHOLARCHAIN_EMBEDDING_MODEL_ID",
+        "SCHOLARCHAIN_PLANNER_MODEL_ID",
+        "SCHOLARCHAIN_SYNTHESIS_MODEL_ID",
+        "SCHOLARCHAIN_GRAPH_POLICY_VERSION",
+        "SCHOLARCHAIN_ER_POLICY_VERSION"
+      )
+    do assert(errorsOf(devEnv + (v -> "")).contains(ConfigLoader.EnvOverrides(v)), v)
+  }
+
+  test("phase 11 D13: a fractional value for an integer key is refused, never truncated") {
+    for (v, x) <- Seq(
+        "SCHOLARCHAIN_ER_MAX_BLOCK_SIZE" -> "150.5",
+        "SCHOLARCHAIN_NEPTUNE_PORT" -> "8182.9",
+        "SCHOLARCHAIN_JOB_MAX_RECEIVE_COUNT" -> "3.7"
+      )
+    do assert(errorsOf(Map(v -> x)).contains(ConfigLoader.EnvOverrides(v)), v)
+    for h <- Seq(
+        "services.query-api.threads = 8.5",
+        "graph.oversize-team-threshold = 99.9",
+        """graph.windows = [{ name = "a", start-year = 2000.5, end-year = 2010 }]"""
+      )
+    do
+      assert(
+        errorsOf(Map(ConfigLoader.ConfigFileEnv -> file(s"scholarchain { $h }").toString))
+          .contains("whole number"),
+        h
+      )
+    assert(load("SCHOLARCHAIN_ER_MAX_BLOCK_SIZE" -> "151").entityResolution.maxBlockSize == 151)
+  }
+
+  test("phase 11 finding 2: the core community-max-iterations equals the Spark value, 10") {
+    assert(load().analytics.communityMaxIterations == 10)
   }
 
   private val queueUrl = "https://sqs.us-east-2.amazonaws.com/111111111111/scholarchain-dev-jobs"

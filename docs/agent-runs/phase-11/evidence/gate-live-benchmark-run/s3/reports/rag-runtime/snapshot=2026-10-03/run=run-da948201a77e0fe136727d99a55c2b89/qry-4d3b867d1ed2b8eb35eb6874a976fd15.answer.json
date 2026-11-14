@@ -1,0 +1,163 @@
+{
+  "schemaVersion": "rag-answer-v1",
+  "response": {
+    "schemaVersion": "answer-response-v1",
+    "queryId": "qry-4d3b867d1ed2b8eb35eb6874a976fd15",
+    "summary": "In 2000-2014, the largest connected component contained 46,062 researchers out of 66,350 total researchers, representing a 69.4% share.",
+    "claims": [
+      {
+        "schemaVersion": "answer-claim-v1",
+        "claimId": "claim-1",
+        "text": "In 2000-2014, the largest connected component contained 46,062 researchers out of 66,350 total researchers, representing a 69.4% share.",
+        "evidenceIds": [
+          "ev-b0de284ed5b7a6dd4680db3a6dabcf76"
+        ],
+        "verificationStatus": "VERIFIED",
+        "uncertainty": null,
+        "provenance": {
+          "schemaVersion": "provenance-v1",
+          "sourceDataset": "RUNTIME",
+          "sourceRecordId": "qry-4d3b867d1ed2b8eb35eb6874a976fd15",
+          "snapshot": "2026-10-03",
+          "runId": "run-da948201a77e0fe136727d99a55c2b89",
+          "policyVersion": null,
+          "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+        }
+      }
+    ],
+    "abstained": false,
+    "uncertainty": "Graph nodes in 2000-2014 (corpus counts): researchers with at least one DBLP publication in the window (one analytics/researcher-metrics row each); researchers with only OpenAlex or Crossref authorship are not nodes. 1 drafted uncertainty line(s) were left out because they failed verification.",
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "RUNTIME",
+      "sourceRecordId": "qry-4d3b867d1ed2b8eb35eb6874a976fd15",
+      "snapshot": "2026-10-03",
+      "runId": "run-da948201a77e0fe136727d99a55c2b89",
+      "policyVersion": "fusion-v1",
+      "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+    }
+  },
+  "plan": {
+    "schemaVersion": "rag-query-plan-v1",
+    "queryId": "qry-4d3b867d1ed2b8eb35eb6874a976fd15",
+    "operations": [
+      {
+        "operation": "COMPONENT_LOOKUP",
+        "scope": "CORPUS",
+        "researchers": [],
+        "metric": null,
+        "topN": null
+      }
+    ],
+    "researcherNames": [],
+    "metrics": [],
+    "window": {
+      "requested": {
+        "kind": "NAMED",
+        "name": "2000-2014",
+        "yearFrom": null,
+        "yearTo": null
+      },
+      "window": "2000-2014",
+      "startYear": 2000,
+      "endYear": 2014,
+      "exact": true,
+      "note": null
+    },
+    "comparison": {
+      "fromWindow": "2000-2014",
+      "toWindow": "2015-2026"
+    },
+    "topics": [],
+    "venues": [],
+    "institutions": [],
+    "semanticIndexes": [],
+    "limits": {
+      "graphLimit": 100,
+      "vectorLimit": 50,
+      "maxPathDepth": 6,
+      "topK": 5
+    },
+    "source": "MODEL",
+    "overriddenFields": [],
+    "rejectedItems": [],
+    "promptVersion": "planner-v2",
+    "modelId": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "RUNTIME",
+      "sourceRecordId": "qry-4d3b867d1ed2b8eb35eb6874a976fd15",
+      "snapshot": "2026-10-03",
+      "runId": "run-da948201a77e0fe136727d99a55c2b89",
+      "policyVersion": null,
+      "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+    }
+  },
+  "resolutions": [],
+  "verification": {
+    "schemaVersion": "claim-verification-v1",
+    "queryId": "qry-4d3b867d1ed2b8eb35eb6874a976fd15",
+    "checks": [
+      {
+        "claimId": "claim-1",
+        "status": "VERIFIED",
+        "checks": [
+          {
+            "rule": "evidence-exists",
+            "outcome": "PASS",
+            "detail": "all cited items are in the bundle"
+          },
+          {
+            "rule": "graph-evidence-required",
+            "outcome": "PASS",
+            "detail": "1 graph item(s) cited"
+          },
+          {
+            "rule": "kind-matches-type",
+            "outcome": "PASS",
+            "detail": "COMPONENT needs COMPONENT_RECORD or METRIC_RECORD"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "largestComponentFraction"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "largestComponentSize"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "researchers"
+          },
+          {
+            "rule": "numbers-in-text",
+            "outcome": "PASS",
+            "detail": "every number is an asserted, named fact"
+          },
+          {
+            "rule": "window",
+            "outcome": "PASS",
+            "detail": "2000-2014"
+          },
+          {
+            "rule": "identity",
+            "outcome": "PASS",
+            "detail": "every subject and name is resolved or cited"
+          }
+        ],
+        "action": "KEPT"
+      }
+    ],
+    "counts": {
+      "verified": 1,
+      "partiallySupported": 0,
+      "unsupported": 0,
+      "conflicting": 0
+    }
+  },
+  "abstention": null,
+  "answerHash": "sha256:1b335a907464148c7b0905c38c2def4423f3424467289dd804eb69302c2de32a"
+}

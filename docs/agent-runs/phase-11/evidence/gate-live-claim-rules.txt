@@ -1,0 +1,15 @@
+s3/logs/rag-runtime  UNSUPPORTED  12
+s3/reports/rag-runtime  UNSUPPORTED  12
+s3/reports/rag-runtime  VERIFIED  174
+
+== s3/logs/rag-runtime claim keys: ['claimId', 'failedChecks', 'kind', 'status', 'text']
+    9  numbers-in-text  FAIL
+    3  identity  FAIL
+    1  context-only  FAIL
+    1  asserted-values  MISSING
+
+== s3/reports/rag-runtime claim keys: ['action', 'checks', 'claimId', 'status']
+    9  numbers-in-text  FAIL
+    3  identity  FAIL
+    1  context-only  FAIL
+    1  asserted-values  MISSING

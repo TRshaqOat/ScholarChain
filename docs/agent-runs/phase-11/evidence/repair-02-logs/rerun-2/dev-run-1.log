@@ -1,0 +1,129 @@
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] scalafmt: Formatting 3 Scala sources (/Users/achyutpatel/Developer/Cloud/ScholarChain/tests)...
+[info] scalafmt: Reformatted 3 Scala sources
+[success] Total time: 1 s, completed Nov 14, 2026, 1:29:11 AM
+[info] compiling 3 Scala sources to /Users/achyutpatel/Developer/Cloud/ScholarChain/tests/target/scala-3.3.7/test-classes ...
+[info] done compiling
+WARNING: Using incubator modules: jdk.incubator.vector
+[info] UnsupportedClaimAdversarialSpec:
+[info] - controls: the stored values verify; a wrong digit, a fabricated ID, or a semantic-only claim do not
+[info] - a multiplier word after the stored digits (10 hundred, 10 thousand) is not that number
+[info] - a quantity stated only in words (hundreds of, dozens of, a dozen) is not verified
+[info] - a comparison the stored value contradicts (more than 10, fewer than 10) is not verified
+[info] - a negated statement of the stored value (does not have 10) is not verified
+[info] - verifier-v7 breadth: other comparison, approximation, vague-quantity, and negation wordings are not verified
+[info] - verifier-v7 controls: exact statements of the stored value still verify
+[info] - a comparison or negation outside the verifier-v7 word lists (short of 10, lacks 10) is not verified
+[info] - verifier-v8 breadth: the comparison words, the filler, and the after-number words repair-02 added are not verified *** FAILED ***
+[info]   Vector("In all-years, Ada Lovelace has SHORT OF 10 publications. -> UNSUPPORTED Vector(numbers-in-text FAIL: 10 is qualified ('SHORT OF'), so it does not state the stored value exactly, identity FAIL: names 'SHORT OF' (not a researcher, title, venue, topic, or institution of the evidence)) (expected only numbers-in-text FAIL with "10 is qualified ('SHORT OF')")") was not empty
+[info]   In all-years, Ada Lovelace has SHORT OF 10 publications. -> UNSUPPORTED Vector(numbers-in-text FAIL: 10 is qualified ('SHORT OF'), so it does not state the stored value exactly, identity FAIL: names 'SHORT OF' (not a researcher, title, venue, topic, or institution of the evidence)) (expected only numbers-in-text FAIL with "10 is qualified ('SHORT OF')") (UnsupportedClaimAdversarialSpec.scala:256)
+[info] - verifier-v8 breadth: the negation words repair-02 added, and asides that must not hide them, are not verified
+[info] - verifier-v8 controls: exact statements of the stored value still verify
+[info] - verifier-v8 through the services composition: the corpus template's 'without' aside and 'did not converge' stay VERIFIED; v8 wordings on corpus counts do not
+[info] RagModelOutputAdversarialSpec:
+[info] - injected title, name, profile, and abstract reach the synthesis prompt only escaped
+[info] - a synthesis that obeys the injection (999 coauthors, a fabricated evidence ID) keeps no claim of it
+[info] - a tampered chunk (text no longer matching its textHash) is dropped, never cited
+[info] - an injected question adds no operation, no unbound store call, and no asserted fact (fake mode)
+[info] - injection in the structured constraint fields stays a bound parameter of fixed templates
+[info] - injected filter terms reach the graph only as bound parameters of the live openCypher templates
+[info] - malformed or fabricated planner output: two attempts, then the rule planner; no model text kept
+[info] - malformed synthesis twice abstains BUDGET_EXHAUSTED with no claim; never a third attempt
+[info] - fabricated researcher and evidence IDs in an otherwise valid synthesis are removed
+[info] - verifier-v8 wordings in a recorded model synthesis: claims removed, summary replaced, uncertainty line left out *** FAILED ***
+[info]   Some("Ada Lovelace was linked to scr:canon-v1.er-v2:3ed012c7e9d38ac0dc513403ec31176a by dominant-name-v1: 0.9091 of 11 works among 2 researchers with this display name. Grace Hopper was linked to scr:canon-v1.er-v2:3bb726d3da683ea3732d02907753c921 by dominant-name-v1: 1.0000 of 6 works among 1 researchers with this display name. Ada Lovelace and Grace Hopper have barely 2 joint publications in all-years. Ada Lovelace and Grace Hopper have 2 joint publications in all-years.") did not contain "Ada Lovelace and Grace Hopper have barely 2 joint publications in all-years.", but Some("Ada Lovelace was linked to scr:canon-v1.er-v2:3ed012c7e9d38ac0dc513403ec31176a by dominant-name-v1: 0.9091 of 11 works among 2 researchers with this display name. Grace Hopper was linked to scr:canon-v1.er-v2:3bb726d3da683ea3732d02907753c921 by dominant-name-v1: 1.0000 of 6 works among 1 researchers with this display name. Ada Lovelace and Grace Hopper have barely 2 joint publications in all-years. Ada Lovelace and Grace Hopper have 2 joint publications in all-years.") did not contain "Ada Lovelace and Grace Hopper have 2 joint publications in all-years." Some(Ada Lovelace was linked to scr:canon-v1.er-v2:3ed012c7e9d38ac0dc513403ec31176a by dominant-name-v1: 0.9091 of 11 works among 2 researchers with this display name. Grace Hopper was linked to scr:canon-v1.er-v2:3bb726d3da683ea3732d02907753c921 by dominant-name-v1: 1.0000 of 6 works among 1 researchers with this display name. Ada Lovelace and Grace Hopper have barely 2 joint publications in all-years. Ada Lovelace and Grace Hopper have 2 joint publications in all-years.) (RagModelOutputAdversarialSpec.scala:444)
+[info] - a throttled or failing model is tried at most max-attempts-per-call times per call
+[info] - an exhausted input-token budget sends no model request at all
+[info] - an output-token budget below one synthesis request skips synthesis, never overspends
+[info] - a throttled vector query (once, or every time) does not fail an answer the graph supports
+[info] - repair-01 D4 detail: only the failed index degrades, to a note without the error, and every claim stays
+[info] - repair-01 D4 boundary: a deadline passing inside a vector query still ends the question
+[info] - a pair whose work has no abstract and a researcher with no profile still answer from the graph
+[info] - a researcher with no institution gets no institution claim; nothing is invented
+[info] - an unknown researcher abstains UNKNOWN_RESEARCHER; an ambiguous common name abstains AMBIGUOUS
+[info] Wo5ProbeSpec:
+WO5PROBE|DOC|VERIFIED|In all-years, Ada Lovelace has past 10 publications.|
+WO5PROBE|DOC|VERIFIED|In all-years, Ada Lovelace is missing 10 publications.|
+WO5PROBE|DOC|VERIFIED|In all-years, Ada Lovelace has a minimum of 10 publications.|
+WO5PROBE|DOC|VERIFIED|In all-years, Ada Lovelace has a maximum of 10 publications.|
+WO5PROBE|DOC|VERIFIED|In all-years, Ada Lovelace has within 10 publications.|
+WO5PROBE|DOC|VERIFIED|In all-years, Ada Lovelace is heading toward 10 publications.|
+WO5PROBE|DOC|VERIFIED|In all-years, Ada Lovelace is pushing 10 publications.|
+WO5PROBE|DOC|VERIFIED|In all-years, Ada Lovelace has the better part of 10 publications.|
+WO5PROBE|DOC|VERIFIED|In all-years, besides Ada Lovelace, each researcher has 10 publications.|
+WO5PROBE|DOC|VERIFIED|In all-years, apart from Ada Lovelace, each researcher has 10 publications.|
+WO5PROBE|DOC|VERIFIED|In all-years, other than Ada Lovelace, each researcher has 10 publications.|
+WO5PROBE|DOC|UNSUPPORTED|In all-years, none of Ada Lovelace's 10 publications exist.|numbers-in-text:0 is not an asserted fact of a cited item
+WO5PROBE|DOC|VERIFIED|In all-years, nobody, Ada Lovelace included, has 10 publications.|
+WO5PROBE|DOC|VERIFIED|In all-years, nothing shows Ada Lovelace has 10 publications.|
+WO5PROBE|DOC|UNSUPPORTED|In all-years, Ada Lovelace has publications that exceed the stored total of 10.|numbers-in-text:10 is not written next to the name of publicationCount
+WO5PROBE|DOC|VERIFIED|In all-years, Ada Lovelace has 10 publications and counting.|
+WO5PROBE|DOC|VERIFIED|In all-years, Ada Lovelace has 10 publications at minimum.|
+WO5PROBE|DOC|VERIFIED|In all-years, Ada Lovelace has a mere 10 publications.|
+WO5PROBE|RULE|VERIFIED|In all-years, 10 publications are absent from Ada Lovelace's record.|
+WO5PROBE|RULE|VERIFIED|In all-years, Ada Lovelace has publications above 10.|
+WO5PROBE|RULE|VERIFIED|In all-years, Ada Lovelace (whose publications are not indexed) has 10 publications.|
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has more or less 10 publications.|
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has 10 publications, more or less.|
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has 10 publications, give or take.|
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has give or take 10 publications.|
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has in the region of 10 publications.|
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has on the order of 10 publications.|
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has practically 10 publications.|
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has virtually 10 publications.|
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has essentially 10 publications.|
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has an estimated 10 publications.|
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has possibly 10 publications.|
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has perhaps 10 publications.|
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has maybe 10 publications.|
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has 10 more publications than her coauthor.|
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has 10 fewer publications than her coauthor.|
+WO5PROBE|CAND|UNSUPPORTED|In all-years, Ada Lovelace has 10 times as many publications as her coauthor.|numbers-in-text:10 is not written next to the name of publicationCount; 'many' states a quantity in words, not a stored value
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has at the very least 10 publications.|
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has 10 publications at the least.|
+WO5PROBE|CAND|UNSUPPORTED|In all-years, Ada Lovelace has 10-something publications.|numbers-in-text:10 is not written next to the name of publicationCount
+WO5PROBE|CAND|UNSUPPORTED|In all-years, Ada Lovelace has not quite 10 publications.|numbers-in-text:10 is negated ('not')
+WO5PROBE|CAND|VERIFIED|In all-years, it is unlikely that Ada Lovelace has 10 publications.|
+WO5PROBE|CAND|VERIFIED|In all-years, it is unclear whether Ada Lovelace has 10 publications.|
+WO5PROBE|CAND|VERIFIED|In all-years, it is doubtful that Ada Lovelace has 10 publications.|
+WO5PROBE|CAND|VERIFIED|In all-years, the records dispute that Ada Lovelace has 10 publications.|
+WO5PROBE|CAND|UNSUPPORTED|In all-years, Ada Lovelace has just about 10 publications.|numbers-in-text:10 is qualified ('about'), so it does not state the stored value exactly
+WO5PROBE|CAND|UNSUPPORTED|In all-years, Ada Lovelace has nearly-10 publications.|numbers-in-text:10 is qualified ('nearly-'), so it does not state the stored value exactly
+WO5PROBE|CAND|UNSUPPORTED|In all-years, Ada Lovelace has under-10 publications.|numbers-in-text:10 is qualified ('under-'), so it does not state the stored value exactly
+WO5PROBE|CAND|UNSUPPORTED|In all-years, Ada Lovelace has 10 or thereabouts publications.|numbers-in-text:10 is qualified ('or thereabouts'), so it does not state the stored value exactly
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has upto 10 publications.|
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has less than or equal to 10 publications.|
+WO5PROBE|CAND|UNSUPPORTED|In all-years, Ada Lovelace has at least 10 publications.|numbers-in-text:10 is qualified ('at least'), so it does not state the stored value exactly
+WO5PROBE|CAND|UNSUPPORTED|In all-years, Ada Lovelace has ≈10 publications.|numbers-in-text:10 is qualified ('≈'), so it does not state the stored value exactly
+WO5PROBE|CAND|UNSUPPORTED|In all-years, Ada Lovelace has ~ 10 publications.|numbers-in-text:10 is qualified ('~'), so it does not state the stored value exactly
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has 10± publications.|
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has 10 publications at most.|
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has an approximate 10 publications.|
+WO5PROBE|CAND|UNSUPPORTED|In all-years, Ada Lovelace has 10 approximately publications.|numbers-in-text:10 is not written next to the name of publicationCount
+WO5PROBE|CAND|UNSUPPORTED|In all-years, Ada Lovelace has well over ten publications.|numbers-in-text:10 is qualified ('over'), so it does not state the stored value exactly
+WO5PROBE|CAND|UNSUPPORTED|In all-years, Ada Lovelace hasn’t 10 publications.|numbers-in-text:10 is negated ('n’t')
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has no 10 publications.|
+WO5PROBE|CAND|UNSUPPORTED|In all-years, Ada Lovelace has zero of 10 publications.|numbers-in-text:0 is not an asserted fact of a cited item
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has 10 publications, though fewer in fact.|
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has 10 publications or nearly so.|
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has 10 publications or close to it.|
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has 10 publications, roughly.|
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has 10 publications, approximately.|
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has 10 publications or less.|
+WO5PROBE|CAND|VERIFIED|In all-years, Ada Lovelace has 10 publications or more.|
+[info] - probe
+[info] Run completed in 2 seconds, 455 milliseconds.
+[info] Total number of tests run: 32
+[info] Suites: completed 3, aborted 0
+[info] Tests: succeeded 30, failed 2, canceled 0, ignored 0, pending 0
+[info] *** 2 TESTS FAILED ***
+[error] Failed tests:
+[error] 	scholarchain.tests.adversarial.RagModelOutputAdversarialSpec
+[error] 	scholarchain.tests.adversarial.UnsupportedClaimAdversarialSpec
+[error] (tests / Test / testOnly) sbt.TestsFailedException: Tests unsuccessful
+[error] Total time: 6 s, completed Nov 14, 2026, 1:29:17 AM

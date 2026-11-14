@@ -1,0 +1,32 @@
+# F3-no-shedding: modules/services/src/main/scala/scholarchain/services/Http.scala
+# patch: 'LinkedBlockingQueue[Runnable](queue), factory)' -> 'LinkedBlockingQueue[Runnable](), factory)'
+# cmd: sbt -J-Xmx4g -batch services/testOnly scholarchain.services.GraphEvidenceApiSpec
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] compiling 2 Scala sources to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/services/target/scala-3.3.7/classes ...
+[info] done compiling
+[info] GraphEvidenceApiSpec:
+[info] - query to evidence: every evidence ID an answer cites resolves with provenance
+[info] - missing evidence is 404; a malformed ID never reaches the store
+[info] - graph node: found with properties, unknown 404, encoded IDs with slashes work
+[info] - neighbors: bounded parameters, allowlisted edge types, and bound cursors
+[info] - a slow store is 504, a failing one 502, then the breaker fails fast and readiness drops
+[info] - an IllegalArgumentException inside a downstream call is 500 with no detail (repair-01 m5)
+[info] - beyond its threads and queue a service sheds load with 503 OVERLOADED *** FAILED ***
+[info]   null equaled null no probe was shed (GraphEvidenceApiSpec.scala:216)
+[info] Run completed in 10 seconds, 963 milliseconds.
+[info] Total number of tests run: 7
+[info] Suites: completed 1, aborted 0
+[info] Tests: succeeded 6, failed 1, canceled 0, ignored 0, pending 0
+[info] *** 1 TEST FAILED ***
+[error] Failed tests:
+[error] 	scholarchain.services.GraphEvidenceApiSpec
+[error] (services / Test / testOnly) sbt.TestsFailedException: Tests unsuccessful
+[error] Total time: 13 s, completed Nov 13, 2026, 10:59:53 PM
+# exit 1
+# sha256 before b2bae7d1046d7f53793929e726727446424b88d6a987030cac31a10fb2be82fb
+# sha256 after  b2bae7d1046d7f53793929e726727446424b88d6a987030cac31a10fb2be82fb OK

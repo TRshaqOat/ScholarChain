@@ -3,11 +3,14 @@ package scholarchain.services
 import org.scalatest.funsuite.AnyFunSuite
 import scholarchain.core.VerificationStatus
 import scholarchain.rag.runtime.AbstentionReason
-import scholarchain.services.main.LocalRun
+import scholarchain.services.main.{GraphEvidenceApi, LocalRun}
 import upickle.default.read
 
+import java.io.File
+import java.net.{InetAddress, ServerSocket}
 import java.nio.charset.StandardCharsets.UTF_8
-import java.nio.file.Files
+import java.nio.file.{Files, Paths}
+import java.util.concurrent.TimeUnit
 import scala.collection.mutable.ArrayBuffer
 
 /** Work order 11: the corpus window summaries wired into the services (runtime.window-summary.
@@ -140,18 +143,61 @@ class CorpusQuerySpec extends AnyFunSuite:
       w.graphEvidence(ge) { g =>
         assert(g.get(s"/v1/evidence/${a.claims.head.evidenceIds.head}").status == 200)
       }
-      // The main of graph-evidence-api starts the same way.
-      val svc = Launcher
-        .start(
-          w.args,
-          Apps.graphEvidenceApi(_, _, _, _),
-          _ => 0,
-          w.env,
-          out += _,
-          JsonLog(_ => ()),
-          answers = false
-        )
+      // The main of graph-evidence-api starts the same way (Phase 11 N2: it passes answers = false
+      // itself; with true it would stop at the missing object).
+      out.clear()
+      val svc = GraphEvidenceApi
+        .start(w.args, w.env, out += _, JsonLog(_ => ()), _ => 0)
         .fold(c => fail(s"exit $c: ${out.mkString("\n")}"), identity)
       svc.stop()
+      assert(
+        out.contains(
+          s"window summaries: $summaryKey not opened (this service answers no questions)"
+        ),
+        out
+      )
     }
+  }
+
+  /** This test's class path, for a child JVM. sbt runs these suites in its own JVM, whose
+    * java.class.path holds only the launcher.
+    */
+  private def classPath: String =
+    val loaders = Iterator.iterate(getClass.getClassLoader)(_.getParent).takeWhile(_ != null)
+    val urls = loaders.flatMap {
+      case u: java.net.URLClassLoader => u.getURLs.toSeq.map(x => Paths.get(x.toURI).toString)
+      case _                          => Nil
+    }
+    (urls.toSeq ++ sys.props("java.class.path").split(File.pathSeparator)).distinct
+      .mkString(File.pathSeparator)
+
+  test("the graph-evidence-api main itself passes answers = false (repair-01 Part C)") {
+    // The child's port is held here, so it stops at its bind and never listens. Before the bind it
+    // has built its backend: with answers = false it prints the "not opened" line; with true it
+    // stops at the missing window-summary object instead.
+    val held = ServerSocket(0, 1, InetAddress.getByName("127.0.0.1"))
+    try
+      val port = s"services.graph-evidence-api.port = ${held.getLocalPort}"
+      withWorld(s"$loadRun\n$port", summaries = true) { w =>
+        Files.delete(w.root.resolve("window-summary").resolve(summaryKey))
+        val output = w.root.resolve("main.out")
+        val java = Paths.get(sys.props("java.home"), "bin", "java").toString
+        val main = GraphEvidenceApi.getClass.getName.stripSuffix("$")
+        val pb = ProcessBuilder((Seq(java, "-Xmx256m", "-cp", classPath, main) ++ w.args)*)
+        pb.environment().clear() // only the world's variables, never the developer's
+        w.env.foreach((k, v) => pb.environment().put(k, v))
+        pb.directory(Paths.get("").toAbsolutePath.toFile).redirectErrorStream(true)
+        val child = pb.redirectOutput(output.toFile).start()
+        try assert(child.waitFor(60, TimeUnit.SECONDS), "the child JVM did not exit")
+        finally child.destroyForcibly()
+        val out = Files.readString(output, UTF_8)
+        assert(
+          out.contains(
+            s"window summaries: $summaryKey not opened (this service answers no questions)"
+          ),
+          out
+        )
+        assert(out.contains("BindException") && !out.contains("OBJECT_MISSING"), out)
+      }
+    finally held.close()
   }

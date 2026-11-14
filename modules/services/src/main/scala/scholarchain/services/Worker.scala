@@ -24,8 +24,16 @@ import scala.util.{Success, Try}
   *     deleted; the queue's redrive policy moves it to the dead-letter queue after
   *     max-receive-count receives.
   *   - While any downstream breaker is open the worker does not receive (it fails fast).
+  *
+  * pause is the poll loop's wait before it looks again (tests pass one that signals).
   */
-final class Worker(cfg: ScholarChainConfig, backend: Backend, log: JsonLog, metrics: Metrics):
+final class Worker(
+    cfg: ScholarChainConfig,
+    backend: Backend,
+    log: JsonLog,
+    metrics: Metrics,
+    pause: Long => Unit = Thread.sleep
+):
   private val w = cfg.services.worker
   private val p = Policies(cfg)
   private val jobs = backend.jobs
@@ -90,13 +98,13 @@ final class Worker(cfg: ScholarChainConfig, backend: Backend, log: JsonLog, metr
   private def loop(): Unit =
     while running do
       // No receive while a breaker is open or every workflow slot is held by an overrun job.
-      if ds.openBreakers.nonEmpty || !ds.workflowSlotFree then Thread.sleep(1000)
+      if ds.openBreakers.nonEmpty || !ds.workflowSlotFree then pause(1000)
       else
         try pollOnce()
         catch
           case NonFatal(_) =>
             log.event(Service, "poll-failed")
-            Thread.sleep(1000)
+            pause(1000)
 
   /** One receive of at most one message, and its processing; the number of messages received. */
   def pollOnce(): Int =

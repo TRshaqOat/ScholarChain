@@ -1,0 +1,12 @@
+openalex	scratch/datasets/openalex/full/works.jsonl	records=107506	doi_values=107506	changed=0	
+crossref	scratch/datasets/crossref/full/works.jsonl	records=106726	doi_values=106726	changed=0	
+orcid	scratch/datasets/orcid/full/records.jsonl.gz	records=22975	doi_values=997529	changed=36	'doi: 10.1016/j.ifset.2013.11.009'; 'doi: 10.1093/bioinformatics/bts656'; 'doi: digital object identifier'; 'doi: 10.1007/s11277-016-3302-0'; 'doi: 10.1007/978-3-319-40528-5_10'
+openalex	datasets/samples/openalex/works-sample.jsonl	records=40	doi_values=40	changed=0	
+crossref	datasets/samples/crossref/works-sample.jsonl	records=40	doi_values=40	changed=0	
+orcid	datasets/samples/orcid/synthetic-orcid-records.jsonl	records=3	doi_values=5	changed=0	
+orcid	datasets/samples/orcid/orcid-fictional-test-record.jsonl	records=1	doi_values=6	changed=0	
+dblp-ee-doi-url	scratch/datasets/dblp/snapshot=2026-10-03/full/works.xml	records=-	doi_values=107639	changed=0	
+dblp-ee-any	scratch/datasets/dblp/snapshot=2026-10-03/full/works.xml	records=-	doi_values=155121	changed=0	
+dblp-ee-doi-url	datasets/samples/dblp/dblp-sample.xml	records=-	doi_values=40	changed=0	
+dblp-ee-any	datasets/samples/dblp/dblp-sample.xml	records=-	doi_values=43	changed=0	
+TOTAL_CHANGED	36

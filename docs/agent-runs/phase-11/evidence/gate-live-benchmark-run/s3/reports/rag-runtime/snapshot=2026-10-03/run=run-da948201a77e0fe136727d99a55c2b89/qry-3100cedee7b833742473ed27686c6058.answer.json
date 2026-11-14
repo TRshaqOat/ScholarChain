@@ -1,0 +1,157 @@
+{
+  "schemaVersion": "rag-answer-v1",
+  "response": {
+    "schemaVersion": "answer-response-v1",
+    "queryId": "qry-3100cedee7b833742473ed27686c6058",
+    "summary": "8075 collaboration communities of size 3 or more exist in 2000-2014.",
+    "claims": [
+      {
+        "schemaVersion": "answer-claim-v1",
+        "claimId": "claim-1",
+        "text": "8075 collaboration communities of size 3 or more exist in 2000-2014.",
+        "evidenceIds": [
+          "ev-d478876c5b9f956de174991faecdf99e"
+        ],
+        "verificationStatus": "VERIFIED",
+        "uncertainty": null,
+        "provenance": {
+          "schemaVersion": "provenance-v1",
+          "sourceDataset": "RUNTIME",
+          "sourceRecordId": "qry-3100cedee7b833742473ed27686c6058",
+          "snapshot": "2026-10-03",
+          "runId": "run-da948201a77e0fe136727d99a55c2b89",
+          "policyVersion": null,
+          "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+        }
+      }
+    ],
+    "abstained": false,
+    "uncertainty": "Graph nodes in 2000-2014 (corpus counts): researchers with at least one DBLP publication in the window (one analytics/researcher-metrics row each); researchers with only OpenAlex or Crossref authorship are not nodes. Communities in 2000-2014 did not converge: detection stopped after 10 rounds, so community counts depend on that cap and its tie-break. Community detection did not converge: the algorithm stopped after 10 rounds, so community counts depend on that stopping criterion and its tie-break. 1 drafted uncertainty line(s) were left out because they failed verification.",
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "RUNTIME",
+      "sourceRecordId": "qry-3100cedee7b833742473ed27686c6058",
+      "snapshot": "2026-10-03",
+      "runId": "run-da948201a77e0fe136727d99a55c2b89",
+      "policyVersion": "fusion-v1",
+      "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+    }
+  },
+  "plan": {
+    "schemaVersion": "rag-query-plan-v1",
+    "queryId": "qry-3100cedee7b833742473ed27686c6058",
+    "operations": [
+      {
+        "operation": "COMMUNITY_COMPARISON",
+        "scope": "CORPUS",
+        "researchers": [],
+        "metric": null,
+        "topN": null
+      }
+    ],
+    "researcherNames": [],
+    "metrics": [],
+    "window": {
+      "requested": {
+        "kind": "NAMED",
+        "name": "2000-2014",
+        "yearFrom": null,
+        "yearTo": null
+      },
+      "window": "2000-2014",
+      "startYear": 2000,
+      "endYear": 2014,
+      "exact": true,
+      "note": null
+    },
+    "comparison": null,
+    "topics": [],
+    "venues": [],
+    "institutions": [],
+    "semanticIndexes": [
+      "collaboration-community-v1"
+    ],
+    "limits": {
+      "graphLimit": 100,
+      "vectorLimit": 50,
+      "maxPathDepth": 6,
+      "topK": 5
+    },
+    "source": "MODEL",
+    "overriddenFields": [],
+    "rejectedItems": [],
+    "promptVersion": "planner-v2",
+    "modelId": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "RUNTIME",
+      "sourceRecordId": "qry-3100cedee7b833742473ed27686c6058",
+      "snapshot": "2026-10-03",
+      "runId": "run-da948201a77e0fe136727d99a55c2b89",
+      "policyVersion": null,
+      "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+    }
+  },
+  "resolutions": [],
+  "verification": {
+    "schemaVersion": "claim-verification-v1",
+    "queryId": "qry-3100cedee7b833742473ed27686c6058",
+    "checks": [
+      {
+        "claimId": "claim-1",
+        "status": "VERIFIED",
+        "checks": [
+          {
+            "rule": "evidence-exists",
+            "outcome": "PASS",
+            "detail": "all cited items are in the bundle"
+          },
+          {
+            "rule": "graph-evidence-required",
+            "outcome": "PASS",
+            "detail": "1 graph item(s) cited"
+          },
+          {
+            "rule": "kind-matches-type",
+            "outcome": "PASS",
+            "detail": "COMMUNITY needs COMMUNITY_RECORD or METRIC_RECORD"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "communitiesAtLeastMinSize"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "communityMinSize"
+          },
+          {
+            "rule": "numbers-in-text",
+            "outcome": "PASS",
+            "detail": "every number is an asserted, named fact"
+          },
+          {
+            "rule": "window",
+            "outcome": "PASS",
+            "detail": "2000-2014"
+          },
+          {
+            "rule": "identity",
+            "outcome": "PASS",
+            "detail": "every subject and name is resolved or cited"
+          }
+        ],
+        "action": "KEPT"
+      }
+    ],
+    "counts": {
+      "verified": 1,
+      "partiallySupported": 0,
+      "unsupported": 0,
+      "conflicting": 0
+    }
+  },
+  "abstention": null,
+  "answerHash": "sha256:1d455d840e8ef81eb878febf6123edf48a39f6f4c9786ef28e2d966d5189209f"
+}

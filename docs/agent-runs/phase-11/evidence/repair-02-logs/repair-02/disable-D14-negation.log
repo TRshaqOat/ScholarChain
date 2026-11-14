@@ -1,0 +1,17 @@
+label: D14-negation
+file: modules/rag/src/main/scala/scholarchain/rag/runtime/Verifier.scala
+sha256 before: 59876ae6788d34a463412ff8bea44ccd82329924d313ceaf54df6821bb04f96c
+D14-negation: 1 replacement(s) applied
+patched sha256: 6cbda5036bff0c38cb7575ec00e211dba6065821ff75c777ecaa4bd66674b65b
+213,214c213
+<       "lack(?:s|ed|ing)?|without|absen(?:t|ce)|devoid|fail(?:s|ed|ing)?\\s+to|hardly|scarcely|" +
+<       "barely|seldom|rarely|den(?:y|ies|ied)|except|excluding)\\b|n['’]t\\b)(?!\\s+converge)").r
+---
+>       "zzdisabledzz)\\b|n['’]t\\b)(?!\\s+converge)").r
+sbt exit: 1
+[info] - repair-02 D14 controls: the template's 'without' aside and 'failed to converge' verify *** FAILED ***
+[info] - repair-02 D14: 'short of 10', 'falls short of 10', and 'lacks 10' are not verified *** FAILED ***
+[info] - repair-02 D14: the negation families (lack, without, absent, fail to) are not verified *** FAILED ***
+[info] Tests: succeeded 113, failed 3, canceled 0, ignored 0, pending 0
+restore check:
+modules/rag/src/main/scala/scholarchain/rag/runtime/Verifier.scala: OK

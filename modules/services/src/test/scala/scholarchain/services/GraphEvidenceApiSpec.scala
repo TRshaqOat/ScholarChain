@@ -6,7 +6,7 @@ import upickle.default.read
 
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets.UTF_8
-import java.util.concurrent.{CountDownLatch, Executors, TimeUnit}
+import java.util.concurrent.{CountDownLatch, ExecutorCompletionService, Executors, TimeUnit}
 import java.util.concurrent.atomic.AtomicInteger
 
 /** graph-evidence-api over a real localhost socket: evidence of an answered query, missing
@@ -203,16 +203,21 @@ class GraphEvidenceApiSpec extends AnyFunSuite:
         release.await(10, TimeUnit.SECONDS)
       }
       w.graphEvidence(slow) { c =>
-        val pool = Executors.newFixedThreadPool(2)
+        val pool = Executors.newFixedThreadPool(3)
         try
           val busy = pool.submit(() => c.get("/v1/evidence/ev-" + "c" * 32))
           assert(entered.await(10, TimeUnit.SECONDS))
-          val queued = pool.submit(() => c.get("/healthz", Seq()))
-          Thread.sleep(300) // let the second request reach the queue
-          code(c.get("/healthz", Seq()), "OVERLOADED", 503)
+          // The one thread is held; two probes race for the one queue place. Whichever comes
+          // second is shed at once, and the other cannot finish before the release, so the first
+          // probe to finish is the shed one, whatever the order of arrival.
+          val probes = ExecutorCompletionService[Reply](pool)
+          (1 to 2).foreach(_ => probes.submit(() => c.get("/healthz", Seq())))
+          val shed = probes.poll(10, TimeUnit.SECONDS)
+          assert(shed != null, "no probe was shed")
+          code(shed.get, "OVERLOADED", 503)
           release.countDown()
           assert(busy.get(10, TimeUnit.SECONDS).status == 404)
-          assert(queued.get(10, TimeUnit.SECONDS).status == 200)
+          assert(probes.take().get(10, TimeUnit.SECONDS).status == 200)
         finally
           release.countDown()
           pool.shutdownNow()

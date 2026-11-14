@@ -1,0 +1,27 @@
+label: D14-comparison
+file: modules/rag/src/main/scala/scholarchain/rag/runtime/Verifier.scala
+sha256 before: 59876ae6788d34a463412ff8bea44ccd82329924d313ceaf54df6821bb04f96c
+D14-comparison: 2 replacement(s) applied
+patched sha256: 97e8712ffad9be4af2129148cdbe6817968ff9429404d57e67c689998502c64d
+189,192c189,190
+<       "upwards?\\s+of|(?:short|shy|north|south)\\s+of|far\\s+from|close\\s+to|nearly|near|nigh|" +
+<       "almost|about|around|approximately|approx|approaching|nearing|roughly|circa|ca|some|beyond|" +
+<       "exceed(?:s|ed|ing)?|surpass(?:es|ed|ing)?|outnumber(?:s|ed|ing)?|top(?:s|ped|ping)|over|" +
+<       "under|above|below|beneath)|[~≈<>≤≥]=?)" + Filler).r
+---
+>       "upwards\\s+of|close\\s+to|nearly|almost|about|around|approximately|approx|roughly|circa|ca|" +
+>       "some|beyond|exceeding|exceeds?|over|under|above|below)|[~≈<>≤≥]=?)" + Filler).r
+194,196c192,194
+<     ("(?i)^(?:\\s*%)?(?:\\s*\\+|[-\\s]\\s*(?:plus|odd|ish)\\b|ish\\b|\\s+or\\s+(?:more|fewer|less|so|" +
+<       "higher|lower|greater|above|below|over|under|thereabouts)\\b|\\s+and\\s+(?:up|above|over|more|" +
+<       "counting)\\b|\\s+at\\s+(?:least|most|(?:a\\s+)?(?:minimum|maximum))\\b)").r
+---
+>     ("(?i)^(?:\\s*%)?(?:\\s*\\+|[-\\s]\\s*(?:plus|odd)\\b|\\s+or\\s+(?:more|fewer|less|so|higher|" +
+>       "lower|greater|above|below|over|under|thereabouts)\\b|\\s+and\\s+(?:up|above|over|more)\\b|" +
+>       "\\s+at\\s+(?:least|most)\\b)").r
+sbt exit: 1
+[info] - repair-02 D14: 'short of 10', 'falls short of 10', and 'lacks 10' are not verified *** FAILED ***
+[info] - repair-02 D14: the comparison families are not verified *** FAILED ***
+[info] Tests: succeeded 114, failed 2, canceled 0, ignored 0, pending 0
+restore check:
+modules/rag/src/main/scala/scholarchain/rag/runtime/Verifier.scala: OK

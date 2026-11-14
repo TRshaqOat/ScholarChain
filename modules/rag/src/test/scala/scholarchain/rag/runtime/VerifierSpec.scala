@@ -1038,3 +1038,301 @@ class VerifierSpec extends AnyFunSuite:
       )
     }
   }
+
+  test("Phase 11 work order 2, live B23 shape: totalWorks is named as the works of the name") {
+    context(pairQ) { (c0, _) =>
+      // The failure shape: the identity item of a name shared by several researchers, where the
+      // resolved researcher has fewer works than all researchers with the name together.
+      val b = c0.bundle
+      val id = b.graphEvidence
+        .find(e =>
+          e.evidenceType == EvidenceType.IDENTITY_RESOLUTION &&
+            e.facts.get("displayName").contains("Ada Lovelace")
+        )
+        .get
+      val c = c0.copy(bundle =
+        b.copy(graphEvidence =
+          b.graphEvidence.map(e =>
+            if e.evidenceId == id.evidenceId then
+              e.copy(facts = e.facts + ("works" -> "40") + ("totalWorks" -> "52"))
+            else e
+          )
+        )
+      )
+      def d(text: String, values: Map[String, String]) =
+        draft(ClaimKind.IDENTITY, text, Vector(id.evidenceId), values, None, id.subjectIds)
+      val both = Map("works" -> "40", "totalWorks" -> "52")
+      // The template wording verifies.
+      val template =
+        d("Ada Lovelace: 40 of 52 works among researchers with this display name.", both)
+      assert(status(template, c) == VERIFIED, Verifier.check(template, c).checks)
+      // The total of every researcher with the name is never the researcher's own count.
+      for text <- Vector(
+          "Ada Lovelace is a researcher with 52 total works.",
+          "Ada Lovelace has 52 works.",
+          "Ada Lovelace has 52 publications."
+        )
+      do
+        val k = Verifier.check(d(text, Map("totalWorks" -> "52")), c)
+        assert(k.status == UNSUPPORTED, text)
+        assert(k.checks.exists(x => x.rule == "numbers-in-text" && x.detail.contains("totalWorks")))
+    }
+  }
+
+  test("N5 (Phase 10 review 2): fixed notes are read with number words before year ranges") {
+    context(pairQ) { (c, r) =>
+      val good = ClaimDraft(
+        "claim-1",
+        ClaimKind.COAUTHORSHIP,
+        "Ada Lovelace and Grace Hopper have 2 joint publications in all-years.",
+        Vector(edgeEv),
+        Vector(ada, grace),
+        Some("all-years"),
+        Map("jointPublicationCount" -> "2")
+      )
+      // "first" before a year range is a time marker, not 1st: the note frees no number 1.
+      val note = "Requested 2005-2010; the first stored window 2000-2014 contains it."
+      val v = Verifier.verify(
+        SynthesisOutput(
+          RuntimeSchemas.SynthesisOutput,
+          good.text,
+          Vector(good),
+          Vector("Requested 2005-2010 maps to 2000-2014.", "There may be 1 more paper.")
+        ),
+        c.copy(notes = Vector(note)),
+        "qry-x",
+        r.answer.response.provenance
+      )
+      assert(v.uncertainty.head == "Requested 2005-2010 maps to 2000-2014.", v.uncertainty)
+      assert(v.dropped.map(_.text) == Vector("There may be 1 more paper."), v.dropped)
+    }
+  }
+
+  // ---- Phase 11 repair-01 (D1 to D3; inputs of the WO3 adversarial tests, fixture names) ----
+
+  private def adaClaim(text: String, values: Map[String, String]) =
+    draft(ClaimKind.METRIC_VALUE, text, Vector(adaMetric), values)
+  private val pubs = Map("publicationCount" -> "10")
+  private val coauthors = Map("distinctCoauthorCount" -> "1")
+  private def removed(c: Verifier.Context, cases: Vector[(String, Map[String, String])]) =
+    cases.foreach { (t, v) =>
+      val k = Verifier.check(adaClaim(t, v), c)
+      assert(k.status == UNSUPPORTED, t)
+      assert(k.checks.exists(x => x.rule == "numbers-in-text" && x.outcome == CheckOutcome.FAIL), t)
+    }
+
+  test("repair-01 D1: a quantity in words (hundreds of, dozens of, a dozen) is not verified") {
+    context(pairQ) { (c, _) =>
+      assert(
+        status(adaClaim("In all-years, Ada Lovelace has 10 publications.", pubs), c) == VERIFIED
+      )
+      removed(
+        c,
+        Vector(
+          "In all-years, Ada Lovelace has hundreds of publications." -> pubs,
+          "In all-years, Ada Lovelace has dozens of publications." -> pubs,
+          "In all-years, Ada Lovelace has scores of publications." -> pubs,
+          "In all-years, Ada Lovelace has a dozen distinct coauthors." -> coauthors,
+          "In all-years, Ada Lovelace has several publications." -> pubs,
+          "In all-years, Ada Lovelace has ten thousand publications." -> pubs
+        )
+      )
+    }
+  }
+
+  test("repair-01 D2: a qualified number (more than 10, about 10, 10 or more) is not verified") {
+    context(pairQ) { (c, _) =>
+      removed(
+        c,
+        Vector(
+          "In all-years, Ada Lovelace has more than 10 publications.",
+          "In all-years, Ada Lovelace has fewer than 10 publications.",
+          "In all-years, Ada Lovelace has over 10 publications.",
+          "In all-years, Ada Lovelace has under 10 publications.",
+          "In all-years, Ada Lovelace has at least 10 publications.",
+          "In all-years, Ada Lovelace has at most 10 publications.",
+          "In all-years, Ada Lovelace has nearly 10 publications.",
+          "In all-years, Ada Lovelace has about ten publications.",
+          "In all-years, Ada Lovelace has approximately 10 publications.",
+          "In all-years, Ada Lovelace has 10 or more publications.",
+          "In all-years, Ada Lovelace has 10+ publications."
+        ).map(_ -> pubs)
+      )
+      // "1 coauthor over 10 publications" is a ratio, not "more than 10".
+      val both = pubs ++ coauthors
+      assert(
+        status(
+          adaClaim(
+            "In all-years, Ada Lovelace has 1 distinct coauthor over 10 publications.",
+            both
+          ),
+          c
+        ) ==
+          VERIFIED
+      )
+    }
+  }
+
+  test("repair-01 D3: a negated number (does not have 10, it is false that) is not verified") {
+    context(pairQ) { (c, _) =>
+      removed(
+        c,
+        Vector(
+          "In all-years, Ada Lovelace does not have 10 publications." -> pubs,
+          "In all-years, it is false that Ada Lovelace has 10 publications." -> pubs,
+          "In all-years, Ada Lovelace has not 1 distinct coauthor." -> coauthors,
+          "In all-years, Ada Lovelace never had 10 publications." -> pubs,
+          "In all-years, Ada Lovelace doesn't have 10 publications." -> pubs
+        )
+      )
+    }
+  }
+
+  test("repair-01 controls: bound qualifiers and the template's negations still verify") {
+    context(pathQ) { (c0, _) =>
+      // A path search cut at its depth: "at most 4 hops" states the stored maxDepth exactly.
+      val b = c0.bundle
+      val path = b.graphEvidence.find(_.evidenceType == EvidenceType.GRAPH_PATH).get
+      val cut = path.copy(facts = path.facts + ("status" -> "BEYOND_DEPTH") + ("maxDepth" -> "4"))
+      val c = c0.copy(bundle =
+        b.copy(graphEvidence = b.graphEvidence.map(e => if e == path then cut else e))
+      )
+      val v = Map("status" -> "BEYOND_DEPTH", "maxDepth" -> "4")
+      def d(text: String) =
+        draft(ClaimKind.PATH, text, Vector(cut.evidenceId), v, subjects = path.subjectIds)
+      val names = "connects Ada Lovelace and Edsger Dijkstra in all-years."
+      val template = d(s"No coauthorship path of at most 4 hops $names")
+      assert(status(template, c) == VERIFIED, Verifier.check(template, c).checks)
+      assert(status(d(s"No coauthorship path of up to 4 hops $names"), c) == VERIFIED)
+      // The bound's own direction only: "at least" of a maximum is not its stored value.
+      assert(status(d(s"No coauthorship path of at least 4 hops $names"), c) == UNSUPPORTED)
+      assert(status(d(s"No coauthorship path of more than 4 hops $names"), c) == UNSUPPORTED)
+    }
+    // The template's "which is not the largest connected component" after the size.
+    context("Which connected component is Ada Lovelace in?") { (c0, _) =>
+      val b = c0.bundle
+      val comp = b.graphEvidence.find(_.evidenceType == EvidenceType.COMPONENT_RECORD).get
+      val notLargest = comp.copy(facts = comp.facts + ("inLargestComponent" -> "false"))
+      val c = c0.copy(bundle =
+        b.copy(graphEvidence = b.graphEvidence.map(e => if e == comp then notLargest else e))
+      )
+      val v = Map(
+        "componentId" -> comp.facts("componentId"),
+        "componentSize" -> comp.facts("componentSize"),
+        "inLargestComponent" -> "false"
+      )
+      val text = s"In all-years, Ada Lovelace is in connected component ${v("componentId")} of " +
+        s"${v("componentSize")} researchers, which is not the largest connected component of that window."
+      val k = Verifier.check(
+        draft(ClaimKind.COMPONENT, text, Vector(notLargest.evidenceId), v),
+        c
+      )
+      assert(k.status == VERIFIED, k.checks)
+    }
+    // The fake template's own wordings: "is 25 over 10 publications", "Breadth is not intensity:",
+    // "Bridge importance is not breadth:"; every material claim verifies.
+    for (q, wording) <- Vector(
+        "How many distinct coauthors does Grace Hopper have?" -> "Breadth is not intensity:",
+        "Is Grace Hopper a bridge between collaboration communities?" -> "Bridge importance is not"
+      )
+    do
+      withWorld() { w =>
+        val a = ok(w.ask(q)).answer
+        val texts = a.response.claims.map(c => (c.verificationStatus, c.text))
+        assert(texts.exists((s, t) => s == VERIFIED && t.contains(wording)), (q, texts))
+        assert(a.verification.counts.unsupported == 0, (q, a.verification))
+        assert(a.verification.counts.conflicting == 0, (q, a.verification))
+      }
+  }
+
+  // ---- Phase 11 repair-02 (D14; the work order 4 failure inputs, then their families) ----
+
+  test("repair-02 D14: 'short of 10', 'falls short of 10', and 'lacks 10' are not verified") {
+    context(pairQ) { (c, _) =>
+      removed(
+        c,
+        Vector(
+          "In all-years, Ada Lovelace has short of 10 publications.",
+          "In all-years, Ada Lovelace falls short of 10 publications.",
+          "In all-years, Ada Lovelace lacks 10 publications."
+        ).map(_ -> pubs)
+      )
+    }
+  }
+
+  test("repair-02 D14: the comparison families are not verified") {
+    context(pairQ) { (c, _) =>
+      removed(
+        c,
+        Vector(
+          "has just shy of 10",
+          "falls well short of 10",
+          "falls below 10",
+          "rose above 10",
+          "goes beyond 10",
+          "has in excess of 10",
+          "has upwards of 10",
+          "has upward of 10",
+          "exceeds 10",
+          "exceeded 10",
+          "has exceeding 10",
+          "surpassed 10",
+          "has north of 10",
+          "has south of 10",
+          "is approaching 10",
+          "is nearing 10",
+          "has near 10",
+          "tops 10",
+          "has beneath 10",
+          "exceeds a total of 10",
+          "has over the 10",
+          "has 10-ish",
+          "has 10ish"
+        ).map(t => s"In all-years, Ada Lovelace $t publications." -> pubs) ++ Vector(
+          "In all-years, Ada Lovelace's publications reach 10 and counting." -> pubs,
+          "In all-years, Ada Lovelace's publications number 10 at a minimum." -> pubs
+        )
+      )
+    }
+  }
+
+  test("repair-02 D14: the negation families (lack, without, absent, fail to) are not verified") {
+    context(pairQ) { (c, _) =>
+      removed(
+        c,
+        Vector(
+          "In all-years, Ada Lovelace lacked 10 publications." -> pubs,
+          "In all-years, Ada Lovelace is lacking 10 publications." -> pubs,
+          "In all-years, Ada Lovelace's record lacks a total of 10 publications." -> pubs,
+          "In all-years, Ada Lovelace is without 10 publications." -> pubs,
+          "In all-years, Ada Lovelace is absent from 10 publications." -> pubs,
+          "In all-years, Ada Lovelace fails to reach 10 publications." -> pubs,
+          "In all-years, Ada Lovelace hardly has 10 publications." -> pubs,
+          "In all-years, Ada Lovelace barely has 10 publications." -> pubs,
+          "In all-years, it is denied that Ada Lovelace has 10 publications." -> pubs,
+          "In all-years, Ada Lovelace lacks 1 distinct coauthor." -> coauthors,
+          // A parenthetical without a measure name still negates the number after it.
+          "In all-years, Ada Lovelace has (not) 10 publications." -> pubs
+        )
+      )
+    }
+  }
+
+  test(
+    "repair-02 controls: exact statements, ratios, and an aside defining a measure still verify"
+  ) {
+    context(pairQ) { (c, _) =>
+      val both = pubs ++ coauthors
+      Vector(
+        "In all-years, Ada Lovelace has 10 publications." -> pubs,
+        "In all-years, Ada Lovelace has exactly 10 publications." -> pubs,
+        "In all-years, Ada Lovelace has just 10 publications." -> pubs,
+        "In all-years, Ada Lovelace has 1 distinct coauthor over 10 publications." -> both,
+        "In all-years, Ada Lovelace has 1 distinct coauthor over the 10 publications." -> both,
+        // A negation inside an aside that names a measure is about that noun, not the number.
+        "In all-years, Ada Lovelace (whose works lack any retraction) has 10 publications." -> pubs
+      ).foreach((t, v) =>
+        assert(status(adaClaim(t, v), c) == VERIFIED, Verifier.check(adaClaim(t, v), c).checks)
+      )
+    }
+  }

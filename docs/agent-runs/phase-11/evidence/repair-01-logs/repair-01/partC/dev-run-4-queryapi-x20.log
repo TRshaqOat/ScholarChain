@@ -1,0 +1,425 @@
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] scalafmt: Formatting 1 Scala sources (/Users/achyutpatel/Developer/Cloud/ScholarChain/modules/services)...
+[info] scalafmt: Formatting 1 Scala sources (/Users/achyutpatel/Developer/Cloud/ScholarChain/modules/services)...
+[success] Total time: 1 s, completed Nov 13, 2026, 10:53:36 PM
+[success] Total time: 0 s, completed Nov 13, 2026, 10:53:36 PM
+[info] compiling 1 Scala source to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/services/target/scala-3.3.7/classes ...
+[info] done compiling
+[info] compiling 1 Scala source to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/services/target/scala-3.3.7/test-classes ...
+[info] done compiling
+[info] RequestReadSpec:
+[info] - D5: a refused or unread body that never arrives does not hold the exchange or the thread (3 seconds, 361 milliseconds)
+[info] - D5: a body or header slower than the read timeout loses its connection; threads freed (30 seconds, 195 milliseconds)
+[info] - D5: a response to a body left unread says Connection: close, so no client reuses it (25 milliseconds)
+[info] Run completed in 33 seconds, 680 milliseconds.
+[info] Total number of tests run: 3
+[info] Suites: completed 1, aborted 0
+[info] Tests: succeeded 3, failed 0, canceled 0, ignored 0, pending 0
+[info] All tests passed.
+[success] Total time: 36 s, completed Nov 13, 2026, 10:54:12 PM
+[info] QueryApiSpec:
+[info] - a synchronous query returns an evidence-backed answer with links; IDs are echoed
+[info] - malformed JSON, invalid fields, a wrong Content-Type, and an oversized body are 400
+[info] - valid JSON with unsupported constraints or retrieval limits is 422
+[info] - Idempotency-Key: the same body replays the stored answer; a different body is 409
+[info] - a passed deadline is 504 (cooperative and hard); a failing store is 502; breakers open
+[info] - missing or wrong API key is 401 everywhere except /healthz and /readyz
+[info] - health and readiness differ; neither reveals configuration
+[info] - explain returns the plan, stages, versions, evidence, and counters; never hidden text
+[info] - POST /v1/query is rate limited per instance (429 with Retry-After)
+[info] - metrics: counts by route and status, latency percentiles, and answer counters
+[info] - no API key, question, or store error text appears in any log line or response
+[info] - launcher: fake mode starts on localhost; a missing key or incomplete live arguments stop it
+[info] - readiness probes S3 under the audit prefix query-api and the worker read (repair-01 m1)
+[info] Run completed in 1 second, 792 milliseconds.
+[info] Total number of tests run: 13
+[info] Suites: completed 1, aborted 0
+[info] Tests: succeeded 13, failed 0, canceled 0, ignored 0, pending 0
+[info] All tests passed.
+[success] Total time: 2 s, completed Nov 13, 2026, 10:54:14 PM
+[info] QueryApiSpec:
+[info] - a synchronous query returns an evidence-backed answer with links; IDs are echoed
+[info] - malformed JSON, invalid fields, a wrong Content-Type, and an oversized body are 400
+[info] - valid JSON with unsupported constraints or retrieval limits is 422
+[info] - Idempotency-Key: the same body replays the stored answer; a different body is 409
+[info] - a passed deadline is 504 (cooperative and hard); a failing store is 502; breakers open
+[info] - missing or wrong API key is 401 everywhere except /healthz and /readyz
+[info] - health and readiness differ; neither reveals configuration
+[info] - explain returns the plan, stages, versions, evidence, and counters; never hidden text
+[info] - POST /v1/query is rate limited per instance (429 with Retry-After)
+[info] - metrics: counts by route and status, latency percentiles, and answer counters
+[info] - no API key, question, or store error text appears in any log line or response
+[info] - launcher: fake mode starts on localhost; a missing key or incomplete live arguments stop it
+[info] - readiness probes S3 under the audit prefix query-api and the worker read (repair-01 m1)
+[info] Run completed in 1 second, 597 milliseconds.
+[info] Total number of tests run: 13
+[info] Suites: completed 1, aborted 0
+[info] Tests: succeeded 13, failed 0, canceled 0, ignored 0, pending 0
+[info] All tests passed.
+[success] Total time: 2 s, completed Nov 13, 2026, 10:54:16 PM
+[info] QueryApiSpec:
+[info] - a synchronous query returns an evidence-backed answer with links; IDs are echoed
+[info] - malformed JSON, invalid fields, a wrong Content-Type, and an oversized body are 400
+[info] - valid JSON with unsupported constraints or retrieval limits is 422
+[info] - Idempotency-Key: the same body replays the stored answer; a different body is 409
+[info] - a passed deadline is 504 (cooperative and hard); a failing store is 502; breakers open
+[info] - missing or wrong API key is 401 everywhere except /healthz and /readyz
+[info] - health and readiness differ; neither reveals configuration
+[info] - explain returns the plan, stages, versions, evidence, and counters; never hidden text
+[info] - POST /v1/query is rate limited per instance (429 with Retry-After)
+[info] - metrics: counts by route and status, latency percentiles, and answer counters
+[info] - no API key, question, or store error text appears in any log line or response
+[info] - launcher: fake mode starts on localhost; a missing key or incomplete live arguments stop it
+[info] - readiness probes S3 under the audit prefix query-api and the worker read (repair-01 m1)
+[info] Run completed in 1 second, 543 milliseconds.
+[info] Total number of tests run: 13
+[info] Suites: completed 1, aborted 0
+[info] Tests: succeeded 13, failed 0, canceled 0, ignored 0, pending 0
+[info] All tests passed.
+[success] Total time: 2 s, completed Nov 13, 2026, 10:54:17 PM
+[info] QueryApiSpec:
+[info] - a synchronous query returns an evidence-backed answer with links; IDs are echoed
+[info] - malformed JSON, invalid fields, a wrong Content-Type, and an oversized body are 400
+[info] - valid JSON with unsupported constraints or retrieval limits is 422
+[info] - Idempotency-Key: the same body replays the stored answer; a different body is 409
+[info] - a passed deadline is 504 (cooperative and hard); a failing store is 502; breakers open
+[info] - missing or wrong API key is 401 everywhere except /healthz and /readyz
+[info] - health and readiness differ; neither reveals configuration
+[info] - explain returns the plan, stages, versions, evidence, and counters; never hidden text
+[info] - POST /v1/query is rate limited per instance (429 with Retry-After)
+[info] - metrics: counts by route and status, latency percentiles, and answer counters
+[info] - no API key, question, or store error text appears in any log line or response
+[info] - launcher: fake mode starts on localhost; a missing key or incomplete live arguments stop it
+[info] - readiness probes S3 under the audit prefix query-api and the worker read (repair-01 m1)
+[info] Run completed in 1 second, 597 milliseconds.
+[info] Total number of tests run: 13
+[info] Suites: completed 1, aborted 0
+[info] Tests: succeeded 13, failed 0, canceled 0, ignored 0, pending 0
+[info] All tests passed.
+[success] Total time: 2 s, completed Nov 13, 2026, 10:54:19 PM
+[info] QueryApiSpec:
+[info] - a synchronous query returns an evidence-backed answer with links; IDs are echoed
+[info] - malformed JSON, invalid fields, a wrong Content-Type, and an oversized body are 400
+[info] - valid JSON with unsupported constraints or retrieval limits is 422
+[info] - Idempotency-Key: the same body replays the stored answer; a different body is 409
+[info] - a passed deadline is 504 (cooperative and hard); a failing store is 502; breakers open
+[info] - missing or wrong API key is 401 everywhere except /healthz and /readyz
+[info] - health and readiness differ; neither reveals configuration
+[info] - explain returns the plan, stages, versions, evidence, and counters; never hidden text
+[info] - POST /v1/query is rate limited per instance (429 with Retry-After)
+[info] - metrics: counts by route and status, latency percentiles, and answer counters
+[info] - no API key, question, or store error text appears in any log line or response
+[info] - launcher: fake mode starts on localhost; a missing key or incomplete live arguments stop it
+[info] - readiness probes S3 under the audit prefix query-api and the worker read (repair-01 m1)
+[info] Run completed in 1 second, 649 milliseconds.
+[info] Total number of tests run: 13
+[info] Suites: completed 1, aborted 0
+[info] Tests: succeeded 13, failed 0, canceled 0, ignored 0, pending 0
+[info] All tests passed.
+[success] Total time: 2 s, completed Nov 13, 2026, 10:54:21 PM
+[info] QueryApiSpec:
+[info] - a synchronous query returns an evidence-backed answer with links; IDs are echoed
+[info] - malformed JSON, invalid fields, a wrong Content-Type, and an oversized body are 400
+[info] - valid JSON with unsupported constraints or retrieval limits is 422
+[info] - Idempotency-Key: the same body replays the stored answer; a different body is 409
+[info] - a passed deadline is 504 (cooperative and hard); a failing store is 502; breakers open
+[info] - missing or wrong API key is 401 everywhere except /healthz and /readyz
+[info] - health and readiness differ; neither reveals configuration
+[info] - explain returns the plan, stages, versions, evidence, and counters; never hidden text
+[info] - POST /v1/query is rate limited per instance (429 with Retry-After)
+[info] - metrics: counts by route and status, latency percentiles, and answer counters
+[info] - no API key, question, or store error text appears in any log line or response
+[info] - launcher: fake mode starts on localhost; a missing key or incomplete live arguments stop it
+[info] - readiness probes S3 under the audit prefix query-api and the worker read (repair-01 m1)
+[info] Run completed in 1 second, 461 milliseconds.
+[info] Total number of tests run: 13
+[info] Suites: completed 1, aborted 0
+[info] Tests: succeeded 13, failed 0, canceled 0, ignored 0, pending 0
+[info] All tests passed.
+[success] Total time: 2 s, completed Nov 13, 2026, 10:54:22 PM
+[info] QueryApiSpec:
+[info] - a synchronous query returns an evidence-backed answer with links; IDs are echoed
+[info] - malformed JSON, invalid fields, a wrong Content-Type, and an oversized body are 400
+[info] - valid JSON with unsupported constraints or retrieval limits is 422
+[info] - Idempotency-Key: the same body replays the stored answer; a different body is 409
+[info] - a passed deadline is 504 (cooperative and hard); a failing store is 502; breakers open
+[info] - missing or wrong API key is 401 everywhere except /healthz and /readyz
+[info] - health and readiness differ; neither reveals configuration
+[info] - explain returns the plan, stages, versions, evidence, and counters; never hidden text
+[info] - POST /v1/query is rate limited per instance (429 with Retry-After)
+[info] - metrics: counts by route and status, latency percentiles, and answer counters
+[info] - no API key, question, or store error text appears in any log line or response
+[info] - launcher: fake mode starts on localhost; a missing key or incomplete live arguments stop it
+[info] - readiness probes S3 under the audit prefix query-api and the worker read (repair-01 m1)
+[info] Run completed in 1 second, 437 milliseconds.
+[info] Total number of tests run: 13
+[info] Suites: completed 1, aborted 0
+[info] Tests: succeeded 13, failed 0, canceled 0, ignored 0, pending 0
+[info] All tests passed.
+[success] Total time: 2 s, completed Nov 13, 2026, 10:54:24 PM
+[info] QueryApiSpec:
+[info] - a synchronous query returns an evidence-backed answer with links; IDs are echoed
+[info] - malformed JSON, invalid fields, a wrong Content-Type, and an oversized body are 400
+[info] - valid JSON with unsupported constraints or retrieval limits is 422
+[info] - Idempotency-Key: the same body replays the stored answer; a different body is 409
+[info] - a passed deadline is 504 (cooperative and hard); a failing store is 502; breakers open
+[info] - missing or wrong API key is 401 everywhere except /healthz and /readyz
+[info] - health and readiness differ; neither reveals configuration
+[info] - explain returns the plan, stages, versions, evidence, and counters; never hidden text
+[info] - POST /v1/query is rate limited per instance (429 with Retry-After)
+[info] - metrics: counts by route and status, latency percentiles, and answer counters
+[info] - no API key, question, or store error text appears in any log line or response
+[info] - launcher: fake mode starts on localhost; a missing key or incomplete live arguments stop it
+[info] - readiness probes S3 under the audit prefix query-api and the worker read (repair-01 m1)
+[info] Run completed in 1 second, 476 milliseconds.
+[info] Total number of tests run: 13
+[info] Suites: completed 1, aborted 0
+[info] Tests: succeeded 13, failed 0, canceled 0, ignored 0, pending 0
+[info] All tests passed.
+[success] Total time: 2 s, completed Nov 13, 2026, 10:54:26 PM
+[info] QueryApiSpec:
+[info] - a synchronous query returns an evidence-backed answer with links; IDs are echoed
+[info] - malformed JSON, invalid fields, a wrong Content-Type, and an oversized body are 400
+[info] - valid JSON with unsupported constraints or retrieval limits is 422
+[info] - Idempotency-Key: the same body replays the stored answer; a different body is 409
+[info] - a passed deadline is 504 (cooperative and hard); a failing store is 502; breakers open
+[info] - missing or wrong API key is 401 everywhere except /healthz and /readyz
+[info] - health and readiness differ; neither reveals configuration
+[info] - explain returns the plan, stages, versions, evidence, and counters; never hidden text
+[info] - POST /v1/query is rate limited per instance (429 with Retry-After)
+[info] - metrics: counts by route and status, latency percentiles, and answer counters
+[info] - no API key, question, or store error text appears in any log line or response
+[info] - launcher: fake mode starts on localhost; a missing key or incomplete live arguments stop it
+[info] - readiness probes S3 under the audit prefix query-api and the worker read (repair-01 m1)
+[info] Run completed in 1 second, 451 milliseconds.
+[info] Total number of tests run: 13
+[info] Suites: completed 1, aborted 0
+[info] Tests: succeeded 13, failed 0, canceled 0, ignored 0, pending 0
+[info] All tests passed.
+[success] Total time: 2 s, completed Nov 13, 2026, 10:54:27 PM
+[info] QueryApiSpec:
+[info] - a synchronous query returns an evidence-backed answer with links; IDs are echoed
+[info] - malformed JSON, invalid fields, a wrong Content-Type, and an oversized body are 400
+[info] - valid JSON with unsupported constraints or retrieval limits is 422
+[info] - Idempotency-Key: the same body replays the stored answer; a different body is 409
+[info] - a passed deadline is 504 (cooperative and hard); a failing store is 502; breakers open
+[info] - missing or wrong API key is 401 everywhere except /healthz and /readyz
+[info] - health and readiness differ; neither reveals configuration
+[info] - explain returns the plan, stages, versions, evidence, and counters; never hidden text
+[info] - POST /v1/query is rate limited per instance (429 with Retry-After)
+[info] - metrics: counts by route and status, latency percentiles, and answer counters
+[info] - no API key, question, or store error text appears in any log line or response
+[info] - launcher: fake mode starts on localhost; a missing key or incomplete live arguments stop it
+[info] - readiness probes S3 under the audit prefix query-api and the worker read (repair-01 m1)
+[info] Run completed in 1 second, 455 milliseconds.
+[info] Total number of tests run: 13
+[info] Suites: completed 1, aborted 0
+[info] Tests: succeeded 13, failed 0, canceled 0, ignored 0, pending 0
+[info] All tests passed.
+[success] Total time: 2 s, completed Nov 13, 2026, 10:54:29 PM
+[info] QueryApiSpec:
+[info] - a synchronous query returns an evidence-backed answer with links; IDs are echoed
+[info] - malformed JSON, invalid fields, a wrong Content-Type, and an oversized body are 400
+[info] - valid JSON with unsupported constraints or retrieval limits is 422
+[info] - Idempotency-Key: the same body replays the stored answer; a different body is 409
+[info] - a passed deadline is 504 (cooperative and hard); a failing store is 502; breakers open
+[info] - missing or wrong API key is 401 everywhere except /healthz and /readyz
+[info] - health and readiness differ; neither reveals configuration
+[info] - explain returns the plan, stages, versions, evidence, and counters; never hidden text
+[info] - POST /v1/query is rate limited per instance (429 with Retry-After)
+[info] - metrics: counts by route and status, latency percentiles, and answer counters
+[info] - no API key, question, or store error text appears in any log line or response
+[info] - launcher: fake mode starts on localhost; a missing key or incomplete live arguments stop it
+[info] - readiness probes S3 under the audit prefix query-api and the worker read (repair-01 m1)
+[info] Run completed in 1 second, 452 milliseconds.
+[info] Total number of tests run: 13
+[info] Suites: completed 1, aborted 0
+[info] Tests: succeeded 13, failed 0, canceled 0, ignored 0, pending 0
+[info] All tests passed.
+[success] Total time: 2 s, completed Nov 13, 2026, 10:54:30 PM
+[info] QueryApiSpec:
+[info] - a synchronous query returns an evidence-backed answer with links; IDs are echoed
+[info] - malformed JSON, invalid fields, a wrong Content-Type, and an oversized body are 400
+[info] - valid JSON with unsupported constraints or retrieval limits is 422
+[info] - Idempotency-Key: the same body replays the stored answer; a different body is 409
+[info] - a passed deadline is 504 (cooperative and hard); a failing store is 502; breakers open
+[info] - missing or wrong API key is 401 everywhere except /healthz and /readyz
+[info] - health and readiness differ; neither reveals configuration
+[info] - explain returns the plan, stages, versions, evidence, and counters; never hidden text
+[info] - POST /v1/query is rate limited per instance (429 with Retry-After)
+[info] - metrics: counts by route and status, latency percentiles, and answer counters
+[info] - no API key, question, or store error text appears in any log line or response
+[info] - launcher: fake mode starts on localhost; a missing key or incomplete live arguments stop it
+[info] - readiness probes S3 under the audit prefix query-api and the worker read (repair-01 m1)
+[info] Run completed in 1 second, 445 milliseconds.
+[info] Total number of tests run: 13
+[info] Suites: completed 1, aborted 0
+[info] Tests: succeeded 13, failed 0, canceled 0, ignored 0, pending 0
+[info] All tests passed.
+[success] Total time: 2 s, completed Nov 13, 2026, 10:54:32 PM
+[info] QueryApiSpec:
+[info] - a synchronous query returns an evidence-backed answer with links; IDs are echoed
+[info] - malformed JSON, invalid fields, a wrong Content-Type, and an oversized body are 400
+[info] - valid JSON with unsupported constraints or retrieval limits is 422
+[info] - Idempotency-Key: the same body replays the stored answer; a different body is 409
+[info] - a passed deadline is 504 (cooperative and hard); a failing store is 502; breakers open
+[info] - missing or wrong API key is 401 everywhere except /healthz and /readyz
+[info] - health and readiness differ; neither reveals configuration
+[info] - explain returns the plan, stages, versions, evidence, and counters; never hidden text
+[info] - POST /v1/query is rate limited per instance (429 with Retry-After)
+[info] - metrics: counts by route and status, latency percentiles, and answer counters
+[info] - no API key, question, or store error text appears in any log line or response
+[info] - launcher: fake mode starts on localhost; a missing key or incomplete live arguments stop it
+[info] - readiness probes S3 under the audit prefix query-api and the worker read (repair-01 m1)
+[info] Run completed in 1 second, 445 milliseconds.
+[info] Total number of tests run: 13
+[info] Suites: completed 1, aborted 0
+[info] Tests: succeeded 13, failed 0, canceled 0, ignored 0, pending 0
+[info] All tests passed.
+[success] Total time: 2 s, completed Nov 13, 2026, 10:54:33 PM
+[info] QueryApiSpec:
+[info] - a synchronous query returns an evidence-backed answer with links; IDs are echoed
+[info] - malformed JSON, invalid fields, a wrong Content-Type, and an oversized body are 400
+[info] - valid JSON with unsupported constraints or retrieval limits is 422
+[info] - Idempotency-Key: the same body replays the stored answer; a different body is 409
+[info] - a passed deadline is 504 (cooperative and hard); a failing store is 502; breakers open
+[info] - missing or wrong API key is 401 everywhere except /healthz and /readyz
+[info] - health and readiness differ; neither reveals configuration
+[info] - explain returns the plan, stages, versions, evidence, and counters; never hidden text
+[info] - POST /v1/query is rate limited per instance (429 with Retry-After)
+[info] - metrics: counts by route and status, latency percentiles, and answer counters
+[info] - no API key, question, or store error text appears in any log line or response
+[info] - launcher: fake mode starts on localhost; a missing key or incomplete live arguments stop it
+[info] - readiness probes S3 under the audit prefix query-api and the worker read (repair-01 m1)
+[info] Run completed in 1 second, 453 milliseconds.
+[info] Total number of tests run: 13
+[info] Suites: completed 1, aborted 0
+[info] Tests: succeeded 13, failed 0, canceled 0, ignored 0, pending 0
+[info] All tests passed.
+[success] Total time: 2 s, completed Nov 13, 2026, 10:54:35 PM
+[info] QueryApiSpec:
+[info] - a synchronous query returns an evidence-backed answer with links; IDs are echoed
+[info] - malformed JSON, invalid fields, a wrong Content-Type, and an oversized body are 400
+[info] - valid JSON with unsupported constraints or retrieval limits is 422
+[info] - Idempotency-Key: the same body replays the stored answer; a different body is 409
+[info] - a passed deadline is 504 (cooperative and hard); a failing store is 502; breakers open
+[info] - missing or wrong API key is 401 everywhere except /healthz and /readyz
+[info] - health and readiness differ; neither reveals configuration
+[info] - explain returns the plan, stages, versions, evidence, and counters; never hidden text
+[info] - POST /v1/query is rate limited per instance (429 with Retry-After)
+[info] - metrics: counts by route and status, latency percentiles, and answer counters
+[info] - no API key, question, or store error text appears in any log line or response
+[info] - launcher: fake mode starts on localhost; a missing key or incomplete live arguments stop it
+[info] - readiness probes S3 under the audit prefix query-api and the worker read (repair-01 m1)
+[info] Run completed in 1 second, 446 milliseconds.
+[info] Total number of tests run: 13
+[info] Suites: completed 1, aborted 0
+[info] Tests: succeeded 13, failed 0, canceled 0, ignored 0, pending 0
+[info] All tests passed.
+[success] Total time: 2 s, completed Nov 13, 2026, 10:54:36 PM
+[info] QueryApiSpec:
+[info] - a synchronous query returns an evidence-backed answer with links; IDs are echoed
+[info] - malformed JSON, invalid fields, a wrong Content-Type, and an oversized body are 400
+[info] - valid JSON with unsupported constraints or retrieval limits is 422
+[info] - Idempotency-Key: the same body replays the stored answer; a different body is 409
+[info] - a passed deadline is 504 (cooperative and hard); a failing store is 502; breakers open
+[info] - missing or wrong API key is 401 everywhere except /healthz and /readyz
+[info] - health and readiness differ; neither reveals configuration
+[info] - explain returns the plan, stages, versions, evidence, and counters; never hidden text
+[info] - POST /v1/query is rate limited per instance (429 with Retry-After)
+[info] - metrics: counts by route and status, latency percentiles, and answer counters
+[info] - no API key, question, or store error text appears in any log line or response
+[info] - launcher: fake mode starts on localhost; a missing key or incomplete live arguments stop it
+[info] - readiness probes S3 under the audit prefix query-api and the worker read (repair-01 m1)
+[info] Run completed in 1 second, 445 milliseconds.
+[info] Total number of tests run: 13
+[info] Suites: completed 1, aborted 0
+[info] Tests: succeeded 13, failed 0, canceled 0, ignored 0, pending 0
+[info] All tests passed.
+[success] Total time: 2 s, completed Nov 13, 2026, 10:54:38 PM
+[info] QueryApiSpec:
+[info] - a synchronous query returns an evidence-backed answer with links; IDs are echoed
+[info] - malformed JSON, invalid fields, a wrong Content-Type, and an oversized body are 400
+[info] - valid JSON with unsupported constraints or retrieval limits is 422
+[info] - Idempotency-Key: the same body replays the stored answer; a different body is 409
+[info] - a passed deadline is 504 (cooperative and hard); a failing store is 502; breakers open
+[info] - missing or wrong API key is 401 everywhere except /healthz and /readyz
+[info] - health and readiness differ; neither reveals configuration
+[info] - explain returns the plan, stages, versions, evidence, and counters; never hidden text
+[info] - POST /v1/query is rate limited per instance (429 with Retry-After)
+[info] - metrics: counts by route and status, latency percentiles, and answer counters
+[info] - no API key, question, or store error text appears in any log line or response
+[info] - launcher: fake mode starts on localhost; a missing key or incomplete live arguments stop it
+[info] - readiness probes S3 under the audit prefix query-api and the worker read (repair-01 m1)
+[info] Run completed in 1 second, 461 milliseconds.
+[info] Total number of tests run: 13
+[info] Suites: completed 1, aborted 0
+[info] Tests: succeeded 13, failed 0, canceled 0, ignored 0, pending 0
+[info] All tests passed.
+[success] Total time: 2 s, completed Nov 13, 2026, 10:54:39 PM
+[info] QueryApiSpec:
+[info] - a synchronous query returns an evidence-backed answer with links; IDs are echoed
+[info] - malformed JSON, invalid fields, a wrong Content-Type, and an oversized body are 400
+[info] - valid JSON with unsupported constraints or retrieval limits is 422
+[info] - Idempotency-Key: the same body replays the stored answer; a different body is 409
+[info] - a passed deadline is 504 (cooperative and hard); a failing store is 502; breakers open
+[info] - missing or wrong API key is 401 everywhere except /healthz and /readyz
+[info] - health and readiness differ; neither reveals configuration
+[info] - explain returns the plan, stages, versions, evidence, and counters; never hidden text
+[info] - POST /v1/query is rate limited per instance (429 with Retry-After)
+[info] - metrics: counts by route and status, latency percentiles, and answer counters
+[info] - no API key, question, or store error text appears in any log line or response
+[info] - launcher: fake mode starts on localhost; a missing key or incomplete live arguments stop it
+[info] - readiness probes S3 under the audit prefix query-api and the worker read (repair-01 m1)
+[info] Run completed in 1 second, 443 milliseconds.
+[info] Total number of tests run: 13
+[info] Suites: completed 1, aborted 0
+[info] Tests: succeeded 13, failed 0, canceled 0, ignored 0, pending 0
+[info] All tests passed.
+[success] Total time: 2 s, completed Nov 13, 2026, 10:54:41 PM
+[info] QueryApiSpec:
+[info] - a synchronous query returns an evidence-backed answer with links; IDs are echoed
+[info] - malformed JSON, invalid fields, a wrong Content-Type, and an oversized body are 400
+[info] - valid JSON with unsupported constraints or retrieval limits is 422
+[info] - Idempotency-Key: the same body replays the stored answer; a different body is 409
+[info] - a passed deadline is 504 (cooperative and hard); a failing store is 502; breakers open
+[info] - missing or wrong API key is 401 everywhere except /healthz and /readyz
+[info] - health and readiness differ; neither reveals configuration
+[info] - explain returns the plan, stages, versions, evidence, and counters; never hidden text
+[info] - POST /v1/query is rate limited per instance (429 with Retry-After)
+[info] - metrics: counts by route and status, latency percentiles, and answer counters
+[info] - no API key, question, or store error text appears in any log line or response
+[info] - launcher: fake mode starts on localhost; a missing key or incomplete live arguments stop it
+[info] - readiness probes S3 under the audit prefix query-api and the worker read (repair-01 m1)
+[info] Run completed in 1 second, 436 milliseconds.
+[info] Total number of tests run: 13
+[info] Suites: completed 1, aborted 0
+[info] Tests: succeeded 13, failed 0, canceled 0, ignored 0, pending 0
+[info] All tests passed.
+[success] Total time: 1 s, completed Nov 13, 2026, 10:54:42 PM
+[info] QueryApiSpec:
+[info] - a synchronous query returns an evidence-backed answer with links; IDs are echoed
+[info] - malformed JSON, invalid fields, a wrong Content-Type, and an oversized body are 400
+[info] - valid JSON with unsupported constraints or retrieval limits is 422
+[info] - Idempotency-Key: the same body replays the stored answer; a different body is 409
+[info] - a passed deadline is 504 (cooperative and hard); a failing store is 502; breakers open
+[info] - missing or wrong API key is 401 everywhere except /healthz and /readyz
+[info] - health and readiness differ; neither reveals configuration
+[info] - explain returns the plan, stages, versions, evidence, and counters; never hidden text
+[info] - POST /v1/query is rate limited per instance (429 with Retry-After)
+[info] - metrics: counts by route and status, latency percentiles, and answer counters
+[info] - no API key, question, or store error text appears in any log line or response
+[info] - launcher: fake mode starts on localhost; a missing key or incomplete live arguments stop it
+[info] - readiness probes S3 under the audit prefix query-api and the worker read (repair-01 m1)
+[info] Run completed in 1 second, 446 milliseconds.
+[info] Total number of tests run: 13
+[info] Suites: completed 1, aborted 0
+[info] Tests: succeeded 13, failed 0, canceled 0, ignored 0, pending 0
+[info] All tests passed.
+[success] Total time: 2 s, completed Nov 13, 2026, 10:54:44 PM
+exit 0

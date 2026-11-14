@@ -1,0 +1,2 @@
+d4888851ecb2e0e3b12d97960c3fa2cf6b9243f72fca847577bf267df4c15234  modules/storage/src/main/scala/scholarchain/storage/WindowSummaries.scala
+95bbd7c3be75da5166356db3b894c69421cc63b3877587d4e634089310f7c684  modules/storage/src/test/scala/scholarchain/storage/WindowSummarySpec.scala

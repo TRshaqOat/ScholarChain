@@ -42,9 +42,11 @@ object Verifier:
     * (ruling 29): v1 work order 4, v2 repair-01, v3 repair-02 (number words, asserted names), v4
     * Phase 10 work order 1 (list positions, measure phrases, ranks, names, removal records), v5
     * Phase 10 work order 9 (digit-group commas, the side window of a stored comparison, corpus
-    * measure names).
+    * measure names), v6 Phase 11 work order 2 (percentages of a share, "collaboration communities",
+    * the totalWorks measure name), v7 Phase 11 repair-01 (D1 to D3: quantity words, qualifiers, and
+    * negations of a number), v8 Phase 11 repair-02 (D14: "short of", "lacks", and their families).
     */
-  val Version = "verifier-v5"
+  val Version = "verifier-v8"
 
   private val NumberRe = "\\d+(?:\\.\\d+)?".r
   private val OrdinalSuffix = "(?:st|nd|rd|th)\\b".r
@@ -164,6 +166,86 @@ object Verifier:
   /** Digit-group commas removed: "141,367" becomes "141367". */
   def ungroup(text: String): String = Grouped.replaceAllIn(text, _.matched.replace(",", ""))
 
+  // Phase 11 work order 2 (live B13, B24): "69.4%" of a share is the fraction 0.694, two more
+  // decimals than written, so the numberMatches precision rule applies unchanged.
+  private val Percent = "\\s*(?:%|percent\\b)".r
+
+  /** A percentage as the fraction it states: "69.4" becomes "0.694", "69" becomes "0.69". */
+  def fromPercent(n: String): String = BigDecimal(n).bigDecimal.movePointLeft(2).toPlainString
+
+  // Repair-01 (D1 to D3): a written number states its stored value exactly. A quantity in words, a
+  // qualifier, or a negation before the number in its clause states something else, so the text
+  // fails, except a bound fact's own qualifier ("at least 3" of a minimum, "at most 4" of a maximum).
+  private val Vague =
+    ("(?i)(?<![\\w-])(?:hundreds?|thousands?|millions?|billions?|dozens?|scores\\s+of|tens\\s+of|" +
+      "handful|few|several|many|numerous|countless|multiple|a\\s+(?:lot|couple|number)\\s+of|" +
+      "lots\\s+of|plenty\\s+of|couple\\s+of|majority\\s+of|most\\s+of|half\\s+of)(?![\\w-])").r
+  // Repair-02 (D14): "short of", "shy of", and the other comparison families, also before "the",
+  // "a", or "a total of" ("exceeds a total of 10").
+  private val Filler = "(?:\\W{1,3}(?:the|an?|a\\s+(?:total|count)\\s+of))?\\W{0,3}$"
+  private val Before =
+    ("(?i)(?:\\b(?:(?:no\\s+)?(?:more|fewer|less|greater|higher|lower|larger|smaller)\\s+than|" +
+      "at\\s+(?:least|most)|up\\s+to|as\\s+(?:many|few|much|little)\\s+as|in\\s+excess\\s+of|" +
+      "upwards?\\s+of|(?:short|shy|north|south)\\s+of|far\\s+from|close\\s+to|nearly|near|nigh|" +
+      "almost|about|around|approximately|approx|approaching|nearing|roughly|circa|ca|some|beyond|" +
+      "exceed(?:s|ed|ing)?|surpass(?:es|ed|ing)?|outnumber(?:s|ed|ing)?|top(?:s|ped|ping)|over|" +
+      "under|above|below|beneath)|[~≈<>≤≥]=?)" + Filler).r
+  private val After =
+    ("(?i)^(?:\\s*%)?(?:\\s*\\+|[-\\s]\\s*(?:plus|odd|ish)\\b|ish\\b|\\s+or\\s+(?:more|fewer|less|so|" +
+      "higher|lower|greater|above|below|over|under|thereabouts)\\b|\\s+and\\s+(?:up|above|over|more|" +
+      "counting)\\b|\\s+at\\s+(?:least|most|(?:a\\s+)?(?:minimum|maximum))\\b)").r
+  // "25 over 10 publications", "1 coauthor over 10 publications": a ratio, not "more than".
+  private val Ratio =
+    ("(?i)(?:\\d|co-?authors?|collaborators?|publications?|papers?|works?|articles?)\\W*" +
+      "(?:over|under|above|below)" + Filler).r
+  private val MinKeys = Set("communityMinSize", "minWorks")
+  private val MaxKeys = Set("maxDepth")
+  private val AtLeast =
+    "(?i)(?:\\b(?:at\\s+least|no\\s+(?:fewer|less)\\s+than)\\W{0,3}|≥\\s*|>=\\s*)$".r
+  private val OrMore = "(?i)^(?:\\s*%)?\\s+or\\s+(?:more|above|over|higher|greater)\\b".r
+  private val AtMost =
+    "(?i)(?:\\b(?:at\\s+most|up\\s+to|no\\s+more\\s+than)\\W{0,3}|≤\\s*|<=\\s*)$".r
+  private val OrFewer = "(?i)^(?:\\s*%)?\\s+or\\s+(?:fewer|less|below|under|lower)\\b".r
+  // "did not converge": the stored convergence status (communityConverged), not a negated number.
+  // Repair-02 (D14): also "lacks", "without", "absent", and their families.
+  private val Negation =
+    ("(?i)(?:\\b(?:not|never|neither|nor|false|untrue|incorrect|wrong|cannot|no\\s+longer|" +
+      "lack(?:s|ed|ing)?|without|absen(?:t|ce)|devoid|fail(?:s|ed|ing)?\\s+to|hardly|scarcely|" +
+      "barely|seldom|rarely|den(?:y|ies|ied)|except|excluding)\\b|n['’]t\\b)(?!\\s+converge)").r
+  // A closed parenthetical with no digit that names a measure defines a noun, as the template's
+  // "singleton researchers (researchers without any coauthor edge in that window)"; a negation in it
+  // is not about a later number.
+  private val Aside = "\\([^()]*\\)".r
+  private def asidesOut(before: String) =
+    Aside.replaceAllIn(
+      before,
+      m =>
+        if !m.matched.exists(_.isDigit) && Families.values.exists(
+            _.findFirstIn(m.matched).isDefined
+          )
+        then " " * m.matched.length
+        else Regex.quoteReplacement(m.matched)
+    )
+
+  /** Why the number at [s, e) of t does not state its stored value exactly, if it does not. */
+  private def hedge(t: String, s: Int, e: Int, bound: Seq[Binding]): Option[String] =
+    val before = t.substring(clause(t, s, e)._1, s)
+    val after = t.substring(e)
+    def bounded(keys: Set[String], pre: Regex, post: Regex) =
+      bound.exists(b => keys(b.key)) && (pre.findFirstIn(before).isDefined ||
+        post.findPrefixOf(after).isDefined)
+    val qualifier =
+      if bounded(MinKeys, AtLeast, OrMore) || bounded(MaxKeys, AtMost, OrFewer) then None
+      else
+        Before
+          .findFirstIn(before)
+          .filter(_ => Ratio.findFirstIn(before).isEmpty)
+          .orElse(After.findPrefixOf(after))
+    val n = t.substring(s, e)
+    qualifier
+      .map(q => s"$n is qualified ('${q.trim}'), so it does not state the stored value exactly")
+      .orElse(Negation.findFirstIn(asidesOut(before)).map(w => s"$n is negated ('$w')"))
+
   /** Rank words: in their clause, an ordinal is a rank (never a time marker or a list position). */
   val RankWord: Regex = "(?i)\\b(?:rank\\w*|places?|placed|position\\w*)\\b|#".r
   private val CompoundRe =
@@ -231,6 +313,9 @@ object Verifier:
   private def words(s: String): Regex = s"(?i)\\b(?:$s)\\b".r
   val Families: Map[String, Regex] = Map(
     "publications" -> words("publications?|papers?|works?|published|articles?"),
+    // Phase 11 work order 2 (live B23): totalWorks counts the works of every researcher with the
+    // display name, so it must be named as such; "X has 252 works" is not X's count.
+    "nameWorks" -> words("works? (?:among|across)|(?:display|same) name|namesakes?"),
     "coauthors" -> words(
       "distinct co-?authors?|unique co-?authors?|co-?authors?|collaborators?|breadth"
     ),
@@ -246,11 +331,12 @@ object Verifier:
     "communities" -> words("communit(?:y|ies)|bridge"),
     "participation" -> words("participation coefficient|participation|bridge"),
     "coreness" -> words("coreness|k-core|core"),
+    // Phase 11 work order 2 (live B17): "collaboration communities" names communities, not edges.
     "joint" -> words(
-      "joint|together|co-?authored|shared|publications?|papers?|works?|collaborations?"
+      "joint|together|co-?authored|shared|publications?|papers?|works?|collaborations?(?!\\s+communit)"
     ),
     "hops" -> words("hops?|steps?|links?|length|edges?|depth"),
-    "edges" -> words("edges?|links?|collaborations?|connections?|ties"),
+    "edges" -> words("edges?|links?|collaborations?(?!\\s+communit)|connections?|ties"),
     "share" -> "(?i)\\b(?:share|fraction|proportion|percent)\\b|%".r,
     "candidates" -> words("researchers?|candidates?|people|persons?"),
     "confidence" -> words("confidence"),
@@ -269,7 +355,7 @@ object Verifier:
   private val Base: Map[String, String] = Map(
     "publicationCount" -> "publications",
     "works" -> "publications",
-    "totalWorks" -> "publications",
+    "totalWorks" -> "nameWorks",
     "minWorks" -> "publications",
     "distinctCoauthorCount" -> "coauthors",
     "maximumCoauthorsOnOnePaper" -> "coauthors",
@@ -540,14 +626,24 @@ object Verifier:
       .toVector
       .flatMap { m =>
         val n = m.matched
-        val bound = bindings.filter(_.binds(n))
+        // A percentage binds only a share fact, as the fraction it states.
+        val bound =
+          if Percent.findPrefixOf(t2.substring(m.end)).isEmpty then bindings.filter(_.binds(n))
+          else
+            bindings
+              .filter(b => b.family.stripPrefix("change:") == "share" && b.binds(fromPercent(n)))
         val ordinal = OrdinalSuffix.findPrefixOf(t2.substring(m.end)).isDefined
         lazy val near = nearest(t2, m.start, m.end)
+        // Repair-01 (D2, D3): numbers of the fixed notes and years are not checked for qualifiers.
+        val hedged =
+          if freeNumbers(n) || bound.exists(_.scope == Scope.YEAR) then None
+          else hedge(t2, m.start, m.end, bound)
         // A rank or a list position (R3-1, review 2 n2, n4): an ordinal, or a number whose nearest
         // measure word is a rank word. It binds only to a stored rank the claim may assert
         // (rank.<k>.storedRank, which needs rank.<k>.researcherId) or, for an ordinal, to the index k
         // of an asserted hop, entry, member, or neighbor fact; never to a listed value or a year.
-        if ordinal || (near("rank") && !near("list")) then
+        if hedged.isDefined then hedged
+        else if ordinal || (near("rank") && !near("list")) then
           if bound.exists(_.family == "rank") then None
           else if ordinal && n.toIntOption.exists(positions) then None
           else if ordinal && !ranked(t2, m.start, m.end) then
@@ -565,7 +661,15 @@ object Verifier:
             s"$n is not written next to the name of ${bound.map(_.key).distinct.mkString(" or ")}"
           )
       }
-    (numberProblems, windowProblems.result())
+    // Repair-01 (D1): "hundreds of publications" or "a dozen coauthors" states no stored value.
+    val vague = Vague.findAllMatchIn(t2).toVector.collect {
+      case m if {
+            val (s, e) = clause(t2, m.start, m.end)
+            Families.values.exists(_.findFirstIn(t2.substring(s, e)).isDefined)
+          } =>
+        s"'${m.matched}' states a quantity in words, not a stored value"
+    }
+    (numberProblems ++ vague, windowProblems.result())
 
   private def numbersIn(text: String, c: Context): Set[String] =
     NumberRe.findAllIn(YearRange.replaceAllIn(wordsToDigits(c.strip(text)), " ")).toSet

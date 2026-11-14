@@ -1,0 +1,9 @@
+label: D4-thrown
+file: modules/rag/src/main/scala/scholarchain/rag/runtime/Semantic.scala
+sha256 before: 2a94eb93157727bd44f9a497eaf5937249d43362e4f205acc761f5ae57590c84
+patched sha256: 56c4231232525c456acb3088d6312e8bc62c746495adde98117756ed29fe3300
+sbt exit: 1
+[info] - repair-01 D4: a failed vector query degrades semantic context; graph facts still answer *** FAILED ***
+[info] Tests: succeeded 110, failed 1, canceled 0, ignored 0, pending 0
+sha256 restored: 2a94eb93157727bd44f9a497eaf5937249d43362e4f205acc761f5ae57590c84
+RESTORE OK

@@ -1,0 +1,11 @@
+label: ctl-ratio
+file: modules/rag/src/main/scala/scholarchain/rag/runtime/Verifier.scala
+sha256 before: a4aebe1e4a15f14feab942c401f950fbd11a8f1bb610677edbf4fe879b5a802c
+patched sha256: 4b5a0f2d6fa222d2b6a9753f5c16b564692675ba6b2831098953376c6a497e94
+sbt exit: 1
+[info] - F1 (a): a number must be bound to the named fact it states, not to any fact or to none *** FAILED ***
+[info] - repair-01 D2: a qualified number (more than 10, about 10, 10 or more) is not verified *** FAILED ***
+[info] - repair-01 controls: bound qualifiers and the template's negations still verify *** FAILED ***
+[info] Tests: succeeded 108, failed 3, canceled 0, ignored 0, pending 0
+sha256 restored: a4aebe1e4a15f14feab942c401f950fbd11a8f1bb610677edbf4fe879b5a802c
+RESTORE OK

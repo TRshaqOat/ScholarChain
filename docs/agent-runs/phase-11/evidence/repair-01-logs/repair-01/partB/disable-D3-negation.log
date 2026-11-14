@@ -1,0 +1,9 @@
+label: D3-negation
+file: modules/rag/src/main/scala/scholarchain/rag/runtime/Verifier.scala
+sha256 before: a4aebe1e4a15f14feab942c401f950fbd11a8f1bb610677edbf4fe879b5a802c
+patched sha256: 139920fb4bceec682a96d9cd1dc6bb0ff46d6684c98b04a02415aa48f18c7793
+sbt exit: 1
+[info] - repair-01 D3: a negated number (does not have 10, it is false that) is not verified *** FAILED ***
+[info] Tests: succeeded 110, failed 1, canceled 0, ignored 0, pending 0
+sha256 restored: a4aebe1e4a15f14feab942c401f950fbd11a8f1bb610677edbf4fe879b5a802c
+RESTORE OK

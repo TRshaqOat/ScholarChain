@@ -1,0 +1,28 @@
+# D5-timeout: modules/services/src/main/scala/scholarchain/services/Http.scala
+# patch: '      System.setProperty("sun.net.httpserver.maxReqTime", RequestReadTimeoutSeconds.toString)\n' -> '      ()\n'
+# cmd: sbt -J-Xmx4g -batch services/testOnly scholarchain.services.RequestReadSpec
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] compiling 1 Scala source to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/services/target/scala-3.3.7/classes ...
+[info] done compiling
+[info] RequestReadSpec:
+[info] - D5: a refused or unread body that never arrives does not hold the exchange or the thread
+[info] - D5: a body or header slower than the read timeout loses its connection; threads freed *** FAILED ***
+[info]   RequestReadSpec.this.untilClosed(slowBody, guard).isDefined was false the slow body kept its connection (RequestReadSpec.scala:95)
+[info] - D5: a response to a body left unread says Connection: close, so no client reuses it
+[info] Run completed in 1 minute, 33 seconds.
+[info] Total number of tests run: 3
+[info] Suites: completed 1, aborted 0
+[info] Tests: succeeded 2, failed 1, canceled 0, ignored 0, pending 0
+[info] *** 1 TEST FAILED ***
+[error] Failed tests:
+[error] 	scholarchain.services.RequestReadSpec
+[error] (services / Test / testOnly) sbt.TestsFailedException: Tests unsuccessful
+[error] Total time: 96 s (0:01:36.0), completed Nov 13, 2026, 10:58:10 PM
+# exit 1
+# sha256 before b2bae7d1046d7f53793929e726727446424b88d6a987030cac31a10fb2be82fb
+# sha256 after  b2bae7d1046d7f53793929e726727446424b88d6a987030cac31a10fb2be82fb OK

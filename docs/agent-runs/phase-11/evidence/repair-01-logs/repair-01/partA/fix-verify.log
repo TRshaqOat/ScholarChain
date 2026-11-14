@@ -1,0 +1,172 @@
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] scalafmt: Checking 1 Scala sources (/Users/achyutpatel/Developer/Cloud/ScholarChain)...
+[info] scalafmt: Checking 2 Scala sources (/Users/achyutpatel/Developer/Cloud/ScholarChain)...
+[success] Total time: 1 s, completed Nov 13, 2026, 3:40:20 AM
+[info] ForkOptions(None, None, Vector(), Some(/Users/achyutpatel/Developer/Cloud/ScholarChain), Vector(-XX:+IgnoreUnrecognizedVMOptions, --add-modules=jdk.incubator.vector, -Djdk.reflect.useDirectMethodHandle=false, -Dio.netty.tryReflectionSetAccessible=true, --add-opens=java.security.jgss/sun.security.krb5=ALL-UNNAMED, --add-opens=java.base/java.lang=ALL-UNNAMED, --add-opens=java.base/java.lang.invoke=ALL-UNNAMED, --add-opens=java.base/java.lang.reflect=ALL-UNNAMED, --add-opens=java.base/java.io=ALL-UNNAMED, --add-opens=java.base/java.net=ALL-UNNAMED, --add-opens=java.base/java.nio=ALL-UNNAMED, --add-opens=java.base/java.util=ALL-UNNAMED, --add-opens=java.base/java.util.concurrent=ALL-UNNAMED, --add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED, --add-opens=java.base/jdk.internal.ref=ALL-UNNAMED, --add-opens=java.base/sun.nio.ch=ALL-UNNAMED, --add-opens=java.base/sun.nio.cs=ALL-UNNAMED, --add-opens=java.base/sun.security.action=ALL-UNNAMED, --add-opens=java.base/sun.util.calendar=ALL-UNNAMED, -Xmx2g), false, Map(), Some(true))
+[success] Total time: 0 s, completed Nov 13, 2026, 3:40:20 AM
+[info] ForkOptions(None, None, Vector(), Some(/Users/achyutpatel/Developer/Cloud/ScholarChain/modules/spark), Vector(-XX:+IgnoreUnrecognizedVMOptions, --add-modules=jdk.incubator.vector, -Djdk.reflect.useDirectMethodHandle=false, -Dio.netty.tryReflectionSetAccessible=true, --add-opens=java.security.jgss/sun.security.krb5=ALL-UNNAMED, --add-opens=java.base/java.lang=ALL-UNNAMED, --add-opens=java.base/java.lang.invoke=ALL-UNNAMED, --add-opens=java.base/java.lang.reflect=ALL-UNNAMED, --add-opens=java.base/java.io=ALL-UNNAMED, --add-opens=java.base/java.net=ALL-UNNAMED, --add-opens=java.base/java.nio=ALL-UNNAMED, --add-opens=java.base/java.util=ALL-UNNAMED, --add-opens=java.base/java.util.concurrent=ALL-UNNAMED, --add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED, --add-opens=java.base/jdk.internal.ref=ALL-UNNAMED, --add-opens=java.base/sun.nio.ch=ALL-UNNAMED, --add-opens=java.base/sun.nio.cs=ALL-UNNAMED, --add-opens=java.base/sun.security.action=ALL-UNNAMED, --add-opens=java.base/sun.util.calendar=ALL-UNNAMED, -Xmx2g), false, Map(), Some(true))
+[success] Total time: 0 s, completed Nov 13, 2026, 3:40:20 AM
+[info] * /Users/achyutpatel/Developer/Cloud/ScholarChain/tests/contracts
+[info] * /Users/achyutpatel/Developer/Cloud/ScholarChain/tests/integration
+[info] * /Users/achyutpatel/Developer/Cloud/ScholarChain/tests/end-to-end
+[info] * /Users/achyutpatel/Developer/Cloud/ScholarChain/tests/adversarial
+[info] * /Users/achyutpatel/Developer/Cloud/ScholarChain/tests/fixtures
+[info] true
+[info] * -XX:+IgnoreUnrecognizedVMOptions
+[info] * --add-modules=jdk.incubator.vector
+[info] * -Djdk.reflect.useDirectMethodHandle=false
+[info] * -Dio.netty.tryReflectionSetAccessible=true
+[info] * --add-opens=java.security.jgss/sun.security.krb5=ALL-UNNAMED
+[info] * --add-opens=java.base/java.lang=ALL-UNNAMED
+[info] * --add-opens=java.base/java.lang.invoke=ALL-UNNAMED
+[info] * --add-opens=java.base/java.lang.reflect=ALL-UNNAMED
+[info] * --add-opens=java.base/java.io=ALL-UNNAMED
+[info] * --add-opens=java.base/java.net=ALL-UNNAMED
+[info] * --add-opens=java.base/java.nio=ALL-UNNAMED
+[info] * --add-opens=java.base/java.util=ALL-UNNAMED
+[info] * --add-opens=java.base/java.util.concurrent=ALL-UNNAMED
+[info] * --add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED
+[info] * --add-opens=java.base/jdk.internal.ref=ALL-UNNAMED
+[info] * --add-opens=java.base/sun.nio.ch=ALL-UNNAMED
+[info] * --add-opens=java.base/sun.nio.cs=ALL-UNNAMED
+[info] * --add-opens=java.base/sun.security.action=ALL-UNNAMED
+[info] * --add-opens=java.base/sun.util.calendar=ALL-UNNAMED
+[info] * -Xmx2g
+[success] Total time: 0 s, completed Nov 13, 2026, 3:40:20 AM
+[success] Total time: 1 s, completed Nov 13, 2026, 3:40:21 AM
+WARNING: Using incubator modules: jdk.incubator.vector
+[info] StoreFailureAdversarialSpec:
+[info] - Neptune: a query timeout is GraphReadTimeoutException after one call, never retried
+[info] - Neptune: throttling is retried within the policy, then surfaces as a transient failure
+[info] - Neptune: a frontier timeout during a path search is SEARCH_LIMIT, never 'no path'
+[info] - DynamoDB: racing job claims through the live adapter: one Moved, the rest Refused with the stored job
+[info] - DynamoDB: a throttled conditional write is one attempt and a transient failure, never a retry
+[info] - S3 Vectors: a throttled put through the live adapter is retried by the loader and then written
+[info] - S3 Vectors: a throttled query is a transient failure, not an empty result
+[info] - duplicate vector keys: in one batch both are rejected; across the input the first wins
+[info] - stale model versions: a vector of another embedding model is never returned to the runtime
+[info] ApiAuthAdversarialSpec:
+[info] - path and method tricks never reach a protected query-api route without a valid key
+[info] - graph-evidence-api: no key, no graph or evidence read; encoded IDs do not change that
+[info] - unauthenticated requests do not consume the per-instance query rate budget
+[info] - an unauthenticated oversized body is refused as 401, not read and not 400
+[info] - the API key comparison accepts exactly one value, of any length or content
+[info] WorkerRedeliveryAdversarialSpec:
+[info] - a forged message pairing a real job with another query ID is poison: never run
+[info] - a stored request that does not decode fails the job once and deletes the message
+[info] - a stored request whose question breaks the API rules is not run as a valid answer
+[info] - an expired job's message is poison: the job is never resurrected or run
+[info] - flooding: 60 poison messages around one real job run that job exactly once
+[info] - async POST flooding is rate limited before any job or message is written
+[info] ConfigOmissionContractSpec:
+[info] - control: the reference loads locally, and the production-shaped file loads as prod
+[info] - every configuration key omitted (set to null) stops the load with an error (pending)
+[info] - a blank value for a required production setting is refused outside the local environment (pending)
+[info] - an empty environment variable overriding a required setting is refused outside local (pending)
+[info] - ill-typed and out-of-range environment overrides are refused
+[info] - a fractional value for an integer setting is refused, not truncated (pending)
+[info] - a missing, unreadable, or malformed configuration file stops the load
+[info] - placeholder values and inconsistent limits never load outside local
+[info] - only the documented variables are read: an unknown SCHOLARCHAIN_ variable changes nothing
+[info] GraphBoundsTimeoutAdversarialSpec:
+[info] - neighbor parameters: overflow, signs, whitespace, repeats, and forged cursors are 400
+[info] - node IDs: injection shapes and oversized IDs are 404 without a graph read
+[info] - a Neptune query timeout is 504 DOWNSTREAM_TIMEOUT and counts toward the neptune breaker
+[info] - a Neptune read that never answers is cut at services.timeouts.neptune-ms (504)
+[info] - the sync query deadline answers 504 while a store read is held; no breaker opens
+[info] GraphReadKnownGraphSpec:
+[info] - shortest paths on the known graph: lengths, hop order, the smallest predecessor, and bounds
+[info] - disconnected and isolated researchers: UNREACHABLE, never a path; unknown IDs are UNKNOWN_RESEARCHER
+[info] - an empty graph (researchers, no coauthor edge) answers UNREACHABLE and empty neighbor lists
+[info] - distinct degree versus weighted degree on the known graph: grace has 2 coauthors and 3 joint works
+[info] - an edge whose supporting-work count disagrees with its jointPublicationCount is refused
+[info] ApiBodyAdversarialSpec:
+[info] - deeply nested JSON within the size cap is a 400, not a stack overflow or a hang
+[info] - numbers outside the int range, fractions, strings, and booleans are 400 in int fields
+[info] - question text: control characters, blanks, length boundaries, and lone surrogates
+[info] - the body must be one JSON object with known fields; JSON nulls only where optional
+[info] - Content-Type, Content-Length, and chunked transfer abuse give typed 4xx errors
+[info] - a declared body that never arrives does not hold the exchange open (refused, 401, or unread) (pending)
+[info] - Idempotency-Key and request-ID headers: bounded, visible ASCII, never echoed when invalid
+[info] DblpXmlAdversarialSpec:
+[info] - truncated, mismatched, and unclosed records are malformed-record rejects
+[info] - external entities, DTD fetches, and entity expansion bombs are refused without any I/O
+[info] - missing or blank keys, unsupported types, and malformed years are typed rejects
+[info] - an author with no name (empty, blank, or markup only) is a schema-validation reject (JOBS.md) (pending)
+[info] - record keys that are not DBLP keys never become malformed work IDs
+[info] - very large records parse: 5,000 authors, a 1 MB title, and repeated names keep every position
+[info] - CDATA, comments, and processing instructions inside a record keep only the text
+[info] LoggingRedactionAdversarialSpec:
+[info] - markers in the question, headers, query string, path, and body never reach a log line
+[info] - worker events and job errors carry IDs and codes only, never the question
+[info] - explain never returns question, prompt, retrieved, or model text
+[info] BlockingTeamAdversarialSpec:
+[info] - a 5,000-member common-name group at the last level is reported oversize with no member held or merged
+[info] - a 5,000-member group below the last level is re-keyed in full, each member exactly once
+[info] - duplicate member values before the overflow are de-duplicated and counted; a kept block is at most max
+[info] - common names over three levels: every keyed mention ends in exactly one kept block or one oversize report
+[info] - pair expansion: empty, solo, and duo teams; mentions of one work never pair inside a block
+[info] - a 2,000-author team expands lazily into exactly n(n-1)/2 canonical, valid pairs
+[info] IdentityAdversarialSpec:
+[info] - canonically and compatibly equivalent spellings give one comparable name and one blocking key
+[info] - invisible format characters inside a name do not split it or change its keys (pending)
+[info] - a mixed-script homoglyph of a name is not the same name and is never merged on the name alone
+[info] - names made only of punctuation, digits, or symbols get no blocking key (no giant empty block)
+[info] - two Wei Wang mentions with nothing else in common are never accepted
+[info] - DBLP homonym numbers: equal numbers merge deterministically, different numbers never merge
+[info] - conflicting ORCID iDs on identical names and coauthors are never merged
+[info] - reordered author lists: the comma form names the same person; a reordered team is not a deterministic duplicate
+[info] - a generic title with the same year but no author evidence is not identity
+[info] - DOI spellings of one DOI normalize to one key
+[info] - DOI normalization is idempotent (pending)
+[info] - a percent-encoded DOI URL (as DBLP writes SICI DOIs) is the same DOI as its plain form (pending)
+[info] - exact DOI groups: cross-source duplicates match DBLP; a within-source duplicate is a conflict, never a merge
+[info] - a DOI disagreement with otherwise identical bibliographic evidence is a conflict, never accepted
+[info] UnsupportedClaimAdversarialSpec:
+[info] - controls: the stored values verify; a wrong digit, a fabricated ID, or a semantic-only claim do not
+[info] - a multiplier word after the stored digits (10 hundred, 10 thousand) is not that number
+[info] - a quantity stated only in words (hundreds of, dozens of, a dozen) is not verified (pending)
+[info] - a comparison the stored value contradicts (more than 10, fewer than 10) is not verified (pending)
+[info] - a negated statement of the stored value (does not have 10) is not verified (pending)
+[info] RagModelOutputAdversarialSpec:
+[info] - injected title, name, profile, and abstract reach the synthesis prompt only escaped
+[info] - a synthesis that obeys the injection (999 coauthors, a fabricated evidence ID) keeps no claim of it
+[info] - a tampered chunk (text no longer matching its textHash) is dropped, never cited
+[info] - an injected question adds no operation, no unbound store call, and no asserted fact (fake mode)
+[info] - injection in the structured constraint fields stays a bound parameter of fixed templates
+[info] - malformed or fabricated planner output: two attempts, then the rule planner; no model text kept
+[info] - malformed synthesis twice abstains BUDGET_EXHAUSTED with no claim; never a third attempt
+[info] - fabricated researcher and evidence IDs in an otherwise valid synthesis are removed
+[info] - a throttled or failing model is tried at most max-attempts-per-call times per call
+[info] - an exhausted input-token budget sends no model request at all
+[info] - an output-token budget below one synthesis request skips synthesis, never overspends
+[info] - a throttled vector query (once, or every time) does not fail an answer the graph supports (pending)
+[info] - a pair whose work has no abstract and a researcher with no profile still answer from the graph
+[info] - a researcher with no institution gets no institution claim; nothing is invented
+[info] - an unknown researcher abstains UNKNOWN_RESEARCHER; an ambiguous common name abstains AMBIGUOUS
+[info] IdempotencyRaceAdversarialSpec:
+[info] - same key and body while the first sync query runs: 409, one workflow, then the replay
+[info] - eight concurrent identical keyed POSTs run one workflow and share one query ID
+[info] - async: a racing replay before the job exists is 409; afterwards one job and one message
+[info] - N3 (documented): a keyed sync POST answered 503 OVERLOADED keeps its key; the retry is 409
+[info] - an expired Idempotency-Key is a new request; the stored record holds only the key hash
+[info] - job transitions are linearizable: of 16 racing QUEUED -> RUNNING claims exactly one wins
+[info] WindowSummaryTamperAdversarialSpec:
+[info] - control: the untampered object opens and answers every configured window
+[info] - a changed count, fraction, ID, or provenance field refuses the whole object
+[info] - counts no coauthorship graph can have are refused (largest component plus the other components exceed the researchers) (pending)
+[info] - structural tampering: extra or missing fields, injected text, duplicates, mixed runs, truncation
+[info] - a missing object refuses to open; nothing is half-opened
+[info] BoundedFixtureEndToEndSpec:
+[info] - sync and async: verified claims, resolvable evidence, explain, and no injected text served
+[info] Run completed in 25 seconds, 731 milliseconds.
+[info] Total number of tests run: 94
+[info] Suites: completed 16, aborted 0
+[info] Tests: succeeded 94, failed 0, canceled 0, ignored 0, pending 14
+[info] All tests passed.
+[success] Total time: 26 s, completed Nov 13, 2026, 3:40:47 AM

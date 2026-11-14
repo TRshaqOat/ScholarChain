@@ -103,23 +103,36 @@ class BuildingBlocksSpec extends AnyFunSuite:
             ErrorCode.OVERLOADED
         )
       }
-      // The workflow pool has no queue: a workflow that cannot start is refused at once.
+      // The workflow pool has no queue: a workflow that cannot start is refused at once. Its hour
+      // long timeout never passes here, so OVERLOADED can only be the refusal; a queued call would
+      // instead run once the held slot frees (at the latest after the hold's 10 s) and answer.
       assert(ds.workflowSlotFree)
       hold(CallPolicy("runtime", 10000, workflow = true))
       assert(!ds.workflowSlotFree)
-      val t0 = System.nanoTime()
-      val wf = CallPolicy("runtime", 10000, workflow = true)
+      val wf = CallPolicy("runtime", 3600000, workflow = true)
       assert(thrown(ds.call(wf)(ran.incrementAndGet())).code == ErrorCode.OVERLOADED)
-      assert((System.nanoTime() - t0) / 1000000 < 1000)
       assert(
         ds.openBreakers.isEmpty && !m.snapshot("counters").obj.keys.exists(_.startsWith("circuit"))
       )
       release.countDown()
-      // A timeout counts from the call's start: 300 ms waiting plus 300 ms running fits in 500 ms.
+      // A timeout counts from the call's start, not its submission. The only store thread is held
+      // until half the timeout has passed since submission (W >= T / 2 < T); the call then runs
+      // until its submission deadline has passed (W + R > T) but not its start deadline (R < T).
+      // Both orders are explicit clock checks; the remaining condition is that a thread starts
+      // within T / 2 of being freed.
+      val timeoutMs = 4000L
+      val gate = CountDownLatch(1)
       val busy = CountDownLatch(1)
-      bg.submit(() => ds.call(CallPolicy("s3", 5000)) { busy.countDown(); Thread.sleep(300); 0 })
+      bg.submit(() =>
+        ds.call(CallPolicy("s3", 60000)) { busy.countDown(); gate.await(20, TimeUnit.SECONDS) }
+      )
       assert(busy.await(10, TimeUnit.SECONDS))
-      assert(ds.call(CallPolicy("s3", 500)) { Thread.sleep(300); "ok" } == "ok")
+      val submitted = System.nanoTime()
+      def until(ms: Long): Unit =
+        while System.nanoTime() - submitted < ms * 1000000 do Thread.sleep(5)
+      val opener: Runnable = () => { until(timeoutMs / 2); gate.countDown() }
+      bg.submit(opener)
+      assert(ds.call(CallPolicy("s3", timeoutMs)) { until(timeoutMs + 200); "ok" } == "ok")
       assert(ran.get == 0 && ds.openBreakers.isEmpty)
     finally
       release.countDown()

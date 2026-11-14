@@ -1,0 +1,21 @@
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] scalafmt: Formatting 1 Scala sources (/Users/achyutpatel/Developer/Cloud/ScholarChain/modules/rag)...
+[success] Total time: 1 s, completed Nov 13, 2026, 9:52:43 PM
+[info] compiling 1 Scala source to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/rag/target/scala-3.3.7/test-classes ...
+[info] done compiling
+[info] VerifierSpec:
+[info] - repair-01 D1: a quantity in words (hundreds of, dozens of, a dozen) is not verified
+[info] - repair-01 D2: a qualified number (more than 10, about 10, 10 or more) is not verified
+[info] - repair-01 D3: a negated number (does not have 10, it is false that) is not verified
+[info] - repair-01 controls: bound qualifiers and the template's negations still verify
+[info] Run completed in 710 milliseconds.
+[info] Total number of tests run: 4
+[info] Suites: completed 1, aborted 0
+[info] Tests: succeeded 4, failed 0, canceled 0, ignored 0, pending 0
+[info] All tests passed.
+[success] Total time: 4 s, completed Nov 13, 2026, 9:52:48 PM

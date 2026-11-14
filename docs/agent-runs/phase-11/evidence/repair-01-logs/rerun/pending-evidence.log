@@ -1,0 +1,13 @@
+# Work order 4: failures of the new defect-exposing tests before wrapping (from dev-run-1.log, sbt tests/test, 2026-11-14T06:20:31Z)
+[info] - a record start tag inside an XML comment is not a record, and the records after it stay intact *** FAILED ***
+[info]   Vector("journals/x/Fake1", "journals/x/Real1", "journals/x/Open") did not equal Vector("journals/x/Real1", "conf/x/Real2", "journals/x/Real3") records read: Vector(journals/x/Fake1, journals/x/Real1, journals/x/Open); works accepted: Vector(dblp:journals/x/Fake1, dblp:journals/x/Real1) (DblpRecordReaderAdversarialSpec.scala:170)
+--
+[info] - a body that is not valid UTF-8 is MALFORMED_JSON, never answered as a different question *** FAILED ***
+[info]   Vector("truncated two-byte sequence: 200 {"queryId":"qry-9f2552c2ed20ed93fc3ce943cef48ea2","mode":"synchronous","answer":", "bytes never valid in UTF-8: 200 {"queryId":"qry-e165242d6242e30fda6a3d2e508ad0a6","mode":"synchronous","answer":", "overlong encoding of '/': 200 {"queryId":"qry-adb9f61b17aff4feb98bcfb035da9c84","mode":"synchronous","answer":", "encoded surrogate: 200 {"queryId":"qry-9c385e596bdd88db7dcb54736596e475","mode":"synchronous","answer":") was not empty invalid UTF-8 not refused: truncated two-byte sequence: 200 {"queryId":"qry-9f2552c2ed20ed93fc3ce943cef48ea2","mode":"synchronous","answer":; bytes never valid in UTF-8: 200 {"queryId":"qry-e165242d6242e30fda6a3d2e508ad0a6","mode":"synchronous","answer":; overlong encoding of '/': 200 {"queryId":"qry-adb9f61b17aff4feb98bcfb035da9c84","mode":"synchronous","answer":; encoded surrogate: 200 {"queryId":"qry-9c385e596
+[info] - a JSON-escaped lone surrogate in the question is a typed 400, never an answer *** FAILED ***
+[info]   Vector("\ud800: 200 {"queryId":"qry-fe655ec319cbad3e94a7980fd1bf97c2","mode":"synchronous","answer":") was not empty lone surrogates accepted: \ud800: 200 {"queryId":"qry-fe655ec319cbad3e94a7980fd1bf97c2","mode":"synchronous","answer": (ApiBodyAdversarialSpec.scala:150)
+[info] - the body must be one JSON object with known fields; JSON nulls only where optional
+--
+[info] - a comparison or negation outside the verifier-v7 word lists (short of 10, lacks 10) is not verified *** FAILED ***
+[info]   Vector("In all-years, Ada Lovelace has short of 10 publications.", "In all-years, Ada Lovelace falls short of 10 publications.", "In all-years, Ada Lovelace lacks 10 publications.") was not empty kept as VERIFIED: Vector(In all-years, Ada Lovelace has short of 10 publications., In all-years, Ada Lovelace falls short of 10 publications., In all-years, Ada Lovelace lacks 10 publications.) (UnsupportedClaimAdversarialSpec.scala:204)
+[info] MatchPathContractSpec:

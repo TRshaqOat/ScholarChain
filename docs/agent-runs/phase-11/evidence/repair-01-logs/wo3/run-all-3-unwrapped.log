@@ -1,0 +1,174 @@
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] compiling 8 Scala sources to /Users/achyutpatel/Developer/Cloud/ScholarChain/tests/target/scala-3.3.7/test-classes ...
+[info] done compiling
+[info] BoundedFixtureEndToEndSpec:
+[info] - sync and async: verified claims, resolvable evidence, explain, and no injected text served
+[info] IdempotencyRaceAdversarialSpec:
+[info] - same key and body while the first sync query runs: 409, one workflow, then the replay
+[info] - eight concurrent identical keyed POSTs run one workflow and share one query ID
+[info] - async: a racing replay before the job exists is 409; afterwards one job and one message
+[info] - an expired Idempotency-Key is a new request; the stored record holds only the key hash
+[info] - job transitions are linearizable: of 16 racing QUEUED -> RUNNING claims exactly one wins
+[info] ApiAuthAdversarialSpec:
+[info] - path and method tricks never reach a protected query-api route without a valid key
+[info] - graph-evidence-api: no key, no graph or evidence read; encoded IDs do not change that
+[info] - unauthenticated requests do not consume the per-instance query rate budget
+[info] - an unauthenticated oversized body is refused as 401, not read and not 400
+[info] - the API key comparison accepts exactly one value, of any length or content
+[info] BlockingTeamAdversarialSpec:
+[info] - a 5,000-member common-name group at the last level is reported oversize with no member held or merged
+[info] - a 5,000-member group below the last level is re-keyed in full, each member exactly once
+[info] - duplicate member values before the overflow are de-duplicated and counted; a kept block is at most max
+[info] - common names over three levels: every keyed mention ends in exactly one kept block or one oversize report
+[info] - pair expansion: empty, solo, and duo teams; mentions of one work never pair inside a block
+[info] - a 2,000-author team expands lazily into exactly n(n-1)/2 canonical, valid pairs
+[info] UnsupportedClaimAdversarialSpec:
+[info] - controls: the stored values verify; a wrong digit, a fabricated ID, or a semantic-only claim do not
+[info] - a multiplier word after the stored digits (10 hundred, 10 thousand) is not that number
+[info] - a quantity stated only in words (hundreds of, dozens of, a dozen) is not verified *** FAILED ***
+[info]   Vector("In all-years, Ada Lovelace has hundreds of publications.", "In all-years, Ada Lovelace has dozens of publications.", "In all-years, Ada Lovelace has scores of publications.", "In all-years, Ada Lovelace has a dozen distinct coauthors.") was not empty kept as VERIFIED: Vector(In all-years, Ada Lovelace has hundreds of publications., In all-years, Ada Lovelace has dozens of publications., In all-years, Ada Lovelace has scores of publications., In all-years, Ada Lovelace has a dozen distinct coauthors.) (UnsupportedClaimAdversarialSpec.scala:76)
+[info] - a comparison the stored value contradicts (more than 10, fewer than 10) is not verified *** FAILED ***
+[info]   Vector("In all-years, Ada Lovelace has more than 10 publications.", "In all-years, Ada Lovelace has fewer than 10 publications.", "In all-years, Ada Lovelace has over 10 publications.", "In all-years, Ada Lovelace has under 10 publications.") was not empty kept as VERIFIED: Vector(In all-years, Ada Lovelace has more than 10 publications., In all-years, Ada Lovelace has fewer than 10 publications., In all-years, Ada Lovelace has over 10 publications., In all-years, Ada Lovelace has under 10 publications.) (UnsupportedClaimAdversarialSpec.scala:91)
+[info] - a negated statement of the stored value (does not have 10) is not verified *** FAILED ***
+[info]   Vector("In all-years, Ada Lovelace does not have 10 publications.", "In all-years, it is false that Ada Lovelace has 10 publications.", "In all-years, Ada Lovelace has not 1 distinct coauthor.") was not empty kept as VERIFIED: Vector(In all-years, Ada Lovelace does not have 10 publications., In all-years, it is false that Ada Lovelace has 10 publications., In all-years, Ada Lovelace has not 1 distinct coauthor.) (UnsupportedClaimAdversarialSpec.scala:105)
+[info] GraphReadKnownGraphSpec:
+[info] - shortest paths on the known graph: lengths, hop order, the smallest predecessor, and bounds
+[info] - disconnected and isolated researchers: UNREACHABLE, never a path; unknown IDs are UNKNOWN_RESEARCHER
+[info] - an empty graph (researchers, no coauthor edge) answers UNREACHABLE and empty neighbor lists
+[info] - distinct degree versus weighted degree on the known graph: grace has 2 coauthors and 3 joint works
+[info] - an edge whose supporting-work count disagrees with its jointPublicationCount is refused
+[info] StoreFailureAdversarialSpec:
+[info] - Neptune: a query timeout is GraphReadTimeoutException after one call, never retried
+[info] - Neptune: throttling is retried within the policy, then surfaces as a transient failure
+[info] - Neptune: a frontier timeout during a path search is SEARCH_LIMIT, never 'no path'
+[info] - DynamoDB: racing job claims through the live adapter: one Moved, the rest Refused with the stored job
+[info] - DynamoDB: a throttled conditional write is one attempt and a transient failure, never a retry
+[info] - S3 Vectors: a throttled put through the live adapter is retried by the loader and then written
+[info] - S3 Vectors: a throttled query is a transient failure, not an empty result
+[info] - duplicate vector keys: in one batch both are rejected; across the input the first wins
+[info] - stale model versions: a vector of another embedding model is never returned to the runtime
+[info] IdentityAdversarialSpec:
+[info] - canonically and compatibly equivalent spellings give one comparable name and one blocking key
+[info] - invisible format characters inside a name do not split it or change its keys *** FAILED ***
+[info]   Vector(173, 8203, 8204, 8205, 8288, 65279, 8206, 8238) was not empty these code points change the family key: U+00AD, U+200B, U+200C, U+200D, U+2060, U+FEFF, U+200E, U+202E (IdentityAdversarialSpec.scala:85)
+[info] - a mixed-script homoglyph of a name is not the same name and is never merged on the name alone
+[info] - names made only of punctuation, digits, or symbols get no blocking key (no giant empty block)
+[info] - two Wei Wang mentions with nothing else in common are never accepted
+[info] - DBLP homonym numbers: equal numbers merge deterministically, different numbers never merge
+[info] - conflicting ORCID iDs on identical names and coauthors are never merged
+[info] - reordered author lists: the comma form names the same person; a reordered team is not a deterministic duplicate
+[info] - a generic title with the same year but no author evidence is not identity
+[info] - DOI spellings of one DOI normalize to one key
+[info] - DOI normalization is idempotent *** FAILED ***
+[info]   not idempotent: 'doi: 10.1145/abc.123' -> ' 10.1145/abc.123' -> '10.1145/abc.123'; 'https://doi.org/ 10.1145/abc.123' -> ' 10.1145/abc.123' -> '10.1145/abc.123'; 'doi:https://doi.org/10.1145/abc.123' -> 'https://doi.org/10.1145/abc.123' -> '10.1145/abc.123'; 'https://doi.org/doi:10.1145/abc.123' -> 'doi:10.1145/abc.123' -> '10.1145/abc.123' (IdentityAdversarialSpec.scala:196)
+[info] - a percent-encoded DOI URL (as DBLP writes SICI DOIs) is the same DOI as its plain form *** FAILED ***
+[info]   "...097-4571(199806)49:8[%3c693::aid-asi4%3e]3.0.co;2-o" did not equal "...097-4571(199806)49:8[<693::aid-asi4>]3.0.co;2-o" (IdentityAdversarialSpec.scala:204)
+[info]   Analysis:
+[info]   "...097-4571(199806)49:8[%3c693::aid-asi4%3e]3.0.co;2-o" -> "...097-4571(199806)49:8[<693::aid-asi4>]3.0.co;2-o"
+[info] - exact DOI groups: cross-source duplicates match DBLP; a within-source duplicate is a conflict, never a merge
+[info] - a DOI disagreement with otherwise identical bibliographic evidence is a conflict, never accepted
+[info] WindowSummaryTamperAdversarialSpec:
+[info] - control: the untampered object opens and answers every configured window
+[info] - a changed count, fraction, ID, or provenance field refuses the whole object
+[info] - counts no coauthorship graph can have are refused (largest component plus the other components exceed the researchers) *** FAILED ***
+[info]   Vector("components", "communities", "communities at least the minimum size above what the largest community allows") was not empty impossible counts accepted: components; communities; communities at least the minimum size above what the largest community allows (WindowSummaryTamperAdversarialSpec.scala:99)
+[info] - structural tampering: extra or missing fields, injected text, duplicates, mixed runs, truncation
+[info] - a missing object refuses to open; nothing is half-opened
+[info] LoggingRedactionAdversarialSpec:
+[info] - markers in the question, headers, query string, path, and body never reach a log line
+[info] - worker events and job errors carry IDs and codes only, never the question
+[info] - explain never returns question, prompt, retrieved, or model text
+[info] GraphBoundsTimeoutAdversarialSpec:
+[info] - neighbor parameters: overflow, signs, whitespace, repeats, and forged cursors are 400
+[info] - node IDs: injection shapes and oversized IDs are 404 without a graph read
+[info] - a Neptune query timeout is 504 DOWNSTREAM_TIMEOUT and counts toward the neptune breaker
+[info] - a Neptune read that never answers is cut at services.timeouts.neptune-ms (504)
+[info] - the sync query deadline answers 504 while a store read is held; no breaker opens
+[info] RagModelOutputAdversarialSpec:
+[info] - injected title, name, profile, and abstract reach the synthesis prompt only escaped
+[info] - a synthesis that obeys the injection (999 coauthors, a fabricated evidence ID) keeps no claim of it
+[info] - a tampered chunk (text no longer matching its textHash) is dropped, never cited
+[info] - an injected question adds no operation, no unbound store call, and no asserted fact (fake mode)
+[info] - malformed or fabricated planner output: two attempts, then the rule planner; no model text kept
+[info] - malformed synthesis twice abstains BUDGET_EXHAUSTED with no claim; never a third attempt
+[info] - fabricated researcher and evidence IDs in an otherwise valid synthesis are removed
+[info] - a throttled or failing model is tried at most max-attempts-per-call times per call
+[info] - an exhausted input-token budget sends no model request at all
+[info] - an output-token budget below one synthesis request skips synthesis, never overspends
+[info] - a throttled vector query (once, or every time) does not fail an answer the graph supports *** FAILED ***
+[info]   Vector(("first query throttled", "FAILED at SEMANTIC_CONTEXT: TransientStoreException: ThrottlingException: Rate exceeded (SYNTHETIC)"), ("every query throttled", "FAILED at SEMANTIC_CONTEXT: TransientStoreException: ThrottlingException: Rate exceeded (SYNTHETIC)")) was not empty answers failed on a throttled vector query: Vector((first query throttled,FAILED at SEMANTIC_CONTEXT: TransientStoreException: ThrottlingException: Rate exceeded (SYNTHETIC)), (every query throttled,FAILED at SEMANTIC_CONTEXT: TransientStoreException: ThrottlingException: Rate exceeded (SYNTHETIC))) (RagModelOutputAdversarialSpec.scala:289)
+[info] - a pair whose work has no abstract and a researcher with no profile still answer from the graph
+[info] - a researcher with no institution gets no institution claim; nothing is invented
+[info] - an unknown researcher abstains UNKNOWN_RESEARCHER; an ambiguous common name abstains AMBIGUOUS
+[info] ConfigOmissionContractSpec:
+[info] - control: the reference loads locally, and the production-shaped file loads as prod
+[info] - every configuration key omitted (set to null) stops the load with an error *** FAILED ***
+[info]   Vector("s3-vectors.indexes.abstracts", "s3-vectors.indexes.communities", "s3-vectors.indexes.paths", "s3-vectors.indexes.researchers", "s3-vectors.indexes.topic-institutions") was not empty loaded with these keys omitted: s3-vectors.indexes.abstracts, s3-vectors.indexes.communities, s3-vectors.indexes.paths, s3-vectors.indexes.researchers, s3-vectors.indexes.topic-institutions (ConfigOmissionContractSpec.scala:62)
+[info] - a blank value for a required production setting is refused outside the local environment *** FAILED ***
+[info]   Vector("application.region", "neptune.endpoint", "s3-vectors.vector-bucket", "s3-vectors.indexes.researchers", "models.embedding-model", "models.planner-model", "models.synthesis-model", "graph.policy-version", "entity-resolution.policy-version", "retrieval.fusion-policy-version") was not empty a blank value loaded in prod for: application.region, neptune.endpoint, s3-vectors.vector-bucket, s3-vectors.indexes.researchers, models.embedding-model, models.planner-model, models.synthesis-model, graph.policy-version, entity-resolution.policy-version, retrieval.fusion-policy-version (ConfigOmissionContractSpec.scala:92)
+[info] - an empty environment variable overriding a required setting is refused outside local *** FAILED ***
+[info]   Vector("SCHOLARCHAIN_NEPTUNE_ENDPOINT", "SCHOLARCHAIN_VECTOR_BUCKET", "SCHOLARCHAIN_EMBEDDING_MODEL_ID", "SCHOLARCHAIN_PLANNER_MODEL_ID", "SCHOLARCHAIN_SYNTHESIS_MODEL_ID", "SCHOLARCHAIN_GRAPH_POLICY_VERSION", "SCHOLARCHAIN_ER_POLICY_VERSION", "SCHOLARCHAIN_AWS_REGION") was not empty an empty Vector(SCHOLARCHAIN_NEPTUNE_ENDPOINT, SCHOLARCHAIN_VECTOR_BUCKET, SCHOLARCHAIN_EMBEDDING_MODEL_ID, SCHOLARCHAIN_PLANNER_MODEL_ID, SCHOLARCHAIN_SYNTHESIS_MODEL_ID, SCHOLARCHAIN_GRAPH_POLICY_VERSION, SCHOLARCHAIN_ER_POLICY_VERSION, SCHOLARCHAIN_AWS_REGION) loaded in prod (ConfigOmissionContractSpec.scala:110)
+[info] - ill-typed and out-of-range environment overrides are refused
+[info] - a fractional value for an integer setting is refused, not truncated *** FAILED ***
+[info]   Vector(("SCHOLARCHAIN_ER_MAX_BLOCK_SIZE", "150.5"), ("SCHOLARCHAIN_NEPTUNE_PORT", "8182.9"), ("SCHOLARCHAIN_JOB_MAX_RECEIVE_COUNT", "3.7")) was not empty truncated silently: Vector((SCHOLARCHAIN_ER_MAX_BLOCK_SIZE,150.5), (SCHOLARCHAIN_NEPTUNE_PORT,8182.9), (SCHOLARCHAIN_JOB_MAX_RECEIVE_COUNT,3.7)) Vector(services.query-api.threads = 8.5, graph.oversize-team-threshold = 99.9) (ConfigOmissionContractSpec.scala:142)
+[info] - a missing, unreadable, or malformed configuration file stops the load
+[info] - placeholder values and inconsistent limits never load outside local
+[info] - only the documented variables are read: an unknown SCHOLARCHAIN_ variable changes nothing
+[info] DblpXmlAdversarialSpec:
+[info] - truncated, mismatched, and unclosed records are malformed-record rejects
+[info] - external entities, DTD fetches, and entity expansion bombs are refused without any I/O
+[info] - missing or blank keys, unsupported types, and malformed years are typed rejects
+[info] - an author with no name (empty, blank, or markup only) is a schema-validation reject (JOBS.md) *** FAILED ***
+[info]   Right(WorkRecord("work-record-v1", "dblp:journals/x/N1", DBLP, "journals/x/N1", Some("A"), Some("a"), None, Some("dblp-venue:journals/x"), Some("article"), None, None, Map(), Vector(AuthorMention("author-mention-v1", "dblp:journals/x/N1#1", "dblp:journals/x/N1", 1, "", "", None, None, Vector(), Provenance("provenance-v1", DBLP, "journals/x/N1", "2026-10-03", "run-497cdfb07aa41f80721dbe515d00eea9", None, None))), None, Provenance("provenance-v1", DBLP, "journals/x/N1", "2026-10-03", "run-497cdfb07aa41f80721dbe515d00eea9", None, None))) did not equal Left("schema-validation") accepted a nameless author: <article key="journals/x/N1"><author></author><title>A</title></article> (DblpXmlAdversarialSpec.scala:104)
+[info]   Analysis:
+[info]   Right(value: WorkRecord(work-record-v1,dblp:journals/x/N1,DBLP,journals/x/N1,Some(A),Some(a),None,Some(dblp-venue:journals/x),Some(article),None,None,Map(),Vector(AuthorMention(author-mention-v1,dblp:journals/x/N1#1,dblp:journals/x/N1,1,,,None,None,Vector(),Provenance(provenance-v1,DBLP,journals/x/N1,2026-10-03,run-497cdfb07aa41f80721dbe515d00eea9,None,None))),None,Provenance(provenance-v1,DBLP,journals/x/N1,2026-10-03,run-497cdfb07aa41f80721dbe515d00eea9,None,None)) -> schema-validation)
+[info] - record keys that are not DBLP keys never become malformed work IDs
+[info] - very large records parse: 5,000 authors, a 1 MB title, and repeated names keep every position
+[info] - CDATA, comments, and processing instructions inside a record keep only the text
+[info] WorkerRedeliveryAdversarialSpec:
+[info] - a forged message pairing a real job with another query ID is poison: never run
+[info] - a stored request that does not decode fails the job once and deletes the message
+[info] - a stored request whose question breaks the API rules is not run as a valid answer
+[info] - an expired job's message is poison: the job is never resurrected or run
+[info] - flooding: 60 poison messages around one real job run that job exactly once
+[info] - async POST flooding is rate limited before any job or message is written
+[info] ApiBodyAdversarialSpec:
+[info] - deeply nested JSON within the size cap is a 400, not a stack overflow or a hang
+[info] - numbers outside the int range, fractions, strings, and booleans are 400 in int fields
+[info] - question text: control characters, blanks, length boundaries, and lone surrogates
+[info] - the body must be one JSON object with known fields; JSON nulls only where optional
+[info] - Content-Type, Content-Length, and chunked transfer abuse give typed 4xx errors
+[info] - a declared Content-Length above the cap is answered at once, without waiting for the body *** FAILED ***
+[info]   java.net.SocketTimeoutException: Read timed out
+[info]   at java.base/sun.nio.ch.NioSocketImpl.timedRead(NioSocketImpl.java:288)
+[info]   at java.base/sun.nio.ch.NioSocketImpl.implRead(NioSocketImpl.java:314)
+[info]   at java.base/sun.nio.ch.NioSocketImpl.read(NioSocketImpl.java:355)
+[info]   at java.base/sun.nio.ch.NioSocketImpl$1.read(NioSocketImpl.java:808)
+[info]   at java.base/java.net.Socket$SocketInputStream.read(Socket.java:966)
+[info]   at java.base/java.io.InputStream.read(InputStream.java:218)
+[info]   at scholarchain.tests.support.RawHttp$.bytes(RawHttp.scala:30)
+[info]   at scholarchain.tests.support.RawHttp$.text(RawHttp.scala:40)
+[info]   at scholarchain.tests.adversarial.ApiBodyAdversarialSpec.testFun$proxy6$1$$anonfun$1$$anonfun$1(ApiBodyAdversarialSpec.scala:176)
+[info]   at scholarchain.tests.support.StoreWorld$World.serve(StoreWorld.scala:399)
+[info]   ...
+[info] - Idempotency-Key and request-ID headers: bounded, visible ASCII, never echoed when invalid
+[info] Run completed in 11 seconds, 323 milliseconds.
+[info] Total number of tests run: 106
+[info] Suites: completed 16, aborted 0
+[info] Tests: succeeded 92, failed 14, canceled 0, ignored 0, pending 0
+[info] *** 14 TESTS FAILED ***
+[error] Failed tests:
+[error] 	scholarchain.tests.contracts.ConfigOmissionContractSpec
+[error] 	scholarchain.tests.adversarial.ApiBodyAdversarialSpec
+[error] 	scholarchain.tests.adversarial.DblpXmlAdversarialSpec
+[error] 	scholarchain.tests.adversarial.IdentityAdversarialSpec
+[error] 	scholarchain.tests.adversarial.UnsupportedClaimAdversarialSpec
+[error] 	scholarchain.tests.adversarial.RagModelOutputAdversarialSpec
+[error] 	scholarchain.tests.adversarial.WindowSummaryTamperAdversarialSpec
+[error] (tests / Test / test) sbt.TestsFailedException: Tests unsuccessful
+[error] Total time: 16 s, completed Nov 12, 2026, 11:13:24 PM

@@ -1,0 +1,26 @@
+scratch/hadoop	files=275	lines=4065887	R1=0	R2=97	R3=0
+scratch/spark	files=47	lines=179710	R1=0	R2=0	R3=0
+scratch/stores	files=13684	lines=4785356	R1=0	R2=0	R3=0
+scratch/er	files=15	lines=2301	R1=0	R2=0	R3=0
+scratch/runtime	files=1268	lines=487825	R1=0	R2=0	R3=0
+EXAMPLES
+R2	scratch/hadoop/wo5-v2b/snapshot=2026-10-03/run=run-035e75abfa6798c938cbd534273dbd8d/j02-source-normalize/researcher-profiles/part-r-00003.gz	'workDoi.13":"10.1007/s10766-015-0383-4","workDoi.112":"http://doi.ieeecomputersociety.org/10.1109/mm'
+R2	scratch/hadoop/wo5-v2b/snapshot=2026-10-03/run=run-035e75abfa6798c938cbd534273dbd8d/j02-source-normalize/researcher-profiles/part-r-00003.gz	',"workDoi.62":"10.1145/1879141.1879195","workDoi.41":"http://doi.acm.org/10.1145/2486001.2486017","'
+R2	scratch/hadoop/wo5-v2b/snapshot=2026-10-03/run=run-035e75abfa6798c938cbd534273dbd8d/j02-source-normalize/researcher-profiles/part-r-00003.gz	'rkDoi.49":"10.3390/computation10060091","workDoi.57":"http://hdl.handle.net/10198/1301","workDoi.35'
+R2	scratch/hadoop/wo5-v2b/snapshot=2026-10-03/run=run-035e75abfa6798c938cbd534273dbd8d/j02-source-normalize/researcher-profiles/part-r-00003.gz	'kDoi.20":"10.1007/978-3-540-76837-1_17","workDoi.92":"http://web.iti.upv.es/~fmunyoz/research/pdf/t'
+R2	scratch/hadoop/wo5-v2b/snapshot=2026-10-03/run=run-035e75abfa6798c938cbd534273dbd8d/j02-source-normalize/researcher-profiles/part-r-00003.gz	'workDoi.198":"10.1109/compsac.2015.194","workDoi.356":" 10.1109/ftdcs.2004.1316615","workDoi.293'
+R2	scratch/hadoop/wo5-v2b/snapshot=2026-10-03/run=run-035e75abfa6798c938cbd534273dbd8d/j02-source-normalize/researcher-profiles/part-r-00003.gz	'3919/ifipnetworking57963.2023.10186412","workDoi.57":"http://doi.acm.org/10.1145/1234161.1234164","'
+R2	scratch/hadoop/wo5-v2b/snapshot=2026-10-03/run=run-035e75abfa6798c938cbd534273dbd8d/j02-source-normalize/researcher-profiles/part-r-00003.gz	'"workDoi.72":"10.1109/lpt.2014.2387092","workDoi.146":"\xa010.1109/50.769299","workDoi.96":"10.1364'
+R2	scratch/hadoop/wo5-v2b/snapshot=2026-10-03/run=run-035e75abfa6798c938cbd534273dbd8d/j02-source-normalize/researcher-profiles/part-r-00003.gz	'"workDoi.5":"10.1007/s00165-015-0349-8","workDoi.19":"http://doi.acm.org/10.1145/383043.383044","wo'
+R2	scratch/hadoop/wo5-v2b/snapshot=2026-10-03/run=run-035e75abfa6798c938cbd534273dbd8d/j02-source-normalize/researcher-profiles/part-r-00003.gz	'_60","externalId.2.type":"ResearcherID","workDoi.127":"http://doi.ieeecomputersociety.org/10.1109/tl'
+R2	scratch/hadoop/wo5-v2b/snapshot=2026-10-03/run=run-035e75abfa6798c938cbd534273dbd8d/j02-source-normalize/researcher-profiles/part-r-00007.gz	'"workDoi.18":"10.1021/acs.jctc.6b00770","workDoi.60":" 10.1016/j.ifset.2013.11.009","workDoi.37'
+R2	scratch/hadoop/wo5-v2b/snapshot=2026-10-03/run=run-035e75abfa6798c938cbd534273dbd8d/j02-source-normalize/researcher-profiles/part-r-00007.gz	',"workDoi.11":"10.1145/3037697.3037725","workDoi.27":"http://doi.acm.org/10.1145/2677030","workDoi.'
+R2	scratch/hadoop/wo5-v2b/snapshot=2026-10-03/run=run-035e75abfa6798c938cbd534273dbd8d/j02-source-normalize/researcher-profiles/part-r-00007.gz	'","workDoi.1":"10.1109/icse.2019.00121","workDoi.3":"http://doi.ieeecomputersociety.org/10.1109/ts'
+R2	scratch/hadoop/wo5-v2b/snapshot=2026-10-03/run=run-035e75abfa6798c938cbd534273dbd8d/j02-source-normalize/researcher-profiles/part-r-00007.gz	'16","workDoi.124":"10.1109/spw.2013.31","workDoi.258":"http://doi.acm.org/10.1145/1791212.1791235","'
+R2	scratch/hadoop/wo5-v2b/snapshot=2026-10-03/run=run-035e75abfa6798c938cbd534273dbd8d/j02-source-normalize/researcher-profiles/part-r-00007.gz	'orkDoi.114":"10.48550/arxiv.1708.02983","workDoi.159":"https://doi.ieeecomputersociety.org/10.1109/ip'
+R2	scratch/hadoop/wo5-v2b/snapshot=2026-10-03/run=run-035e75abfa6798c938cbd534273dbd8d/j02-source-normalize/researcher-profiles/part-r-00007.gz	'orkDoi.106":"10.1109/tkde.2021.3134806","workDoi.178":"https://dl.acm.org/doi/10.1145/3448016.3457257'
+R2	scratch/hadoop/wo5-v2b/snapshot=2026-10-03/run=run-035e75abfa6798c938cbd534273dbd8d/j02-source-normalize/researcher-profiles/part-r-00007.gz	'"workDoi.5":"10.1109/tcad.2022.3201494","workDoi.15":"http://doi.acm.org/10.1145/224164.224177","wo'
+R2	scratch/hadoop/wo5-v2b/snapshot=2026-10-03/run=run-035e75abfa6798c938cbd534273dbd8d/j02-source-normalize/researcher-profiles/part-r-00007.gz	'"David","workDoi.2":"10.1109/38.403821","workDoi.24":"http://doi.ieeecomputersociety.org/10.1109/cm'
+R2	scratch/hadoop/wo5-v2b/snapshot=2026-10-03/run=run-035e75abfa6798c938cbd534273dbd8d/j02-source-normalize/researcher-profiles/part-r-00007.gz	'workDoi.45":"10.1142/s0129626405002052","workDoi.63":"http://10.1109/icpp.2006.11","workDoi.56":"10'
+R2	scratch/hadoop/wo5-v2b/snapshot=2026-10-03/run=run-035e75abfa6798c938cbd534273dbd8d/j02-source-normalize/researcher-profiles/part-r-00007.gz	'7","workDoi.23":"10.1145/566726.566763","workDoi.26":"https://doi.ieeecomputersociety.org/10.1109/ho'
+R2	scratch/hadoop/wo5-v2b/snapshot=2026-10-03/run=run-035e75abfa6798c938cbd534273dbd8d/j02-source-normalize/researcher-profiles/part-r-00007.gz	'198":"10.20944/preprints202501.1114.v1","workDoi.293":"https://uotechnology.edu.iq/tec_magaz/2014/vol'

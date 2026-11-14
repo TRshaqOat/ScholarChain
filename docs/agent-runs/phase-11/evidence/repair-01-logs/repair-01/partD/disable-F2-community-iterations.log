@@ -1,0 +1,52 @@
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] compiling 1 Scala source to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/core/target/scala-3.3.7/classes ...
+[info] done compiling
+[info] ConfigLoaderSpec:
+[info] - the reference file alone loads as a valid local configuration
+[info] - default graph windows are the three D-10 windows
+[info] - one bucket per environment with the eight ruling-7 prefixes
+[info] - a layer that still sets a removed per-purpose bucket key is rejected
+[info] - precedence: the config file overrides the reference
+[info] - precedence: environment variables override the config file and the reference
+[info] - unlisted environment variables are ignored
+[info] - an invalid bucket name or malformed or duplicate prefix is rejected
+[info] - every documented environment variable maps to a path in the reference
+[info] - a missing config file is an error, not a silent fallback
+[info] - a non-local environment must replace every placeholder
+[info] - a non-local environment with every value supplied loads
+[info] - phase 11 D11: an index entry set to null stops the load (no silently dropped index)
+[info] - phase 11 D12: outside local, a blank value from a file or an empty variable is refused
+[info] - phase 11 D13: a fractional value for an integer key is refused, never truncated
+[info] - phase 11 finding 2: the core community-max-iterations equals the Spark value, 10 *** FAILED ***
+[info]   20 did not equal 10 (ConfigLoaderSpec.scala:224)
+[info] - Phase 10 work order 10: runtime.window-summary.load-run default, override, and rule
+[info] - Phase 10: services defaults (work order 2) and the sync deadline
+[info] - Phase 10: queue and stub-LLM environment overrides; fake queue URLs fail outside local
+[info] - Phase 10: the API key variable is a name only and never enters configuration
+[info] - Phase 10: services bounds and cross-key checks are enforced
+[info] - every services leaf in the reference is read by the loader
+[info] - M10: table prefix and Neptune loader role ARN are keys with env overrides
+[info] - M10: malformed prefixes and ARNs are rejected; placeholders are rejected outside local
+[info] - Phase 9: planner and synthesis models default to Haiku 4.5 and are env-overridable
+[info] - Phase 9: runtime, ranking, and graph-read defaults (RUNTIME.md section 20)
+[info] - Phase 9: runtime bounds and cross-key checks are enforced
+[info] - every runtime and graph-read leaf in the reference is read by the loader
+[info] - entity-resolution thresholds must be ordered within [0, 1]
+[info] - entity-resolution policy version defaults to er-v2 and is env-overridable
+[info] - entity-resolution block and conflict-group limits: defaults, env overrides, positive
+[info] - a window whose start year exceeds its end year is rejected
+[info] - an unsupported config version is rejected
+[info] Run completed in 394 milliseconds.
+[info] Total number of tests run: 33
+[info] Suites: completed 1, aborted 0
+[info] Tests: succeeded 32, failed 1, canceled 0, ignored 0, pending 0
+[info] *** 1 TEST FAILED ***
+[error] Failed tests:
+[error] 	scholarchain.core.config.ConfigLoaderSpec
+[error] (core / Test / testOnly) sbt.TestsFailedException: Tests unsuccessful
+[error] Total time: 3 s, completed Nov 13, 2026, 11:28:18 PM

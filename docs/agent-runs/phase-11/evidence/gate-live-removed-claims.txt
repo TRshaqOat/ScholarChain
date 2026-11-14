@@ -1,0 +1,18 @@
+30 query ids mapped to benchmark ids
+INVALID_OUTPUT qry-7f81c9435c53dae0 -> B27
+INVALID_OUTPUT qry-bfc47164b7df490f -> B29
+INVALID_OUTPUT qry-ad896ea5ff83ea2d -> B23
+60 llm calls in audits; token totals: {'inputTokens': 219940, 'outputTokens': 39429}
+12 removed claims
+B05  qry-b9356e0b5213d99a  "PUBLICATION"  UNSUPPORTED  [{"rule": "identity", "outcome": "FAIL", "detail": "not resolved or cited: Ian T. Foster"}]
+B16  qry-e9599635e3be7347  "COMMUNITY"  UNSUPPORTED  [{"rule": "asserted-values", "outcome": "MISSING", "detail": "memberCount: no cited graph item has this fact"}, {"rule": "identity", "outcome": "FAIL", "detail": "not resolved or cited: Alexander S. Szalay, Alok N. Choudhary, Anshu Dubey, Bernd Mohr, Bill Kramer 0001, Bronis R. de Supinski, Daniel A. Reed, David E. Keyes, Ewa Deelman, Fran\u00e7ois Bodin, Ga\u00ebl Varoquaux, Geoffrey C. Fox, H. F
+B18  qry-d1ea19fe0a84dcfd  "DESCRIPTIVE"  UNSUPPORTED  [{"rule": "identity", "outcome": "FAIL", "detail": "names 'Cloud Computing' (not a researcher, title, venue, topic, or institution of the evidence), 'Resource Management' (not a researcher, title, venue, topic, or institution of the evidence), 'Parallel Computing Systems' (not a researcher, title, venue, topic, or institution of the evidence)"}, {"rule": "context-only", "outcome": "FAIL", "detail"
+B26  qry-a8377621e915cb47  "RANKING"  UNSUPPORTED  [{"rule": "numbers-in-text", "outcome": "FAIL", "detail": "2 is a rank, and no asserted rank.<k>.storedRank of its researcher binds it"}]
+B26  qry-a8377621e915cb47  "RANKING"  UNSUPPORTED  [{"rule": "numbers-in-text", "outcome": "FAIL", "detail": "3 is a rank, and no asserted rank.<k>.storedRank of its researcher binds it"}]
+B26  qry-a8377621e915cb47  "RANKING"  UNSUPPORTED  [{"rule": "numbers-in-text", "outcome": "FAIL", "detail": "4 is a rank, and no asserted rank.<k>.storedRank of its researcher binds it"}]
+B26  qry-a8377621e915cb47  "RANKING"  UNSUPPORTED  [{"rule": "numbers-in-text", "outcome": "FAIL", "detail": "5 is a rank, and no asserted rank.<k>.storedRank of its researcher binds it"}]
+B26  qry-a8377621e915cb47  "RANKING"  UNSUPPORTED  [{"rule": "numbers-in-text", "outcome": "FAIL", "detail": "6 is a rank, and no asserted rank.<k>.storedRank of its researcher binds it"}]
+B26  qry-a8377621e915cb47  "RANKING"  UNSUPPORTED  [{"rule": "numbers-in-text", "outcome": "FAIL", "detail": "7 is a rank, and no asserted rank.<k>.storedRank of its researcher binds it"}]
+B26  qry-a8377621e915cb47  "RANKING"  UNSUPPORTED  [{"rule": "numbers-in-text", "outcome": "FAIL", "detail": "8 is a rank, and no asserted rank.<k>.storedRank of its researcher binds it"}]
+B26  qry-a8377621e915cb47  "RANKING"  UNSUPPORTED  [{"rule": "numbers-in-text", "outcome": "FAIL", "detail": "9 is a rank, and no asserted rank.<k>.storedRank of its researcher binds it"}]
+B26  qry-a8377621e915cb47  "RANKING"  UNSUPPORTED  [{"rule": "numbers-in-text", "outcome": "FAIL", "detail": "10 is a rank, and no asserted rank.<k>.storedRank of its researcher binds it"}]

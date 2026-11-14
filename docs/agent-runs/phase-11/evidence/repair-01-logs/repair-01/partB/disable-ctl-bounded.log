@@ -1,0 +1,12 @@
+label: ctl-bounded
+file: modules/rag/src/main/scala/scholarchain/rag/runtime/Verifier.scala
+sha256 before: a4aebe1e4a15f14feab942c401f950fbd11a8f1bb610677edbf4fe879b5a802c
+patched sha256: aa04fa4c72169b688285ff6c26fa3b25d15948eed2e5beef9c73208a3f18f551
+sbt exit: 1
+[info] - B17 shape: communities of at least the stored minimum size; non-convergence is stated *** FAILED ***
+[info] - a model claim on corpus evidence is still checked: wrong measure or value is removed *** FAILED ***
+[info] - Phase 11 work order 2, live B17 shape: 'collaboration communities' names the count *** FAILED ***
+[info] - repair-01 controls: bound qualifiers and the template's negations still verify *** FAILED ***
+[info] Tests: succeeded 107, failed 4, canceled 0, ignored 0, pending 0
+sha256 restored: a4aebe1e4a15f14feab942c401f950fbd11a8f1bb610677edbf4fe879b5a802c
+RESTORE OK

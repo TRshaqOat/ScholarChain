@@ -1,0 +1,441 @@
+{
+  "schemaVersion": "rag-answer-v1",
+  "response": {
+    "schemaVersion": "answer-response-v1",
+    "queryId": "qry-b9356e0b5213d99a10e8cbe904f0fac5",
+    "summary": "Ian T. Foster's maximum team size is 50 authors on one paper.",
+    "claims": [
+      {
+        "schemaVersion": "answer-claim-v1",
+        "claimId": "claim-1",
+        "text": "Ian T. Foster's maximum team size is 50 authors on one paper.",
+        "evidenceIds": [
+          "ev-5f5a0e33242cc34e8a1bf7b3014839e2"
+        ],
+        "verificationStatus": "VERIFIED",
+        "uncertainty": null,
+        "provenance": {
+          "schemaVersion": "provenance-v1",
+          "sourceDataset": "RUNTIME",
+          "sourceRecordId": "qry-b9356e0b5213d99a10e8cbe904f0fac5",
+          "snapshot": "2026-10-03",
+          "runId": "run-da948201a77e0fe136727d99a55c2b89",
+          "policyVersion": null,
+          "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+        }
+      }
+    ],
+    "abstained": false,
+    "uncertainty": "Ian T. Foster was linked to scr:canon-v1.er-v2:8c41e7402418b6a74ad89d1b987f6f44 by dominant-name-v1: 0.9680 of 281 works among 10 researchers with this display name. No paper-abstract-v1 document matched the filters. Ian T. Foster was identified with confidence 0.9680 among 10 researchers with this display name. 1 drafted uncertainty line(s) were left out because they failed verification.",
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "RUNTIME",
+      "sourceRecordId": "qry-b9356e0b5213d99a10e8cbe904f0fac5",
+      "snapshot": "2026-10-03",
+      "runId": "run-da948201a77e0fe136727d99a55c2b89",
+      "policyVersion": "fusion-v1",
+      "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+    }
+  },
+  "plan": {
+    "schemaVersion": "rag-query-plan-v1",
+    "queryId": "qry-b9356e0b5213d99a10e8cbe904f0fac5",
+    "operations": [
+      {
+        "operation": "MAXIMUM_TEAM_SIZE",
+        "scope": "RESEARCHER",
+        "researchers": [
+          0
+        ],
+        "metric": null,
+        "topN": null
+      }
+    ],
+    "researcherNames": [
+      {
+        "name": "Ian T. Foster",
+        "offset": 25
+      }
+    ],
+    "metrics": [],
+    "window": {
+      "requested": {
+        "kind": "DEFAULT",
+        "name": null,
+        "yearFrom": null,
+        "yearTo": null
+      },
+      "window": "all-years",
+      "startYear": 2000,
+      "endYear": 2026,
+      "exact": true,
+      "note": null
+    },
+    "comparison": null,
+    "topics": [],
+    "venues": [],
+    "institutions": [],
+    "semanticIndexes": [
+      "researcher-profile-v1",
+      "paper-abstract-v1"
+    ],
+    "limits": {
+      "graphLimit": 100,
+      "vectorLimit": 50,
+      "maxPathDepth": 6,
+      "topK": 5
+    },
+    "source": "MODEL",
+    "overriddenFields": [],
+    "rejectedItems": [],
+    "promptVersion": "planner-v2",
+    "modelId": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "RUNTIME",
+      "sourceRecordId": "qry-b9356e0b5213d99a10e8cbe904f0fac5",
+      "snapshot": "2026-10-03",
+      "runId": "run-da948201a77e0fe136727d99a55c2b89",
+      "policyVersion": null,
+      "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+    }
+  },
+  "resolutions": [
+    {
+      "schemaVersion": "researcher-resolution-v1",
+      "name": "Ian T. Foster",
+      "nameKey": "name-v1:ian t foster",
+      "policyVersion": "dominant-name-v1",
+      "dominantShare": 0.9,
+      "minWorks": 5,
+      "decision": "RESOLVED_DOMINANT",
+      "researcherId": "scr:canon-v1.er-v2:8c41e7402418b6a74ad89d1b987f6f44",
+      "topShare": 0.9679715302491103,
+      "totalWorks": 281,
+      "candidateCount": 10,
+      "candidates": [
+        {
+          "researcherId": "scr:canon-v1.er-v2:8c41e7402418b6a74ad89d1b987f6f44",
+          "displayName": "Ian T. Foster",
+          "matchedName": "Ian T. Foster",
+          "works": 272,
+          "share": 0.9679715302491103,
+          "identityConfidence": 0.9300527553067827,
+          "mentionCount": 782,
+          "dblpAnchored": true,
+          "orcid": "0000-0003-2129-5269",
+          "institutions": [
+            {
+              "id": "ringgold:1291",
+              "name": "Argonne National Laboratory",
+              "count": null
+            },
+            {
+              "id": "ringgold:2462",
+              "name": "The University of Chicago",
+              "count": null
+            },
+            {
+              "id": "ror:00rs6vg23",
+              "name": "The Ohio State University",
+              "count": null
+            }
+          ],
+          "topCoauthors": [
+            {
+              "id": "scr:canon-v1.er-v2:2e230e1997b21b0c8c8b37343f737316",
+              "name": "Kyle Chard",
+              "count": 70
+            },
+            {
+              "id": "scr:canon-v1.er-v2:d04fce9e8727001e30ec1d4a881afc65",
+              "name": "Rajkumar Kettimuthu",
+              "count": 38
+            },
+            {
+              "id": "scr:canon-v1.er-v2:3d465eeb56aec324f1828630a5fba5ca",
+              "name": "Ryan Chard",
+              "count": 33
+            }
+          ],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:0536ae2e1a2f0cc3b7489331d93d7c95",
+          "displayName": "Ian T. Foster",
+          "matchedName": "Ian T. Foster",
+          "works": 1,
+          "share": 0.0035587188612099642,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:10eace63333ee3ae1376da2eb6226695",
+          "displayName": "Ian T. Foster",
+          "matchedName": "Ian T. Foster",
+          "works": 1,
+          "share": 0.0035587188612099642,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:11abaad890ee528c3a062d1e06f27abd",
+          "displayName": "Ian T. Foster",
+          "matchedName": "Ian T. Foster",
+          "works": 1,
+          "share": 0.0035587188612099642,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [
+            {
+              "id": "scr:canon-v1.er-v2:68b2fd632af09d66da1ec2e0081ff900",
+              "name": "Kihyeon Cho",
+              "count": 1
+            },
+            {
+              "id": "scr:canon-v1.er-v2:3d00fc1ff0c84f9d1a940250e2ad3fa7",
+              "name": "Alan DeSmet",
+              "count": 1
+            },
+            {
+              "id": "scr:canon-v1.er-v2:2469ac7e105a3907b3b50b027f1730db",
+              "name": "Yong Zhao 0009",
+              "count": 1
+            }
+          ],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:17bc6dd9f244f2506d61c5ae05619db3",
+          "displayName": "Ian T. Foster",
+          "matchedName": "Ian T. Foster",
+          "works": 1,
+          "share": 0.0035587188612099642,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:2882fb6574e77869c16f84cb4a72b291",
+          "displayName": "Ian T. Foster",
+          "matchedName": "Ian T. Foster",
+          "works": 1,
+          "share": 0.0035587188612099642,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:36d926d5f6898ab1ed224f8fda1eb3cb",
+          "displayName": "Ian T. Foster",
+          "matchedName": "Ian T. Foster",
+          "works": 1,
+          "share": 0.0035587188612099642,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [
+            {
+              "id": "scr:canon-v1.er-v2:ee11724eae6b8499317651c2f91be9da",
+              "name": "John R. Johnson",
+              "count": 1
+            }
+          ],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:39a3b7086fdf18c5341a6a10f7673bb6",
+          "displayName": "Ian T. Foster",
+          "matchedName": "Ian T. Foster",
+          "works": 1,
+          "share": 0.0035587188612099642,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:4f4475b11d7fad9b535031df93a8e705",
+          "displayName": "Ian T. Foster",
+          "matchedName": "Ian T. Foster",
+          "works": 1,
+          "share": 0.0035587188612099642,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:7280ea5169b29a188a9ed211d177afb2",
+          "displayName": "Ian T. Foster",
+          "matchedName": "Ian T. Foster",
+          "works": 1,
+          "share": 0.0035587188612099642,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [
+            {
+              "id": "scr:canon-v1.er-v2:7d6a4697f4b4698197e83f2cd45e85b1",
+              "name": "David E. Culler",
+              "count": 1
+            },
+            {
+              "id": "scr:canon-v1.er-v2:db628f25dd40701efdb4763b4f3d97d6",
+              "name": "Harvey B. Newman",
+              "count": 1
+            },
+            {
+              "id": "scr:canon-v1.er-v2:c91499cbc8a6b8717dd60aed28238616",
+              "name": "Rick L. Stevens",
+              "count": 1
+            }
+          ],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        }
+      ],
+      "otherNameMatches": [],
+      "truncated": false,
+      "evidenceId": "ev-6128f267040ccebc39d52a341f6a706a"
+    }
+  ],
+  "verification": {
+    "schemaVersion": "claim-verification-v1",
+    "queryId": "qry-b9356e0b5213d99a10e8cbe904f0fac5",
+    "checks": [
+      {
+        "claimId": "claim-1",
+        "status": "VERIFIED",
+        "checks": [
+          {
+            "rule": "evidence-exists",
+            "outcome": "PASS",
+            "detail": "all cited items are in the bundle"
+          },
+          {
+            "rule": "graph-evidence-required",
+            "outcome": "PASS",
+            "detail": "1 graph item(s) cited"
+          },
+          {
+            "rule": "kind-matches-type",
+            "outcome": "PASS",
+            "detail": "METRIC_VALUE needs METRIC_RECORD or RANKING_RECORD or TEMPORAL_CHANGE"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "maximumTeamSize"
+          },
+          {
+            "rule": "numbers-in-text",
+            "outcome": "PASS",
+            "detail": "every number is an asserted, named fact"
+          },
+          {
+            "rule": "window",
+            "outcome": "PASS",
+            "detail": "all-years"
+          },
+          {
+            "rule": "identity",
+            "outcome": "PASS",
+            "detail": "every subject and name is resolved or cited"
+          }
+        ],
+        "action": "KEPT"
+      },
+      {
+        "claimId": "claim-2",
+        "status": "UNSUPPORTED",
+        "checks": [
+          {
+            "rule": "evidence-exists",
+            "outcome": "PASS",
+            "detail": "all cited items are in the bundle"
+          },
+          {
+            "rule": "graph-evidence-required",
+            "outcome": "PASS",
+            "detail": "1 graph item(s) cited"
+          },
+          {
+            "rule": "kind-matches-type",
+            "outcome": "PASS",
+            "detail": "PUBLICATION needs WORK_RECORD or COAUTHOR_EDGE or METRIC_RECORD"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "title"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "year"
+          },
+          {
+            "rule": "numbers-in-text",
+            "outcome": "PASS",
+            "detail": "every number is an asserted, named fact"
+          },
+          {
+            "rule": "identity",
+            "outcome": "FAIL",
+            "detail": "not resolved or cited: Ian T. Foster"
+          }
+        ],
+        "action": "REMOVED"
+      }
+    ],
+    "counts": {
+      "verified": 1,
+      "partiallySupported": 0,
+      "unsupported": 1,
+      "conflicting": 0
+    }
+  },
+  "abstention": null,
+  "answerHash": "sha256:603dacabf49421fd08461a1b48a12f01dc3ae4710810c427553f1a557f218002"
+}

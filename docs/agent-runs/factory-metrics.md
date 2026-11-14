@@ -93,3 +93,17 @@ Running log for the Phase 16 agentic-factory evaluation. One row per agent invoc
 | 2026-11-12 | 10 | service-engineer (repair-01 A) | COMPLETE | n | - | 1 | 0 | ? | F1 two pools, m1 m2 m3 m5, SERVICES.md; review 2 N1 to N4; SaturationSpec flake (ruling 25) |
 | 2026-11-12 | 10 | rag-engineer (repair-01 B) | COMPLETE | y | - | 1 | 0 | ? | m4; 19 disable checks on verifier-v5 |
 | 2026-11-12 | 10 | code-reviewer (review 2) | APPROVE | y | 0/0/5 | 1 | 0 | ? | N1 to N5 residual (ruling 24) |
+| 2026-11-13 | 11 | service-engineer (WO1) | COMPLETE | n | - | 0 | 0 | ? | SaturationSpec deterministic, N1-N4; review 1 F3 |
+| 2026-11-13 | 11 | rag-engineer (WO2) | COMPLETE | n | - | 0 | 0 | ? | 15 live claims classified, verifier-v6, N5; review 1 F5 |
+| 2026-11-13 | 11 | test-engineer (WO3) | COMPLETE | n | - | 0 | 2 | ? | 108 adversarial tests, D1-D13 pending; review 1 F4, F7, section 5 |
+| 2026-11-13 | 11 | code-reviewer (review 1) | REQUEST_CHANGES | y | 0/5/15 | 0 | 0 | ? | D1-D5 major confirmed; D6-D13 and F1-F7 minors |
+| 2026-11-14 | 11 | build-engineer (repair-01 A) | COMPLETE | y | - | 1 | 0 | ? | tests classpath for Spark/Hadoop, fork at repo root (ruling 12) |
+| 2026-11-14 | 11 | rag-engineer (repair-01 B) | COMPLETE | n | - | 1 | 0 | ? | D1-D4, F5, verifier-v7; review 2 N2 |
+| 2026-11-14 | 11 | service-engineer (repair-01 C) | COMPLETE | y | - | 1 | 0 | ? | D5 read timeout and drain bound, F3, main test |
+| 2026-11-14 | 11 | domain-engineer (repair-01 D) | BLOCKED-ON | y | - | 1 | 1 | ? | D11-D13, F1, F2; D8 blocked (ruling 19) |
+| 2026-11-14 | 11 | storage-engineer (repair-01 E) | COMPLETE | y | - | 1 | 0 | ? | D10 count identities |
+| 2026-11-14 | 11 | spark-engineer (repair-01 F) | COMPLETE | y | - | 1 | 0 | ? | F6 JOBS.md |
+| 2026-11-14 | 11 | test-engineer (WO4 rerun) | COMPLETE | n | - | 1 | 0 | ? | 10 wrappers removed, Spark/Hadoop suites, D14-D17 found; review 2 N1, N3 |
+| 2026-11-14 | 11 | rag-engineer (repair-02 A) | COMPLETE | y | - | 2 | 0 | ? | D14, verifier-v8 (human exception, ruling 20) |
+| 2026-11-14 | 11 | test-engineer (WO5 rerun) | COMPLETE | y | - | 2 | 0 | ? | D14 wrapper removed, D18-D20 found |
+| 2026-11-14 | 11 | code-reviewer (review 2) | REQUEST_CHANGES | y | 0/1/3 | 2 | 0 | ? | D18 major open (residual, ruling 24); N1-N3 new minors; human escalation (ruling 27) |

@@ -1,0 +1,26 @@
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+WARNING: Using incubator modules: jdk.incubator.vector
+[info] UnsupportedClaimAdversarialSpec:
+[info] - controls: the stored values verify; a wrong digit, a fabricated ID, or a semantic-only claim do not
+[info] - a multiplier word after the stored digits (10 hundred, 10 thousand) is not that number
+[info] - a quantity stated only in words (hundreds of, dozens of, a dozen) is not verified
+[info] - a comparison the stored value contradicts (more than 10, fewer than 10) is not verified
+[info] - a negated statement of the stored value (does not have 10) is not verified
+[info] - verifier-v7 breadth: other comparison, approximation, vague-quantity, and negation wordings are not verified
+[info] - verifier-v7 controls: exact statements of the stored value still verify
+[info] - a comparison or negation outside the verifier-v7 word lists (short of 10, lacks 10) is not verified *** FAILED ***
+[info]   A block of code that was marked pendingUntilFixed did not throw an exception. Remove "pendingUntilFixed" and the curly braces to eliminate this failure. (UnsupportedClaimAdversarialSpec.scala:197)
+[info] Run completed in 1 second, 326 milliseconds.
+[info] Total number of tests run: 8
+[info] Suites: completed 1, aborted 0
+[info] Tests: succeeded 7, failed 1, canceled 0, ignored 0, pending 0
+[info] *** 1 TEST FAILED ***
+[error] Failed tests:
+[error] 	scholarchain.tests.adversarial.UnsupportedClaimAdversarialSpec
+[error] (tests / Test / testOnly) sbt.TestsFailedException: Tests unsuccessful
+[error] Total time: 3 s, completed Nov 14, 2026, 1:03:08 AM

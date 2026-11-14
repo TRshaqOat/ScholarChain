@@ -1,0 +1,9 @@
+label: D1-vague
+file: modules/rag/src/main/scala/scholarchain/rag/runtime/Verifier.scala
+sha256 before: a4aebe1e4a15f14feab942c401f950fbd11a8f1bb610677edbf4fe879b5a802c
+patched sha256: 275e58e8e54d0791a0f6b1d5849f3551ed655129e2e5f20e1652e949d73468ea
+sbt exit: 1
+[info] - repair-01 D1: a quantity in words (hundreds of, dozens of, a dozen) is not verified *** FAILED ***
+[info] Tests: succeeded 110, failed 1, canceled 0, ignored 0, pending 0
+sha256 restored: a4aebe1e4a15f14feab942c401f950fbd11a8f1bb610677edbf4fe879b5a802c
+RESTORE OK

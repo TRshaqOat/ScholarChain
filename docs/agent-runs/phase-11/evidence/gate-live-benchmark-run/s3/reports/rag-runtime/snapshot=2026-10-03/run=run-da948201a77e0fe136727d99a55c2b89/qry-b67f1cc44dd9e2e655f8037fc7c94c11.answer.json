@@ -1,0 +1,157 @@
+{
+  "schemaVersion": "rag-answer-v1",
+  "response": {
+    "schemaVersion": "answer-response-v1",
+    "queryId": "qry-b67f1cc44dd9e2e655f8037fc7c94c11",
+    "summary": "The maximum number of coauthors on one paper in the corpus is 286.",
+    "claims": [
+      {
+        "schemaVersion": "answer-claim-v1",
+        "claimId": "claim-1",
+        "text": "The maximum number of coauthors on one paper in the corpus is 286.",
+        "evidenceIds": [
+          "ev-2a930931a5777ce36c0d467bfbab6ad3"
+        ],
+        "verificationStatus": "VERIFIED",
+        "uncertainty": null,
+        "provenance": {
+          "schemaVersion": "provenance-v1",
+          "sourceDataset": "RUNTIME",
+          "sourceRecordId": "qry-b67f1cc44dd9e2e655f8037fc7c94c11",
+          "snapshot": "2026-10-03",
+          "runId": "run-da948201a77e0fe136727d99a55c2b89",
+          "policyVersion": null,
+          "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+        }
+      }
+    ],
+    "abstained": false,
+    "uncertainty": null,
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "RUNTIME",
+      "sourceRecordId": "qry-b67f1cc44dd9e2e655f8037fc7c94c11",
+      "snapshot": "2026-10-03",
+      "runId": "run-da948201a77e0fe136727d99a55c2b89",
+      "policyVersion": "fusion-v1",
+      "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+    }
+  },
+  "plan": {
+    "schemaVersion": "rag-query-plan-v1",
+    "queryId": "qry-b67f1cc44dd9e2e655f8037fc7c94c11",
+    "operations": [
+      {
+        "operation": "RESEARCHER_RANKING",
+        "scope": "CORPUS",
+        "researchers": [],
+        "metric": "MAXIMUM_COAUTHORS_ON_ONE_PAPER",
+        "topN": 1
+      }
+    ],
+    "researcherNames": [],
+    "metrics": [],
+    "window": {
+      "requested": {
+        "kind": "DEFAULT",
+        "name": null,
+        "yearFrom": null,
+        "yearTo": null
+      },
+      "window": "all-years",
+      "startYear": 2000,
+      "endYear": 2026,
+      "exact": true,
+      "note": null
+    },
+    "comparison": null,
+    "topics": [],
+    "venues": [],
+    "institutions": [],
+    "semanticIndexes": [
+      "topic-institution-summary-v1"
+    ],
+    "limits": {
+      "graphLimit": 100,
+      "vectorLimit": 50,
+      "maxPathDepth": 6,
+      "topK": 5
+    },
+    "source": "MODEL",
+    "overriddenFields": [],
+    "rejectedItems": [],
+    "promptVersion": "planner-v2",
+    "modelId": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "RUNTIME",
+      "sourceRecordId": "qry-b67f1cc44dd9e2e655f8037fc7c94c11",
+      "snapshot": "2026-10-03",
+      "runId": "run-da948201a77e0fe136727d99a55c2b89",
+      "policyVersion": null,
+      "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+    }
+  },
+  "resolutions": [],
+  "verification": {
+    "schemaVersion": "claim-verification-v1",
+    "queryId": "qry-b67f1cc44dd9e2e655f8037fc7c94c11",
+    "checks": [
+      {
+        "claimId": "claim-1",
+        "status": "VERIFIED",
+        "checks": [
+          {
+            "rule": "evidence-exists",
+            "outcome": "PASS",
+            "detail": "all cited items are in the bundle"
+          },
+          {
+            "rule": "graph-evidence-required",
+            "outcome": "PASS",
+            "detail": "1 graph item(s) cited"
+          },
+          {
+            "rule": "kind-matches-type",
+            "outcome": "PASS",
+            "detail": "METRIC_VALUE needs METRIC_RECORD or RANKING_RECORD or TEMPORAL_CHANGE"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "rank.1.researcherId"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "rank.1.value"
+          },
+          {
+            "rule": "numbers-in-text",
+            "outcome": "PASS",
+            "detail": "every number is an asserted, named fact"
+          },
+          {
+            "rule": "window",
+            "outcome": "PASS",
+            "detail": "all-years"
+          },
+          {
+            "rule": "identity",
+            "outcome": "PASS",
+            "detail": "every subject and name is resolved or cited"
+          }
+        ],
+        "action": "KEPT"
+      }
+    ],
+    "counts": {
+      "verified": 1,
+      "partiallySupported": 0,
+      "unsupported": 0,
+      "conflicting": 0
+    }
+  },
+  "abstention": null,
+  "answerHash": "sha256:9e4bc126b9c409343e80c0f30dee857a0a3b971bb77ddafc3d3584b6de36032c"
+}

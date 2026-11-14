@@ -167,3 +167,12 @@ class ValidationSpec extends AnyFunSuite:
   test("a null field is rejected, not thrown") {
     assert(validate(pairCandidate.copy(authorA = null)).isLeft)
   }
+
+  test("phase 11 finding 1: an authorship position below 1 is rejected, even with a matching ID") {
+    for p <- Seq(0, -1) do
+      rejected(
+        authorship.copy(position = p, mentionId = s"$workId#$p"),
+        s"author position must be >= 1, got $p"
+      )
+    assert(validate(authorship).isRight)
+  }

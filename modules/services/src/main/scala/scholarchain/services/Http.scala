@@ -11,6 +11,7 @@ import java.util.concurrent.{
   Executor,
   LinkedBlockingQueue,
   RejectedExecutionException,
+  ScheduledThreadPoolExecutor,
   ThreadFactory,
   ThreadPoolExecutor,
   TimeUnit
@@ -126,6 +127,33 @@ final class HttpService(
         // shortcut: when the shedding queue is full too, the 503 is written on the dispatcher.
         try shed.execute(s)
         catch case _: RejectedExecutionException => s.run()
+  private val alarms = ScheduledThreadPoolExecutor(
+    1,
+    r =>
+      val t = Thread(r, s"$name-alarm")
+      t.setDaemon(true)
+      t
+  )
+  alarms.setRemoveOnCancelPolicy(true)
+
+  /** Runs body; if it still runs after ms, interrupts this thread, which closes the connection a
+    * blocked socket read waits on. The interrupt never outlives body.
+    */
+  private def interruptAfter(ms: Long)(body: => Unit): Unit =
+    val self = Thread.currentThread()
+    val lock = Object()
+    var running = true
+    var fired = false
+    val alarm = alarms.schedule(
+      (() => lock.synchronized { if running then { fired = true; self.interrupt() } }): Runnable,
+      ms,
+      TimeUnit.MILLISECONDS
+    )
+    try body
+    finally
+      val clear = lock.synchronized { running = false; fired }
+      alarm.cancel(false)
+      if clear then Thread.interrupted()
 
   @volatile private var server: Option[HttpServer] = None
 
@@ -134,6 +162,7 @@ final class HttpService(
 
   /** Binds host:port (0 picks a free port) and returns the bound port. */
   def start(host: String, port: Int): Int =
+    HttpService.limitRequestReads()
     val s = HttpServer.create(InetSocketAddress(host, port), 0)
     s.createContext("/", ex => handle(ex))
     s.setExecutor(executor)
@@ -147,6 +176,7 @@ final class HttpService(
     server = None
     workers.shutdownNow()
     shed.shutdownNow()
+    alarms.shutdownNow()
     onStop()
 
   private def segments(rawPath: String): Vector[String] =
@@ -170,7 +200,11 @@ final class HttpService(
         .flatMap(_.toLongOption)
         .exists(_ > max)
     then throw tooLarge
-    val bytes = ex.getRequestBody.readNBytes(max + 1)
+    val bytes =
+      try ex.getRequestBody.readNBytes(max + 1)
+      catch
+        case _: java.io.IOException => // closed by the read timeout, or by the client
+          throw ApiError(ErrorCode.INVALID_FIELD, "the body was not received in full")
     if bytes.length > max then throw tooLarge
     bytes
 
@@ -181,6 +215,7 @@ final class HttpService(
     val requestId = Ids.orFresh(header("X-Request-Id"), "req-")
     val traceId = Ids.orFresh(header("X-Trace-Id"), "trace-")
     var template = "unmatched"
+    var bodyRead = false // the route read the whole body
     val response =
       try
         if shedding.get then
@@ -205,9 +240,11 @@ final class HttpService(
               catch
                 case NonFatal(_) =>
                   throw ApiError(ErrorCode.INVALID_FIELD, "malformed query string")
-            route.handle(
-              Request(method, params, query, header, () => readBody(ex), requestId, traceId)
-            )
+            def read() =
+              val b = readBody(ex)
+              bodyRead = true
+              b
+            route.handle(Request(method, params, query, header, () => read(), requestId, traceId))
       catch
         case e: ApiError => errorResponse(e, requestId, traceId)
         case NonFatal(_) =>
@@ -216,6 +253,8 @@ final class HttpService(
             requestId,
             traceId
           )
+    val unread = !bodyRead && (header("Transfer-Encoding").nonEmpty ||
+      header("Content-Length").flatMap(_.toLongOption).exists(_ > 0))
     try
       val bytes = response.body.render().getBytes(UTF_8)
       val out = ex.getResponseHeaders
@@ -225,10 +264,17 @@ final class HttpService(
       out.set("X-Request-Id", requestId)
       out.set("X-Trace-Id", traceId)
       response.headers.foreach((k, v) => out.set(k, v))
+      // This connection ends after a body left unread (Phase 11 D5); say so, or a client may send
+      // its next request on it.
+      if unread then out.set("Connection", "close")
       ex.sendResponseHeaders(response.status, bytes.length.toLong)
       ex.getResponseBody.write(bytes)
     catch case NonFatal(_) => () // the client went away; the request is still logged
-    finally ex.close()
+    finally
+      // The response is already on the wire. ex.close drains a body left unread (at most 64 KiB),
+      // so a client still sending it gets no reset; one that never comes is cut after
+      // UnreadBodyDrainMs, so it cannot hold this thread (Phase 11 D5).
+      if unread then interruptAfter(HttpService.UnreadBodyDrainMs)(ex.close()) else ex.close()
     val ms = (System.nanoTime() - t0) / 1000000
     val code = response.body.objOpt.flatMap(_.get("error")).flatMap(_.strOpt)
     metrics.request(template, response.status, ms)
@@ -241,3 +287,21 @@ final class HttpService(
       upickle.default.writeJs(ErrorBody(e.code, e.message, traceId, requestId, e.code.retryable)),
       retryAfter.toMap
     )
+
+object HttpService:
+  /** Request read timeout (Phase 11 D5): a request whose line, headers, and body have not all
+    * arrived within this many seconds of its first byte loses its connection. The JVM option
+    * -Dsun.net.httpserver.maxReqTime=<seconds> overrides it (SERVICES.md section 6).
+    */
+  val RequestReadTimeoutSeconds = 30
+
+  /** How long after its response a body left unread may still arrive (Phase 11 D5). */
+  val UnreadBodyDrainMs = 1000L
+
+  /** Sets the JDK server's request read timeout before the JVM creates its first server. */
+  // shortcut: JVM-wide, read once when the first JDK server is created; every JDK server here is an
+  // HttpService. Make it a services key (domain-engineer) if one JVM ever needs two values.
+  def limitRequestReads(): Unit = synchronized {
+    if System.getProperty("sun.net.httpserver.maxReqTime") == null then
+      System.setProperty("sun.net.httpserver.maxReqTime", RequestReadTimeoutSeconds.toString)
+  }

@@ -1,0 +1,109 @@
+package scholarchain.tests.adversarial
+
+import org.scalatest.funsuite.AnyFunSuite
+import scholarchain.core.{EvidenceType, StableIds}
+import scholarchain.rag.runtime.*
+import scholarchain.tests.support.StoreWorld.*
+
+/** TEMPORARY work order 5 probe (deleted before the report): prints the verifier-v8 outcome of
+  * documented-limit and unlisted wordings. It asserts nothing.
+  */
+class Wo5ProbeSpec extends AnyFunSuite:
+  private val adaMetric =
+    StableIds.evidenceId(EvidenceType.METRIC_RECORD, Seq(ada, "WINDOW#all-years"), metricRun)
+
+  test("probe") {
+    withWorld() { w =>
+      val r = w.ask("Have Ada Lovelace and Grace Hopper coauthored a paper?").toOption.get
+      val c = Verifier.Context(r.bundle.get, r.answer.resolutions, w.cfg)
+      val pubs = Map("publicationCount" -> "10")
+      val p = "In all-years, Ada Lovelace"
+      val texts = Vector(
+        "DOC|" -> s"$p has past 10 publications.",
+        "DOC|" -> s"$p is missing 10 publications.",
+        "DOC|" -> s"$p has a minimum of 10 publications.",
+        "DOC|" -> s"$p has a maximum of 10 publications.",
+        "DOC|" -> s"$p has within 10 publications.",
+        "DOC|" -> s"$p is heading toward 10 publications.",
+        "DOC|" -> s"$p is pushing 10 publications.",
+        "DOC|" -> s"$p has the better part of 10 publications.",
+        "DOC|" -> "In all-years, besides Ada Lovelace, each researcher has 10 publications.",
+        "DOC|" -> "In all-years, apart from Ada Lovelace, each researcher has 10 publications.",
+        "DOC|" -> "In all-years, other than Ada Lovelace, each researcher has 10 publications.",
+        "DOC|" -> "In all-years, none of Ada Lovelace's 10 publications exist.",
+        "DOC|" -> "In all-years, nobody, Ada Lovelace included, has 10 publications.",
+        "DOC|" -> "In all-years, nothing shows Ada Lovelace has 10 publications.",
+        "DOC|" -> s"$p has publications that exceed the stored total of 10.",
+        "DOC|" -> s"$p has 10 publications and counting.",
+        "DOC|" -> s"$p has 10 publications at minimum.",
+        "DOC|" -> s"$p has a mere 10 publications.",
+        "RULE|" -> "In all-years, 10 publications are absent from Ada Lovelace's record.",
+        "RULE|" -> s"$p has publications above 10.",
+        "RULE|" -> s"$p (whose publications are not indexed) has 10 publications.",
+        "CAND|" -> s"$p has more or less 10 publications.",
+        "CAND|" -> s"$p has 10 publications, more or less.",
+        "CAND|" -> s"$p has 10 publications, give or take.",
+        "CAND|" -> s"$p has give or take 10 publications.",
+        "CAND|" -> s"$p has in the region of 10 publications.",
+        "CAND|" -> s"$p has on the order of 10 publications.",
+        "CAND|" -> s"$p has practically 10 publications.",
+        "CAND|" -> s"$p has virtually 10 publications.",
+        "CAND|" -> s"$p has essentially 10 publications.",
+        "CAND|" -> s"$p has an estimated 10 publications.",
+        "CAND|" -> s"$p has possibly 10 publications.",
+        "CAND|" -> s"$p has perhaps 10 publications.",
+        "CAND|" -> s"$p has maybe 10 publications.",
+        "CAND|" -> s"$p has 10 more publications than her coauthor.",
+        "CAND|" -> s"$p has 10 fewer publications than her coauthor.",
+        "CAND|" -> s"$p has 10 times as many publications as her coauthor.",
+        "CAND|" -> s"$p has at the very least 10 publications.",
+        "CAND|" -> s"$p has 10 publications at the least.",
+        "CAND|" -> s"$p has 10-something publications.",
+        "CAND|" -> s"$p has not quite 10 publications.",
+        "CAND|" -> "In all-years, it is unlikely that Ada Lovelace has 10 publications.",
+        "CAND|" -> "In all-years, it is unclear whether Ada Lovelace has 10 publications.",
+        "CAND|" -> "In all-years, it is doubtful that Ada Lovelace has 10 publications.",
+        "CAND|" -> "In all-years, the records dispute that Ada Lovelace has 10 publications.",
+        "CAND|" -> s"$p has just about 10 publications.",
+        "CAND|" -> s"$p has nearly-10 publications.",
+        "CAND|" -> s"$p has under-10 publications.",
+        "CAND|" -> s"$p has 10 or thereabouts publications.",
+        "CAND|" -> s"$p has upto 10 publications.",
+        "CAND|" -> s"$p has less than or equal to 10 publications.",
+        "CAND|" -> s"$p has at least 10 publications.",
+        "CAND|" -> s"$p has ≈10 publications.",
+        "CAND|" -> s"$p has ~ 10 publications.",
+        "CAND|" -> s"$p has 10± publications.",
+        "CAND|" -> s"$p has 10 publications at most.",
+        "CAND|" -> s"$p has an approximate 10 publications.",
+        "CAND|" -> s"$p has 10 approximately publications.",
+        "CAND|" -> s"$p has well over ten publications.",
+        "CAND|" -> s"$p hasn’t 10 publications.",
+        "CAND|" -> s"$p has no 10 publications.",
+        "CAND|" -> s"$p has zero of 10 publications.",
+        "CAND|" -> s"$p has 10 publications, though fewer in fact.",
+        "CAND|" -> s"$p has 10 publications or nearly so.",
+        "CAND|" -> s"$p has 10 publications or close to it.",
+        "CAND|" -> s"$p has 10 publications, roughly.",
+        "CAND|" -> s"$p has 10 publications, approximately.",
+        "CAND|" -> s"$p has 10 publications or less.",
+        "CAND|" -> s"$p has 10 publications or more."
+      )
+      texts.foreach { (tag, t) =>
+        val k = Verifier.check(
+          ClaimDraft(
+            "claim-1",
+            ClaimKind.METRIC_VALUE,
+            t,
+            Vector(adaMetric),
+            Vector(ada),
+            Some("all-years"),
+            pubs
+          ),
+          c
+        )
+        val d = k.checks.filter(_.outcome != CheckOutcome.PASS).map(x => s"${x.rule}:${x.detail}")
+        println(s"WO5PROBE|$tag${k.status}|$t|${d.mkString(" ; ")}")
+      }
+    }
+  }

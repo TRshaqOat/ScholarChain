@@ -1,0 +1,14 @@
+label: D14-filler
+file: modules/rag/src/main/scala/scholarchain/rag/runtime/Verifier.scala
+sha256 before: 59876ae6788d34a463412ff8bea44ccd82329924d313ceaf54df6821bb04f96c
+D14-filler: 1 replacement(s) applied
+patched sha256: 61b5f795cfccf5b2fe5fdff7a44c6ff1a84e36ac311cfdeb20ee151901967c7f
+185c185
+<   private val Filler = "(?:\\W{1,3}(?:the|an?|a\\s+(?:total|count)\\s+of))?\\W{0,3}$"
+---
+>   private val Filler = "\\W{0,3}$"
+sbt exit: 1
+[info] - repair-02 D14: the comparison families are not verified *** FAILED ***
+[info] Tests: succeeded 115, failed 1, canceled 0, ignored 0, pending 0
+restore check:
+modules/rag/src/main/scala/scholarchain/rag/runtime/Verifier.scala: OK

@@ -1,6 +1,13 @@
 package scholarchain.core.config
 
-import com.typesafe.config.{Config, ConfigFactory, ConfigParseOptions, ConfigResolveOptions}
+import com.typesafe.config.{
+  Config,
+  ConfigException,
+  ConfigFactory,
+  ConfigParseOptions,
+  ConfigResolveOptions,
+  ConfigUtil
+}
 import scholarchain.core.{CollaborationMetric, IdFormat}
 
 import java.io.File
@@ -339,9 +346,18 @@ object ConfigLoader:
       .resolve(ConfigResolveOptions.noSystem())
       .getConfig("scholarchain")
 
+  /** getInt that refuses a fractional value (8.5, or "150.5" from a variable) instead of truncating
+    * it.
+    */
+  private def wholeInt(c: Config, p: String): Int =
+    val i = c.getInt(p)
+    if c.getDouble(p) != i then
+      throw new ConfigException.BadValue(c.getValue(p).origin, p, "must be a whole number")
+    i
+
   private def typed(c: Config): ScholarChainConfig =
     def str(p: String) = c.getString(p)
-    def int(p: String) = c.getInt(p)
+    def int(p: String) = wholeInt(c, p)
     def dbl(p: String) = c.getDouble(p)
     ScholarChainConfig(
       configVersion = str("config-version"),
@@ -370,10 +386,11 @@ object ConfigLoader:
       dynamoDb = DynamoDbConfig(str("dynamodb.table-prefix")),
       s3Vectors = S3VectorsConfig(
         str("s3-vectors.vector-bucket"),
-        c.getConfig("s3-vectors.indexes")
-          .entrySet
+        // The object's keys, not entrySet, which silently skips an entry set to null.
+        c.getObject("s3-vectors.indexes")
+          .keySet
           .asScala
-          .map(e => e.getKey -> e.getValue.unwrapped.toString)
+          .map(k => k -> str(ConfigUtil.joinPath("s3-vectors", "indexes", k)))
           .toMap
       ),
       entityResolution = EntityResolutionConfig(
@@ -390,7 +407,9 @@ object ConfigLoader:
         int("graph.oversize-team-threshold"),
         c.getConfigList("graph.windows")
           .asScala
-          .map(w => TimeWindow(w.getString("name"), w.getInt("start-year"), w.getInt("end-year")))
+          .map(w =>
+            TimeWindow(w.getString("name"), wholeInt(w, "start-year"), wholeInt(w, "end-year"))
+          )
           .toVector
       ),
       analytics = AnalyticsConfig(
@@ -622,6 +641,26 @@ object ConfigLoader:
       v.startsWith("example-") || v.endsWith(".invalid") || v == "000000000000" ||
         v.contains(":000000000000:") || v.contains("/example-")
     )
+    // Values a service or job uses as is; outside local a blank one (from a file, or an empty
+    // variable) would fail only later, at the first AWS call or run ID.
+    val blanks = (Seq(
+      "application.region" -> c.region,
+      "storage.bucket" -> c.storage.bucket,
+      "neptune.endpoint" -> c.neptune.endpoint,
+      "neptune.loader-role-arn" -> c.neptune.loaderRoleArn,
+      "dynamodb.table-prefix" -> c.dynamoDb.tablePrefix,
+      "s3-vectors.vector-bucket" -> c.s3Vectors.vectorBucket,
+      "models.embedding-model" -> c.models.embeddingModel,
+      "models.planner-model" -> c.models.plannerModel,
+      "models.synthesis-model" -> c.models.synthesisModel,
+      "graph.policy-version" -> c.graph.policyVersion,
+      "entity-resolution.policy-version" -> er.policyVersion,
+      "retrieval.fusion-policy-version" -> c.retrieval.fusionPolicyVersion,
+      "runtime.prompts-dir" -> rt.promptsDir,
+      "services.queue.url" -> c.services.queue.url,
+      "services.api-key-env" -> c.services.apiKeyEnv
+    ) ++ c.s3Vectors.indexes.toSeq.sorted.map((k, v) => s"s3-vectors.indexes.$k" -> v))
+      .collect { case (k, v) if v.trim.isEmpty => k }
     check(
       c.configVersion == SupportedConfigVersion,
       s"unsupported config-version '${c.configVersion}'"
@@ -744,4 +783,8 @@ object ConfigLoader:
       check(
         c.environment == "local" || placeholders.isEmpty,
         s"environment '${c.environment}' still uses placeholder values: ${placeholders.mkString(", ")}"
+      ) ++
+      check(
+        c.environment == "local" || blanks.isEmpty,
+        s"environment '${c.environment}' has blank values for: ${blanks.mkString(", ")}"
       )

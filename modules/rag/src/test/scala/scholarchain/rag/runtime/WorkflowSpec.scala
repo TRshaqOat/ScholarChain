@@ -654,3 +654,61 @@ class WorkflowSpec extends AnyFunSuite:
       )
     }
   }
+
+  test("repair-01 D4: a failed vector query degrades semantic context; graph facts still answer") {
+    // Every query throws a transient store error (after the storage retry policy), or is refused.
+    val failures: Vector[(String, () => Either[String, Vector[scholarchain.storage.VectorHit]])] =
+      Vector(
+        "thrown" -> (() =>
+          throw scholarchain.storage.TransientStoreException("ThrottlingException (fixture)")
+        ),
+        "refused" -> (() => Left("ValidationException (fixture)"))
+      )
+    for (shape, failure) <- failures do
+      withWorld() { w =>
+        var calls = 0
+        val vectors = new scholarchain.storage.VectorReadPort:
+          def get(index: String, keys: Seq[String]) = w.ports.vectors.get(index, keys)
+          def query(
+              index: String,
+              vector: Array[Float],
+              topK: Int,
+              filter: Option[scholarchain.storage.VectorFilter]
+          ) =
+            calls += 1
+            failure()
+        val r = Workflow.answer(
+          QueryRequest(
+            RuntimeSchemas.QueryRequest,
+            "",
+            Some("session-1"),
+            pairQ,
+            None,
+            None,
+            None,
+            None
+          ),
+          w.ports.copy(vectors = vectors),
+          w.setup
+        )
+        val res = r.fold(f => fail(s"$shape: $f"), identity)
+        val a = res.answer
+        assert(calls >= 1, shape)
+        assert(a.abstention.isEmpty, (shape, a.abstention))
+        assert(res.bundle.get.semanticEvidence.isEmpty, shape)
+        assert(
+          res.bundle.get.missing.exists(m =>
+            m.reason == MissingReason.NO_SEMANTIC_MATCH && m.detail.contains("query failed")
+          ),
+          (shape, res.bundle.get.missing)
+        )
+        val joint = a.response.claims.find(_.text.contains("2 joint publications")).get
+        assert(joint.verificationStatus == VerificationStatus.VERIFIED, shape)
+        assert(
+          res.audit.stages.exists(s =>
+            s.stage == Stage.SEMANTIC_CONTEXT && s.outcome == StageOutcome.OK
+          ),
+          shape
+        )
+      }
+  }

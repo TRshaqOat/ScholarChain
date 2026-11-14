@@ -1,0 +1,10 @@
+core: suites 4, tests 190, failures 0, errors 0, skipped 0
+entity-resolution: suites 10, tests 111, failures 0, errors 0, skipped 0
+hadoop: suites 6, tests 70, failures 0, errors 0, skipped 0
+rag: suites 14, tests 116, failures 0, errors 0, skipped 0
+services: suites 9, tests 47, failures 0, errors 0, skipped 0
+spark: suites 8, tests 46, failures 0, errors 0, skipped 0
+storage: suites 11, tests 109, failures 0, errors 0, skipped 0
+tests: suites 20, tests 143, failures 1, errors 0, skipped 7 (stale, not counted: ['TEST-scholarchain.tests.adversarial.Wo4ProbeSpec.xml'])
+TOTAL: suites 82, tests 832, failures 1, errors 0, skipped 7
+FAILING: scholarchain.tests.adversarial.UnsupportedClaimAdversarialSpec :: a comparison or negation outside the verifier-v7 word lists (short of 10, lacks 10) is not verified

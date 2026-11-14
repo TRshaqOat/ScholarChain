@@ -1,0 +1,423 @@
+{
+  "schemaVersion": "rag-audit-v3",
+  "queryId": "qry-a8377621e915cb47637a02d9baae134f",
+  "sessionId": null,
+  "runId": "run-da948201a77e0fe136727d99a55c2b89",
+  "createdAt": "2026-11-14T19:14:57.396598Z",
+  "mode": "LIVE",
+  "questionHash": "sha256:59ce8cb0d7b69fa419f40a677ecab2a7d1b97e5d98df8e576ec66c77a9db2fee",
+  "questionChars": 65,
+  "plan": {
+    "schemaVersion": "rag-query-plan-v1",
+    "queryId": "qry-a8377621e915cb47637a02d9baae134f",
+    "operations": [
+      {
+        "operation": "RESEARCHER_RANKING",
+        "scope": "CORPUS",
+        "researchers": [],
+        "metric": "PUBLICATION_COUNT",
+        "topN": null
+      },
+      {
+        "operation": "TOPIC_FILTER",
+        "scope": "CORPUS",
+        "researchers": [],
+        "metric": null,
+        "topN": null
+      }
+    ],
+    "researcherNames": [],
+    "metrics": [],
+    "window": {
+      "requested": {
+        "kind": "DEFAULT",
+        "name": null,
+        "yearFrom": null,
+        "yearTo": null
+      },
+      "window": "all-years",
+      "startYear": 2000,
+      "endYear": 2026,
+      "exact": true,
+      "note": null
+    },
+    "comparison": null,
+    "topics": [
+      "cloud computing"
+    ],
+    "venues": [],
+    "institutions": [],
+    "semanticIndexes": [
+      "topic-institution-summary-v1"
+    ],
+    "limits": {
+      "graphLimit": 100,
+      "vectorLimit": 50,
+      "maxPathDepth": 6,
+      "topK": 5
+    },
+    "source": "MODEL",
+    "overriddenFields": [],
+    "rejectedItems": [],
+    "promptVersion": "planner-v2",
+    "modelId": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "RUNTIME",
+      "sourceRecordId": "qry-a8377621e915cb47637a02d9baae134f",
+      "snapshot": "2026-10-03",
+      "runId": "run-da948201a77e0fe136727d99a55c2b89",
+      "policyVersion": null,
+      "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+    }
+  },
+  "resolutions": [],
+  "graphEvidenceIds": [
+    "ev-b33bbec83dd36190531d939a38ad1bd9",
+    "ev-a04da1471717856caf222211f1d83611"
+  ],
+  "semanticEvidenceIds": [
+    "ev-06973ae8a59c69ef40249e00ae384e3a",
+    "ev-610adc56c932e950e313a7989250d6c3",
+    "ev-b0f9d99cae5f1d825e51a9f1d3717860",
+    "ev-1176c77a97851fdb629eb2a4a6db4f9b",
+    "ev-c641162768d7dbf2518d16de9adca08a"
+  ],
+  "metricVersions": [
+    "researcher-ranking-v1@run-1d6a86491812ff94887270c1ab885e69"
+  ],
+  "graphRunId": "run-1d6a86491812ff94887270c1ab885e69",
+  "vectorIndexes": [
+    "topic-institution-summary-v1"
+  ],
+  "embeddingModelVersion": "amazon.titan-embed-text-v2:0|1024|normalized|rendering-v1",
+  "promptVersions": {
+    "planner.schema": "planner-output-v1",
+    "synthesis.schema": "synthesis-output-v3",
+    "synthesis": "synthesis-v3",
+    "planner.schema.sha256": "sha256:3ff40901f3f625204eaaa3ddc525b844c96178ad36629666ebc96f9fe91c1368",
+    "synthesis.schema.sha256": "sha256:44eb22cc2e428a1e90884bcd115b6aac031c9c95f199efd4c42729fada880d02",
+    "planner.sha256": "sha256:c7354f86ece47e7aa01481f6c893a9721a9f13e3d24716bc73942ef49e81e655",
+    "planner": "planner-v2",
+    "synthesis.sha256": "sha256:5755fb97ab563ed8bbe19cded139818194bef346e1718d2ed5df4cc8c4953e2e"
+  },
+  "modelIds": {
+    "planner": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "synthesis": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "embedding": "amazon.titan-embed-text-v2:0|1024|normalized|rendering-v1"
+  },
+  "llmCalls": [
+    {
+      "stage": "QUERY_PLANNING",
+      "modelId": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+      "promptVersion": "planner-v2",
+      "schemaVersion": "planner-output-v1",
+      "attempt": 1,
+      "outcome": "OK",
+      "requests": 1,
+      "inputTokens": 2515,
+      "outputTokens": 222,
+      "latencyMs": 1242,
+      "throttleWaitMs": 3133,
+      "failure": null
+    },
+    {
+      "stage": "ANSWER_SYNTHESIS",
+      "modelId": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+      "promptVersion": "synthesis-v3",
+      "schemaVersion": "synthesis-output-v3",
+      "attempt": 1,
+      "outcome": "OK",
+      "requests": 1,
+      "inputTokens": 4768,
+      "outputTokens": 2615,
+      "latencyMs": 10266,
+      "throttleWaitMs": 5523,
+      "failure": null
+    }
+  ],
+  "embeddingCalls": [
+    {
+      "index": "topic-institution-summary-v1",
+      "modelVersion": "amazon.titan-embed-text-v2:0|1024|normalized|rendering-v1",
+      "attempt": 1,
+      "outcome": "OK",
+      "inputTokens": null,
+      "latencyMs": 241,
+      "throttleWaitMs": 0
+    }
+  ],
+  "templateCalls": [
+    {
+      "templateId": "kv.ranking",
+      "latencyMs": 3,
+      "resultCount": 1,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.lookup",
+      "latencyMs": 171,
+      "resultCount": 2,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.researcher-facets",
+      "latencyMs": 133,
+      "resultCount": 50,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.vertices",
+      "latencyMs": 1,
+      "resultCount": 10,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.lookup",
+      "latencyMs": 32,
+      "resultCount": 2,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.topic-researchers",
+      "latencyMs": 127,
+      "resultCount": 10,
+      "truncated": true
+    },
+    {
+      "templateId": "kv.entity-link",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "kv.entity-link",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "kv.entity-link",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    }
+  ],
+  "stages": [
+    {
+      "stage": "QUERY_PLANNING",
+      "outcome": "OK",
+      "latencyMs": 4376
+    },
+    {
+      "stage": "RESEARCHER_RESOLUTION",
+      "outcome": "OK",
+      "latencyMs": 0
+    },
+    {
+      "stage": "COLLABORATION_METRICS",
+      "outcome": "OK",
+      "latencyMs": 310
+    },
+    {
+      "stage": "PATH_FINDING",
+      "outcome": "SKIPPED",
+      "latencyMs": 0
+    },
+    {
+      "stage": "COMMUNITY_ANALYSIS",
+      "outcome": "OK",
+      "latencyMs": 161
+    },
+    {
+      "stage": "SEMANTIC_CONTEXT",
+      "outcome": "OK",
+      "latencyMs": 258
+    },
+    {
+      "stage": "EVIDENCE_BUILDING",
+      "outcome": "OK",
+      "latencyMs": 2
+    },
+    {
+      "stage": "ANSWER_SYNTHESIS",
+      "outcome": "OK",
+      "latencyMs": 15790
+    },
+    {
+      "stage": "CLAIM_VERIFICATION",
+      "outcome": "OK",
+      "latencyMs": 13
+    },
+    {
+      "stage": "AUDIT",
+      "outcome": "OK",
+      "latencyMs": 0
+    }
+  ],
+  "budget": {
+    "tokenBudget": 11000,
+    "graphTokens": 1139,
+    "semanticTokens": 1273,
+    "omittedGraphItems": 0,
+    "omittedSemanticItems": 0
+  },
+  "verification": {
+    "verified": 1,
+    "partiallySupported": 0,
+    "unsupported": 9,
+    "conflicting": 0
+  },
+  "removedClaims": [
+    {
+      "claimId": "claim-2",
+      "kind": "RANKING",
+      "text": "Albert Y. Zomaya ranks second with 298 publications on cloud computing topics.",
+      "status": "UNSUPPORTED",
+      "failedChecks": [
+        {
+          "rule": "numbers-in-text",
+          "outcome": "FAIL",
+          "detail": "2 is a rank, and no asserted rank.<k>.storedRank of its researcher binds it"
+        }
+      ]
+    },
+    {
+      "claimId": "claim-3",
+      "kind": "RANKING",
+      "text": "Rajkumar Buyya ranks third with 293 publications on cloud computing topics.",
+      "status": "UNSUPPORTED",
+      "failedChecks": [
+        {
+          "rule": "numbers-in-text",
+          "outcome": "FAIL",
+          "detail": "3 is a rank, and no asserted rank.<k>.storedRank of its researcher binds it"
+        }
+      ]
+    },
+    {
+      "claimId": "claim-4",
+      "kind": "RANKING",
+      "text": "Ian T. Foster ranks fourth with 262 publications on cloud computing topics.",
+      "status": "UNSUPPORTED",
+      "failedChecks": [
+        {
+          "rule": "numbers-in-text",
+          "outcome": "FAIL",
+          "detail": "4 is a rank, and no asserted rank.<k>.storedRank of its researcher binds it"
+        }
+      ]
+    },
+    {
+      "claimId": "claim-5",
+      "kind": "RANKING",
+      "text": "Minyi Guo ranks fifth with 240 publications on cloud computing topics.",
+      "status": "UNSUPPORTED",
+      "failedChecks": [
+        {
+          "rule": "numbers-in-text",
+          "outcome": "FAIL",
+          "detail": "5 is a rank, and no asserted rank.<k>.storedRank of its researcher binds it"
+        }
+      ]
+    },
+    {
+      "claimId": "claim-6",
+      "kind": "RANKING",
+      "text": "Franck Cappello ranks sixth with 234 publications on cloud computing topics.",
+      "status": "UNSUPPORTED",
+      "failedChecks": [
+        {
+          "rule": "numbers-in-text",
+          "outcome": "FAIL",
+          "detail": "6 is a rank, and no asserted rank.<k>.storedRank of its researcher binds it"
+        }
+      ]
+    },
+    {
+      "claimId": "claim-7",
+      "kind": "RANKING",
+      "text": "Yves Robert ranks seventh with 216 publications on cloud computing topics.",
+      "status": "UNSUPPORTED",
+      "failedChecks": [
+        {
+          "rule": "numbers-in-text",
+          "outcome": "FAIL",
+          "detail": "7 is a rank, and no asserted rank.<k>.storedRank of its researcher binds it"
+        }
+      ]
+    },
+    {
+      "claimId": "claim-8",
+      "kind": "RANKING",
+      "text": "Jie Wu 0001 ranks eighth with 210 publications on cloud computing topics.",
+      "status": "UNSUPPORTED",
+      "failedChecks": [
+        {
+          "rule": "numbers-in-text",
+          "outcome": "FAIL",
+          "detail": "8 is a rank, and no asserted rank.<k>.storedRank of its researcher binds it"
+        }
+      ]
+    },
+    {
+      "claimId": "claim-9",
+      "kind": "RANKING",
+      "text": "Manish Parashar ranks ninth with 196 publications on cloud computing topics.",
+      "status": "UNSUPPORTED",
+      "failedChecks": [
+        {
+          "rule": "numbers-in-text",
+          "outcome": "FAIL",
+          "detail": "9 is a rank, and no asserted rank.<k>.storedRank of its researcher binds it"
+        }
+      ]
+    },
+    {
+      "claimId": "claim-10",
+      "kind": "RANKING",
+      "text": "Martin Schulz 0001 ranks tenth with 183 publications on cloud computing topics.",
+      "status": "UNSUPPORTED",
+      "failedChecks": [
+        {
+          "rule": "numbers-in-text",
+          "outcome": "FAIL",
+          "detail": "10 is a rank, and no asserted rank.<k>.storedRank of its researcher binds it"
+        }
+      ]
+    }
+  ],
+  "droppedLines": [
+    {
+      "part": "SUMMARY",
+      "text": "Dhabaleswar K. Panda 0001 has the most papers on cloud computing topics with 359 publications, followed by Albert Y. Zomaya with 298 papers and Rajkumar Buyya with 293 papers. The ranking covers all years from 2000 to 2026 across cloud computing and resource management and remote desktop technologies topics.",
+      "reasons": [
+        "298 is not an asserted fact of a cited item",
+        "293 is not an asserted fact of a cited item",
+        "names Albert Y. Zomaya, whom no kept claim may name",
+        "names Rajkumar Buyya, whom no kept claim may name"
+      ]
+    },
+    {
+      "part": "UNCERTAINTY",
+      "text": "The ranking covers topics Cloud Computing and Resource Management (openalex:T10101) and Cloud Computing and Remote Desktop Technologies (openalex:T14067).",
+      "reasons": [
+        "10101 is not an asserted fact of a cited item",
+        "14067 is not an asserted fact of a cited item",
+        "names 'Cloud Computing' (not a researcher, title, venue, topic, or institution of the evidence), 'Resource Management' (not a researcher, title, venue, topic, or institution of the evidence), 'Remote Desktop Technologies' (not a researcher, title, venue, topic, or institution of the evidence)"
+      ]
+    }
+  ],
+  "abstained": false,
+  "abstentionReason": null,
+  "answerHash": "sha256:10f0189f7bda77547fc6635ff713205da3da0698bac4a6dcf93a94c62718a5c1",
+  "provenance": {
+    "schemaVersion": "provenance-v1",
+    "sourceDataset": "RUNTIME",
+    "sourceRecordId": "qry-a8377621e915cb47637a02d9baae134f",
+    "snapshot": "2026-10-03",
+    "runId": "run-da948201a77e0fe136727d99a55c2b89",
+    "policyVersion": "fusion-v1",
+    "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+  }
+}

@@ -1,0 +1,36 @@
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] compiling 1 Scala source to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/core/target/scala-3.3.7/classes ...
+[info] done compiling
+[info] ValidationSpec:
+[info] - every fixture is valid
+[info] - missing provenance is rejected
+[info] - incomplete provenance is rejected
+[info] - confidence outside [0, 1] is rejected
+[info] - unsupported schema versions are rejected, including a nested provenance version
+[info] - malformed stable IDs are rejected
+[info] - a coauthor edge ID that does not match its formula is rejected
+[info] - a synthetic ORCID fixture ID is accepted as a source record ID
+[info] - non-canonical and self pairs are rejected
+[info] - Community nodes need comm- IDs; MEMBER_OF runs from a researcher to a community
+[info] - a pair candidate's mentions must belong to its work
+[info] - windows whose start year exceeds the end year are rejected
+[info] - evidence bundles keep graph facts and semantic context apart
+[info] - supported claims must cite evidence; unsupported claims may not
+[info] - match decisions need reason codes and an ISO-8601 timestamp
+[info] - a null field is rejected, not thrown
+[info] - phase 11 finding 1: an authorship position below 1 is rejected, even with a matching ID *** FAILED ***
+[info]   result.isLeft was false expected rejection containing 'author position must be >= 1, got 0' (ValidationSpec.scala:12)
+[info] Run completed in 201 milliseconds.
+[info] Total number of tests run: 17
+[info] Suites: completed 1, aborted 0
+[info] Tests: succeeded 16, failed 1, canceled 0, ignored 0, pending 0
+[info] *** 1 TEST FAILED ***
+[error] Failed tests:
+[error] 	scholarchain.core.ValidationSpec
+[error] (core / Test / testOnly) sbt.TestsFailedException: Tests unsuccessful
+[error] Total time: 2 s, completed Nov 13, 2026, 11:28:13 PM

@@ -117,7 +117,8 @@ object SemanticStage:
             )
           )
         case Right(vec) =>
-          val results = queries.map { (index, window, extra) =>
+          val failed = Vector.newBuilder[MissingEvidence]
+          val results = queries.flatMap { (index, window, extra) =>
             val base = Seq(
               VectorFilter.Eq("embeddingModelVersion", ujson.Str(label)),
               VectorFilter.Eq("window", ujson.Str(window))
@@ -125,23 +126,34 @@ object SemanticStage:
             val filter = VectorFilter.And(base ++ extra.toSeq)
             checkDeadline(s"the $index query")
             val q0 = nowMs()
-            val hits = vectors
-              .query(index, vec, plan.limits.topK, Some(filter))
-              .fold(
-                e => throw IllegalStateException(s"vector query on $index refused: $e"),
-                identity
-              )
-            val (items, dropped) = SemanticContext.fetch(objects, index, hits)
-            SemanticResult(
-              RuntimeSchemas.SemanticResult,
-              index,
-              label,
-              filterJson(filter).render(),
-              plan.limits.topK,
-              items,
-              dropped.size,
-              nowMs() - q0
-            )
+            // Repair-01 (D4): a vector store error (after the storage retry policy) or a refusal
+            // degrades this index to a missing-evidence note, as an embedding failure does; the
+            // question goes on with its graph evidence.
+            val hits =
+              try vectors.query(index, vec, plan.limits.topK, Some(filter))
+              catch case NonFatal(e) if !e.isInstanceOf[DeadlineExceeded] => Left("error")
+            hits match
+              case Left(_) =>
+                failed += MissingEvidence(
+                  MissingReason.NO_SEMANTIC_MATCH,
+                  index,
+                  s"The $index query failed; no semantic context from it."
+                )
+                None
+              case Right(hs) =>
+                val (items, dropped) = SemanticContext.fetch(objects, index, hs)
+                Some(
+                  SemanticResult(
+                    RuntimeSchemas.SemanticResult,
+                    index,
+                    label,
+                    filterJson(filter).render(),
+                    plan.limits.topK,
+                    items,
+                    dropped.size,
+                    nowMs() - q0
+                  )
+                )
           }
           val none = results
             .filter(_.items.isEmpty)
@@ -152,7 +164,7 @@ object SemanticStage:
                 s"No ${r.index} document matched the filters."
               )
             )
-          Output(results, Some(call), none)
+          Output(results, Some(call), failed.result() ++ none)
 
   /** The filter as S3 Vectors JSON (audit form; holds IDs and enum values only). */
   def filterJson(f: VectorFilter): ujson.Value = f match

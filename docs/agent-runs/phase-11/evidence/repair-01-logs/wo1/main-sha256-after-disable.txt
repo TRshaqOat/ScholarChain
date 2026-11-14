@@ -1,0 +1,11 @@
+modules/services/src/main/scala/scholarchain/services/Composition.scala: OK
+modules/services/src/main/scala/scholarchain/services/Http.scala: OK
+modules/services/src/main/scala/scholarchain/services/Models.scala: OK
+modules/services/src/main/scala/scholarchain/services/Observability.scala: OK
+modules/services/src/main/scala/scholarchain/services/Resilience.scala: OK
+modules/services/src/main/scala/scholarchain/services/Services.scala: OK
+modules/services/src/main/scala/scholarchain/services/Worker.scala: OK
+modules/services/src/main/scala/scholarchain/services/main/GraphEvidenceApi.scala: OK
+modules/services/src/main/scala/scholarchain/services/main/LocalRun.scala: OK
+modules/services/src/main/scala/scholarchain/services/main/QueryApi.scala: OK
+modules/services/src/main/scala/scholarchain/services/main/Worker.scala: OK

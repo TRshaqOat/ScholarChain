@@ -62,6 +62,17 @@ lazy val commonSettings = Seq(
   )
 )
 
+// One shared local SparkSession per test JVM: fork, open the JDK modules, run suites serially.
+// Used by sparkAnalytics and tests (phase-11 ruling 12); hadoop's tests need no fork or JVM options.
+lazy val sparkTestSettings = Seq(
+  Test / fork := true,
+  Test / parallelExecution := false,
+  Test / javaOptions ++= SparkJvmOptions :+ "-Xmx2g"
+)
+
+// ScalaTest brings scala-xml_3 and Spark brings scala-xml_2.13; keep the runtime's 2.13 build.
+val excludeScalaXml3 = excludeDependencies += ExclusionRule("org.scala-lang.modules", "scala-xml_3")
+
 def module(id: String, dir: String): Project =
   Project(id, file(s"modules/$dir")).settings(commonSettings, name := id)
 
@@ -89,16 +100,12 @@ lazy val sparkAnalytics = module("sparkAnalytics", "spark")
   .dependsOn(core)
   .settings(
     libraryDependencies += Dependencies.sparkSql,
-    // ScalaTest brings scala-xml_3 and Spark brings scala-xml_2.13; keep the runtime's 2.13 build.
-    excludeDependencies += ExclusionRule("org.scala-lang.modules", "scala-xml_3"),
+    excludeScalaXml3,
     // Spark supplies scala-library 2.13 at runtime; the job jar carries only scala3-library_3.
     assembly / assemblyExcludedJars := (assembly / fullClasspath).value.filter(
       _.data.getName.startsWith("scala-library-")
     ),
-    // One shared local SparkSession per test JVM: fork, open the JDK modules, run suites serially.
-    Test / fork := true,
-    Test / parallelExecution := false,
-    Test / javaOptions ++= SparkJvmOptions :+ "-Xmx2g",
+    sparkTestSettings,
     // run/runMain put Provided Spark on the classpath, fork, and resolve relative paths from the
     // repository root (so scratch/spark/ means the repo's scratch/spark/).
     Compile / run := Defaults
@@ -161,6 +168,14 @@ lazy val tests = Project("tests", file("tests"))
   .settings(
     commonSettings,
     publish / skip := true,
+    // Provided Spark and Hadoop are not inherited through dependsOn; same ledger pins, Test scope only.
+    libraryDependencies ++=
+      (Dependencies.sparkSql +: Dependencies.hadoop).map(_.withConfigurations(Some(Test.name))),
+    excludeScalaXml3,
+    sparkTestSettings,
+    // Forked suites keep the repository root as working directory, as unforked ones had (prompts/).
+    Test / forkOptions := (Test / forkOptions).value
+      .withWorkingDirectory((ThisBuild / baseDirectory).value),
     Test / unmanagedSourceDirectories := Seq(
       "contracts",
       "integration",

@@ -1,0 +1,9 @@
+core: suites 4 tests 185 failures 0 errors 0 skipped/pending 0
+entity-resolution: suites 10 tests 111 failures 0 errors 0 skipped/pending 0
+hadoop: suites 6 tests 70 failures 0 errors 0 skipped/pending 0
+rag: suites 14 tests 106 failures 0 errors 0 skipped/pending 0
+services: suites 8 tests 43 failures 0 errors 0 skipped/pending 0
+spark: suites 8 tests 46 failures 0 errors 0 skipped/pending 0
+storage: suites 11 tests 108 failures 0 errors 0 skipped/pending 0
+tests: suites 16 tests 108 failures 0 errors 0 skipped/pending 14
+TOTAL: suites 77 tests 777 failures 0 errors 0 skipped/pending 14

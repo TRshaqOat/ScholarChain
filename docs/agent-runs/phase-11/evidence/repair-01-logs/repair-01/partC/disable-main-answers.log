@@ -1,0 +1,33 @@
+# main-answers: modules/services/src/main/scala/scholarchain/services/main/GraphEvidenceApi.scala
+# patch: '  def main(args: Array[String]): Unit = Launcher.run(start(args.toSeq))\n' -> '  def main(args: Array[String]): Unit =\n    Launcher.main(args, Apps.graphEvidenceApi(_, _, _, _), _.services.graphEvidenceApi.port)\n'
+# cmd: sbt -J-Xmx4g -batch services/testOnly scholarchain.services.CorpusQuerySpec
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] compiling 2 Scala sources to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/services/target/scala-3.3.7/classes ...
+[info] done compiling
+[info] CorpusQuerySpec:
+[info] - B13 shape: corpus components in 2000-2014 answered with VERIFIED claims from the summary
+[info]   + claim-1 VERIFIED: In 2000-2014, the coauthorship graph has 33 connected components; the largest connected component has 252 researchers out of 400 researchers, a share of 0.6300. 
+[info]   + claim-2 VERIFIED: In 2000-2014, 13 singleton researchers (researchers without any coauthor edge in that window) are among the 400 researchers of the coauthorship graph. 
+[info] - an empty runtime.window-summary.load-run leaves the port unset: corpus questions abstain
+[info] - LocalRun passes --window-summary-root through; a bad or missing object stops startup
+[info] - graph-evidence-api never opens the window-summary object; same runtime run (repair-01 m3)
+[info] - the graph-evidence-api main itself passes answers = false (repair-01 Part C) *** FAILED ***
+[info]   "failed: the window-summary object curated/window-summary/snapshot=2026-10-03/run=run-3b918dc6e3fe0cb9f8ae17dc9630df2a/part-00000.jsonl was refused: OBJECT_MISSING
+[info]   " did not contain "window summaries: curated/window-summary/snapshot=2026-10-03/run=run-3b918dc6e3fe0cb9f8ae17dc9630df2a/part-00000.jsonl not opened (this service answers no questions)" failed: the window-summary object curated/window-summary/snapshot=2026-10-03/run=run-3b918dc6e3fe0cb9f8ae17dc9630df2a/part-00000.jsonl was refused: OBJECT_MISSING (CorpusQuerySpec.scala:194)
+[info] Run completed in 20 seconds, 964 milliseconds.
+[info] Total number of tests run: 5
+[info] Suites: completed 1, aborted 0
+[info] Tests: succeeded 4, failed 1, canceled 0, ignored 0, pending 0
+[info] *** 1 TEST FAILED ***
+[error] Failed tests:
+[error] 	scholarchain.services.CorpusQuerySpec
+[error] (services / Test / testOnly) sbt.TestsFailedException: Tests unsuccessful
+[error] Total time: 23 s, completed Nov 13, 2026, 10:32:55 PM
+# exit 1
+# sha256 before c1c1aea92881b590d65ed765d4196fb185e63bc6b3a1364a47c9ab9411bc47cd
+# sha256 after  c1c1aea92881b590d65ed765d4196fb185e63bc6b3a1364a47c9ab9411bc47cd OK

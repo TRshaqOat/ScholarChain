@@ -1,0 +1,33 @@
+# F3-timeout-from-submission: modules/services/src/main/scala/scholarchain/services/Resilience.scala
+# patch: '        if left <= 0 then throw e else f.get(left, TimeUnit.MILLISECONDS)\n' -> '        throw e\n'
+# cmd: sbt -J-Xmx4g -batch services/testOnly scholarchain.services.BuildingBlocksSpec
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] compiling 1 Scala source to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/services/target/scala-3.3.7/classes ...
+[info] done compiling
+[info] BuildingBlocksSpec:
+[info] - breaker: opens after the threshold, fails fast while open, half-opens after the interval
+[info] - downstream calls: timeout, retries only for retryable reads, breaker per downstream
+[info] - waiting to start is no downstream failure: 503 OVERLOADED, no breaker (repair-01 F1) *** FAILED ***
+[info]   scholarchain.services.ApiError: s3 did not answer within 4000 ms
+[info]   ...
+[info] - rate limiter: a sliding minute
+[info] - cursor: round trip, bound to its walk, and opaque garbage rejected
+[info] - IDs: valid client values echoed, anything else replaced
+[info] - API key: exact match only, any length; the key is never printed
+[info] Run completed in 4 seconds, 556 milliseconds.
+[info] Total number of tests run: 7
+[info] Suites: completed 1, aborted 0
+[info] Tests: succeeded 6, failed 1, canceled 0, ignored 0, pending 0
+[info] *** 1 TEST FAILED ***
+[error] Failed tests:
+[error] 	scholarchain.services.BuildingBlocksSpec
+[error] (services / Test / testOnly) sbt.TestsFailedException: Tests unsuccessful
+[error] Total time: 7 s, completed Nov 13, 2026, 10:59:38 PM
+# exit 1
+# sha256 before 7607aafd7c1713c3aae76942e63f39ca90fc93a53dc050a50c4b7162205ded53
+# sha256 after  7607aafd7c1713c3aae76942e63f39ca90fc93a53dc050a50c4b7162205ded53 OK

@@ -1,0 +1,27 @@
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] scalafmt: Formatting 5 Scala sources (/Users/achyutpatel/Developer/Cloud/ScholarChain/modules/services)...
+[info] scalafmt: Formatting 1 Scala sources (/Users/achyutpatel/Developer/Cloud/ScholarChain/modules/services)...
+[info] scalafmt: Reformatted 1 Scala sources
+[success] Total time: 1 s, completed Nov 13, 2026, 10:27:25 PM
+[success] Total time: 0 s, completed Nov 13, 2026, 10:27:25 PM
+[info] compiling 1 Scala source to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/services/target/scala-3.3.7/classes ...
+[info] done compiling
+[info] compiling 5 Scala sources to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/services/target/scala-3.3.7/test-classes ...
+[error] -- [E051] Reference Error: /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/services/src/test/scala/scholarchain/services/BuildingBlocksSpec.scala:133:9 
+[error] 133 |      bg.submit(() => { until(timeoutMs / 2); gate.countDown() })
+[error]     |      ^^^^^^^^^
+[error]     |Ambiguous overload. The overloaded alternatives of method submit in trait ExecutorService with types
+[error]     | (x$0: Runnable): java.util.concurrent.Future[?]
+[error]     | [T](x$0: java.util.concurrent.Callable[T]): java.util.concurrent.Future[T]
+[error]     |both match arguments (() => Unit)
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] one error found
+[error] (services / Test / compileIncremental) Compilation failed
+[error] Total time: 3 s, completed Nov 13, 2026, 10:27:28 PM
+exit 1

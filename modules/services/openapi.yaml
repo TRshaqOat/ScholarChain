@@ -586,7 +586,7 @@ components:
           schema:
             $ref: '#/components/schemas/ErrorBody'
     Unavailable:
-      description: CIRCUIT_OPEN (a downstream breaker is open) or OVERLOADED (request threads and queue full, every workflow slot busy, or a downstream call that could not start within its timeout; never counted against a breaker; SERVICES.md section 3)
+      description: CIRCUIT_OPEN (a downstream breaker is open) or OVERLOADED (request threads and queue full, every workflow slot busy, or a downstream call that could not start within its timeout; never counted against a breaker; SERVICES.md section 3). A sync POST /v1/query sent with an Idempotency-Key and answered 503 OVERLOADED because every workflow slot is busy keeps its key claimed until the idempotency TTL (services.ttl.idempotency-hours), so a retry with the same key is 409 IDEMPOTENCY_CONFLICT; retry with a new key.
       content:
         application/json:
           schema:

@@ -1,0 +1,10 @@
+D5-alarm: exit 1, modules/services/src/main/scala/scholarchain/services/Http.scala sha256 b2bae7d1046d7f53793929e726727446424b88d6a987030cac31a10fb2be82fb restore OK
+D5-conn-close: exit 1, modules/services/src/main/scala/scholarchain/services/Http.scala sha256 b2bae7d1046d7f53793929e726727446424b88d6a987030cac31a10fb2be82fb restore OK
+D5-timeout: exit 1, modules/services/src/main/scala/scholarchain/services/Http.scala sha256 b2bae7d1046d7f53793929e726727446424b88d6a987030cac31a10fb2be82fb restore OK
+D5-400: exit 1, modules/services/src/main/scala/scholarchain/services/Http.scala sha256 b2bae7d1046d7f53793929e726727446424b88d6a987030cac31a10fb2be82fb restore OK
+main-answers: exit 1, modules/services/src/main/scala/scholarchain/services/main/GraphEvidenceApi.scala sha256 c1c1aea92881b590d65ed765d4196fb185e63bc6b3a1364a47c9ab9411bc47cd restore OK
+F3-workflow-queue: exit 1, modules/services/src/main/scala/scholarchain/services/Resilience.scala sha256 7607aafd7c1713c3aae76942e63f39ca90fc93a53dc050a50c4b7162205ded53 restore OK
+F3-timeout-from-submission: exit 1, modules/services/src/main/scala/scholarchain/services/Resilience.scala sha256 7607aafd7c1713c3aae76942e63f39ca90fc93a53dc050a50c4b7162205ded53 restore OK
+F3-no-shedding: exit 1, modules/services/src/main/scala/scholarchain/services/Http.scala sha256 b2bae7d1046d7f53793929e726727446424b88d6a987030cac31a10fb2be82fb restore OK
+exit 0
+manifest check exit 0

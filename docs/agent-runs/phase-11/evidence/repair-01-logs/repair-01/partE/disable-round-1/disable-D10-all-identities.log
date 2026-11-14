@@ -1,0 +1,26 @@
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] compiling 1 Scala source to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/storage/target/scala-3.3.7/classes ...
+[info] done compiling
+[info] WindowSummarySpec:
+[info] - rows from a Spark manifest carry the rebuilt provenance, nodeBasis and sourceRuns
+[info] - the port reads the store object back unchanged; a reload is Unchanged
+[info] - malformed rows, duplicate or missing windows, and mixed runs refuse the whole object
+[info] - phase 11 D10: counts no graph can have are refused; real-shaped counts still open *** FAILED ***
+[info]   Vector() was empty largest component 900 with 1,000 components: Vector() (WindowSummarySpec.scala:235)
+[info] - a manifest with integrity violations, another schema, or another row count is refused
+[info] - the loader writes once under a new root, reloads as Unchanged, and refuses a conflict
+[info] - the loader refuses a run directory whose manifest names another run
+[info] Run completed in 282 milliseconds.
+[info] Total number of tests run: 7
+[info] Suites: completed 1, aborted 0
+[info] Tests: succeeded 6, failed 1, canceled 0, ignored 0, pending 0
+[info] *** 1 TEST FAILED ***
+[error] Failed tests:
+[error] 	scholarchain.storage.WindowSummarySpec
+[error] (storage / Test / testOnly) sbt.TestsFailedException: Tests unsuccessful
+[error] Total time: 3 s, completed Nov 13, 2026, 11:46:53 PM

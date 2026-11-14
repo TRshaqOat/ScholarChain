@@ -1,0 +1,2 @@
+d713f227f609b4a46638f208445dd077fd889b904a3b126b57f885c9b4848348  scratch/runtime/wo8/s3/curated/window-summary/snapshot=2026-10-03/run=run-6fbad498beb0d8f570df67665fb97544/part-00000.jsonl
+fe6f34960696f130d81e371c9c17b25dc96bfa106bfcaebc3eb6d4d21b8c95da  scratch/runtime/wo7/spark/snapshot=2026-10-03/run=run-1de2293597c338227290eb382de16957/_manifest.json

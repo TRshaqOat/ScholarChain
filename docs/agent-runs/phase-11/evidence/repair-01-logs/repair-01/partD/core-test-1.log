@@ -1,0 +1,216 @@
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] scalafmt: Formatting 2 Scala sources (/Users/achyutpatel/Developer/Cloud/ScholarChain/modules/core)...
+[info] scalafmt: Formatting 2 Scala sources (/Users/achyutpatel/Developer/Cloud/ScholarChain/modules/core)...
+[info] scalafmt: Reformatted 1 Scala sources
+[info] scalafmt: Reformatted 1 Scala sources
+[success] Total time: 1 s, completed Nov 13, 2026, 11:27:31 PM
+[success] Total time: 0 s, completed Nov 13, 2026, 11:27:31 PM
+[info] compiling 2 Scala sources to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/core/target/scala-3.3.7/classes ...
+[info] done compiling
+[info] compiling 2 Scala sources to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/core/target/scala-3.3.7/test-classes ...
+[info] done compiling
+[info] StableIdsSpec:
+[info] - frozen formula values match an independent implementation
+[info] - IDs are deterministic across calls
+[info] - run IDs ignore input order but change with attempt, code, config, and inputs
+[info] - work IDs are namespace plus authoritative source ID
+[info] - researcher ID uses a validated ORCID, else a versioned ScholarChain identity ID
+[info] - ORCID checksum is enforced and synthetic fixture IDs are never ORCID iDs
+[info] - coauthor edge ID is independent of argument order and depends on window and policy
+[info] - graph edge ID canonicalizes undirected endpoints only, and evidence order is ignored
+[info] - community ID: frozen value (JOBS.md job 6 formula), shape, and window sensitivity
+[info] - chunk ID changes with any of its inputs
+[info] - affiliation-name ID: frozen value, canonical form, version, and empty names
+[info] - ID parts containing the separator are refused
+[info] - canonical pair rule: smaller ID first, self-pairs refused
+[info] - query ID: frozen value (RUNTIME.md audit formula), shape, input sensitivity, and guards
+[info] - Phase 10 job ID: frozen value, one job per query, shape, and guard
+[info] - Phase 10 node ID: every GraphNode ID shape is a node ID; other text is not
+[info] - ID format checks accept well-formed and reject malformed IDs
+[info] ValidationSpec:
+[info] - every fixture is valid
+[info] - missing provenance is rejected
+[info] - incomplete provenance is rejected
+[info] - confidence outside [0, 1] is rejected
+[info] - unsupported schema versions are rejected, including a nested provenance version
+[info] - malformed stable IDs are rejected
+[info] - a coauthor edge ID that does not match its formula is rejected
+[info] - a synthetic ORCID fixture ID is accepted as a source record ID
+[info] - non-canonical and self pairs are rejected
+[info] - Community nodes need comm- IDs; MEMBER_OF runs from a researcher to a community
+[info] - a pair candidate's mentions must belong to its work
+[info] - windows whose start year exceeds the end year are rejected
+[info] - evidence bundles keep graph facts and semantic context apart
+[info] - supported claims must cite evidence; unsupported claims may not
+[info] - match decisions need reason codes and an ISO-8601 timestamp
+[info] - a null field is rejected, not thrown
+[info] - phase 11 finding 1: an authorship position below 1 is rejected, even with a matching ID
+[info] WireContractSpec:
+[info] - every record has a frozen wire example and no frozen example is orphaned
+[info] - Provenance: encoding matches the frozen wire example
+[info] - Provenance: the frozen wire example decodes to the fixture
+[info] - Provenance: round trip is lossless and the fixture is valid
+[info] - Provenance: an unsupported schema version is rejected
+[info] - WorkRecord: encoding matches the frozen wire example
+[info] - WorkRecord: the frozen wire example decodes to the fixture
+[info] - WorkRecord: round trip is lossless and the fixture is valid
+[info] - WorkRecord: an unsupported schema version is rejected
+[info] - WorkRecord: a record without provenance is rejected
+[info] - AuthorMention: encoding matches the frozen wire example
+[info] - AuthorMention: the frozen wire example decodes to the fixture
+[info] - AuthorMention: round trip is lossless and the fixture is valid
+[info] - AuthorMention: an unsupported schema version is rejected
+[info] - AuthorMention: a record without provenance is rejected
+[info] - CanonicalResearcher: encoding matches the frozen wire example
+[info] - CanonicalResearcher: the frozen wire example decodes to the fixture
+[info] - CanonicalResearcher: round trip is lossless and the fixture is valid
+[info] - CanonicalResearcher: an unsupported schema version is rejected
+[info] - CanonicalResearcher: a record without provenance is rejected
+[info] - AuthorshipRecord: encoding matches the frozen wire example
+[info] - AuthorshipRecord: the frozen wire example decodes to the fixture
+[info] - AuthorshipRecord: round trip is lossless and the fixture is valid
+[info] - AuthorshipRecord: an unsupported schema version is rejected
+[info] - AuthorshipRecord: a record without provenance is rejected
+[info] - PublicationTeam: encoding matches the frozen wire example
+[info] - PublicationTeam: the frozen wire example decodes to the fixture
+[info] - PublicationTeam: round trip is lossless and the fixture is valid
+[info] - PublicationTeam: an unsupported schema version is rejected
+[info] - PublicationTeam: a record without provenance is rejected
+[info] - CoauthorPairCandidate: encoding matches the frozen wire example
+[info] - CoauthorPairCandidate: the frozen wire example decodes to the fixture
+[info] - CoauthorPairCandidate: round trip is lossless and the fixture is valid
+[info] - CoauthorPairCandidate: an unsupported schema version is rejected
+[info] - CoauthorPairCandidate: a record without provenance is rejected
+[info] - CoauthorEdge: encoding matches the frozen wire example
+[info] - CoauthorEdge: the frozen wire example decodes to the fixture
+[info] - CoauthorEdge: round trip is lossless and the fixture is valid
+[info] - CoauthorEdge: an unsupported schema version is rejected
+[info] - CoauthorEdge: a record without provenance is rejected
+[info] - ResearcherMetrics: encoding matches the frozen wire example
+[info] - ResearcherMetrics: the frozen wire example decodes to the fixture
+[info] - ResearcherMetrics: round trip is lossless and the fixture is valid
+[info] - ResearcherMetrics: an unsupported schema version is rejected
+[info] - ResearcherMetrics: a record without provenance is rejected
+[info] - Venue: encoding matches the frozen wire example
+[info] - Venue: the frozen wire example decodes to the fixture
+[info] - Venue: round trip is lossless and the fixture is valid
+[info] - Venue: an unsupported schema version is rejected
+[info] - Venue: a record without provenance is rejected
+[info] - Institution: encoding matches the frozen wire example
+[info] - Institution: the frozen wire example decodes to the fixture
+[info] - Institution: round trip is lossless and the fixture is valid
+[info] - Institution: an unsupported schema version is rejected
+[info] - Institution: a record without provenance is rejected
+[info] - Topic: encoding matches the frozen wire example
+[info] - Topic: the frozen wire example decodes to the fixture
+[info] - Topic: round trip is lossless and the fixture is valid
+[info] - Topic: an unsupported schema version is rejected
+[info] - Topic: a record without provenance is rejected
+[info] - MatchCandidate: encoding matches the frozen wire example
+[info] - MatchCandidate: the frozen wire example decodes to the fixture
+[info] - MatchCandidate: round trip is lossless and the fixture is valid
+[info] - MatchCandidate: an unsupported schema version is rejected
+[info] - MatchCandidate: a record without provenance is rejected
+[info] - MatchDecision: encoding matches the frozen wire example
+[info] - MatchDecision: the frozen wire example decodes to the fixture
+[info] - MatchDecision: round trip is lossless and the fixture is valid
+[info] - MatchDecision: an unsupported schema version is rejected
+[info] - MatchDecision: a record without provenance is rejected
+[info] - GraphNode: encoding matches the frozen wire example
+[info] - GraphNode: the frozen wire example decodes to the fixture
+[info] - GraphNode: round trip is lossless and the fixture is valid
+[info] - GraphNode: an unsupported schema version is rejected
+[info] - GraphNode: a record without provenance is rejected
+[info] - GraphEdge: encoding matches the frozen wire example
+[info] - GraphEdge: the frozen wire example decodes to the fixture
+[info] - GraphEdge: round trip is lossless and the fixture is valid
+[info] - GraphEdge: an unsupported schema version is rejected
+[info] - GraphEdge: a record without provenance is rejected
+[info] - GraphNode.Community: encoding matches the frozen wire example
+[info] - GraphNode.Community: the frozen wire example decodes to the fixture
+[info] - GraphNode.Community: round trip is lossless and the fixture is valid
+[info] - GraphNode.Community: an unsupported schema version is rejected
+[info] - GraphNode.Community: a record without provenance is rejected
+[info] - GraphEdge.MEMBER_OF: encoding matches the frozen wire example
+[info] - GraphEdge.MEMBER_OF: the frozen wire example decodes to the fixture
+[info] - GraphEdge.MEMBER_OF: round trip is lossless and the fixture is valid
+[info] - GraphEdge.MEMBER_OF: an unsupported schema version is rejected
+[info] - GraphEdge.MEMBER_OF: a record without provenance is rejected
+[info] - EvidenceItem: encoding matches the frozen wire example
+[info] - EvidenceItem: the frozen wire example decodes to the fixture
+[info] - EvidenceItem: round trip is lossless and the fixture is valid
+[info] - EvidenceItem: an unsupported schema version is rejected
+[info] - EvidenceItem: a record without provenance is rejected
+[info] - EvidenceBundle: encoding matches the frozen wire example
+[info] - EvidenceBundle: the frozen wire example decodes to the fixture
+[info] - EvidenceBundle: round trip is lossless and the fixture is valid
+[info] - EvidenceBundle: an unsupported schema version is rejected
+[info] - EvidenceBundle: a record without provenance is rejected
+[info] - QueryPlan: encoding matches the frozen wire example
+[info] - QueryPlan: the frozen wire example decodes to the fixture
+[info] - QueryPlan: round trip is lossless and the fixture is valid
+[info] - QueryPlan: an unsupported schema version is rejected
+[info] - QueryPlan: a record without provenance is rejected
+[info] - AnswerClaim: encoding matches the frozen wire example
+[info] - AnswerClaim: the frozen wire example decodes to the fixture
+[info] - AnswerClaim: round trip is lossless and the fixture is valid
+[info] - AnswerClaim: an unsupported schema version is rejected
+[info] - AnswerClaim: a record without provenance is rejected
+[info] - AnswerResponse: encoding matches the frozen wire example
+[info] - AnswerResponse: the frozen wire example decodes to the fixture
+[info] - AnswerResponse: round trip is lossless and the fixture is valid
+[info] - AnswerResponse: an unsupported schema version is rejected
+[info] - AnswerResponse: a record without provenance is rejected
+[info] - every record's schema version is its current SchemaVersions constant
+[info] - absent options are JSON null and enums are their case names
+[info] - an unknown enum value is rejected
+[info] - evidence-v1 EvidenceType names are frozen; only TEXT_CHUNK and PROFILE are semantic
+[info] - the Phase 9 evidence types round-trip as evidence-v1 and are graph evidence only
+[info] - Phase 10 JobState: frozen names, wire form, and the only allowed transitions
+[info] - Phase 10 ErrorCode: frozen names, HTTP statuses (ruling 6), and retryable defaults
+[info] - malformed JSON is rejected, not thrown
+[info] ConfigLoaderSpec:
+[info] - the reference file alone loads as a valid local configuration
+[info] - default graph windows are the three D-10 windows
+[info] - one bucket per environment with the eight ruling-7 prefixes
+[info] - a layer that still sets a removed per-purpose bucket key is rejected
+[info] - precedence: the config file overrides the reference
+[info] - precedence: environment variables override the config file and the reference
+[info] - unlisted environment variables are ignored
+[info] - an invalid bucket name or malformed or duplicate prefix is rejected
+[info] - every documented environment variable maps to a path in the reference
+[info] - a missing config file is an error, not a silent fallback
+[info] - a non-local environment must replace every placeholder
+[info] - a non-local environment with every value supplied loads
+[info] - phase 11 D11: an index entry set to null stops the load (no silently dropped index)
+[info] - phase 11 D12: outside local, a blank value from a file or an empty variable is refused
+[info] - phase 11 D13: a fractional value for an integer key is refused, never truncated
+[info] - phase 11 finding 2: the core community-max-iterations equals the Spark value, 10
+[info] - Phase 10 work order 10: runtime.window-summary.load-run default, override, and rule
+[info] - Phase 10: services defaults (work order 2) and the sync deadline
+[info] - Phase 10: queue and stub-LLM environment overrides; fake queue URLs fail outside local
+[info] - Phase 10: the API key variable is a name only and never enters configuration
+[info] - Phase 10: services bounds and cross-key checks are enforced
+[info] - every services leaf in the reference is read by the loader
+[info] - M10: table prefix and Neptune loader role ARN are keys with env overrides
+[info] - M10: malformed prefixes and ARNs are rejected; placeholders are rejected outside local
+[info] - Phase 9: planner and synthesis models default to Haiku 4.5 and are env-overridable
+[info] - Phase 9: runtime, ranking, and graph-read defaults (RUNTIME.md section 20)
+[info] - Phase 9: runtime bounds and cross-key checks are enforced
+[info] - every runtime and graph-read leaf in the reference is read by the loader
+[info] - entity-resolution thresholds must be ordered within [0, 1]
+[info] - entity-resolution policy version defaults to er-v2 and is env-overridable
+[info] - entity-resolution block and conflict-group limits: defaults, env overrides, positive
+[info] - a window whose start year exceeds its end year is rejected
+[info] - an unsupported config version is rejected
+[info] Run completed in 420 milliseconds.
+[info] Total number of tests run: 190
+[info] Suites: completed 4, aborted 0
+[info] Tests: succeeded 190, failed 0, canceled 0, ignored 0, pending 0
+[info] All tests passed.
+[success] Total time: 4 s, completed Nov 13, 2026, 11:27:36 PM

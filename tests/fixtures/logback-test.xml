@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Phase 11 work order 4 (test-engineer). Logging of the forked tests JVM only (tests/fixtures is
+  the tests project's Test resource directory). logback-classic reaches this classpath through the
+  services module's Runtime scope; with no configuration it logs every library at DEBUG, and the
+  Spark suites then write about 120 MB per run. No project code logs through SLF4J (the services
+  write their JSON lines through JsonLog), so this changes library console output only.
+-->
+<configuration>
+  <appender name="STDERR" class="ch.qos.logback.core.ConsoleAppender">
+    <target>System.err</target>
+    <encoder>
+      <pattern>%d{HH:mm:ss.SSS} %-5level %logger{36} - %msg%n</pattern>
+    </encoder>
+  </appender>
+  <root level="WARN">
+    <appender-ref ref="STDERR" />
+  </root>
+</configuration>

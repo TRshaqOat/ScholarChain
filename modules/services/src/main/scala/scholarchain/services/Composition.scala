@@ -518,9 +518,11 @@ object Launcher:
   def main(
       args: Array[String],
       build: (ScholarChainConfig, Backend, ApiKeyAuth, JsonLog) => HttpService,
-      port: ScholarChainConfig => Int,
-      answers: Boolean = true
-  ): Unit =
-    start(args.toSeq, build, port, answers = answers) match
+      port: ScholarChainConfig => Int
+  ): Unit = run(start(args.toSeq, build, port))
+
+  /** Exits with the code, or stops the started service at JVM shutdown. */
+  def run(started: Either[Int, HttpService]): Unit =
+    started match
       case Left(code) => sys.exit(code)
       case Right(svc) => sys.addShutdownHook(svc.stop())

@@ -1,0 +1,38 @@
+label: D14-all
+file: modules/rag/src/main/scala/scholarchain/rag/runtime/Verifier.scala
+sha256 before: 59876ae6788d34a463412ff8bea44ccd82329924d313ceaf54df6821bb04f96c
+D14-all: 4 replacement(s) applied
+patched sha256: 9dd42dda92043b336e7625a2a893673534a6984672164b25130715b288827a71
+185c185
+<   private val Filler = "(?:\\W{1,3}(?:the|an?|a\\s+(?:total|count)\\s+of))?\\W{0,3}$"
+---
+>   private val Filler = "\\W{0,3}$"
+189,192c189,190
+<       "upwards?\\s+of|(?:short|shy|north|south)\\s+of|far\\s+from|close\\s+to|nearly|near|nigh|" +
+<       "almost|about|around|approximately|approx|approaching|nearing|roughly|circa|ca|some|beyond|" +
+<       "exceed(?:s|ed|ing)?|surpass(?:es|ed|ing)?|outnumber(?:s|ed|ing)?|top(?:s|ped|ping)|over|" +
+<       "under|above|below|beneath)|[~≈<>≤≥]=?)" + Filler).r
+---
+>       "upwards\\s+of|close\\s+to|nearly|almost|about|around|approximately|approx|roughly|circa|ca|" +
+>       "some|beyond|exceeding|exceeds?|over|under|above|below)|[~≈<>≤≥]=?)" + Filler).r
+194,196c192,194
+<     ("(?i)^(?:\\s*%)?(?:\\s*\\+|[-\\s]\\s*(?:plus|odd|ish)\\b|ish\\b|\\s+or\\s+(?:more|fewer|less|so|" +
+<       "higher|lower|greater|above|below|over|under|thereabouts)\\b|\\s+and\\s+(?:up|above|over|more|" +
+<       "counting)\\b|\\s+at\\s+(?:least|most|(?:a\\s+)?(?:minimum|maximum))\\b)").r
+---
+>     ("(?i)^(?:\\s*%)?(?:\\s*\\+|[-\\s]\\s*(?:plus|odd)\\b|\\s+or\\s+(?:more|fewer|less|so|higher|" +
+>       "lower|greater|above|below|over|under|thereabouts)\\b|\\s+and\\s+(?:up|above|over|more)\\b|" +
+>       "\\s+at\\s+(?:least|most)\\b)").r
+213,214c211
+<       "lack(?:s|ed|ing)?|without|absen(?:t|ce)|devoid|fail(?:s|ed|ing)?\\s+to|hardly|scarcely|" +
+<       "barely|seldom|rarely|den(?:y|ies|ied)|except|excluding)\\b|n['’]t\\b)(?!\\s+converge)").r
+---
+>       "zzdisabledzz)\\b|n['’]t\\b)(?!\\s+converge)").r
+sbt exit: 1
+[info] - repair-02 D14 controls: the template's 'without' aside and 'failed to converge' verify *** FAILED ***
+[info] - repair-02 D14: 'short of 10', 'falls short of 10', and 'lacks 10' are not verified *** FAILED ***
+[info] - repair-02 D14: the comparison families are not verified *** FAILED ***
+[info] - repair-02 D14: the negation families (lack, without, absent, fail to) are not verified *** FAILED ***
+[info] Tests: succeeded 112, failed 4, canceled 0, ignored 0, pending 0
+restore check:
+modules/rag/src/main/scala/scholarchain/rag/runtime/Verifier.scala: OK

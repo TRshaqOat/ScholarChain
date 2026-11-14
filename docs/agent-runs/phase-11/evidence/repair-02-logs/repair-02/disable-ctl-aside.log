@@ -1,0 +1,17 @@
+label: ctl-aside
+file: modules/rag/src/main/scala/scholarchain/rag/runtime/Verifier.scala
+sha256 before: 59876ae6788d34a463412ff8bea44ccd82329924d313ceaf54df6821bb04f96c
+ctl-aside: 1 replacement(s) applied
+patched sha256: a4937fdbc2742ad2fcb3dc9d2a205ac921872bb6a5c7ca781d0bd46ff6c0a0dd
+247c247
+<       .orElse(Negation.findFirstIn(asidesOut(before)).map(w => s"$n is negated ('$w')"))
+---
+>       .orElse(Negation.findFirstIn(before).map(w => s"$n is negated ('$w')"))
+sbt exit: 1
+[info] - B13 and B15 shapes: corpus component counts of a window, verified, with row provenance *** FAILED ***
+[info] - B24 shape: the stored pair of windows, with deltas, and the window lengths stated *** FAILED ***
+[info] - repair-02 D14 controls: the template's 'without' aside and 'failed to converge' verify *** FAILED ***
+[info] - repair-02 controls: exact statements, ratios, and an aside defining a measure still verify *** FAILED ***
+[info] Tests: succeeded 112, failed 4, canceled 0, ignored 0, pending 0
+restore check:
+modules/rag/src/main/scala/scholarchain/rag/runtime/Verifier.scala: OK

@@ -1,0 +1,33 @@
+old run-396fa84df47be7a2579b491bec64356c runtime run-824b0a2eaf72183a533e55c9e07b9297 questions 30
+new run-7730f2f6f85f3bc22754e299a2136e16 runtime run-c2198066e1f52dcdbfbb6eafe6b2b4c3 questions 30
+B01 ans  V/P/U/C old [3, 1, 0, 0] new [3, 1, 0, 0] claims True summary True uncertainty True abstention True checks True 
+B02 ans  V/P/U/C old [3, 1, 0, 0] new [3, 1, 0, 0] claims True summary True uncertainty True abstention True checks True 
+B03 ans  V/P/U/C old [1, 1, 0, 0] new [1, 1, 0, 0] claims True summary True uncertainty True abstention True checks True 
+B04 ans  V/P/U/C old [1, 0, 0, 0] new [1, 0, 0, 0] claims True summary True uncertainty True abstention True checks True 
+B05 ans  V/P/U/C old [3, 1, 0, 0] new [3, 1, 0, 0] claims True summary True uncertainty True abstention True checks True 
+B06 ans  V/P/U/C old [3, 2, 0, 0] new [3, 2, 0, 0] claims True summary True uncertainty True abstention True checks True 
+B07 ans  V/P/U/C old [4, 2, 0, 0] new [4, 2, 0, 0] claims True summary True uncertainty True abstention True checks True 
+B08 ans  V/P/U/C old [4, 2, 0, 0] new [4, 2, 0, 0] claims True summary True uncertainty True abstention True checks True 
+B09 abst AMBIGUOUS_RESEARCHER V/P/U/C old [0, 0, 0, 0] new [0, 0, 0, 0] claims True summary True uncertainty True abstention True checks True 
+B10 ans  V/P/U/C old [9, 2, 0, 0] new [9, 2, 0, 0] claims True summary True uncertainty True abstention True checks True 
+B11 ans  V/P/U/C old [9, 2, 0, 0] new [9, 2, 0, 0] claims True summary True uncertainty True abstention True checks True 
+B12 abst UNKNOWN_RESEARCHER V/P/U/C old [0, 0, 0, 0] new [0, 0, 0, 0] claims True summary True uncertainty True abstention True checks True 
+B13 ans  V/P/U/C old [2, 0, 0, 0] new [2, 0, 0, 0] claims True summary True uncertainty True abstention True checks True 
+B14 ans  V/P/U/C old [4, 1, 0, 0] new [4, 1, 0, 0] claims True summary True uncertainty True abstention True checks True 
+B15 ans  V/P/U/C old [2, 0, 0, 0] new [2, 0, 0, 0] claims True summary True uncertainty True abstention True checks True 
+B16 ans  V/P/U/C old [3, 1, 0, 0] new [3, 1, 0, 0] claims True summary True uncertainty True abstention True checks True 
+B17 ans  V/P/U/C old [2, 0, 0, 0] new [2, 0, 0, 0] claims True summary True uncertainty True abstention True checks True 
+B18 ans  V/P/U/C old [3, 2, 0, 0] new [3, 2, 0, 0] claims True summary True uncertainty True abstention True checks True 
+B19 ans  V/P/U/C old [1, 0, 0, 0] new [1, 0, 0, 0] claims True summary True uncertainty True abstention True checks True 
+B20 ans  V/P/U/C old [3, 1, 0, 0] new [3, 1, 0, 0] claims True summary True uncertainty True abstention True checks True 
+B21 ans  V/P/U/C old [1, 0, 0, 0] new [1, 0, 0, 0] claims True summary True uncertainty True abstention True checks True 
+B22 ans  V/P/U/C old [5, 1, 0, 0] new [5, 1, 0, 0] claims True summary True uncertainty True abstention True checks True 
+B23 ans  V/P/U/C old [3, 1, 0, 0] new [3, 1, 0, 0] claims True summary True uncertainty True abstention True checks True 
+B24 ans  V/P/U/C old [4, 0, 0, 0] new [4, 0, 0, 0] claims True summary True uncertainty True abstention True checks True 
+B25 ans  V/P/U/C old [2, 1, 0, 0] new [2, 1, 0, 0] claims True summary True uncertainty True abstention True checks True 
+B26 ans  V/P/U/C old [1, 1, 0, 0] new [1, 1, 0, 0] claims True summary True uncertainty True abstention True checks True 
+B27 ans  V/P/U/C old [2, 1, 0, 0] new [2, 1, 0, 0] claims True summary True uncertainty True abstention True checks True 
+B28 abst UNSUPPORTED_REQUEST V/P/U/C old [0, 0, 0, 0] new [0, 0, 0, 0] claims True summary True uncertainty True abstention True checks True 
+B29 ans  V/P/U/C old [4, 2, 0, 0] new [4, 2, 0, 0] claims True summary True uncertainty True abstention True checks True 
+B30 ans  V/P/U/C old [9, 2, 0, 0] new [9, 2, 0, 0] claims True summary True uncertainty True abstention True checks True 
+questions with any difference: 0

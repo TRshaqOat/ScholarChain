@@ -1,0 +1,73 @@
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] compiling 25 Scala sources to /Users/achyutpatel/Developer/Cloud/ScholarChain/tests/target/scala-3.3.7/test-classes ...
+[error] -- [E172] Type Error: /Users/achyutpatel/Developer/Cloud/ScholarChain/tests/contracts/scholarchain/tests/contracts/ConfigOmissionContractSpec.scala:182:11 
+[error] 182 |    assert(core == spark, s"core $core, spark $spark")
+[error]     |           ^^^^^^^^^^^^^
+[error]     |Values of types Either[List[String], Int] and Either[String, Int] cannot be compared with == or !=.
+[error]     |I found:
+[error]     |
+[error]     |    CanEqual.canEqualEither[L1, R1, L2, R2](/* missing */summon[CanEqual[L1, L2]],
+[error]     |      ???)
+[error]     |
+[error]     |But no implicit values were found that match type CanEqual[L1, L2].
+[error] -- [E007] Type Mismatch Error: /Users/achyutpatel/Developer/Cloud/ScholarChain/tests/integration/scholarchain/tests/integration/SparkKnownGraphSpec.scala:225:6 
+[error] 225 |      clique("k5", 1 to 5) ++
+[error]     |      ^
+[error]     |      Found:    Seq[(String, String, String)]
+[error]     |      Required: Vector[(String, String, String)]
+[error] 226 |        (1 to 6).map(i => ("c6", r(i), r(i % 6 + 1))) ++
+[error] 227 |        (2 to 7).map(i => ("star", r(1), r(i))) ++
+[error] 228 |        Vector(("tree", r(1), r(2)), ("tree", r(1), r(3)), ("tree", r(3), r(4)), ("tree", r(3), r(5))) ++
+[error] 229 |        petersen.map((a, b) => ("petersen", r(a), r(b))) ++
+[error] 230 |        clique("tail", 1 to 4) ++ Vector(("tail", r(4), r(5)), ("tail", r(5), r(6)), ("tail", r(6), r(5)))
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+exception caught when loading module class ActiveStandbyElector$: java.lang.AssertionError: assertion failed: failure to resolve inner class:
+externalName = org.apache.hadoop.shaded.org.apache.zookeeper.AsyncCallback$StatCallback,
+outerName = org.apache.hadoop.shaded.org.apache.zookeeper.AsyncCallback,
+innerName = StatCallback
+owner.fullName = org.apache.hadoop.shaded.org.apache.zookeeper.AsyncCallback
+while parsing /Users/achyutpatel/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/hadoop/hadoop-client-api/3.4.2/hadoop-client-api-3.4.2.jar(org/apache/hadoop/ha/ActiveStandbyElector.class)
+[error] -- [E007] Type Mismatch Error: /Users/achyutpatel/Developer/Cloud/ScholarChain/tests/integration/scholarchain/tests/integration/SparkKnownGraphSpec.scala:261:6 
+[error] 261 |      clique("w", 1 to 4) ++ clique("w", 5 to 8) ++ Vector(("w", r(4), r(5))) ++
+[error]     |      ^
+[error]     |      Found:    Seq[(String, String, String)]
+[error]     |      Required: Vector[(String, String, String)]
+[error] 262 |        clique("w", 10 to 12) ++ clique("w", 13 to 15) ++ Vector(("w", r(17), r(16)))
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/achyutpatel/Developer/Cloud/ScholarChain/tests/integration/scholarchain/tests/integration/SparkKnownGraphSpec.scala:286:89 
+[error] 286 |    assert(rows(capped, "node", "label").map(x => x(0).toString -> x(1).toString).toMap(r(5)) == r(4))
+[error]     |                                                                                        ^^^^
+[error]     |                             Found:    String
+[error]     |                             Required: (String, String) <:< (Any, Any)
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+***** missing reference, looking for HandlerWrapper/T in [33mpackage[0m [35morg.eclipse.jetty.server.handler[0m
+decls = Scope{}
+***** missing reference, looking for Server/T in [33mpackage[0m [35morg.eclipse.jetty.server[0m
+decls = Scope{
+  [33mfinal[0m [33mlazy[0m [33mmodule[0m object handler: org.eclipse.jetty.server.handler
+  [33mfinal[0m [33mmodule[0m object handler extends  {this:
+    org.eclipse.jetty.server.handler.type =>} at
+    (org.eclipse.jetty.server : org.eclipse.jetty.server.type)
+}
+***** missing reference, looking for ContextHandlerCollection/T in [33mpackage[0m [35morg.eclipse.jetty.server.handler[0m
+decls = Scope{}
+[error] -- [E007] Type Mismatch Error: /Users/achyutpatel/Developer/Cloud/ScholarChain/tests/integration/scholarchain/tests/integration/SparkKnownGraphSpec.scala:342:6 
+[error] 342 |      clique("all-years", 1 to 4) ++ clique("all-years", 5 to 8) ++ Vector(("all-years", r(4), r(5))) ++
+[error]     |      ^
+[error]     |      Found:    Seq[(String, String, String)]
+[error]     |      Required: Vector[(String, String, String)]
+[error] 343 |        Vector(("all-years", r(10), r(11))) ++
+[error] 344 |        (1 to 5).map(i => ("2000-2014", r(i), r(i + 1)))
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] 5 errors found
+[error] (tests / Test / compileIncremental) Compilation failed
+[error] Total time: 6 s, completed Nov 14, 2026, 12:19:10 AM

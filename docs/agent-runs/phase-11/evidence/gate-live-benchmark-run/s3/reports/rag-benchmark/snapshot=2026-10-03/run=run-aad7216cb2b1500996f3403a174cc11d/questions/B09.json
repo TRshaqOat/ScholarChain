@@ -1,0 +1,154 @@
+{
+  "schemaVersion": "rag-benchmark-result-v2",
+  "questionId": "B09",
+  "category": "direct_collaboration",
+  "mode": "LIVE",
+  "runtimeRunId": "run-da948201a77e0fe136727d99a55c2b89",
+  "queryId": "qry-823a6ca07d64f9c098f1d8a5a79f32da",
+  "planSource": "MODEL",
+  "operations": [
+    "DIRECT_COAUTHORS/PAIR"
+  ],
+  "metrics": [],
+  "window": "all-years",
+  "resolutions": [
+    {
+      "name": "Lei Zhang",
+      "decision": "AMBIGUOUS",
+      "researcherId": null,
+      "topShare": 0.02727272727272727,
+      "candidateCount": 101
+    },
+    {
+      "name": "Wei Wang",
+      "decision": "AMBIGUOUS",
+      "researcherId": null,
+      "topShare": 0.01282051282051282,
+      "candidateCount": 307
+    }
+  ],
+  "abstained": true,
+  "abstentionReason": "AMBIGUOUS_RESEARCHER",
+  "verification": {
+    "verified": 0,
+    "partiallySupported": 0,
+    "unsupported": 0,
+    "conflicting": 0
+  },
+  "claims": 0,
+  "graph": {
+    "reads": 572,
+    "readsByTemplate": {
+      "kv.entity-link": 2,
+      "graph.researcher-institutions": 9,
+      "graph.coauthors": 554,
+      "graph.authored-counts": 7
+    },
+    "rows": 2251,
+    "truncatedReads": 135,
+    "evidenceItems": 0,
+    "tokens": 0,
+    "omittedItems": 0,
+    "latencyMs": 0,
+    "pathStatuses": []
+  },
+  "semantic": {
+    "embeddingCalls": 0,
+    "embeddingInputTokens": 0,
+    "indexes": [],
+    "hits": 0,
+    "tokens": 0,
+    "omittedItems": 0,
+    "latencyMs": 0,
+    "outcome": "SKIPPED"
+  },
+  "llm": {
+    "attempts": 1,
+    "requests": 1,
+    "attemptsByStage": {
+      "QUERY_PLANNING": 1
+    },
+    "outcomes": {
+      "OK": 1
+    },
+    "inputTokens": 2516,
+    "outputTokens": 184,
+    "throttleWaitMs": 4959
+  },
+  "latencyMs": 6163,
+  "stageLatencyMs": {
+    "COLLABORATION_METRICS": 0,
+    "PATH_FINDING": 0,
+    "EVIDENCE_BUILDING": 0,
+    "AUDIT": 0,
+    "QUERY_PLANNING": 6075,
+    "SEMANTIC_CONTEXT": 0,
+    "COMMUNITY_ANALYSIS": 0,
+    "CLAIM_VERIFICATION": 0,
+    "RESEARCHER_RESOLUTION": 75,
+    "ANSWER_SYNTHESIS": 0
+  },
+  "checks": [
+    {
+      "name": "plan-operations",
+      "outcome": "PASS",
+      "detail": "needs DIRECT_COAUTHORS/PAIR; plan [DIRECT_COAUTHORS/PAIR]"
+    },
+    {
+      "name": "researcher-names",
+      "outcome": "PASS",
+      "detail": "expected [Lei Zhang; Wei Wang], extracted [Lei Zhang; Wei Wang]"
+    },
+    {
+      "name": "resolution",
+      "outcome": "PASS",
+      "detail": "Lei Zhang: expected AMBIGUOUS, got AMBIGUOUS; Wei Wang: expected AMBIGUOUS, got AMBIGUOUS"
+    },
+    {
+      "name": "abstention",
+      "outcome": "PASS",
+      "detail": "expected abstain (AMBIGUOUS_RESEARCHER), got abstain (AMBIGUOUS_RESEARCHER)"
+    },
+    {
+      "name": "claim-evidence",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no claim"
+    },
+    {
+      "name": "verification",
+      "outcome": "PASS",
+      "detail": "abstained with no verified claim kept; counts 0/0/0/0; final claims 0 verified of 0"
+    },
+    {
+      "name": "bundle-budget",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no bundle"
+    },
+    {
+      "name": "llm-budget",
+      "outcome": "PASS",
+      "detail": "1 attempts, 1 requests (QUERY_PLANNING 1), tokens in 2516 out 184"
+    },
+    {
+      "name": "embedding-budget",
+      "outcome": "PASS",
+      "detail": "0 embedding calls for 0 indexes queried"
+    },
+    {
+      "name": "path-hops",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no path evidence in the bundle"
+    },
+    {
+      "name": "pair-edges",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no bundle edge has stored path evidence"
+    },
+    {
+      "name": "deadline",
+      "outcome": "PASS",
+      "detail": "6163 ms of 180000"
+    }
+  ],
+  "answerHash": "sha256:62db4b5e98a58b874705efa5c7a0a4c64d6e45d199882768138537907e3512cf"
+}

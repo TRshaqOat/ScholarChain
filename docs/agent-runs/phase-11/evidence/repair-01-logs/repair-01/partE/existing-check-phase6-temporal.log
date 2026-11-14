@@ -1,0 +1,6 @@
+phase6 manifest scratch/spark/snapshot=2026-10-03/run=run-0375535e0174b7330b18a78988c07211/_manifest.json sha256 f00b71ab2a2c540f46942c8c7d4daba2064415a072a4035bf2934ac759b2b430
+2000-2014 failed [] shared fields equal store object row: True
+all-years failed [] shared fields equal store object row: True
+2015-2026 failed [] shared fields equal store object row: True
+PHASE6_ROWS 3 WITH_PROBLEMS 0
+exit 0
