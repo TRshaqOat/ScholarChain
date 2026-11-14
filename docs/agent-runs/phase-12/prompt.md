@@ -354,3 +354,17 @@ Read the work order 3 report (BLOCKED-ON item 1) and scripts/run-bounded-pipelin
 ## Work order 8: hadoop-engineer (documentation)
 
 Edit only modules/hadoop/JOBS.md. Line 33 names `<raw-bucket>` and `<curated-bucket>`. Replace them with the single data bucket and its raw/ and curated/ prefixes, as infra/terraform/README.md defines them. Documentation only, so no sbt check.
+
+## Human rulings after session 1b
+
+16. Session 1b results.
+   - Work orders 4 to 8 are COMPLETE with no BLOCKED-ON. sbt check: 839 passed, 0 failed, 10 pending.
+   - Known minor stale text is listed here so that code review 1 confirms it without re-deriving it. It is fixed in repair-01 together with any review findings, or carried as a residual risk if there is no repair round.
+   - infra-engineer:
+     - infra/terraform/envs/course/variables.tf:397;
+     - scripts/load-stores.sh:43-44;
+     - scripts/run-bounded-pipeline.sh:18-20 and :98;
+     - scripts/README.md:304;
+     - the run-bounded-pipeline.sh --dry-run output does not print the resolved input paths.
+   - storage-engineer: modules/storage/STORAGE.md:487.
+17. ORCID does not scale with the size fraction under the fraction-v1 linkage rule: 64.9 percent of records at 25 and 80.0 percent at 50, because a researcher is kept when any one of their works is kept. This is accepted. The D-13 size-scaling analysis uses DBLP works (and the derived authors and edges) as the scaling variable, and the final report states the ORCID behaviour as a limitation. No change.
