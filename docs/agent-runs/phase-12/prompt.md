@@ -260,3 +260,97 @@ Review in this order:
 9. Documentation claims not backed by code.
 
 Verify every candidate finding against the files before reporting it. For each finding, give the severity, file and line, a concrete failure input, the expected impact and the owning agent. Return APPROVE or REQUEST_CHANGES. Do not edit any file.
+
+## Human rulings after session 1
+
+10. Accepted deviations, recorded at the gate.
+   - (a) Work order 1 ran read-only git diff and git status, against ruling 8. Nothing was changed.
+   - (b) Work order 3 ran scripts/cleanup.sh (--help, three --dry-run stages and one wrong --confirm case) through a shell function wrapper that the guard-dangerous cleanup-script rule did not match. Each run exited before any AWS, Terraform or git call, and the agent disclosed it. Ruling 5 allowed --help and dry-runs of any script, which conflicted with docs/agents.md section 8.
+   - Ruling 5 is amended: no agent runs scripts/cleanup.sh in any mode, and no agent invokes a command through a function, alias or wrapper in a way that a hook would otherwise match.
+   - The guard gap (the cleanup-script rule anchors on command position) is a minor factory-engineer item carried to the backlog. No factory change in Phase 12.
+11. Pins and accepted risks.
+   - The human confirmed that hashicorp/aws 6.28.0 was released on January 7, 2026 (D-09 holds), and that the lock file holds the published darwin_arm64 zip hash.
+   - The module name apikey is accepted. The human removed the empty modules/secrets/ directory.
+   - Accepted as documented risks, for code review 1 to check:
+     - the HTTP-only ALB (no domain);
+     - the unconditioned s3:ListBucket on query-api and worker (SERVICES.md:83);
+     - the 60 waived medium Checkov findings;
+     - the Docker Hub base-image pull on CodeBuild. If the first build fails on a rate limit, dependency-updater moves javaRuntimeImage to the ECR Public mirror after the human confirms the same digest (a Phase 14 item).
+   - At the gate the human checks, read-only: the Haiku inference-profile Regions, db.t4g.medium orderability for Neptune 1.4.8.1, and m6g.xlarge on emr-spark-8.0.0.
+12. Routing of the BLOCKED-ON items. Session 1b runs work orders 4 to 8 before code review 1, so the review sees the final tree. infra-engineer is not rerun: the task definitions and load-stores.sh already use the post-fix forms, and code review 1 checks that they match.
+13. The size-scaling runs of cloud window 1 (D-13, Nov 17) need the 25 and 50 percent subsets, so work order 7 has priority. Its outputs are the only new files allowed under scratch/ outside scratch/phase-12-logs/: the new directories scratch/datasets/fraction=25/ and scratch/datasets/fraction=50/. Nothing existing is modified.
+14. Findings against the modules/ docs (work order 2 risks a to e):
+   - (a) Accepted: graph-evidence-api does not set SCHOLARCHAIN_WINDOW_SUMMARY_RUN (SERVICES.md:117). service-engineer notes this in work order 6.
+   - (b) Phase 10 ruling 18's `bin/query-api` command form is superseded by the entryPoint form (work order 2 assumption 1, confirmed by work order 3's staged image). service-engineer documents this in work order 6.
+   - (c) hadoop JOBS.md:33 should name the single bucket: work order 8.
+   - (d) The unused verification and adjudication model placeholders are a minor residual; Terraform sets them to the Haiku profile ID.
+   - (e) The storage CLIs: work order 5.
+15. Code review 1 scope (amends "## Code review 1"). Code review 1 reviews work orders 1 to 8 against rulings 1 to 15. It also checks:
+   - the ruling 10 deviations;
+   - that the ECS task definitions and scripts/load-stores.sh pass arguments that the CLIs accept after work orders 5 and 6;
+   - that scripts/run-bounded-pipeline.sh reads the work order 7 layout.
+
+## Session 1b plan
+Work orders 4 to 8, in order: 4 domain-engineer, 5 storage-engineer, 6 service-engineer, 7 dataset-engineer, 8 hadoop-engineer. Ruling 8 constraints (as amended by ruling 10, with the ruling 13 exception) apply. Then session 2: code review 1.
+
+## Work order 4: domain-engineer (Haiku cap)
+
+Read the work order 2 report (BLOCKED-ON item 1). Edit only modules/core/**.
+1. Add `"SCHOLARCHAIN_LLM_REQUESTS_PER_MINUTE" -> "runtime.llm.requests-per-minute"` to ConfigLoader.EnvOverrides. Note the variable name beside the key in scholarchain.conf.
+2. Tests: the variable overrides the key; 0, a negative value, a fractional value, and a blank value outside local are each refused. Add a logged disable check with sha256 restore.
+3. No config-version bump unless the existing rules require one; say which.
+Run sbt check twice.
+
+## Work order 5: storage-engineer (in-VPC loader)
+
+Read the work order 2 report (BLOCKED-ON item 2) and scripts/load-stores.sh (read-only). Edit only modules/storage/**.
+1. Cli.liveTarget: `--live` without `--profile` returns a target with no profile, which selects the SDK default chain as in work order 1. Every live loader CLI accepts this. Update the usage text, STORAGE.md:7, :458 and :660, and the LoadNeptuneCli message at line 155.
+2. LoadNeptuneCli `--stage-from-bucket` (with --live).
+   - Before the existing scan, it copies into <out>/s3, write-once:
+     - the store-conversion manifest of the run;
+     - every manifest object under the --dir graph prefix;
+     - every manifest object under curated/coauthor-evidence/snapshot=<d>/run=<r>/.
+   - It verifies each object against the manifest sha256, and refuses on any mismatch or missing object.
+   - Then it runs the unchanged scan, preload checks and start.
+   - It is bounded: the object count and bytes come from the manifest, and it has a timeout.
+   - `--status` needs no staging.
+3. Tests with the existing fake object store and no network:
+   - the staged copy matches the manifest;
+   - a sha256 mismatch is refused;
+   - a missing object is refused;
+   - no profile selects the default chain.
+   Logged disable checks with sha256 restore.
+4. Check that the arguments load-stores.sh passes match the CLIs. Report any mismatch as a finding for infra-engineer; do not edit scripts/.
+Run sbt check twice.
+
+## Work order 6: service-engineer (optional --profile)
+
+Read the work order 1 report (BLOCKED-ON) and ruling 14. Edit only modules/services/**.
+1. Composition Launcher.backend: `--live` without `--profile` builds a target with no profile. Usage and the doc comment become `--live [--profile <name>]`.
+2. Test: with no profile, profileName is None; with --profile x, it is Some("x"). Add a logged disable check with sha256 restore.
+3. SERVICES.md:
+   - ECS starts the services with no --profile (see STORAGE.md "Credentials on ECS").
+   - Task definitions use entryPoint /opt/docker/bin/<service>, with arguments only. This supersedes the command form in Phase 10 ruling 18.
+   - graph-evidence-api has no SCHOLARCHAIN_WINDOW_SUMMARY_RUN (ruling 14a).
+4. Check that the arguments and environment of the ECS task definitions (infra/terraform/modules/ecs/main.tf, read-only) are accepted by the Launcher. Report any mismatch as a finding for infra-engineer.
+Run sbt check twice.
+
+## Work order 7: dataset-engineer (size-scaling subsets, D-13; priority)
+
+Read the work order 3 report (BLOCKED-ON item 1) and scripts/run-bounded-pipeline.sh (read-only) for the exact input layout. Edit only datasets/**; outputs go only under the ruling 13 directories.
+1. A tool under datasets/scripts/ (for example make_fraction.sh) with `--fraction 25|50`.
+   - It writes scratch/datasets/fraction=<p>/ in exactly the layout run-bounded-pipeline.sh reads, for every input that script uploads.
+   - Selection is deterministic and nested (25 within 50 within 100): a DBLP record is kept when int(the first 8 hex digits of sha256("fraction-v1|" + key)) mod 100 < p.
+   - OpenAlex and Crossref are filtered to the kept DOIs. ORCID is filtered to the iDs linked to kept records.
+   - If the pipeline reads DBLP persons, filter them to the kept authors or keep them whole; justify the choice.
+   - It writes SHA256SUMS and run-info.json: the fraction, the rule, the source sha256 values, and the counts per input.
+2. Run it for 25 and 50. Validation:
+   - nesting holds: every 25 key is in 50, and every 50 key is in 100;
+   - the counts are near 25 and 50 percent of the 100 percent input;
+   - every output parses with the existing dataset validators;
+   - `scripts/run-bounded-pipeline.sh --fraction 25 --dry-run` and `--fraction 50 --dry-run` resolve their inputs (dry-run only, no AWS). If either still fails, report it as a finding for infra-engineer.
+3. Record the fraction rule and the counts in the dataset manifest and docs.
+
+## Work order 8: hadoop-engineer (documentation)
+
+Edit only modules/hadoop/JOBS.md. Line 33 names `<raw-bucket>` and `<curated-bucket>`. Replace them with the single data bucket and its raw/ and curated/ prefixes, as infra/terraform/README.md defines them. Documentation only, so no sbt check.
