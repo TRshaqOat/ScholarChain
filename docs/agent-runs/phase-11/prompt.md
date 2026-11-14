@@ -165,3 +165,32 @@ Report exact counts, wrappers removed and kept, new suites per category, coverag
 ## Code review 2: code-reviewer
 
 Review the repair-01 changes and work order 4 against code review 1's findings, D1 to D13, and rulings 14 to 18. For each finding: resolved or not, with file and line and the test that fails without the fix (or residual by ruling 15). Check that repair-01 edited nothing outside owned paths; that no fix changed a stable ID or stored record of existing data (ruling 15); that test-engineer edited no production code; that every remaining pendingUntilFixed wrapper is justified; and that the spec Phase 11 gate items hold. Verify each candidate finding against the files. Give critical and major findings in full (severity, file and line, failure input, impact, owner) and minors briefly. Return APPROVE or REQUEST_CHANGES. Do not edit any file.
+
+## Human rulings after repair-01 and work order 4
+
+19. D8 stays a residual risk, with D6, D7 and D9 (ruling 15). Part D's measurement: an idempotent normalizeDoi would change 36 stored ORCID workDoi values in 26 researcher-profile records of Hadoop run run-035e75abfa6798c938cbd534273dbd8d (j02-source-normalize/researcher-profiles); no work ID or key would change. A DOI with a leading space only fails to match, so it loses recall and never over-merges. Part D made no D8 change. Its tests/** wrapper (IdentityAdversarialSpec, "DOI normalization is idempotent") stays and is listed at the gate.
+20. D14 is confirmed major (owner rag-engineer). This is a human exception to the one-repair-round rule (ruling 9): one small repair round, repair-02, fixes D14 only, and work order 5 (test-engineer) follows in the same session. Code review 2 then covers repair-01, work order 4, repair-02 and work order 5. If code review 2 returns REQUEST_CHANGES, the exit is human escalation. Ruling 14 applies to repair-02: the only accepted sbt check failure is the D14 tests/** wrapper.
+21. D15 and D16 (owner service-engineer) and D17 (owner hadoop-engineer) are minor residual risks, carried to the Phase 12+ backlog. Their wrappers stay and are listed at the gate. D17 measurement, made by the human (read-only grep for "<!--" from Terminal): 0 comments in datasets/samples/dblp/dblp-sample.xml; in the full works.xml (61M) and persons.xml (27M) under scratch/datasets/dblp/snapshot=2026-10-03/full/; in the sample works.xml and persons.xml; and in the full raw dblp-2026-10-03.xml.gz (1.0G). The 32 MB dblp-2026-10-03.prefix-33554432.xml.gz is a truncated byte prefix (gzip reports "unexpected end of file", as expected) and has 0 in its readable part. D17 therefore affects no existing output.
+22. Accepted deviations. First, the four guard blocks in repair-01 Parts B, C and E and in work order 4. Each was a pattern match on a read-only command or on test code, and nothing was written to a protected path; the step was redone with the Write or Edit tool, or only its read-only parts were rerun. Second, Part D's `du -sh scratch`, which walked directory entries under scratch/stores-live/ and scratch/er/adjudication-live/ for a size total without printing or reading anything from them (the same kind as ruling 13). From now on, no du or find runs over scratch/ without pruning both paths.
+23. Code review 2 scope (amends "## Code review 2: code-reviewer"). It reviews repair-01, work order 4, repair-02 and work order 5 against code review 1, D1 to D17, and rulings 14 to 23. The justified pendingUntilFixed wrappers are D6, D7, D8 and D9 (rulings 15 and 19) and D15, D16 and D17 (ruling 21). It also confirms or changes the severity and owner of D14 to D17.
+
+## Repair 2 (repair-02, human exception per ruling 20)
+
+One session: Part A rag-engineer, then work order 5 (test-engineer). Before Part A, check docs/agent-runs/phase-11/repair-02.md for "## Part A: rag-engineer" and skip the part if it is present. Before work order 5, check agent-report.md for "## Work order 5" and skip it if present. Append the Part A report verbatim to repair-02.md under "## Part A: rag-engineer", wrapped in a ````text fence. Ruling 7 constraints apply. Cited logs go under scratch/phase-11-logs/repair-02/ (work order 5: scratch/phase-11-logs/rerun-2/).
+
+### Part A: rag-engineer (D14)
+
+Read the work order 4 report (D14), repair-01 Part B, and RUNTIME.md sections 12 and 21. Edit only modules/rag/**.
+1. D14: "short of 10", "falls short of 10" and "lacks 10", checked against a stored 10, must not pass as VERIFIED. Close the same families, not only these words. That means comparison phrases such as "short of", "shy of", "below", "above", "beyond", "in excess of", "upwards of" and "exceeds"/"exceeding", and negation words such as "lack"/"lacks"/"lacking"/"lacked", "without" and "absent". Keep repair-01's exceptions (a bound fact's own direction, ratios, "not converge") and keep the template wordings verified. Write module tests from the work order 4 failure inputs, plus controls. The owner's own test must fail without the fix (a logged disable check with sha256 restore).
+2. Bump the verifier version from verifier-v7 to verifier-v8. Update RUNTIME.md: the section 12 rules, the section 21 known failure modes, and the version lines.
+3. Rerun the fake benchmark as a new run under scratch/runtime/phase-11/repair-02/. Report it next to run-6acd1b5b8b39225000e9599b827f369d and explain every changed claim. No live calls.
+4. Run sbt check twice. By ruling 14, the only accepted failure is the D14 wrapper at UnsupportedClaimAdversarialSpec.scala:196.
+
+## Work order 5: test-engineer (rerun after repair-02)
+
+Read the work order 4 report and repair-02.md in full. Edit only tests/**.
+1. Remove the D14 wrapper; the test must now pass. Keep the wrappers of D6, D7, D8, D9, D15, D16 and D17.
+2. Add verifier-v8 breadth cases for the new wordings repair-02 reports (these must not verify), plus exact-value controls (these must verify).
+3. Update tests/TESTS.md: counts, D14 fixed, rulings 19 to 23.
+4. Run UnsupportedClaimAdversarialSpec and RagModelOutputAdversarialSpec 3 times each. Run sbt check twice: no failures, and pending only for the 7 kept wrappers.
+Report exact counts, the wrappers removed and kept, the new tests, any new defect (wrapped, with proposed severity and owner), and residual risks.
