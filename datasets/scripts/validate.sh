@@ -4,7 +4,7 @@
 #
 # Checks: manifest required fields for each dataset; S3 raw prefixes use the configured-bucket
 # placeholder; subset config sanity and ORCID caps; bash -n on every script; the ORCID selection
-# self-test; Python syntax and the extractor self-test; schema notes exist; every sample file is under 200,000 bytes; JSONL samples parse;
+# self-test; Python syntax, the extractor self-test, and the size-fraction self-test; schema notes exist; every sample file is under 200,000 bytes; JSONL samples parse;
 # the DBLP sample is well-formed XML with the DTD's entities resolved; OpenAlex and Crossref sample
 # DOIs are a non-empty subset of the DBLP sample DOIs; manifest sample sizes match the files;
 # ORCID samples hold only ORCID's fictional test record or labeled synthetic records (human ruling,
@@ -23,6 +23,7 @@ for f in "$SCRIPTS_DIR"/*.py; do
   check "python syntax ${f#"$REPO_ROOT"/}" python3 -I -c 'import ast, sys; ast.parse(open(sys.argv[1]).read())' "$f"
 done
 check "dblp_extract.py --self-test" python3 -I "$SCRIPTS_DIR/dblp_extract.py" --self-test
+check "make_fraction.py --self-test (rule fraction-v1: exact DBLP rule, linkage, nesting, deterministic gzip)" python3 -I "$SCRIPTS_DIR/make_fraction.py" --self-test
 
 check "config is valid JSON with venues, years, and pinned checksums" jq -e '
   (.config_version | type == "string") and (.dblp.venues | length > 0)

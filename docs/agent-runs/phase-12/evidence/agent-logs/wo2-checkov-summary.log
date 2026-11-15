@@ -1,0 +1,96 @@
+status success rc 1
+summary {'passed': 350, 'failed': 60, 'skipped': 0, 'parsing_errors': 0, 'resource_count': 113, 'checkov_version': '3.4.5'}
+failed findings 60
+keys ['description', 'file_path', 'fix_details', 'fixed', 'guideline', 'id', 'line', 'resource', 'severity', 'type']
+  1 CKV2_AWS_11 sev=MEDIUM Ensure VPC flow logging is enabled in all VPCs
+  1 CKV2_AWS_20 sev=MEDIUM Ensure that ALB redirects HTTP requests into HTTPS ones
+  1 CKV2_AWS_28 sev=MEDIUM Ensure public facing ALB are protected by WAF
+  8 CKV2_AWS_5 sev=MEDIUM Ensure that Security Groups are attached to another resource
+  1 CKV2_AWS_57 sev=MEDIUM Ensure Secrets Manager secrets should have automatic rotation enabled
+  1 CKV2_AWS_58 sev=MEDIUM Ensure AWS Neptune cluster deletion protection is enabled
+  1 CKV2_AWS_62 sev=MEDIUM Ensure S3 buckets should have event notifications enabled
+  1 CKV_AWS_101 sev=MEDIUM Ensure Neptune logging is enabled
+  1 CKV_AWS_103 sev=MEDIUM Ensure that load balancer is using at least TLS 1.2
+  7 CKV_AWS_119 sev=MEDIUM Ensure DynamoDB Tables are encrypted using a KMS Customer Managed CMK
+  2 CKV_AWS_130 sev=MEDIUM Ensure VPC subnets do not assign public IP by default
+  1 CKV_AWS_136 sev=MEDIUM Ensure that ECR repositories are encrypted using KMS
+  1 CKV_AWS_144 sev=MEDIUM Ensure that S3 bucket has cross-region replication enabled
+  1 CKV_AWS_145 sev=MEDIUM Ensure that S3 buckets are encrypted with KMS by default
+  1 CKV_AWS_149 sev=MEDIUM Ensure that Secrets Manager secret is encrypted using KMS CMK
+  1 CKV_AWS_150 sev=MEDIUM Ensure that Load Balancer has deletion protection enabled
+  5 CKV_AWS_158 sev=MEDIUM Ensure that CloudWatch Log Group is encrypted by KMS
+  1 CKV_AWS_18 sev=MEDIUM Ensure the S3 bucket has access logging enabled
+  1 CKV_AWS_2 sev=MEDIUM Ensure ALB protocol is HTTPS
+  1 CKV_AWS_26 sev=MEDIUM Ensure all data stored in the SNS topic is encrypted
+  7 CKV_AWS_28 sev=MEDIUM Ensure DynamoDB point in time recovery (backup) is enabled
+  1 CKV_AWS_316 sev=MEDIUM Ensure CodeBuild project environments do not have privileged mode enabled
+  1 CKV_AWS_333 sev=MEDIUM Ensure ECS services do not have public IP addresses assigned to them automatically
+  2 CKV_AWS_336 sev=MEDIUM Ensure ECS containers are limited to read-only access to root filesystems
+  5 CKV_AWS_338 sev=MEDIUM Ensure CloudWatch log groups retains logs for at least 1 year
+  1 CKV_AWS_347 sev=MEDIUM Ensure Neptune is encrypted by KMS using a customer managed Key (CMK)
+  1 CKV_AWS_361 sev=MEDIUM Ensure that Neptune DB cluster has automated backups enabled with adequate retention
+  1 CKV_AWS_378 sev=MEDIUM Ensure AWS Load Balancer doesn't use HTTP protocol
+  1 CKV_AWS_394 sev=MEDIUM Ensure aws_availability_zones data source pins zone identity so its result set does not silently expand when AWS adds an Availability Zone
+  1 CKV_AWS_65 sev=MEDIUM Ensure container insights are enabled on ECS cluster
+  1 CKV_AWS_91 sev=MEDIUM Ensure the ELBv2 (Application/Network) has access logging enabled
+--- by resource
+CKV2_AWS_11 module.network.aws_vpc.this /modules/network/main.tf
+CKV2_AWS_20 module.ecs.aws_lb.this /modules/ecs/main.tf
+CKV2_AWS_28 module.ecs.aws_lb.this /modules/ecs/main.tf
+CKV2_AWS_5 module.emr.aws_security_group.core /modules/emr/main.tf
+CKV2_AWS_5 module.emr.aws_security_group.primary /modules/emr/main.tf
+CKV2_AWS_5 module.network.aws_security_group.alb /modules/network/main.tf
+CKV2_AWS_5 module.network.aws_security_group.graph_evidence_api /modules/network/main.tf
+CKV2_AWS_5 module.network.aws_security_group.loader /modules/network/main.tf
+CKV2_AWS_5 module.network.aws_security_group.neptune /modules/network/main.tf
+CKV2_AWS_5 module.network.aws_security_group.query_api /modules/network/main.tf
+CKV2_AWS_5 module.network.aws_security_group.worker /modules/network/main.tf
+CKV2_AWS_57 module.apikey.aws_secretsmanager_secret.api_key /modules/apikey/main.tf
+CKV2_AWS_58 module.neptune.aws_neptune_cluster.this /modules/neptune/main.tf
+CKV2_AWS_62 module.data.aws_s3_bucket.data /modules/data/main.tf
+CKV_AWS_101 module.neptune.aws_neptune_cluster.this /modules/neptune/main.tf
+CKV_AWS_103 module.ecs.aws_lb_listener.http /modules/ecs/main.tf
+CKV_AWS_119 module.dynamodb.aws_dynamodb_table.this["ArtifactRegistry"] /modules/dynamodb/main.tf
+CKV_AWS_119 module.dynamodb.aws_dynamodb_table.this["EntityLinkCache"] /modules/dynamodb/main.tf
+CKV_AWS_119 module.dynamodb.aws_dynamodb_table.this["EvidenceBundle"] /modules/dynamodb/main.tf
+CKV_AWS_119 module.dynamodb.aws_dynamodb_table.this["QuerySession"] /modules/dynamodb/main.tf
+CKV_AWS_119 module.dynamodb.aws_dynamodb_table.this["ResearcherMetricCache"] /modules/dynamodb/main.tf
+CKV_AWS_119 module.dynamodb.aws_dynamodb_table.this["RunLedger"] /modules/dynamodb/main.tf
+CKV_AWS_119 module.dynamodb.aws_dynamodb_table.this["ServiceState"] /modules/dynamodb/main.tf
+CKV_AWS_130 module.network.aws_subnet.public[0] /modules/network/main.tf
+CKV_AWS_130 module.network.aws_subnet.public[1] /modules/network/main.tf
+CKV_AWS_136 module.build.aws_ecr_repository.services /modules/build/main.tf
+CKV_AWS_144 module.data.aws_s3_bucket.data /modules/data/main.tf
+CKV_AWS_145 module.data.aws_s3_bucket.data /modules/data/main.tf
+CKV_AWS_149 module.apikey.aws_secretsmanager_secret.api_key /modules/apikey/main.tf
+CKV_AWS_150 module.ecs.aws_lb.this /modules/ecs/main.tf
+CKV_AWS_158 module.build.aws_cloudwatch_log_group.codebuild /modules/build/main.tf
+CKV_AWS_158 module.observability.aws_cloudwatch_log_group.ecs["graph-evidence-api"] /modules/observability/main.tf
+CKV_AWS_158 module.observability.aws_cloudwatch_log_group.ecs["neptune-loader"] /modules/observability/main.tf
+CKV_AWS_158 module.observability.aws_cloudwatch_log_group.ecs["query-api"] /modules/observability/main.tf
+CKV_AWS_158 module.observability.aws_cloudwatch_log_group.ecs["worker"] /modules/observability/main.tf
+CKV_AWS_18 module.data.aws_s3_bucket.data /modules/data/main.tf
+CKV_AWS_2 module.ecs.aws_lb_listener.http /modules/ecs/main.tf
+CKV_AWS_26 module.observability.aws_sns_topic.alarms /modules/observability/main.tf
+CKV_AWS_28 module.dynamodb.aws_dynamodb_table.this["ArtifactRegistry"] /modules/dynamodb/main.tf
+CKV_AWS_28 module.dynamodb.aws_dynamodb_table.this["EntityLinkCache"] /modules/dynamodb/main.tf
+CKV_AWS_28 module.dynamodb.aws_dynamodb_table.this["EvidenceBundle"] /modules/dynamodb/main.tf
+CKV_AWS_28 module.dynamodb.aws_dynamodb_table.this["QuerySession"] /modules/dynamodb/main.tf
+CKV_AWS_28 module.dynamodb.aws_dynamodb_table.this["ResearcherMetricCache"] /modules/dynamodb/main.tf
+CKV_AWS_28 module.dynamodb.aws_dynamodb_table.this["RunLedger"] /modules/dynamodb/main.tf
+CKV_AWS_28 module.dynamodb.aws_dynamodb_table.this["ServiceState"] /modules/dynamodb/main.tf
+CKV_AWS_316 module.build.aws_codebuild_project.services_image /modules/build/main.tf
+CKV_AWS_333 module.ecs.aws_ecs_service.this /modules/ecs/main.tf
+CKV_AWS_336 module.ecs.aws_ecs_task_definition.neptune_loader /modules/ecs/main.tf
+CKV_AWS_336 module.ecs.aws_ecs_task_definition.service /modules/ecs/main.tf
+CKV_AWS_338 module.build.aws_cloudwatch_log_group.codebuild /modules/build/main.tf
+CKV_AWS_338 module.observability.aws_cloudwatch_log_group.ecs["graph-evidence-api"] /modules/observability/main.tf
+CKV_AWS_338 module.observability.aws_cloudwatch_log_group.ecs["neptune-loader"] /modules/observability/main.tf
+CKV_AWS_338 module.observability.aws_cloudwatch_log_group.ecs["query-api"] /modules/observability/main.tf
+CKV_AWS_338 module.observability.aws_cloudwatch_log_group.ecs["worker"] /modules/observability/main.tf
+CKV_AWS_347 module.neptune.aws_neptune_cluster.this /modules/neptune/main.tf
+CKV_AWS_361 module.neptune.aws_neptune_cluster.this /modules/neptune/main.tf
+CKV_AWS_378 module.ecs.aws_lb_target_group.service /modules/ecs/main.tf
+CKV_AWS_394 module.foundation.aws_availability_zones.available /modules/foundation/main.tf
+CKV_AWS_65 module.ecs.aws_ecs_cluster.this /modules/ecs/main.tf
+CKV_AWS_91 module.ecs.aws_lb.this /modules/ecs/main.tf

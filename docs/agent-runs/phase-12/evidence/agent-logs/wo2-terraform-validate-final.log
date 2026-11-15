@@ -1,0 +1,4 @@
+$ terraform -chdir=infra/terraform/envs/course validate
+Success! The configuration is valid.
+
+exit 0

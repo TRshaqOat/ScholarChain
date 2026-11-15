@@ -1,0 +1,789 @@
+--- docs/agent-runs/phase-12/evidence/code-review-1/phase-12-cr1-changeset.txt	2026-11-14 23:35:35
++++ /private/tmp/claude-501/-Users-achyutpatel-Developer-Cloud-ScholarChain/647b30d8-a29e-43d0-9e41-a7e964cb44a3/scratchpad/phase-12-cr2-changeset.txt	2026-11-14 23:36:30
+@@ -1,5 +1,5 @@
+ ===== git rev-parse HEAD
+-655436b5c2c1ca7bd8cd41bec5aca81a16b13c20
++3145709e23c92c45ff9cb8dd84f1043920e55882
+ 
+ ===== git status --short
+  M datasets/dataset-manifest.yaml
+@@ -20,10 +20,12 @@
+  M modules/storage/src/test/scala/scholarchain/storage/CliSpec.scala
+  M modules/storage/src/test/scala/scholarchain/storage/LiveRequestSpec.scala
+ ?? datasets/schemas/fractions.md
+-?? datasets/scripts/__pycache__/
+ ?? datasets/scripts/make_fraction.py
+ ?? datasets/scripts/make_fraction.sh
+ ?? docs/agent-runs/phase-12/agent-report.md
++?? docs/agent-runs/phase-12/evidence/
++?? docs/agent-runs/phase-12/repair-01.md
++?? docs/agent-runs/phase-12/review-report.md
+ ?? infra/
+ ?? modules/services/src/test/scala/scholarchain/services/LauncherSpec.scala
+ ?? scripts/
+@@ -262,7 +264,7 @@
+        // Ruling 5: the key is read once from the variable configuration names, never logged.
+        key <- env
+ diff --git a/modules/storage/STORAGE.md b/modules/storage/STORAGE.md
+-index 872e4f0..615da3c 100644
++index 872e4f0..f6ac56d 100644
+ --- a/modules/storage/STORAGE.md
+ +++ b/modules/storage/STORAGE.md
+ @@ -4,7 +4,7 @@ Owner: storage-engineer. Code: `modules/storage/src/main/scala/scholarchain/stor
+@@ -299,7 +301,7 @@
+ +- Set `taskRoleArn` to the service's task role. The ECS agent then injects `AWS_CONTAINER_CREDENTIALS_RELATIVE_URI` into the container itself; the task definition does not set it. Task role credentials are valid for six hours and rotated by the agent. Source: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/security-iam-roles.html (accessed 2026-11-14).
+ +- Set no `AWS_PROFILE`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_SESSION_TOKEN`, `AWS_WEB_IDENTITY_TOKEN_FILE`, or `AWS_ROLE_ARN`, and no `aws.accessKeyId` or `aws.secretAccessKey` system property. Each comes before container credentials in the chain and would replace the task role.
+ +- The region comes from the service's `--region` or the core `application.region` (`SCHOLARCHAIN_AWS_REGION`, default us-east-2), not from `AWS_REGION`.
+-+- The service launcher must start live mode without `--profile` and pass `LiveTarget(None, region)`. `Launcher.backend` in `modules/services` still requires `--profile` (service-engineer; reported BLOCKED-ON in Phase 12 work order 1).
+++- The service launcher starts live mode without `--profile` and passes `LiveTarget(None, region)`: `Launcher.liveTarget` in `modules/services` gives `LiveTarget(a.get("profile"), region)`, so `--profile` is optional (Phase 12 work order 6). The four live loader CLIs accept `--live` alone the same way (work order 5).
+ +
+  | Adapter | Ports | Requests |
+  |---|---|---|
+@@ -779,7 +781,7 @@
+        yield
+          val root = Paths.get(a.get("out").getOrElse("scratch/stores"))
+ diff --git a/modules/storage/src/main/scala/scholarchain/storage/live/LiveAws.scala b/modules/storage/src/main/scala/scholarchain/storage/live/LiveAws.scala
+-index f17cf38..ae902aa 100644
++index f17cf38..151cbfa 100644
+ --- a/modules/storage/src/main/scala/scholarchain/storage/live/LiveAws.scala
+ +++ b/modules/storage/src/main/scala/scholarchain/storage/live/LiveAws.scala
+ @@ -4,6 +4,7 @@ import scholarchain.storage.TransientStoreException
+@@ -790,15 +792,17 @@
+    ProfileCredentialsProvider
+  }
+  import software.amazon.awssdk.awscore.client.builder.AwsClientBuilder
+-@@ -27,15 +28,25 @@ import java.time.Duration
++@@ -27,15 +28,27 @@ import java.time.Duration
+  import scala.collection.concurrent.TrieMap
+  import scala.jdk.CollectionConverters.*
+  
+ -/** The explicit opt-in for live AWS calls: both --live and --profile, neither on by default
+ -  * (rulings 1 and 26). Nothing in this package runs unless a CLI was given one.
+-+/** The explicit opt-in for live AWS calls. The storage CLIs build one only from both --live and
+-+  * --profile, neither on by default (rulings 1 and 26). profileName None (an ECS task, which sets
+-+  * no profile; Phase 10 ruling 18) selects the SDK default credentials provider chain.
+++/** The explicit opt-in for live AWS calls. The storage CLIs build one only from --live, off by
+++  * default (rulings 1 and 26). --profile is optional in the four loader CLIs (Phase 12 work order
+++  * 5) and in the services Launcher (work order 6); EmbedCli and the rag CLIs still need it.
+++  * profileName None (an ECS task, which sets no profile; Phase 10 ruling 18) selects the SDK
+++  * default credentials provider chain.
+    */
+ -final case class LiveTarget(profile: String, region: String)
+ +final case class LiveTarget(profileName: Option[String], region: String):
+@@ -823,7 +827,7 @@
+    */
+  final class RefreshingCredentials(build: () => AwsCredentialsProvider)
+      extends AwsCredentialsProvider
+-@@ -92,18 +103,28 @@ object LiveAws:
++@@ -92,18 +105,28 @@ object LiveAws:
+      require(timeoutMs >= 1, s"timeout $timeoutMs ms")
+      overrides.toBuilder.apiCallTimeout(Duration.ofMillis(timeoutMs)).build()
+  
+@@ -1115,9 +1119,6 @@
+ - 3,301 full ORCID records carry an iD that appears on no subset record, so no fraction can keep them.
+ - 94 full OpenAlex works have a DOI that is on no DBLP record, so no fraction keeps them.
+ - The source files contain duplicate identical lines (OpenAlex: 107,506 lines, 107,439 distinct; ORCID: 22,975 lines, 22,914 distinct). The tool keeps them as they are.
+-
+-===== UNTRACKED: datasets/scripts/__pycache__/dblp_extract.cpython-313.pyc
+-[binary file omitted: 22772 bytes, sha256 424e2ce9584b3ea60abd9900c14a1ca4d34d3064669f4b085482be2860db003c]
+ 
+ ===== UNTRACKED: datasets/scripts/make_fraction.py
+ #!/usr/bin/env python3
+@@ -1155,6 +1156,7 @@
+ NAMES = {"dblp": "dblp/works.xml", "openalex": "openalex/works.jsonl", "crossref": "crossref/works.jsonl",
+          "orcid": "orcid/records.jsonl.gz"}
+ 
++sys.dont_write_bytecode = True  # python3 -I does not imply -B: no __pycache__ under datasets/scripts (code review 1 F2)
+ _spec = importlib.util.spec_from_file_location("dblp_extract", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dblp_extract.py"))
+ dx = importlib.util.module_from_spec(_spec)
+ _spec.loader.exec_module(dx)
+@@ -1509,7 +1511,7 @@
+ ===== UNTRACKED: infra/terraform/README.md
+ # ScholarChain Terraform
+ 
+-Owner: infra-engineer. Spec Phase 12, D-10, D-13, and the Phase 12 human rulings 1 to 9
++Owner: infra-engineer. Spec Phase 12, D-10, D-13, and the Phase 12 human rulings 1 to 21
+ (`docs/agent-runs/phase-12/prompt.md`). Agents never run `terraform plan`, `apply`, `destroy`,
+ `import`, or any state command; the human runs the plan through `scripts/plan.sh` and applies only
+ through the approved path in Phase 14.
+@@ -1526,7 +1528,7 @@
+     course.tfvars           course values (no secrets, no personal data)
+     .terraform.lock.hcl     provider lock (commit it)
+   modules/
+-    foundation/             account, Region, partition, two AZs, name prefix
++    foundation/             account, Region, partition, the two pinned AZs, name prefix
+     network/                VPC, subnets, routes, S3 and DynamoDB gateway endpoints, runtime security groups
+     data/                   the environment data bucket
+     emr/                    EMR service and instance roles, EMR-managed security groups, log location
+@@ -1542,9 +1544,6 @@
+     ecs/                    cluster, task definitions, services, ALB (runtime only)
+ ```
+ 
+-The empty directory `modules/secrets/` was created by mistake before the rename and could not be
+-removed by the agent (permission denied); Git ignores empty directories. The human may delete it.
+-
+ No provider other than `hashicorp/aws` is used.
+ 
+ ## The two stages (D-13, ruling 2)
+@@ -1604,12 +1603,15 @@
+ | `runtime_graph_run`, `runtime_items_run`, `runtime_vectors_run` | `null` | `--graph-run`, `--items-run`, `--vectors-run` of the three services |
+ | `runtime_snapshot` | `2026-10-03` | `--snapshot` |
+ | `window_summary_run` | `run-6fbad498beb0d8f570df67665fb97544` | `SCHOLARCHAIN_WINDOW_SUMMARY_RUN`, query-api and worker only |
++| `availability_zones` | `["us-east-2a", "us-east-2b"]` | exactly two distinct AZs in the Region (validated); pinned, not a data source, so an AZ state change never replans the subnets. A change replaces the subnets |
+ | `alb_ingress_cidr_blocks` | `["0.0.0.0/0"]` | narrow to the demo client when possible |
+ | `data_bucket_force_destroy` | `false` | course switch, see Cleanup |
+ | `emr_instance_type`, `emr_core_instance_count` | `m6g.xlarge`, `2` | Graviton only; core count 1 to 2; primary always 1 |
+ | `neptune_instance_class` | `db.t4g.medium` | `db.t4g.medium` or `db.t3.medium` only |
+ | `service_max_counts` | query-api 1, graph-evidence-api 2, worker 1 | each 1 or 2 (ruling 2) |
+-| `llm_requests_per_minute` | `4` | validated: `llm_requests_per_minute x (query-api max + worker max) <= 8` |
++| `haiku_calls_per_minute_cap` | `8` | validated 1 to 8 |
++| `llm_requests_per_minute` | `4` | validated: `llm_requests_per_minute x (query-api max + worker max) <= haiku_calls_per_minute_cap` |
++| `haiku_destination_regions` | `["us-east-1", "us-east-2", "us-west-2"]` | the US Haiku 4.5 profile's Regions (ruling 18) |
+ 
+ ## Design notes
+ 
+@@ -1627,7 +1629,7 @@
+   destroy of the bucket fails while any object version remains, which protects grading evidence.
+ 
+ ### Network and security groups
+-- `10.40.0.0/16`, two AZs. Public subnets (`/20`) for the ALB, the ECS tasks (public IP) and EMR
++- `10.40.0.0/16`, two AZs (`availability_zones`, default us-east-2a and us-east-2b). Public subnets (`/20`) for the ALB, the ECS tasks (public IP) and EMR
+   nodes; private subnets for Neptune only. No NAT gateway, so the public subnets assign public IPs.
+ - Security groups by role: the ALB accepts port 80 from `alb_ingress_cidr_blocks` (the only CIDR
+   ingress) and sends only to the query-api (8080) and graph-evidence-api (8081) groups; those accept
+@@ -1636,7 +1638,10 @@
+   `0.0.0.0/0`, because without NAT or interface endpoints the AWS APIs (ECR, Logs, Secrets Manager,
+   SQS, Bedrock, S3 Vectors) are public endpoints. The default security group has no rules.
+ - EMR uses two EMR-managed groups; EMR writes their intra-cluster rules, so Terraform ignores rule
+-  drift there and revokes the rules on delete.
++  drift there and revokes the rules on delete. Terraform therefore cannot show or enforce the ingress
++  EMR adds: that no rule admits `0.0.0.0/0` or `::/0` is unverified until the first cluster runs.
++  `scripts/run-bounded-pipeline.sh` describes both groups after every cluster, records them, and
++  warns about any such rule.
+ 
+ ### Neptune
+ - Engine `1.4.8.1` (released 2026-10-06 per the Neptune engine release table, at least 14 days old,
+@@ -1724,16 +1729,15 @@
+ costs more than a minutes-long Fargate task. The loader task role reads `graph/neptune/*`,
+ `curated/coauthor-evidence/*`, and `runs/store-conversion/*`, and may only start and read bulk
+ loads; the load itself reads S3 with the bulk-load role. Network: public subnet, public IP, loader
+-security group. Two storage changes are needed first (BLOCKED-ON storage-engineer): the live loader
+-CLI must run without `--profile`, and it must stage its local copy from the bucket (it validates a
+-local copy today). The other loads (`LoadS3Cli`, `LoadDynamoCli`, `LoadVectorsCli`) call public AWS
++security group. The live loader CLI runs without `--profile` and stages its local copy from the
++bucket with `--stage-from-bucket` (Phase 12 work order 5). The other loads (`LoadS3Cli`, `LoadDynamoCli`, `LoadVectorsCli`) call public AWS
+ APIs and run from the laptop with a profile.
+ 
+ ### IAM summary
+ | Role | Grants |
+ |---|---|
+ | `scholarchain-course-emr-service` | AWS `AmazonEMRServicePolicy_v2` (EC2 actions limited to resources tagged `for-use-with-amazon-emr-managed-policies=true`); `iam:PassRole` on the EMR instance role to `ec2.amazonaws.com` |
+-| `scholarchain-course-emr-instance` (+ profile) | data bucket: List, GetBucketLocation, ListBucketMultipartUploads; GetObject on `raw/ curated/ graph/ semantic-context/ runs/ reports/ artifacts/`; Put, Delete, AbortMultipartUpload, ListMultipartUploadParts on `curated/ graph/ semantic-context/ runs/ reports/ logs/emr/` |
++| `scholarchain-course-emr-instance` (+ profile) | data bucket: GetBucketLocation, ListBucketMultipartUploads; ListBucket only with `s3:prefix` `raw/* curated/* artifacts/* logs/emr/*`; GetObject on `raw/ curated/ artifacts/`; Put, Delete, AbortMultipartUpload, ListMultipartUploadParts on `curated/ logs/emr/` (no `graph/`, `semantic-context/`, `runs/`, or `reports/` grant; code review 1 F1) |
+ | `scholarchain-course-codebuild-services-image` | Logs on its log group; GetObject, GetObjectVersion on `artifacts/codebuild/source/*`; GetBucketLocation, GetBucketAcl; `ecr:GetAuthorizationToken` (no resource scope exists); push and pull actions on the services repository only |
+ | `scholarchain-course-neptune-bulk-loader` | ListBucket (prefix `graph/*`), GetObject `graph/*` |
+ | `scholarchain-course-ecs-exec-services` | ECR pull on the services repository, `ecr:GetAuthorizationToken`, logs on the three service log groups, `secretsmanager:GetSecretValue` on the API key secret |
+@@ -1743,8 +1747,10 @@
+ | `scholarchain-course-task-graph-evidence-api` | `dynamodb:Query` on `EvidenceBundle/index/evidenceById`; GetObject `logs/rag-runtime/*`; `neptune-db:ReadDataViaQuery`. No window-summary, vector, model, queue, or ServiceState grant |
+ | `scholarchain-course-task-neptune-loader` | ListBucket (prefixes `graph/neptune/*`, `curated/coauthor-evidence/*`, `runs/store-conversion/*`); GetObject on those prefixes; `neptune-db:StartLoaderJob`, `GetLoaderJobStatus` |
+ 
+-Every role trusts one service principal with `aws:SourceAccount` (and `aws:SourceArn` for ECS and
+-EMR). No statement uses a wildcard action. Deployment (the human's `scholarchain-sdk` profile) and
++Every role trusts one service principal. Every role except the EMR instance role also carries
++`aws:SourceAccount` (and `aws:SourceArn` for ECS and the EMR service role). The EMR instance role
++trusts `ec2.amazonaws.com` with no condition: an unverified condition there could stop clusters
++from launching (ruling 19). No statement uses a wildcard action. Deployment (the human's `scholarchain-sdk` profile) and
+ runtime roles are separate.
+ 
+ ## Stateful resources and their protections
+@@ -1806,7 +1812,9 @@
+ 4. **Before window 2**: verify with read-only calls that `db.t4g.medium` is orderable for engine
+    1.4.8.1 (`aws neptune describe-orderable-db-instance-options`), that `m6g.xlarge` is supported by
+    `emr-spark-8.0.0` (`aws emr list-supported-instance-types`), and the Haiku 4.5 US profile's
+-   destination Regions (`aws bedrock get-inference-profile`).
++   destination Regions (`aws bedrock get-inference-profile`). Done by the human on 2026-11-14
++   (ruling 18): Neptune is orderable in us-east-2a, 2b, and 2c; m6g.xlarge is supported; the profile
++   routes to us-east-1, us-east-2, and us-west-2. Repeat them if a value changes.
+ 5. **Secret value** right after the window 2 apply, without the value entering shell history or any
+    file in the repository, for example
+    `read -rs K && printf '%s' "$K" | aws secretsmanager put-secret-value --secret-id scholarchain-course/api-key --secret-string file:///dev/stdin; unset K`.
+@@ -1854,6 +1862,7 @@
+ # Set to true for cloud window 2, together with image_tag and the three served runs below.
+ runtime_enabled = false
+ 
++availability_zones      = ["us-east-2a", "us-east-2b"]
+ vpc_cidr                = "10.40.0.0/16"
+ alb_ingress_cidr_blocks = ["0.0.0.0/0"]
+ 
+@@ -1892,7 +1901,7 @@
+ 
+ embedding_model_id         = "amazon.titan-embed-text-v2:0"
+ haiku_inference_profile_id = "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+-haiku_destination_regions  = ["us-east-1", "us-east-2", "us-west-1", "us-west-2"]
++haiku_destination_regions  = ["us-east-1", "us-east-2", "us-west-2"]
+ 
+ # query-api plus worker maximums x llm_requests_per_minute <= 8 Haiku calls per minute.
+ service_max_counts = {
+@@ -1926,9 +1935,10 @@
+ # ---------------------------------------------------------------------------------------------
+ 
+ module "foundation" {
+-  source      = "../../modules/foundation"
+-  project     = "scholarchain"
+-  environment = var.environment
++  source             = "../../modules/foundation"
++  project            = "scholarchain"
++  environment        = var.environment
++  availability_zones = var.availability_zones
+ }
+ 
+ module "network" {
+@@ -2371,6 +2381,17 @@
+ # Network
+ # ---------------------------------------------------------------------------------------------
+ 
++variable "availability_zones" {
++  description = "The two AZs of the VPC (ruling 1), pinned rather than read from a data source (code review 1 F6). Neptune 1.4.8.1 on db.t4g.medium is orderable in us-east-2a and us-east-2b (ruling 18). Changing a value replaces the subnets and everything in them."
++  type        = list(string)
++  default     = ["us-east-2a", "us-east-2b"]
++
++  validation {
++    condition     = length(var.availability_zones) == 2 && length(distinct(var.availability_zones)) == 2 && alltrue([for z in var.availability_zones : can(regex("^${var.region}[a-z]$", z))])
++    error_message = "availability_zones must be exactly two distinct AZ names in var.region (for example us-east-2a and us-east-2b)."
++  }
++}
++
+ variable "vpc_cidr" {
+   description = "VPC CIDR; split into two public and two private /20 subnets."
+   type        = string
+@@ -2676,9 +2697,9 @@
+ }
+ 
+ variable "haiku_destination_regions" {
+-  description = "Regions the US Haiku 4.5 profile may route to. The IAM grant on the foundation model covers exactly these. Verify with a read-only `aws bedrock get-inference-profile` before window 2."
++  description = "Regions the US Haiku 4.5 profile routes to (verified read-only by the human, ruling 18). The IAM grant on the foundation model covers exactly these."
+   type        = list(string)
+-  default     = ["us-east-1", "us-east-2", "us-west-1", "us-west-2"]
++  default     = ["us-east-1", "us-east-2", "us-west-2"]
+ }
+ 
+ variable "service_max_counts" {
+@@ -2704,10 +2725,15 @@
+   description = "Upper bound on live Haiku calls per minute from query-api and the worker together (work order 2: 8)."
+   type        = number
+   default     = 8
++
++  validation {
++    condition     = var.haiku_calls_per_minute_cap >= 1 && var.haiku_calls_per_minute_cap <= 8
++    error_message = "haiku_calls_per_minute_cap must be 1 to 8 (code review 1 F5); more is a human-gated scale change."
++  }
+ }
+ 
+ variable "llm_requests_per_minute" {
+-  description = "Per-process Haiku throttle (runtime.llm.requests-per-minute), passed as SCHOLARCHAIN_LLM_REQUESTS_PER_MINUTE. The product with the query-api plus worker maximums must not exceed haiku_calls_per_minute_cap. Takes effect only once the core loader honours that variable (BLOCKED-ON domain-engineer, see README)."
++  description = "Per-process Haiku throttle (runtime.llm.requests-per-minute), passed as SCHOLARCHAIN_LLM_REQUESTS_PER_MINUTE. The product with the query-api plus worker maximums must not exceed haiku_calls_per_minute_cap. The core loader honours the variable (Phase 12 work order 4) and caps each process at 8."
+   type        = number
+   default     = 4
+ 
+@@ -3837,11 +3863,16 @@
+ locals {
+   emr_tag = { "for-use-with-amazon-emr-managed-policies" = "true" }
+   b       = var.data_bucket_arn
+-  # Prefixes the jobs read: raw inputs, earlier outputs, and job jars.
+-  read_prefixes = ["raw/", "curated/", "graph/", "semantic-context/", "runs/", "reports/", "artifacts/"]
+-  # Prefixes the jobs write. DeleteObject is needed by the s3a committers (temporary and rename
+-  # files); versioning keeps every overwritten or deleted version.
+-  write_prefixes = ["curated/", "graph/", "semantic-context/", "runs/", "reports/", "logs/emr/"]
++  # Only what the steps touch (code review 1 F1): run-bounded-pipeline.sh and emr/step.sh read raw
++  # inputs, job jars and step.sh under artifacts/jobs/, and the Hadoop run under curated/hadoop; the
++  # jobs write curated/hadoop and curated/spark; EMR pushes logs to logs/emr/. No graph/,
++  # semantic-context/, runs/, or reports/ grant: StoreConversion and the loaders never run on EMR.
++  read_prefixes = ["raw/", "curated/", "artifacts/"]
++  # DeleteObject is needed by the s3a committers (temporary and rename files); versioning keeps
++  # every overwritten or deleted version.
++  write_prefixes = ["curated/", "logs/emr/"]
++  # ListBucket only under the prefixes the role reads or writes (s3:prefix condition).
++  list_prefixes = distinct(concat(local.read_prefixes, local.write_prefixes))
+ }
+ 
+ # ---------------------------------------------------------------------------------------------
+@@ -3933,11 +3964,23 @@
+ data "aws_iam_policy_document" "instance_s3" {
+   statement {
+     sid       = "BucketLevel"
+-    actions   = ["s3:ListBucket", "s3:GetBucketLocation", "s3:ListBucketMultipartUploads"]
++    actions   = ["s3:GetBucketLocation", "s3:ListBucketMultipartUploads"]
+     resources = [local.b]
+   }
+ 
+   statement {
++    sid       = "ListOwnPrefixes"
++    actions   = ["s3:ListBucket"]
++    resources = [local.b]
++
++    condition {
++      test     = "StringLike"
++      variable = "s3:prefix"
++      values   = [for p in local.list_prefixes : "${p}*"]
++    }
++  }
++
++  statement {
+     sid       = "ReadInputs"
+     actions   = ["s3:GetObject"]
+     resources = [for p in local.read_prefixes : "${local.b}/${p}*"]
+@@ -3963,8 +4006,11 @@
+ 
+ # ---------------------------------------------------------------------------------------------
+ # EMR-managed security groups (public subnets). EMR adds and maintains the ingress rules between the
+-# primary and core nodes itself, so Terraform ignores rule drift and revokes them on delete. No
+-# group admits traffic from the internet; EMR block public access stays on (account default).
++# primary and core nodes itself, so Terraform ignores rule drift and revokes them on delete. Terraform
++# therefore can neither show nor enforce the ingress EMR adds (code review 1 F7c). Terraform itself
++# creates no ingress rule, and EMR block public access (account default, on) should stop any
++# internet ingress, but that is unverified until the first cluster runs: run-bounded-pipeline.sh
++# describes both groups after each cluster and records and warns about any 0.0.0.0/0 or ::/0 ingress.
+ # ---------------------------------------------------------------------------------------------
+ 
+ resource "aws_security_group" "primary" {
+@@ -4058,13 +4104,9 @@
+ 
+ data "aws_partition" "current" {}
+ 
+-data "aws_availability_zones" "available" {
+-  state = "available"
+-
+-  filter {
+-    name   = "opt-in-status"
+-    values = ["opt-in-not-required"]
+-  }
++variable "availability_zones" {
++  description = "The two AZs of the VPC, pinned (code review 1 F6) so an AZ state change never replans the subnets. Validated in the root module."
++  type        = list(string)
+ }
+ 
+ output "name_prefix" {
+@@ -4085,8 +4127,8 @@
+ }
+ 
+ output "azs" {
+-  description = "The first two available zones (ruling 1: a two-AZ VPC)."
+-  value       = slice(sort(data.aws_availability_zones.available.names), 0, 2)
++  description = "The two pinned zones (ruling 1: a two-AZ VPC)."
++  value       = var.availability_zones
+ }
+ 
+ ===== UNTRACKED: infra/terraform/modules/iam/main.tf
+@@ -5476,7 +5518,7 @@
+ # ScholarChain operational scripts
+ 
+ Owner: infra-engineer (authoring only). Spec Phases 12 and 13, D-10, D-13, and the Phase 12 human
+-rulings 1 to 9 (`docs/agent-runs/phase-12/prompt.md`). The infra-engineer never runs a script against
++rulings 1 to 21 (`docs/agent-runs/phase-12/prompt.md`). The infra-engineer never runs a script against
+ AWS. Who runs each script is set by `docs/agents.md` section 8 and is repeated below.
+ 
+ ## Conventions (every script)
+@@ -5493,10 +5535,11 @@
+ - AWS: `--profile` (default `$AWS_PROFILE`) and `--region` (default and only allowed value
+   `us-east-2`, D-04). Every AWS-calling script prints `==> TARGET account=... region=... profile=...`
+   before acting, and checks that the Terraform state belongs to the same account.
+-- Every AWS CLI call has `--cli-connect-timeout 10 --cli-read-timeout 120`. Reads and idempotent
++- Every AWS CLI call has `--cli-connect-timeout 10 --cli-read-timeout 120`, including those in
++  `emr/step.sh` and the step bootstrap that `run-bounded-pipeline.sh` submits. Reads and idempotent
+   writes (same key and bytes, same desired state) use SDK standard retries (5 attempts). Calls that are
+-  not idempotent (create a cluster, start a build, run a task, register a task definition revision)
+-  make exactly one attempt. Long waits poll with a deadline (exit 6).
++  not idempotent (create a cluster, start a build, run a task, register a task definition revision,
++  force a new ECS deployment) make exactly one attempt. Long waits poll with a deadline (exit 6).
+ - No secret value is in source, flags, or output. The API key is read only by `smoke-test.sh`, into a
+   variable, and reaches curl on standard input.
+ - Dirty tree: any change outside `operations/` and `experiments/results/` (the record trees the
+@@ -5521,7 +5564,8 @@
+ 
+ `operations/**` belongs to the deploy-engineer and `experiments/**` to the experiment-engineer
+ (`docs/agents.md`); the scripts write there when those agents or the human run them. No new
+-`.gitignore` line is needed: plan files land under the ignored `scratch/`.
++`.gitignore` line is needed: plan files land under the ignored `scratch/`. Logs the scripts write
++under `operations/` end in `.txt`, never `.log`, because `.gitignore` ignores `*.log`.
+ 
+ ## The flow
+ 
+@@ -5548,8 +5592,10 @@
+ - **Purpose:** every non-cloud gate of a checkout (spec Phase 13 item 1).
+ - **Command:** `scripts/check.sh` (only `--help` besides).
+ - **Gates:** jq parses `.claude/settings.json` and `.mcp.json`; `.claude/hooks/validate-agent-files.sh`
+-  (agent files and hook self-tests); `bash -n` on `.claude/hooks/*.sh` and `scripts/**/*.sh`;
+-  `shellcheck -S error` when installed (otherwise reported SKIPPED); `terraform fmt -check -recursive
++  (agent files and hook self-tests); `bash -n` on `.claude/hooks/*.sh`, `scripts/**/*.sh`, and
++  `datasets/scripts/*.sh`; `shellcheck -S error` when installed (otherwise reported SKIPPED);
++  `bash datasets/scripts/validate.sh` (dataset manifest, samples, checksums, and the dataset script
++  self-tests; run through `bash` because those files are not executable); `terraform fmt -check -recursive
+   infra/terraform`; `terraform init -backend=false -lockfile=readonly` and `terraform validate`;
+   `sbt check` (scalafmt check, Test/compile, every test, markTestRun). All gates run; exit 1 if any failed.
+ - **Environment:** none. Network: the first terraform init downloads the pinned provider; sbt resolves
+@@ -5609,7 +5655,7 @@
+   key secret value between the window 2 apply and `--resume`.
+ - **Evidence:** `operations/releases/release-<stamp>-<sha12>.json` (commit, plan sha256, account,
+   Region, image tag and digest, per-service task definition ARN and running digest, runtime run IDs),
+-  `.apply.log` (full apply output), `.outputs.json` (terraform outputs; no secret values).
++  `.apply.txt` (full apply output), `.outputs.json` (terraform outputs; no secret values).
+ - **Rollback:** a failing ECS deployment is rolled back by the deployment circuit breaker; otherwise
+   `rollback.sh` to the previous release record. Terraform changes are not reverted automatically;
+   a revert is a new plan through `plan.sh`.
+@@ -5674,12 +5720,17 @@
+      hdfs:///scholarchain/spark/checkpoints --code-version <commit> --shuffle-partitions <n>`, killed at
+      its timeout.
+   Then a bounded wait for TERMINATED; collection of step timings, normalized instance hours, the new
+-  run directories and their `_manifest.json`, and the step logs (bounded wait for EMR to push them).
++  run directories and their `_manifest.json`, and the step logs (bounded wait for EMR to push them);
++  then a read-only `ec2 describe-security-groups` of both EMR-managed groups. Terraform ignores their
++  rule drift, so this is the only check that EMR added no `0.0.0.0/0` or `::/0` ingress: any such rule
++  is printed as `==> WARN EMR GROUP OPEN TO THE INTERNET ...` and recorded; the script changes no rule.
+ - **Inputs:** fraction 100 uses the full local subset (`scratch/datasets/dblp/snapshot=2026-10-03/full/works.xml`,
+   `raw/dblp.dtd`, `scratch/datasets/{openalex,crossref}/full/works.jsonl`,
+   `scratch/datasets/orcid/full/records.jsonl.gz`). Fractions 25 and 50 read
+   `scratch/datasets/fraction=<p>/{dblp/works.xml,openalex/works.jsonl,crossref/works.jsonl,orcid/records.jsonl.gz}`,
+-  which no tool produces yet (see Open dependencies); the script stops with exit 3 until they exist.
++  written by `datasets/scripts/make_fraction.sh` (rule fraction-v1, nested 25 within 50 within 100;
++  `datasets/schemas/fractions.md`); a missing file stops the script with exit 3. Every resolved input
++  path is printed with its size and sha256 (step `inputs`, also in `--dry-run`).
+ - **Environment:** `AWS_PROFILE`. EMR jobs use the core configuration defaults (environment `local`
+   semantics for thresholds and windows); paths are arguments.
+ - **Runs it:** deploy-engineer (`/run-pipeline`) or the human. **Approval points:** the applied window 1
+@@ -5687,7 +5738,8 @@
+ - **Evidence:** `operations/pipeline-runs/<stamp>-fraction<p>/`: `run.json` (commit and code version,
+   fraction, snapshots, input keys with sha256 and bytes, input run, configuration, cluster ID, final
+   state and reason, step names, states and timestamps, normalized instance hours, output run
+-  directories), `steps.json` as submitted, `cluster.json`, `steps-result.json`, `manifests/`, `logs/`.
++  directories, `emrSecurityGroups` with any open ingress), `steps.json` as submitted, `cluster.json`,
++  `steps-result.json`, `security-groups.json`, `input-hashes.txt`, `manifests/`, `logs/`.
+ - **Rollback:** nothing to roll back: outputs are new write-once run directories and the cluster
+   terminates itself. On timeout (exit 6) the cluster ID is printed; terminating a stuck cluster is a
+   human action.
+@@ -5709,8 +5761,8 @@
+   4. `LoadVectorsCli --input <vectors-root>/vectors/backup/snapshot=2026-10-03/run=<vectors-run> --live --profile <p> --region <r>`.
+ - **Environment:** `AWS_PROFILE` (LiveAws reads the named profile). **Runs it:** the human (the storage
+   live loaders are human-run, storage rulings 1 and 26). **Approval points:** the applied window 2 plan.
+-- **Evidence:** `operations/pipeline-runs/store-load-<stamp>/`: one log per loader (each prints its
+-  counts), the Neptune task logs, `run.json` (runs, Neptune load ID, per-step status and seconds).
++- **Evidence:** `operations/pipeline-runs/store-load-<stamp>/`: one log per loader as `<step>.txt`
++  (each prints its counts), the Neptune task logs as `neptune-<start|status>-<task>.txt`, `run.json` (runs, Neptune load ID, per-step status and seconds).
+ - **Rollback:** none automatic: every load is write-once and a rerun skips loaded data. Removing loaded
+   data is a human-gated destructive action; ending window 2 destroys the stores.
+ 
+@@ -5769,27 +5821,20 @@
+   customer-managed key exists (ruling 1).
+ - **Environment:** `AWS_PROFILE`, `TF_VAR_alarm_email`. **Approval points:** the `--confirm` checksum
+   is the documented human confirmation. **Evidence:** `operations/cleanup/cleanup-<stamp>-<stage>/`
+-  (inventories before and after, apply log, retained list, record).
++  (inventories before and after, `apply.txt`, retained list, record).
+ - **Rollback:** a destroyed runtime is recreated by `plan.sh --runtime-enabled true` and `deploy.sh`,
+   then `load-stores.sh` from the write-once S3 files.
+ 
+-## Open dependencies (Phase 12 work order 3)
++## Dependencies (Phase 12 work orders 3 to 8, all complete)
+ 
+-- **dataset-engineer: 25 and 50 percent subsets (D-13 size scaling).** No tool under `datasets/`
+-  produces them. Needed: a script, for example `datasets/scripts/make_fraction.sh --fraction 25|50`,
+-  that writes `scratch/datasets/fraction=<p>/` with `dblp/works.xml`, `openalex/works.jsonl`,
+-  `crossref/works.jsonl`, `orcid/records.jsonl.gz`, `SHA256SUMS`, and `run-info.json`:
+-  - DBLP records of the full subset (`scratch/datasets/dblp/snapshot=2026-10-03/full/works.xml`) chosen
+-    deterministically and nested (25 within 50 within 100), for example keep a record when the first 8
+-    hex digits of sha256("fraction-v1|" + record key), read as an integer, mod 100 are below p;
+-  - OpenAlex and Crossref lines restricted to the DOIs of the kept DBLP works, and ORCID records to the
+-    iDs that appear on kept DBLP, OpenAlex, or Crossref authors, so enrichment shrinks with DBLP;
+-  - the counts (works, authors, DOIs, ORCID iDs) recorded in `run-info.json` and the manifest.
+-- **storage-engineer (from work order 2):** `--live` without `--profile`, and `--stage-from-bucket`, for
+-  `LoadNeptuneCli`; `load-stores.sh` step 2 uses that form.
+-- **service-engineer and domain-engineer (from work orders 1 and 2):** optional `--profile` in the
+-  services launcher; the `SCHOLARCHAIN_LLM_REQUESTS_PER_MINUTE` override. `deploy.sh` waits for stable
+-  services and fails at the stable wait until the launcher change is merged.
++- **dataset-engineer (work order 7):** `datasets/scripts/make_fraction.sh` writes the 25 and 50 percent
++  subsets under `scratch/datasets/fraction=<p>/` (rule fraction-v1, `datasets/schemas/fractions.md`);
++  `run-bounded-pipeline.sh` reads that layout.
++- **storage-engineer (work order 5):** `LoadNeptuneCli --live` without `--profile`, with
++  `--stage-from-bucket`; `load-stores.sh` step 2 uses that form.
++- **service-engineer and domain-engineer (work orders 6 and 4):** `--profile` is optional in the
++  services launcher, and the core loader honours `SCHOLARCHAIN_LLM_REQUESTS_PER_MINUTE`; the ECS task
++  definitions use both.
+ 
+ ===== UNTRACKED: scripts/archive-evidence.sh
+ #!/usr/bin/env bash
+@@ -5958,8 +6003,10 @@
+ Gates, in order (all run; the exit code is 1 if any failed):
+   json               jq parses .claude/settings.json and .mcp.json
+   constitution       .claude/hooks/validate-agent-files.sh (agent files and hook self-tests)
+-  bash-syntax        bash -n on .claude/hooks/*.sh and scripts/**/*.sh
++  bash-syntax        bash -n on .claude/hooks/*.sh, scripts/**/*.sh and datasets/scripts/*.sh
+   shellcheck         shellcheck -S error on scripts/**/*.sh (SKIPPED when not installed)
++  dataset-validation bash datasets/scripts/validate.sh (manifest, samples, checksums, self-tests;
++                     no network)
+   terraform-fmt      terraform fmt -check -recursive infra/terraform
+   terraform-validate terraform init -backend=false -lockfile=readonly, then validate
+   sbt-check          SPARK_LOCAL_IP=127.0.0.1 sbt -J-Xmx6g -batch check
+@@ -5995,7 +6042,7 @@
+ 
+ bash_syntax_ok() {
+   local f rc=0
+-  for f in "$SC_ROOT"/.claude/hooks/*.sh "$SC_ROOT"/scripts/*.sh "$SC_ROOT"/scripts/*/*.sh; do
++  for f in "$SC_ROOT"/.claude/hooks/*.sh "$SC_ROOT"/scripts/*.sh "$SC_ROOT"/scripts/*/*.sh "$SC_ROOT"/datasets/scripts/*.sh; do
+     if bash -n "$f"; then info "ok   ${f#"$SC_ROOT"/}"; else info "FAIL ${f#"$SC_ROOT"/}"; rc=1; fi
+   done
+   return "$rc"
+@@ -6009,6 +6056,9 @@
+   shellcheck -x -S error "$SC_ROOT"/scripts/*.sh "$SC_ROOT"/scripts/*/*.sh
+ }
+ 
++# Through bash, as the manifest's validation_commands do: the datasets/scripts files are not executable.
++datasets_ok() { bash "$SC_ROOT/datasets/scripts/validate.sh"; }
++
+ tf_fmt_ok() { terraform fmt -check -recursive "$SC_ROOT/infra/terraform"; }
+ 
+ tf_validate_ok() {
+@@ -6022,6 +6072,7 @@
+ gate constitution constitution_ok
+ gate bash-syntax bash_syntax_ok
+ gate shellcheck shellcheck_ok
++gate dataset-validation datasets_ok
+ gate terraform-fmt tf_fmt_ok
+ gate terraform-validate tf_validate_ok
+ gate sbt-check sbt_check_ok
+@@ -6159,7 +6210,7 @@
+   inventory "$REC/before"
+   step "destroy"
+   info "the state file stays; back it up outside the repository after this step"
+-  tf apply -input=false -lock-timeout=60s "$PLAN_FILE" 2>&1 | tee "$REC/apply.log"
++  tf apply -input=false -lock-timeout=60s "$PLAN_FILE" 2>&1 | tee "$REC/apply.txt"
+   tf output -json >"$TF_OUT" || echo '{}' >"$TF_OUT"
+   inventory "$REC/after"
+   jq -r '.[]' "$REC/after.terraform.json" | while IFS= read -r a; do printf '%s\t%s\n' "$a" "$(retained_reason "$a")"; done >"$REC/retained.tsv"
+@@ -6264,6 +6315,7 @@
+        = <repository>:<package record tag>
+      - query-api and the worker print the same runtime run ID (SERVICES.md section 5)
+   6. writes the release record <release-dir>/release-<UTC stamp>-<commit 12>.json and the apply log
++     (.apply.txt, not .log, so that Git does not ignore it)
+ 
+ Flags:
+   --plan-file              required; written by scripts/plan.sh
+@@ -6354,7 +6406,7 @@
+ if [ "$RESUME" = 0 ]; then
+   step "apply"
+   info "state stays local (ruling 1): back up terraform state outside the repository after this step"
+-  tf apply -input=false -lock-timeout=60s "$PLAN_FILE" 2>&1 | tee "$REL.apply.log"
++  tf apply -input=false -lock-timeout=60s "$PLAN_FILE" 2>&1 | tee "$REL.apply.txt"
+   ok "apply"
+ else
+   step "apply"
+@@ -6382,7 +6434,8 @@
+   if [ "$RESUME" = 1 ]; then
+     step "force-new-deployment"
+     for s in $SC_SERVICES; do
+-      aws_retry ecs update-service --cluster "$CLUSTER" --service "$s" --force-new-deployment \
++      # Not idempotent (each call starts another deployment): one attempt (code review 1 F3).
++      aws_once ecs update-service --cluster "$CLUSTER" --service "$s" --force-new-deployment \
+         --query 'service.serviceName' --output text
+     done
+   fi
+@@ -6423,7 +6476,9 @@
+ mode="${1:?mode}"
+ shift
+ 
+-fetch() { aws s3 cp --only-show-errors "$1" "$2"; }
++# Every AWS CLI call has explicit timeouts (scripts/README.md conventions; code review 1 F7b).
++aws_t() { aws --cli-connect-timeout 10 --cli-read-timeout 120 "$@"; }
++fetch() { aws_t s3 cp --only-show-errors "$1" "$2"; }
+ 
+ case "$mode" in
+   classpath)
+@@ -6448,12 +6503,12 @@
+     shift 5
+     base="s3://$bucket/curated/hadoop/snapshot=$snapshot/"
+     run="" n=0
+-    for d in $(aws s3 ls "$base" | awk '$1 == "PRE" {sub("/$", "", $2); print $2}'); do
++    for d in $(aws_t s3 ls "$base" | awk '$1 == "PRE" {sub("/$", "", $2); print $2}'); do
+       case ",$earlier," in *",$d,"*) continue ;; esac
+       run="$d" n=$((n + 1))
+     done
+     [ "$n" = 1 ] || { echo "expected exactly one new Hadoop run under $base, found $n" >&2; exit 1; }
+-    aws s3 ls "$base$run/_manifest.json" >/dev/null || { echo "no _manifest.json in $base$run" >&2; exit 1; }
++    aws_t s3 ls "$base$run/_manifest.json" >/dev/null || { echo "no _manifest.json in $base$run" >&2; exit 1; }
+     echo "==> HADOOP-RUN ${base}${run}"
+     fetch "$jar" /tmp/scholarchain-spark.jar
+     exec timeout "$timeout_s" spark-submit --master yarn --deploy-mode client \
+@@ -6739,14 +6794,14 @@
+ 
+ Defaults: --root scratch/stores/s3, --vectors-root = --root, --window-summary-run
+ run-6fbad498beb0d8f570df67665fb97544, --record-dir operations/pipeline-runs (writes
+-store-load-<stamp>/ with every loader log and run.json).
++store-load-<stamp>/ with every loader log as <step>.txt, the Neptune task logs as
++neptune-<start|status>-<task>.txt, and run.json; .txt, not .log, so that Git does not ignore them).
+ --dry-run validates flags and local manifests, prints the steps, no AWS/Terraform/git/sbt call.
+ 
+ Environment: AWS_PROFILE (or --profile), used by the laptop loaders through LiveAws.
+ Run by: the human (the storage live loaders are human-run, storage rulings 1 and 26), after deploy.sh
+ applied cloud window 2. sbt runs with SPARK_LOCAL_IP=127.0.0.1 and -J-Xmx6g, one process at a time.
+-Depends on (not yet merged): storage-engineer --live without --profile and --stage-from-bucket for
+-LoadNeptuneCli (Phase 12 work order 2, BLOCKED-ON). Until then step 2 fails at the task.
++Step 2 uses LoadNeptuneCli --live without --profile and --stage-from-bucket (Phase 12 work order 5).
+ Rollback: none automatic; loads are write-once. Removing loaded data is a human-gated destructive
+ action (docs/agents.md escalation 2); ending window 2 destroys the stores.
+ Exit: 0 all loads done; 1 a loader failed; 3 precondition; 6 timeout.
+@@ -6827,12 +6882,12 @@
+ loader() { # name sbt-command-line
+   local name="$1" t0=$SECONDS
+   step "$name"
+-  if sbt_run "$2" 2>&1 | tee "$REC/$name.log"; then
+-    note "$name" ok "$((SECONDS - t0))" "$name.log"
++  if sbt_run "$2" 2>&1 | tee "$REC/$name.txt"; then
++    note "$name" ok "$((SECONDS - t0))" "$name.txt"
+     ok "$name"
+   else
+-    note "$name" failed "$((SECONDS - t0))" "$name.log"
+-    die "$name failed; log $REC/$name.log" 1
++    note "$name" failed "$((SECONDS - t0))" "$name.txt"
++    die "$name failed; log $REC/$name.txt" 1
+   fi
+ }
+ 
+@@ -6865,10 +6920,10 @@
+   wait_until "loader task $id" 1800 15 _stopped
+   code="$(aws_retry ecs describe-tasks --cluster "$CLUSTER" --tasks "$task" --query 'tasks[0].containers[0].exitCode' --output text)"
+   aws_retry logs get-log-events --log-group-name "$LOG_GROUP" --log-stream-name "neptune-loader/neptune-loader/$id" \
+-    --start-from-head --query 'events[].message' --output text | tr '\t' '\n' >"$REC/neptune-$label-$id.log" || true
+-  cat "$REC/neptune-$label-$id.log"
+-  [ "$code" = 0 ] || die "loader task $id exited $code ($(aws_retry ecs describe-tasks --cluster "$CLUSTER" --tasks "$task" --query 'tasks[0].stoppedReason' --output text)); log $REC/neptune-$label-$id.log" 1
+-  LAST_LOG="$REC/neptune-$label-$id.log"
++    --start-from-head --query 'events[].message' --output text | tr '\t' '\n' >"$REC/neptune-$label-$id.txt" || true
++  cat "$REC/neptune-$label-$id.txt"
++  [ "$code" = 0 ] || die "loader task $id exited $code ($(aws_retry ecs describe-tasks --cluster "$CLUSTER" --tasks "$task" --query 'tasks[0].stoppedReason' --output text)); log $REC/neptune-$label-$id.txt" 1
++  LAST_LOG="$REC/neptune-$label-$id.txt"
+ }
+ 
+ step "neptune"
+@@ -7372,9 +7427,10 @@
+                   scratch/datasets/{openalex,crossref}/full/works.jsonl,
+                   scratch/datasets/orcid/full/records.jsonl.gz
+   --fraction 25|50 scratch/datasets/fraction=<p>/{dblp/works.xml, openalex/works.jsonl,
+-                  crossref/works.jsonl, orcid/records.jsonl.gz} (BLOCKED-ON dataset-engineer: no
+-                  tool produces these yet; the script stops with exit 3 while they are missing)
++                  crossref/works.jsonl, orcid/records.jsonl.gz}, written by
++                  datasets/scripts/make_fraction.sh (rule fraction-v1; exit 3 if one is missing)
+   DTD             scratch/datasets/dblp/snapshot=2026-10-03/raw/dblp.dtd
++  Every resolved input path is printed with its size and sha256 (also in --dry-run).
+ 
+ Steps:
+   1. clean tree; HEAD = the package record's commit; local jars and scripts/emr/step.sh hash to it
+@@ -7388,8 +7444,10 @@
+      spark-pipeline jobs 1..11 (TERMINATE_CLUSTER); each job step has a timeout on the node
+   5. wait for TERMINATED (bounded); collect step timings, instance hours, the new Hadoop and Spark
+      run directories and their _manifest.json, and the step logs (classpath evidence)
+-  6. write <record-dir>/<stamp>-fraction<p>/run.json plus the submitted steps, cluster description,
+-     manifests, and logs
++  6. read-only describe-security-groups of both EMR-managed groups: any 0.0.0.0/0 or ::/0 ingress
++     (which Terraform cannot see, it ignores their rule drift) is warned about and recorded
++  7. write <record-dir>/<stamp>-fraction<p>/run.json plus the submitted steps, cluster description,
++     security groups, manifests, and logs
+ 
+ Flags: --record-dir default operations/pipeline-runs; --dry-run validates flags and local inputs,
+ prints the steps, makes no AWS/Terraform/git call.
+@@ -7451,9 +7509,20 @@
+   ORCID="$F/orcid/records.jsonl.gz"
+ fi
+ for f in "$DBLP" "$DTD" "$OPENALEX" "$CROSSREF" "$ORCID"; do
+-  [ -f "$f" ] || die "input missing: ${f#"$SC_ROOT"/}$([ "$FRACTION" != 100 ] && echo ' (25/50 percent subsets: BLOCKED-ON dataset-engineer, see scripts/README.md)')" 3
++  [ -f "$f" ] || die "input missing: ${f#"$SC_ROOT"/}$([ "$FRACTION" != 100 ] && echo ' (write it with: bash datasets/scripts/make_fraction.sh)')" 3
+ done
+ 
++# "<path> <sha256> <bytes>" per input, after a fraction line: printed here (dry-run too) and hashed
++# into the input run ID in step upload-inputs.
++step "inputs"
++INPUT_LINES="$(
++  printf 'fraction=%s\n' "$FRACTION"
++  for f in "$DBLP" "$DTD" "$OPENALEX" "$CROSSREF" "$ORCID"; do
++    printf '%s %s %s\n' "${f#"$SC_ROOT"/}" "$(sha256_hex "$f")" "$(wc -c <"$f" | tr -d ' ')"
++  done
++)"
++printf '%s\n' "$INPUT_LINES" | sed 1d | while read -r p s b; do info "input $p bytes=$b sha256=$s"; done
++
+ COMMIT="$(jq -er .commit "$PACKAGE_RECORD")" || die "package record has no commit" 3
+ is_sha40 "$COMMIT" || die "package record commit is not a Git SHA" 3
+ HADOOP_JAR="$SC_ROOT/modules/hadoop/target/scala-3.3.7/hadoop-assembly-0.1.0.jar"
+@@ -7466,6 +7535,7 @@
+   "write-once upload of 5 inputs (fraction $FRACTION) under raw/, jars under artifacts/jobs/$COMMIT/" \
+   "aws emr create-cluster (once): emr-spark-8.0.0, 1 primary + core per the emr output, auto-terminate; steps classpath-probe, hadoop-pipeline (${HADOOP_MIN} min), spark-pipeline (${SPARK_MIN} min, shuffle $SHUFFLE, reducers $REDUCERS)" \
+   "poll describe-cluster until TERMINATED; collect steps, instance hours, run manifests, step logs" \
++  "describe-security-groups (read-only) of both EMR groups; warn about and record any 0.0.0.0/0 or ::/0 ingress" \
+   "write $RECORD_DIR/<stamp>-fraction$FRACTION/run.json"
+ 
+ require_clean_tree
+@@ -7502,10 +7572,7 @@
+ 
+ step "upload-inputs"
+ LINES="$REC/input-hashes.txt"
+-printf 'fraction=%s\n' "$FRACTION" >"$LINES"
+-for f in "$DBLP" "$DTD" "$OPENALEX" "$CROSSREF" "$ORCID"; do
+-  printf '%s %s %s\n' "${f#"$SC_ROOT"/}" "$(sha256_hex "$f")" "$(wc -c <"$f" | tr -d ' ')" >>"$LINES"
+-done
++printf '%s\n' "$INPUT_LINES" >"$LINES"
+ INPUT_RUN="run-$(sha256_hex "$LINES" | cut -c1-32)"
+ info "input run $INPUT_RUN"
+ k_dblp="raw/dblp/snapshot=$SC_SNAPSHOT/run=$INPUT_RUN/works.xml"
+@@ -7536,7 +7603,7 @@
+ 
+ step "submit"
+ S3A="s3a://$BUCKET"
+-BOOT="set -euo pipefail; aws s3 cp --only-show-errors s3://$BUCKET/$JP/step.sh /tmp/scholarchain-step.sh; exec bash /tmp/scholarchain-step.sh \"\$@\""
++BOOT="set -euo pipefail; aws --cli-connect-timeout 10 --cli-read-timeout 120 s3 cp --only-show-errors s3://$BUCKET/$JP/step.sh /tmp/scholarchain-step.sh; exec bash /tmp/scholarchain-step.sh \"\$@\""
+ jq -n --arg boot "$BOOT" --arg hjar "s3://$BUCKET/$JP/hadoop-assembly.jar" --arg sjar "s3://$BUCKET/$JP/sparkAnalytics-assembly.jar" \
+   --arg ht "$((HADOOP_MIN * 60))" --arg st "$((SPARK_MIN * 60))" --arg bucket "$BUCKET" --arg snap "$SC_SNAPSHOT" \
+   --arg earlier "$EARLIER" --arg commit "$COMMIT" --arg reducers "$REDUCERS" --arg shuffle "$SHUFFLE" \
+@@ -7593,6 +7660,28 @@
+ logs_ready() { [ "$(aws_retry s3 ls --recursive "$LOG_PREFIX" 2>/dev/null | grep -c 'stdout.gz' || true)" -ge 3 ]; }
+ if (wait_until "step logs under $LOG_PREFIX" 600 30 logs_ready); then :; else warn "step logs incomplete; fetched what exists"; fi
+ aws_retry s3 cp --only-show-errors --recursive "$LOG_PREFIX" "$REC/logs/" || warn "no step logs fetched"
++
++# Terraform ignores ingress drift on the EMR-managed groups (code review 1 F7c), so check read-only
++# what EMR added. Warns and records; never changes a rule (the fix is a human action).
++step "emr-security-groups"
++OPEN_INGRESS_JQ='[.SecurityGroups[] | .GroupId as $g | .IpPermissions[]? | . as $p
++  | ([.IpRanges[]? | select(.CidrIp == "0.0.0.0/0") | .CidrIp] + [.Ipv6Ranges[]? | select(.CidrIpv6 == "::/0") | .CidrIpv6])[]
++  | {groupId: $g, protocol: $p.IpProtocol, fromPort: ($p.FromPort // "all"), toPort: ($p.ToPort // "all"), source: .}]'
++SG_CHECKED=false
++SG_OPEN='[]'
++if aws_retry ec2 describe-security-groups --group-ids "$(emr .primary_security_group_id)" "$(emr .core_security_group_id)" \
++  >"$REC/security-groups.json"; then
++  SG_CHECKED=true
++  SG_OPEN="$(jq -c "$OPEN_INGRESS_JQ" "$REC/security-groups.json")"
++  if [ "$SG_OPEN" = '[]' ]; then
++    ok "no 0.0.0.0/0 or ::/0 ingress on the EMR groups"
++  else
++    jq -r '.[] | "\(.groupId) \(.protocol) \(.fromPort)-\(.toPort) from \(.source)"' <<<"$SG_OPEN" |
++      while IFS= read -r l; do warn "EMR GROUP OPEN TO THE INTERNET: $l (recorded; the human reviews and removes it)"; done
++  fi
++else
++  warn "describe-security-groups failed: the EMR ingress check is UNVERIFIED for this run"
++fi
+ 
+ STATE="$(jq -r .Cluster.Status.State "$REC/cluster.json")"
+ REASON="$(jq -r .Cluster.Status.StateChangeReason.Code "$REC/cluster.json")"
+@@ -7602,6 +7691,7 @@
+   --arg hours "$HOURS" --arg account "$ACCOUNT" --arg region "$REGION" --arg release "$RELEASE" --arg itype "$ITYPE" \
+   --argjson core "$CORE" --arg reducers "$REDUCERS" --arg shuffle "$SHUFFLE" --arg bucket "$BUCKET" \
+   --arg hadoop "$NEW_HADOOP" --arg spark "$NEW_SPARK" --rawfile inputs "$LINES" --slurpfile steps "$REC/steps-result.json" \
++  --argjson sgChecked "$SG_CHECKED" --argjson sgOpen "$SG_OPEN" \
+   '{schemaVersion: "pipeline-run-record-v1", commit: $commit, codeVersion: $commit, fraction: ($fraction | tonumber),
+     snapshots: {dblp: $snap, openalex: $es, crossref: $es, orcid: $es}, inputRun: $inputRun,
+     inputs: ($inputs | split("\n") | map(select(test(" ")) | split(" ") | {path: .[0], sha256: .[1], bytes: (.[2] | tonumber)})),
+@@ -7613,6 +7703,7 @@
+              end: .Status.Timeline.EndDateTime}],
+     outputs: {hadoopRuns: ($hadoop | split("\n") | map(select(. != "")) | map("s3://" + $bucket + "/curated/hadoop/snapshot=" + $snap + "/" + .)),
+               sparkRuns: ($spark | split("\n") | map(select(. != "")) | map("s3://" + $bucket + "/curated/spark/snapshot=" + $snap + "/" + .))},
++    emrSecurityGroups: {checked: $sgChecked, openIngress: $sgOpen, file: "security-groups.json"},
+     logs: "logs/", manifests: "manifests/"}' >"$REC/run.json"
+ printf '==> PIPELINE record=%s cluster=%s state=%s reason=%s instance-hours=%s\n' "$REC/run.json" "$CLUSTER_ID" "$STATE" "$REASON" "$HOURS"
+ 
+@@ -7921,3 +8012,4 @@
+ 
+ write_record PASS
+ printf '==> SMOKE result=PASS record=%s query=%s\n' "$RECORD_DIR/smoke-$STAMP.json" "$QID"
++

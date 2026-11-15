@@ -1,0 +1,23 @@
+ok   scripts/archive-evidence.sh
+ok   scripts/check.sh
+ok   scripts/cleanup.sh
+ok   scripts/deploy.sh
+ok   scripts/load-stores.sh
+ok   scripts/package.sh
+ok   scripts/plan.sh
+ok   scripts/rollback.sh
+ok   scripts/run-bounded-pipeline.sh
+ok   scripts/run-experiment.sh
+ok   scripts/smoke-test.sh
+ok   scripts/emr/step.sh
+ok   scripts/lib/common.sh
+ok   datasets/scripts/build_samples.sh
+ok   datasets/scripts/fetch_crossref.sh
+ok   datasets/scripts/fetch_dblp.sh
+ok   datasets/scripts/fetch_openalex.sh
+ok   datasets/scripts/fetch_orcid.sh
+ok   datasets/scripts/lib.sh
+ok   datasets/scripts/make_fraction.sh
+ok   datasets/scripts/validate.sh
+== shellcheck
+shellcheck not installed

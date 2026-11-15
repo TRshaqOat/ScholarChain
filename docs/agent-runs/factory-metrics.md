@@ -107,3 +107,20 @@ Running log for the Phase 16 agentic-factory evaluation. One row per agent invoc
 | 2026-11-14 | 11 | rag-engineer (repair-02 A) | COMPLETE | y | - | 2 | 0 | ? | D14, verifier-v8 (human exception, ruling 20) |
 | 2026-11-14 | 11 | test-engineer (WO5 rerun) | COMPLETE | y | - | 2 | 0 | ? | D14 wrapper removed, D18-D20 found |
 | 2026-11-14 | 11 | code-reviewer (review 2) | REQUEST_CHANGES | y | 0/1/3 | 2 | 0 | ? | D18 major open (residual, ruling 24); N1-N3 new minors; human escalation (ruling 27) |
+| 2026-11-14 | 12 | storage-engineer (WO1) | BLOCKED-ON | y | - | 0 | 1 | ? | LiveAws default chain for ECS; blocked on service-engineer launcher |
+| 2026-11-14 | 12 | infra-engineer (WO2) | BLOCKED-ON | n | - | 0 | 3 | ? | Terraform 13 modules, aws 6.28.0; review 1 F1, F5, F6, F7a, F7c |
+| 2026-11-14 | 12 | infra-engineer (WO3) | BLOCKED-ON | n | - | 0 | 2 | ? | 11 scripts; ran cleanup.sh via wrapper (ruling 10); review 1 F3, F4, F7b, F9 |
+| 2026-11-14 | 12 | domain-engineer (WO4) | COMPLETE | y | - | 0 | 0 | ? | SCHOLARCHAIN_LLM_REQUESTS_PER_MINUTE override |
+| 2026-11-14 | 12 | storage-engineer (WO5) | COMPLETE | n | - | 0 | 0 | ? | loaders without --profile, --stage-from-bucket; review 1 F8 (LiveAws comment) |
+| 2026-11-14 | 12 | service-engineer (WO6) | COMPLETE | y | - | 0 | 0 | ? | Launcher optional --profile, SERVICES.md 5a |
+| 2026-11-14 | 12 | dataset-engineer (WO7) | COMPLETE | n | - | 0 | 0 | ? | fraction-v1 25/50 subsets; review 1 F2 (pycache) |
+| 2026-11-14 | 12 | hadoop-engineer (WO8) | COMPLETE | y | - | 0 | 0 | ? | JOBS.md single bucket |
+| 2026-11-14 | 12 | code-reviewer (review 1) | REQUEST_CHANGES | y | 0/1/8 | 0 | 0 | ? | F1 EMR role IAM major |
+| 2026-11-14 | 12 | dataset-engineer (repair-01 A) | COMPLETE | y | - | 1 | 0 | ? | F2 |
+| 2026-11-14 | 12 | storage-engineer (repair-01 B) | COMPLETE | y | - | 1 | 0 | ? | F8 docs |
+| 2026-11-14 | 12 | infra-engineer (repair-01 C) | COMPLETE | n | - | 1 | 0 | ? | F1, F3-F9; review 2 N1-N3; ListBucket prefix condition per human wording led to N4 |
+| 2026-11-14 | 12 | code-reviewer (review 2) | APPROVE | n | 0/0/3 | 1 | 0 | ? | R1 raised; its proposed exact-key fix was incomplete (corrected in review 3) |
+| 2026-11-15 | 12 | infra-engineer (repair-02 A) | COMPLETE | n | - | 2 | 0 | ? | R1, N1, N2, F9 remainder (ruling 22); review 3 N4, N5 |
+| 2026-11-15 | 12 | code-reviewer (review 3) | REQUEST_CHANGES | y | 0/1/1 | 2 | 0 | ? | N4 major (S3 404 needs ListBucket) |
+| 2026-11-15 | 12 | infra-engineer (repair-03 A) | COMPLETE | n | - | 3 | 0 | ? | N4, role table (ruling 23); review 4 M1, M2 |
+| 2026-11-15 | 12 | code-reviewer (review 4) | APPROVE | y | 0/0/3 | 3 | 0 | ? | M1-M3 residual (ruling 24) |

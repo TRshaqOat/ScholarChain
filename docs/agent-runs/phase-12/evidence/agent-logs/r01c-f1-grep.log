@@ -1,0 +1,51 @@
+== emr module: prefix locals and statements
+48:  read_prefixes = ["raw/", "curated/", "artifacts/"]
+51:  write_prefixes = ["curated/", "logs/emr/"]
+52:  # ListBucket only under the prefixes the role reads or writes (s3:prefix condition).
+53:  list_prefixes = distinct(concat(local.read_prefixes, local.write_prefixes))
+144:    sid       = "BucketLevel"
+150:    sid       = "ListOwnPrefixes"
+156:      variable = "s3:prefix"
+157:      values   = [for p in local.list_prefixes : "${p}*"]
+162:    sid       = "ReadInputs"
+164:    resources = [for p in local.read_prefixes : "${local.b}/${p}*"]
+168:    sid = "WriteOutputs"
+175:    resources = [for p in local.write_prefixes : "${local.b}/${p}*"]
+== emr module: any dropped prefix (graph/ semantic-context/ runs/ reports/)?
+46:  # jobs write curated/hadoop and curated/spark; EMR pushes logs to logs/emr/. No graph/,
+47:  # semantic-context/, runs/, or reports/ grant: StoreConversion and the loaders never run on EMR.
+grep exit=0 (1 = none)
+== emr service role: managed policy and PassRole only
+89:# AWS-managed v2 service policy: its EC2 actions are limited to resources tagged
+93:  policy_arn = "arn:${var.partition}:iam::aws:policy/service-role/AmazonEMRServicePolicy_v2"
+99:    actions   = ["iam:PassRole"]
+100:    resources = [aws_iam_role.instance.arn]
+146:    resources = [local.b]
+152:    resources = [local.b]
+164:    resources = [for p in local.read_prefixes : "${local.b}/${p}*"]
+175:    resources = [for p in local.write_prefixes : "${local.b}/${p}*"]
+== S3 paths the EMR steps touch (run-bounded-pipeline.sh, emr/step.sh)
+scripts/run-bounded-pipeline.sh:150:LOG_URI
+scripts/run-bounded-pipeline.sh:30:artifacts/jobs
+scripts/run-bounded-pipeline.sh:187:curated/hadoop
+scripts/run-bounded-pipeline.sh:188:curated/spark
+scripts/run-bounded-pipeline.sh:170:raw/crossref
+scripts/run-bounded-pipeline.sh:21:raw/dblp
+scripts/run-bounded-pipeline.sh:169:raw/openalex
+scripts/run-bounded-pipeline.sh:171:raw/orcid
+scripts/run-bounded-pipeline.sh:293:s3://
+scripts/run-bounded-pipeline.sh:185:s3://$BUCKET/$1
+scripts/run-bounded-pipeline.sh:244:s3://$BUCKET/$HADOOP_ROOT$r/_manifest.json
+scripts/run-bounded-pipeline.sh:196:s3://$BUCKET/$JP/hadoop-assembly.jar
+scripts/run-bounded-pipeline.sh:196:s3://$BUCKET/$JP/sparkAnalytics-assembly.jar
+scripts/run-bounded-pipeline.sh:195:s3://$BUCKET/$JP/step.sh
+scripts/run-bounded-pipeline.sh:245:s3://$BUCKET/$SPARK_ROOT$r/_manifest.json
+scripts/emr/step.sh:43:s3://$bucket/curated/hadoop/snapshot=$snapshot/
+scripts/run-bounded-pipeline.sh:194:s3a://$BUCKET
+scripts/emr/step.sh:55:s3a://$bucket/curated/hadoop/snapshot=$snapshot/$run
+== log_uri output
+46:  # jobs write curated/hadoop and curated/spark; EMR pushes logs to logs/emr/. No graph/,
+51:  write_prefixes = ["curated/", "logs/emr/"]
+254:  value       = "s3://${var.data_bucket_name}/logs/emr/"
+== dropped prefixes outside comment lines (expect none)
+grep exit=1 (1 = none)

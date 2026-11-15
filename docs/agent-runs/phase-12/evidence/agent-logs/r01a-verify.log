@@ -1,0 +1,32 @@
+== 2026-11-15T03:20:10Z bash datasets/scripts/make_fraction.sh --verify
+2026-11-15T03:20:11Z [PASS] scratch/datasets/fraction=25/SHA256SUMS verifies
+2026-11-15T03:20:12Z [PASS] scratch/datasets/fraction=50/SHA256SUMS verifies
+2026-11-15T03:20:12Z [STEP] verify 2 fraction(s) against the full inputs
+INFO full: dblp 110867 records; rows {'openalex': 107506, 'crossref': 106726, 'orcid': 22975}; not linked by the fraction rule at 100 percent {'openalex': 94, 'crossref': 0, 'orcid': 3301}
+PASS fraction=25 dblp/works.xml parses with expat and the DTD: 27993 records
+PASS fraction=25 openalex/works.jsonl parses as JSON per line: 27129 records
+PASS fraction=25 crossref/works.jsonl parses as JSON per line: 26964 records
+PASS fraction=25 orcid/records.jsonl.gz parses as JSON per line: 14905 records
+PASS fraction=25 dblp keys equal the rule applied to the full input: 27993 kept, 27993 expected
+PASS fraction=25 every OpenAlex and Crossref DOI is on a kept DBLP record (unlinked: openalex 0, crossref 0)
+PASS fraction=25 every ORCID iD appears on a kept record (unlinked: 0)
+PASS fraction=50 dblp/works.xml parses with expat and the DTD: 55598 records
+PASS fraction=50 openalex/works.jsonl parses as JSON per line: 53949 records
+PASS fraction=50 crossref/works.jsonl parses as JSON per line: 53607 records
+PASS fraction=50 orcid/records.jsonl.gz parses as JSON per line: 18388 records
+PASS fraction=50 dblp keys equal the rule applied to the full input: 55598 kept, 55598 expected
+PASS fraction=50 every OpenAlex and Crossref DOI is on a kept DBLP record (unlinked: openalex 0, crossref 0)
+PASS fraction=50 every ORCID iD appears on a kept record (unlinked: 0)
+PASS nesting dblp fraction=25 within fraction=50: 27993 of 55598 keys, byte-identical records
+PASS nesting openalex fraction=25 within fraction=50: 27108 of 53915 distinct records, byte-identical lines
+PASS nesting crossref fraction=25 within fraction=50: 26964 of 53607 distinct records, byte-identical lines
+PASS nesting orcid fraction=25 within fraction=50: 14866 of 18342 distinct records, byte-identical lines
+PASS nesting dblp fraction=50 within full: 55598 of 110867 keys, byte-identical records
+PASS nesting openalex fraction=50 within full: 53915 of 107439 distinct records, byte-identical lines
+PASS nesting crossref fraction=50 within full: 53607 of 106726 distinct records, byte-identical lines
+PASS nesting orcid fraction=50 within full: 18342 of 22914 distinct records, byte-identical lines
+2026-11-15T03:21:08Z [DONE] verify: all checks passed
+exit=0
+== 2026-11-15T03:21:08Z end
+-- find datasets -name __pycache__ -o -name '*.pyc'
+(end)

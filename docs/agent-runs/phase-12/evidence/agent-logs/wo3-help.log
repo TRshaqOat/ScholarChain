@@ -1,0 +1,345 @@
+######## scripts/check.sh --help
+Usage: scripts/check.sh [--help]
+
+Gates, in order (all run; the exit code is 1 if any failed):
+  json               jq parses .claude/settings.json and .mcp.json
+  constitution       .claude/hooks/validate-agent-files.sh (agent files and hook self-tests)
+  bash-syntax        bash -n on .claude/hooks/*.sh and scripts/**/*.sh
+  shellcheck         shellcheck -S error on scripts/**/*.sh (SKIPPED when not installed)
+  terraform-fmt      terraform fmt -check -recursive infra/terraform
+  terraform-validate terraform init -backend=false -lockfile=readonly, then validate
+  sbt-check          SPARK_LOCAL_IP=127.0.0.1 sbt -J-Xmx6g -batch check
+                     (scalafmt check, Test/compile, every test, markTestRun)
+
+Needs: jq, bash, terraform 1.16.6, sbt, a JDK. Network: only the first terraform init (provider
+download) and sbt dependency resolution. No AWS credentials are read.
+######## exit 0
+######## scripts/package.sh --help
+Usage: scripts/package.sh [--profile <name>] [--region us-east-2] [--record-dir <dir>]
+                          [--build-timeout-minutes 30] [--dry-run]
+
+Steps:
+  1. clean tree; commit = git rev-parse HEAD (the image tag and the code version)
+  2. sbt packageJobs; sha256 of both assembly jars; the Hadoop jar's Main-Class must be
+     scholarchain.hadoop.Pipeline (the EMR step relies on it)
+  3. SCHOLARCHAIN_IMAGE_TAG=<commit> sbt services/Docker/stage (no Docker), then zip the staged
+     context (Dockerfile at the zip root) and take its sha256
+  4. upload, write-once by sha256: the jars to s3://<bucket>/artifacts/jobs/<commit>/ and the
+     context to s3://<bucket>/artifacts/codebuild/source/<commit>.zip
+  5. if ECR has no image tagged <commit>: start one CodeBuild build of that zip with IMAGE_TAG=<commit>
+     (no retry), wait for it (bounded); ECR tags are immutable, so an existing tag is reused
+  6. read the image digest and the scan-on-push status from ECR
+  7. write <record-dir>/package-<commit>.json: commit, jar sha256 values and S3 keys, context
+     sha256, image repository, tag, digest, build ID, scan status
+
+Flags:
+  --record-dir             default operations/releases
+  --build-timeout-minutes  default 30 (the CodeBuild project's own timeout is also 30)
+  --dry-run                validate flags, print the steps, no AWS/Terraform/git/sbt call
+
+Environment: AWS_PROFILE (or --profile). sbt runs with SPARK_LOCAL_IP=127.0.0.1 and -J-Xmx6g.
+Run by: the human or deploy-engineer, before deploy.sh (cloud window 1 must be applied: ECR,
+CodeBuild, and the bucket come from Terraform). Rollback: none needed; artifacts are additive and
+keyed by commit.
+Exit: 0 recorded; 1 build or verification failed; 3 precondition; 6 timeout.
+######## exit 0
+######## scripts/plan.sh --help
+Usage: scripts/plan.sh --runtime-enabled true|false [--var-file <path>] [--profile <name>]
+                       [--region us-east-2] [--out-dir <dir>] [--evidence-dir <dir>] [--dry-run]
+
+Runs terraform init (local backend) and terraform plan -out for infra/terraform/envs/course, prints
+the complete plan, and writes into <out-dir>/<UTC stamp>-<commit 12>/ (gitignored, under scratch/):
+  plan.tfplan        the saved plan (deploy.sh applies only this file, by checksum)
+  plan.sha256        its sha256
+  plan.txt           the full human-readable plan, exactly as printed
+  plan.json          terraform show -json (holds planned values; stays local, mode 600)
+  plan-meta.json     commit, account, Region, runtime_enabled, var file and its sha256, counts
+  summary.md         secret-free summary: counts, stateful destroys or replacements (first), IAM
+                     changes, high-cost resources
+and copies summary.md to <evidence-dir>/<UTC stamp>-<commit 12>.md for the phase evidence.
+
+Flags:
+  --runtime-enabled  required: false = cloud window 1, true = cloud window 2 (D-13)
+  --var-file         default infra/terraform/envs/course/course.tfvars
+  --profile          default $AWS_PROFILE (the human's scholarchain-sdk profile)
+  --region           default us-east-2 (the only Region the configuration accepts)
+  --out-dir          default scratch/plans
+  --evidence-dir     default operations/plans
+  --dry-run          validate flags and local files, print the steps, no AWS/Terraform/git call
+
+Environment: AWS_PROFILE (or --profile); TF_VAR_alarm_email (required by the configuration; may be
+empty for no alarm subscription; never printed by this script).
+Run by: the human architect at the plan gate. Never applies; never uses -auto-approve.
+Exit: 0 plan written; 2 usage; 3 dirty tree, wrong account or Region; 1 terraform failure.
+######## exit 0
+######## scripts/deploy.sh --help
+Usage: scripts/deploy.sh --plan-file <dir>/plan.tfplan --approved-plan-sha256 <64 hex>
+                         [--package-record <operations/releases/package-<sha>.json>]
+                         [--profile <name>] [--region us-east-2] [--release-dir <dir>]
+                         [--stable-timeout-minutes 20] [--resume] [--dry-run]
+
+Gates, in order:
+  1. clean tree (outside operations/ and experiments/results/), HEAD = the plan's commit
+  2. sha256(plan file) = --approved-plan-sha256, else exit 4 and nothing is applied
+  3. the profile's account and Region = the plan's (plan-meta.json beside the plan file)
+  4. terraform apply <plan file> (a saved plan: no prompt, no -auto-approve, no other input);
+     skipped with --resume
+  5. runtime_enabled only:
+     - the API key secret must have a value (DescribeSecret, the value is never read); if not, exit 5:
+       the human sets it (infra/terraform/README.md), then the same command runs again with --resume
+     - --resume forces a new deployment of query-api, graph-evidence-api and worker (together)
+     - waits until every service is stable (one COMPLETED deployment, running = desired), bounded
+     - every running task's image digest = the package record's digest, and its task definition image
+       = <repository>:<package record tag>
+     - query-api and the worker print the same runtime run ID (SERVICES.md section 5)
+  6. writes the release record <release-dir>/release-<UTC stamp>-<commit 12>.json and the apply log
+
+Flags:
+  --plan-file              required; written by scripts/plan.sh
+  --approved-plan-sha256   required; the checksum the human signed at the plan gate
+  --package-record         required when the plan has runtime_enabled = true (scripts/package.sh)
+  --release-dir            default operations/releases
+  --stable-timeout-minutes default 20
+  --resume                 no apply: the plan was applied already (for example before the secret
+                           value existed); still requires the same plan file and checksum
+  --dry-run                validate flags and local files, print the steps, no AWS/Terraform/git call
+
+Environment: AWS_PROFILE (or --profile).
+Run by: deploy-engineer through the gated command, after the human approved the plan checksum
+(docs/agents.md section 8 and escalation 4/5).
+Rollback: a failed ECS deployment is rolled back by the ECS circuit breaker; otherwise
+scripts/rollback.sh --to-release <earlier release record>. Terraform changes are not rolled back
+automatically.
+Exit: 0 deployed and verified; 1 verification failed; 3 precondition; 4 checksum mismatch;
+5 waiting for the secret value; 6 timeout.
+######## exit 0
+######## scripts/rollback.sh --help
+Usage: scripts/rollback.sh --to-release <operations/releases/release-<stamp>-<sha>.json>
+                           [--profile <name>] [--region us-east-2] [--reason "<text>"]
+                           [--stable-timeout-minutes 20] [--record-dir <dir>] [--dry-run]
+       scripts/rollback.sh --list [--record-dir <dir>]
+
+--list prints the local release and smoke records (no AWS call), so the operator can pick the last
+known-good release: one whose smoke record after it says PASS.
+
+Steps:
+  1. the record must be a runtime release of this account and Region with an image tag and digest
+  2. ECR must still hold <repository>:<tag> with exactly that digest (tags are immutable)
+  3. for query-api, graph-evidence-api and worker together (SERVICES.md section 5): copy the
+     service's current task definition, change only the container image to <repository>:<tag>,
+     register it as a new revision (one attempt each), and point the service at it
+  4. wait until the services are stable (bounded), then verify every running task's digest and that
+     query-api and the worker log one runtime run ID
+  5. write <record-dir>/rollback-<stamp>.json (previous and new task definitions, image, reason)
+
+No terraform apply. Terraform state still names the newer image, so the next plan shows the task
+definitions changing back; to keep the rollback, set image_tag in course.tfvars to the release's tag
+and go through plan.sh and deploy.sh.
+
+Flags: --record-dir default operations/releases; --dry-run validates the record, prints the steps,
+no AWS/Terraform call.
+Environment: AWS_PROFILE (or --profile).
+Run by: deploy-engineer for its own failing in-flight deployment, the incident-responder for a live
+revision (/rollback); each AWS mutation passes the human's permission prompt.
+Exit: 0 rolled back and verified; 1 verification failed; 3 precondition; 6 timeout.
+######## exit 0
+######## scripts/smoke-test.sh --help
+Usage: scripts/smoke-test.sh [--profile <name>] [--region us-east-2] [--base-url http://<alb dns>]
+                             [--question "<text>"] [--record-dir <dir>] [--dry-run]
+
+Checks, in order (each prints ==> OK or ==> FAIL; the first failure stops the run):
+  healthz      GET /healthz = 200 {"status":"ok"} (no key; retried, idempotent)
+  readyz       GET /readyz = 200 {"status":"ready"} (no key; retried up to 3 minutes)
+  query        POST /v1/query {"question": <question>, "execution": "sync"} with a fresh
+               Idempotency-Key = 200, a qry- ID, and at least one claim with an evidence ID
+               (not retried; max 60 s against the 40 s synchronous deadline)
+  evidence     GET /v1/evidence/<first evidence ID of the first such claim> = 200, same evidenceId
+  idempotent   the same POST with the same Idempotency-Key = 200, same queryId and answerHash
+  auth-error   POST /v1/query without X-Api-Key = 401 {"error":"UNAUTHORIZED"}
+
+The API key is read from Secrets Manager (the ARN from terraform output api_key_secret_arn) into a
+shell variable and passed to curl on standard input (--config -), never in argv, a file, or output.
+
+Flags:
+  --base-url     default http://<terraform output alb_dns_name>
+  --question     default "Have Jack J. Dongarra and Yves Robert coauthored a paper?" (benchmark B07: one bounded researcher query)
+  --record-dir   default operations/releases (writes smoke-<stamp>.json and smoke-<stamp>/ bodies)
+  --dry-run      validate flags, print the checks, no AWS/Terraform/HTTP call
+
+Environment: AWS_PROFILE (or --profile).
+Run by: deploy-engineer after deploy.sh (and the incident-responder after a rollback).
+Rollback: none; on failure the deploy-engineer follows the rollback gate (scripts/rollback.sh).
+Exit: 0 all checks passed; 1 a check failed; 3 precondition.
+######## exit 0
+######## scripts/run-bounded-pipeline.sh --help
+Usage: scripts/run-bounded-pipeline.sh --fraction 25|50|100 --package-record <package-<sha>.json>
+           [--profile <name>] [--region us-east-2] [--reducers 2] [--shuffle-partitions 16]
+           [--hadoop-timeout-minutes 90] [--spark-timeout-minutes 150] [--record-dir <dir>] [--dry-run]
+
+Inputs (DBLP snapshot 2026-10-03; OpenAlex, Crossref, ORCID snapshot 2026-11-03):
+  --fraction 100  scratch/datasets/dblp/snapshot=2026-10-03/full/works.xml,
+                  scratch/datasets/{openalex,crossref}/full/works.jsonl,
+                  scratch/datasets/orcid/full/records.jsonl.gz
+  --fraction 25|50 scratch/datasets/fraction=<p>/{dblp/works.xml, openalex/works.jsonl,
+                  crossref/works.jsonl, orcid/records.jsonl.gz} (BLOCKED-ON dataset-engineer: no
+                  tool produces these yet; the script stops with exit 3 while they are missing)
+  DTD             scratch/datasets/dblp/snapshot=2026-10-03/raw/dblp.dtd
+
+Steps:
+  1. clean tree; HEAD = the package record's commit; local jars and scripts/emr/step.sh hash to it
+  2. account and Region; terraform outputs (bucket, the emr object); ruling 2 bounds re-checked:
+     release emr-spark-8.0.0, 1 primary, 1 to 2 core, Graviton type, on-demand
+  3. write-once uploads (skipped when present with the same sha256): inputs to
+     raw/<dataset>/snapshot=<d>/run=<input run>/ (input run = hash of the fraction and file hashes),
+     jars and step.sh to artifacts/jobs/<commit>/
+  4. one create-cluster call (no retry), auto-terminate, three steps:
+     classpath-probe (CONTINUE), hadoop-pipeline J01..J10 (TERMINATE_CLUSTER),
+     spark-pipeline jobs 1..11 (TERMINATE_CLUSTER); each job step has a timeout on the node
+  5. wait for TERMINATED (bounded); collect step timings, instance hours, the new Hadoop and Spark
+     run directories and their _manifest.json, and the step logs (classpath evidence)
+  6. write <record-dir>/<stamp>-fraction<p>/run.json plus the submitted steps, cluster description,
+     manifests, and logs
+
+Flags: --record-dir default operations/pipeline-runs; --dry-run validates flags and local inputs,
+prints the steps, makes no AWS/Terraform/git call.
+Environment: AWS_PROFILE (or --profile).
+Run by: deploy-engineer (/run-pipeline) or the human, after cloud window 1 is applied and
+scripts/package.sh recorded the jars. Rollback: nothing to roll back; outputs are new write-once
+run directories, and the cluster terminates itself (a hung step is killed by its timeout).
+Exit: 0 all steps completed and manifests found; 1 a step or check failed (cluster ID recorded);
+3 precondition; 6 timeout (the cluster ID is printed; the human may terminate it).
+######## exit 0
+######## scripts/load-stores.sh --help
+Usage: scripts/load-stores.sh --store-run <run-..> --vectors-run <run-..>
+           [--root scratch/stores/s3] [--vectors-root <root>] [--window-summary-run <run-..>]
+           [--window-summary-root scratch/runtime/wo8/s3] [--dynamo-concurrency 8]
+           [--neptune-timeout-minutes 60] [--profile <name>] [--region us-east-2]
+           [--record-dir <dir>] [--dry-run]
+
+Order (each step stops the script on failure; every loader is write-once and idempotent, so a
+rerun skips what is already loaded):
+  1. s3       LoadS3Cli --live --profile, once per run manifest, from the local roots:
+              runs/store-conversion/snapshot=2026-10-03/run=<store-run>/manifest.json (graph/neptune,
+              curated/dynamodb, curated/coauthor-evidence, semantic-context/candidates),
+              runs/embed/snapshot=2026-10-03/run=<vectors-run>/manifest.json (vectors/backup,
+              semantic-context/text), and
+              runs/load-window-summary/snapshot=2026-10-03/run=<window-summary-run>/manifest.json
+              (curated/window-summary, from scratch/runtime/wo8/s3)
+  2. neptune  the in-VPC path: one-off ECS task scholarchain-course-neptune-loader (no --profile; task
+              role) running LoadNeptuneCli --live --stage-from-bucket --dir
+              /tmp/stores/s3/graph/neptune/snapshot=2026-10-03/run=<store-run> --out /tmp/stores, then
+              one --status task every 2 minutes until LOAD_COMPLETED (bounded)
+  3. dynamodb LoadDynamoCli --live --profile --dir <root>/curated/dynamodb/snapshot=.../run=<store-run>
+              (about 876k conditional puts) --concurrency <n>
+  4. vectors  LoadVectorsCli --live --profile --input <vectors-root>/vectors/backup/snapshot=.../run=<vectors-run>
+The laptop loaders get exactly the tasks' SCHOLARCHAIN_* variables (terraform output
+runtime_environment), so SCHOLARCHAIN_ENVIRONMENT is non-local and the names are the deployed ones.
+
+Defaults: --root scratch/stores/s3, --vectors-root = --root, --window-summary-run
+run-6fbad498beb0d8f570df67665fb97544, --record-dir operations/pipeline-runs (writes
+store-load-<stamp>/ with every loader log and run.json).
+--dry-run validates flags and local manifests, prints the steps, no AWS/Terraform/git/sbt call.
+
+Environment: AWS_PROFILE (or --profile), used by the laptop loaders through LiveAws.
+Run by: the human (the storage live loaders are human-run, storage rulings 1 and 26), after deploy.sh
+applied cloud window 2. sbt runs with SPARK_LOCAL_IP=127.0.0.1 and -J-Xmx6g, one process at a time.
+Depends on (not yet merged): storage-engineer --live without --profile and --stage-from-bucket for
+LoadNeptuneCli (Phase 12 work order 2, BLOCKED-ON). Until then step 2 fails at the task.
+Rollback: none automatic; loads are write-once. Removing loaded data is a human-gated destructive
+action (docs/agents.md escalation 2); ending window 2 destroys the stores.
+Exit: 0 all loads done; 1 a loader failed; 3 precondition; 6 timeout.
+######## exit 0
+######## scripts/run-experiment.sh --help
+Usage: scripts/run-experiment.sh --manifest experiments/<path>.json [--profile <name>]
+                                 [--region us-east-2] [--results-root experiments/results] [--dry-run]
+
+Manifest (JSON, committed under experiments/ before the run):
+  {
+    "schemaVersion": "experiment-manifest-v1",
+    "experimentId": "<a-z 0-9 ->",                 used in the results path
+    "description": "<text>",
+    "command": ["<tracked executable under experiments/ or load-tests/>", "<arg>", ...],
+    "limits": {"maxMinutes": <1..240>, ...},       maxMinutes is enforced; every limit is recorded
+    "metrics": [{"namespace": "AWS/ECS", "metricName": "CPUUtilization",
+                 "dimensions": {"ClusterName": "...", "ServiceName": "..."}}, ...]
+  }
+
+Gates: the manifest is tracked by Git and unchanged from HEAD; the tree is clean (outside
+operations/ and experiments/results/); the command's first element is a tracked executable under
+experiments/ or load-tests/ (no other command can run); account and Region are printed first.
+The command runs from the repository root with SCHOLARCHAIN_EXPERIMENT_ID,
+SCHOLARCHAIN_EXPERIMENT_DIR (its raw results directory), AWS_PROFILE and AWS_REGION, and is stopped
+(TERM, then KILL after 30 s) at limits.maxMinutes.
+
+Writes <results-root>/<experimentId>/<UTC stamp>/: raw/ (the command's own outputs), stdout.log,
+stderr.log, and run-record.json (commit, manifest path and sha256, limits, start and end times,
+exit code, account, Region, metric locations). The directory is made read-only afterwards (raw
+results are immutable).
+
+Environment: AWS_PROFILE (or --profile).
+Run by: experiment-engineer (/experiment) with an approved, committed manifest.
+Rollback: none; an experiment changes no deployed resource beyond what its manifest's command does
+within the approved bounds.
+Exit: 0 command exited 0; 1 command failed; 3 precondition (uncommitted manifest, dirty tree);
+6 maxMinutes reached.
+######## exit 0
+######## scripts/archive-evidence.sh --help
+Usage: scripts/archive-evidence.sh --out-dir <new directory> [--plans-dir scratch/plans]
+           [--metrics-from <ISO-8601 UTC> --metrics-to <ISO-8601 UTC>] [--s3-prefix reports/evidence/<name>/]
+           [--profile <name>] [--region us-east-2] [--dry-run]
+
+Copies into <out-dir> (it must not exist: one directory per archive, never overwritten):
+  test-reports/<project>/   sbt JUnit XML from modules/*/target/test-reports and tests/target/test-reports
+  plans/<plan>/             plan.sha256, plan-meta.json, summary.md of every plan under --plans-dir
+                            (never plan.tfplan, plan.json, or plan.txt: they hold planned values)
+  operations/               package, release, smoke and rollback records (image digests), pipeline
+                            run and store-load records with their run manifests, plan summaries
+  experiments-results/      experiments/results/ (experiment outputs)
+  metrics/cloudwatch.json   with --metrics-from/--metrics-to: CloudWatch GetMetricData (60 s) for
+                            ECS CPU and memory per service, ALB requests, target 5xx and p90 latency,
+                            job queue and DLQ depth, Neptune CPU (runtime outputs only)
+  index.json, SHA256SUMS    commit, creation time, sources; a checksum of every file
+With --s3-prefix (must start with reports/evidence/ and be empty): uploads the directory to the data
+bucket under that prefix.
+
+Without --metrics-* and --s3-prefix no AWS call is made.
+--dry-run validates flags, lists the sources found, makes no AWS/Terraform/git call.
+Environment: AWS_PROFILE (or --profile) only for metrics or S3.
+Run by: the human or deploy-engineer (read-only on the sources; writes only <out-dir> and the prefix).
+Rollback: none; delete the new directory to discard an archive.
+Exit: 0 archived; 2 usage; 3 the out-dir or S3 prefix already exists.
+######## exit 0
+######## scripts/cleanup.sh --help
+Usage: scripts/cleanup.sh --stage runtime|infra|final [--evidence-archive <location>]
+                          [--var-file <path>] [--profile <name>] [--region us-east-2]
+                          [--out-dir scratch/plans] [--record-dir operations/cleanup] [--dry-run]
+       scripts/cleanup.sh --plan-file <dir>/plan.tfplan --confirm <64 hex> [--profile <name>]
+
+Stages (each keeps the Terraform state, local and backed up by the human outside the repository):
+  runtime  end of cloud window 2 (D-13): a plan with runtime_enabled = false. Destroys Neptune, the
+           DynamoDB tables, the S3 Vectors bucket and indexes, SQS, the API key secret (it enters its
+           7-day recovery window), ECS services, task definitions, the ALB, runtime security groups,
+           runtime IAM roles, alarms and dashboard. Keeps the network, data bucket, ECR, EMR roles,
+           CodeBuild, and log groups.
+  infra    after the evidence is archived: plan -destroy of the network, EMR roles and security
+           groups, CodeBuild and its role (and any runtime module left). Keeps the data bucket (grading
+           evidence), the ECR repository and its images, and every log group.
+  final    only after the instructor approved the evidence archive location, given as
+           --evidence-archive: plan -destroy of everything. The data bucket (force_destroy = false)
+           and the ECR repository (force_delete = false) are deleted only when already empty; the
+           script lists what they still hold and never empties them.
+Ephemeral EMR clusters are not Terraform resources: active ones are listed in the inventory, never
+terminated here.
+
+First invocation: clean tree, account and Region, inventory-before (Terraform state addresses,
+resources tagged Project=ScholarChain, active EMR clusters, ECR images, top-level bucket prefixes),
+the plan printed in full, every resource it destroys, every resource it keeps with the reason,
+and the plan sha256. Nothing is changed.
+Second invocation (--plan-file and --confirm): the sha256 must match, HEAD and the account must be
+the plan's; then terraform apply <plan file> (saved plan, no -auto-approve), inventory-after, and
+<record-dir>/cleanup-<stamp>-<stage>/record.json listing what remains and why.
+
+Environment: AWS_PROFILE (or --profile); TF_VAR_alarm_email (the configuration requires it; may be empty).
+Run by: the human architect only. Approval: the --confirm checksum is the documented human confirmation.
+Exit: 0 planned or destroyed; 2 usage; 3 precondition; 4 checksum mismatch; 1 terraform failure.
+######## exit 0

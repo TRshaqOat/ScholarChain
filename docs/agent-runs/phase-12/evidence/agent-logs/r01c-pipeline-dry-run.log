@@ -1,0 +1,24 @@
+== bash scripts/run-bounded-pipeline.sh --fraction 25 --package-record scratch/phase-12-logs/r01c-fixtures/package-fixture.json --dry-run
+==> STEP inputs
+    input scratch/datasets/fraction=25/dblp/works.xml bytes=16234807 sha256=03e790beabb37695f51aa4bbff1a3d8b1a76117518bd311b6138215b242a1aa3
+    input scratch/datasets/dblp/snapshot=2026-10-03/raw/dblp.dtd bytes=13134 sha256=2d864498f9eef9298662df11e3874171ff24cd4a21ab5974f1369c90acdb1ef6
+    input scratch/datasets/fraction=25/openalex/works.jsonl bytes=144354332 sha256=1490664d97a85250fcfb07e025e5fd0050ed26983e7ba81775329dd26bca9b0b
+    input scratch/datasets/fraction=25/crossref/works.jsonl bytes=45677021 sha256=6f4b71fc13dea4ee2d4536ebc9ff4bdd192ddc43f4f47d196b27dc86f3908a37
+    input scratch/datasets/fraction=25/orcid/records.jsonl.gz bytes=174426953 sha256=40f289397f8591ba85508e73b7dca38c67637e7824a7801eb2299d62870f0a3d
+==> STEP dry-run
+    no AWS, Terraform, or git call was made; steps that would run:
+    - refuse a dirty tree; HEAD must be 0123456789abcdef0123456789abcdef01234567; jar and step.sh sha256 must equal the package record
+    - aws sts get-caller-identity; terraform output (bucket, emr); bounds check
+    - write-once upload of 5 inputs (fraction 25) under raw/, jars under artifacts/jobs/0123456789abcdef0123456789abcdef01234567/
+    - aws emr create-cluster (once): emr-spark-8.0.0, 1 primary + core per the emr output, auto-terminate; steps classpath-probe, hadoop-pipeline (90 min), spark-pipeline (150 min, shuffle 16, reducers 2)
+    - poll describe-cluster until TERMINATED; collect steps, instance hours, run manifests, step logs
+    - describe-security-groups (read-only) of both EMR groups; warn about and record any 0.0.0.0/0 or ::/0 ingress
+    - write /Users/achyutpatel/Developer/Cloud/ScholarChain/operations/pipeline-runs/<stamp>-fraction25/run.json
+==> OK dry-run
+exit=0
+== independent check: shasum and wc of the same files
+03e790beabb37695f51aa4bbff1a3d8b1a76117518bd311b6138215b242a1aa3 16234807 scratch/datasets/fraction=25/dblp/works.xml
+2d864498f9eef9298662df11e3874171ff24cd4a21ab5974f1369c90acdb1ef6 13134 scratch/datasets/dblp/snapshot=2026-10-03/raw/dblp.dtd
+1490664d97a85250fcfb07e025e5fd0050ed26983e7ba81775329dd26bca9b0b 144354332 scratch/datasets/fraction=25/openalex/works.jsonl
+6f4b71fc13dea4ee2d4536ebc9ff4bdd192ddc43f4f47d196b27dc86f3908a37 45677021 scratch/datasets/fraction=25/crossref/works.jsonl
+40f289397f8591ba85508e73b7dca38c67637e7824a7801eb2299d62870f0a3d 174426953 scratch/datasets/fraction=25/orcid/records.jsonl.gz

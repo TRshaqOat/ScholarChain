@@ -1,0 +1,13 @@
+disable sha-check: modules/storage/src/main/scala/scholarchain/storage/cli/LoadNeptuneCli.scala line 226, sed 's/ || Hashing.sha256(b) != entry.sha256//'
+sha256 before 8d287100d18322b7de623e8a368aa8312d26c1bde998301ba6c1aef7d179a2c2
+disabled line:         case Some(b) if b.length != entry.bytes =>
+sha256 disabled ac2ef1996cf8e77d59f9356643cb866998dce4326620956bd7d8ad0e0e36d90a
+[info] - WO5 stage-from-bucket: a sha256 mismatch is refused and not written *** FAILED ***
+[info] Tests: succeeded 15, failed 1, canceled 0, ignored 0, pending 0
+[info] *** 1 TEST FAILED ***
+[error] Failed tests:
+[error] 	scholarchain.storage.CliSpec
+[error] (storage / Test / testOnly) sbt.TestsFailedException: Tests unsuccessful
+[error] Total time: 12 s, completed Nov 14, 2026, 4:51:04 PM
+sha256 restored 8d287100d18322b7de623e8a368aa8312d26c1bde998301ba6c1aef7d179a2c2
+RESTORE OK

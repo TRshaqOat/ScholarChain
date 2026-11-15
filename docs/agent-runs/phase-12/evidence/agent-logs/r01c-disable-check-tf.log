@@ -1,0 +1,10 @@
+== fixed variables.tf sha256 cd52a54fff00ec29e250a327da2461a8b9227a93980b11e65ba9da5cf2e790af
+== case F5-bad: fix present, haiku_calls_per_minute_cap default 32
+401:variable "haiku_calls_per_minute_cap" {
+402-  description = "Upper bound on live Haiku calls per minute from query-api and the worker together (work order 2: 8)."
+403-  type        = number
+404-  default     = 32
+Success! The configuration is valid.
+
+validate exit=0
+restored sha256 cd52a54fff00ec29e250a327da2461a8b9227a93980b11e65ba9da5cf2e790af

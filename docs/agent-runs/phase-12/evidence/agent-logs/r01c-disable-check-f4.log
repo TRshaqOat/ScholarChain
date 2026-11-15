@@ -1,0 +1,577 @@
+== fixed check.sh sha256 f7266c731ce008f345e5123d0fcb1afd696fa318d0c01d49050af7ceaa10c459; prefix copy sha256 39655b3479c3ca3b3d7cab16d8721826f141f3daaa55d011b047f69c666cd1de
+== shims first on PATH: python3 always exits 1 (a failing dataset validation); sbt is a no-op (sbt not run in this check)
+== RUN A: fixed check.sh
+==> STEP json
+==> OK json
+==> STEP constitution
+PASS  .claude/agents/build-engineer.md has name (build-engineer)
+PASS  .claude/agents/build-engineer.md has description (690 chars)
+PASS  .claude/agents/build-engineer.md has explicit tools (Read, Grep, Glob, Write, Edit, Bash)
+PASS  .claude/agents/build-engineer.md filename matches name
+PASS  .claude/agents/build-engineer.md has a refusal boundary
+PASS  .claude/agents/build-engineer.md has a structured report contract
+PASS  build-engineer is listed in docs/agents.md
+PASS  .claude/agents/code-reviewer.md has name (code-reviewer)
+PASS  .claude/agents/code-reviewer.md has description (701 chars)
+PASS  .claude/agents/code-reviewer.md has explicit tools (Read, Grep, Glob)
+PASS  .claude/agents/code-reviewer.md filename matches name
+PASS  .claude/agents/code-reviewer.md has a refusal boundary
+PASS  .claude/agents/code-reviewer.md has a structured report contract
+PASS  code-reviewer is listed in docs/agents.md
+PASS  .claude/agents/dataset-engineer.md has name (dataset-engineer)
+PASS  .claude/agents/dataset-engineer.md has description (646 chars)
+PASS  .claude/agents/dataset-engineer.md has explicit tools (Read, Grep, Glob, Write, Edit, Bash, WebFetch)
+PASS  .claude/agents/dataset-engineer.md filename matches name
+PASS  .claude/agents/dataset-engineer.md has a refusal boundary
+PASS  .claude/agents/dataset-engineer.md has a structured report contract
+PASS  dataset-engineer is listed in docs/agents.md
+PASS  .claude/agents/dependency-updater.md has name (dependency-updater)
+PASS  .claude/agents/dependency-updater.md has description (605 chars)
+PASS  .claude/agents/dependency-updater.md has explicit tools (Read, Grep, Glob, Edit, Bash, WebFetch, WebSearch)
+PASS  .claude/agents/dependency-updater.md filename matches name
+PASS  .claude/agents/dependency-updater.md has a refusal boundary
+PASS  .claude/agents/dependency-updater.md has a structured report contract
+PASS  dependency-updater is listed in docs/agents.md
+PASS  .claude/agents/deploy-engineer.md has name (deploy-engineer)
+PASS  .claude/agents/deploy-engineer.md has description (721 chars)
+PASS  .claude/agents/deploy-engineer.md has explicit tools (Read, Grep, Glob, Write, Bash, mcp__aws-api__call_aws)
+PASS  .claude/agents/deploy-engineer.md filename matches name
+PASS  .claude/agents/deploy-engineer.md has a refusal boundary
+PASS  .claude/agents/deploy-engineer.md has a structured report contract
+PASS  deploy-engineer is listed in docs/agents.md
+PASS  .claude/agents/documentation-engineer.md has name (documentation-engineer)
+PASS  .claude/agents/documentation-engineer.md has description (676 chars)
+PASS  .claude/agents/documentation-engineer.md has explicit tools (Read, Grep, Glob, Write, Edit, Bash, mcp__aws-docs__search_documentation, mcp__aws-docs__read_documentation)
+PASS  .claude/agents/documentation-engineer.md filename matches name
+PASS  .claude/agents/documentation-engineer.md has a refusal boundary
+PASS  .claude/agents/documentation-engineer.md has a structured report contract
+PASS  documentation-engineer is listed in docs/agents.md
+PASS  .claude/agents/domain-engineer.md has name (domain-engineer)
+PASS  .claude/agents/domain-engineer.md has description (778 chars)
+PASS  .claude/agents/domain-engineer.md has explicit tools (Read, Grep, Glob, Write, Edit, Bash)
+PASS  .claude/agents/domain-engineer.md filename matches name
+PASS  .claude/agents/domain-engineer.md has a refusal boundary
+PASS  .claude/agents/domain-engineer.md has a structured report contract
+PASS  domain-engineer is listed in docs/agents.md
+PASS  .claude/agents/entity-resolution-engineer.md has name (entity-resolution-engineer)
+PASS  .claude/agents/entity-resolution-engineer.md has description (801 chars)
+PASS  .claude/agents/entity-resolution-engineer.md has explicit tools (Read, Grep, Glob, Write, Edit, Bash)
+PASS  .claude/agents/entity-resolution-engineer.md filename matches name
+PASS  .claude/agents/entity-resolution-engineer.md has a refusal boundary
+PASS  .claude/agents/entity-resolution-engineer.md has a structured report contract
+PASS  entity-resolution-engineer is listed in docs/agents.md
+PASS  .claude/agents/experiment-engineer.md has name (experiment-engineer)
+PASS  .claude/agents/experiment-engineer.md has description (783 chars)
+PASS  .claude/agents/experiment-engineer.md has explicit tools (Read, Grep, Glob, Write, Edit, Bash, mcp__aws-api__call_aws)
+PASS  .claude/agents/experiment-engineer.md filename matches name
+PASS  .claude/agents/experiment-engineer.md has a refusal boundary
+PASS  .claude/agents/experiment-engineer.md has a structured report contract
+PASS  experiment-engineer is listed in docs/agents.md
+PASS  .claude/agents/factory-engineer.md has name (factory-engineer)
+PASS  .claude/agents/factory-engineer.md has description (575 chars)
+PASS  .claude/agents/factory-engineer.md has explicit tools (Read, Grep, Glob, Write, Edit, Bash)
+PASS  .claude/agents/factory-engineer.md filename matches name
+PASS  .claude/agents/factory-engineer.md has a refusal boundary
+PASS  .claude/agents/factory-engineer.md has a structured report contract
+PASS  factory-engineer is listed in docs/agents.md
+PASS  .claude/agents/hadoop-engineer.md has name (hadoop-engineer)
+PASS  .claude/agents/hadoop-engineer.md has description (751 chars)
+PASS  .claude/agents/hadoop-engineer.md has explicit tools (Read, Grep, Glob, Write, Edit, Bash, mcp__aws-docs__search_documentation, mcp__aws-docs__read_documentation)
+PASS  .claude/agents/hadoop-engineer.md filename matches name
+PASS  .claude/agents/hadoop-engineer.md has a refusal boundary
+PASS  .claude/agents/hadoop-engineer.md has a structured report contract
+PASS  hadoop-engineer is listed in docs/agents.md
+PASS  .claude/agents/incident-responder.md has name (incident-responder)
+PASS  .claude/agents/incident-responder.md has description (662 chars)
+PASS  .claude/agents/incident-responder.md has explicit tools (Read, Grep, Glob, Write, Edit, Bash, mcp__aws-api__call_aws, mcp__aws-docs__search_documentation, mcp__aws-docs__read_documentation)
+PASS  .claude/agents/incident-responder.md filename matches name
+PASS  .claude/agents/incident-responder.md has a refusal boundary
+PASS  .claude/agents/incident-responder.md has a structured report contract
+PASS  incident-responder is listed in docs/agents.md
+PASS  .claude/agents/infra-engineer.md has name (infra-engineer)
+PASS  .claude/agents/infra-engineer.md has description (875 chars)
+PASS  .claude/agents/infra-engineer.md has explicit tools (Read, Grep, Glob, Write, Edit, Bash, mcp__aws-api__call_aws, mcp__aws-api__suggest_aws_commands, mcp__terraform__SearchAwsProviderDocs, mcp__terraform__SearchAwsccProviderDocs, mcp__terraform__SearchSpecificAwsIaModules, mcp__terraform__SearchUserProvidedModule, mcp__terraform__RunCheckovScan, mcp__aws-docs__search_documentation, mcp__aws-docs__read_documentation, mcp__aws-docs__recommend)
+PASS  .claude/agents/infra-engineer.md filename matches name
+PASS  .claude/agents/infra-engineer.md has a refusal boundary
+PASS  .claude/agents/infra-engineer.md has a structured report contract
+PASS  infra-engineer is listed in docs/agents.md
+PASS  .claude/agents/rag-engineer.md has name (rag-engineer)
+PASS  .claude/agents/rag-engineer.md has description (850 chars)
+PASS  .claude/agents/rag-engineer.md has explicit tools (Read, Grep, Glob, Write, Edit, Bash, mcp__aws-docs__search_documentation, mcp__aws-docs__read_documentation)
+PASS  .claude/agents/rag-engineer.md filename matches name
+PASS  .claude/agents/rag-engineer.md has a refusal boundary
+PASS  .claude/agents/rag-engineer.md has a structured report contract
+PASS  rag-engineer is listed in docs/agents.md
+PASS  .claude/agents/service-engineer.md has name (service-engineer)
+PASS  .claude/agents/service-engineer.md has description (785 chars)
+PASS  .claude/agents/service-engineer.md has explicit tools (Read, Grep, Glob, Write, Edit, Bash)
+PASS  .claude/agents/service-engineer.md filename matches name
+PASS  .claude/agents/service-engineer.md has a refusal boundary
+PASS  .claude/agents/service-engineer.md has a structured report contract
+PASS  service-engineer is listed in docs/agents.md
+PASS  .claude/agents/spark-engineer.md has name (spark-engineer)
+PASS  .claude/agents/spark-engineer.md has description (787 chars)
+PASS  .claude/agents/spark-engineer.md has explicit tools (Read, Grep, Glob, Write, Edit, Bash, mcp__aws-docs__search_documentation, mcp__aws-docs__read_documentation)
+PASS  .claude/agents/spark-engineer.md filename matches name
+PASS  .claude/agents/spark-engineer.md has a refusal boundary
+PASS  .claude/agents/spark-engineer.md has a structured report contract
+PASS  spark-engineer is listed in docs/agents.md
+PASS  .claude/agents/storage-engineer.md has name (storage-engineer)
+PASS  .claude/agents/storage-engineer.md has description (847 chars)
+PASS  .claude/agents/storage-engineer.md has explicit tools (Read, Grep, Glob, Write, Edit, Bash, mcp__aws-docs__search_documentation, mcp__aws-docs__read_documentation)
+PASS  .claude/agents/storage-engineer.md filename matches name
+PASS  .claude/agents/storage-engineer.md has a refusal boundary
+PASS  .claude/agents/storage-engineer.md has a structured report contract
+PASS  storage-engineer is listed in docs/agents.md
+PASS  .claude/agents/test-engineer.md has name (test-engineer)
+PASS  .claude/agents/test-engineer.md has description (823 chars)
+PASS  .claude/agents/test-engineer.md has explicit tools (Read, Grep, Glob, Write, Edit, Bash)
+PASS  .claude/agents/test-engineer.md filename matches name
+PASS  .claude/agents/test-engineer.md has a refusal boundary
+PASS  .claude/agents/test-engineer.md has a structured report contract
+PASS  test-engineer is listed in docs/agents.md
+PASS  required agent factory-engineer exists
+PASS  required agent build-engineer exists
+PASS  required agent domain-engineer exists
+PASS  required agent dataset-engineer exists
+PASS  required agent hadoop-engineer exists
+PASS  required agent entity-resolution-engineer exists
+PASS  required agent spark-engineer exists
+PASS  required agent storage-engineer exists
+PASS  required agent rag-engineer exists
+PASS  required agent service-engineer exists
+PASS  required agent test-engineer exists
+PASS  required agent code-reviewer exists
+PASS  required agent infra-engineer exists
+PASS  required agent deploy-engineer exists
+PASS  required agent experiment-engineer exists
+PASS  required agent documentation-engineer exists
+PASS  required agent incident-responder exists
+PASS  required agent dependency-updater exists
+PASS  reviewer fence: code-reviewer tools are read-only (Read  Grep  Glob)
+PASS  .claude/settings.json parses as JSON
+PASS  .mcp.json parses as JSON
+PASS  .claude/settings.local.json does not exist
+PASS  bypass permissions mode is disabled
+PASS  deny rule present: Bash(terraform apply *)
+PASS  deny rule present: Bash(terraform destroy *)
+PASS  deny rule present: Bash(git push --force *)
+PASS  deny rule present: Bash(git push -f *)
+PASS  deny rule present: Bash(git push --force-with-lease *)
+PASS  deny rule present: Read(**/.env)
+PASS  deny rule present: Read(**/.env.*)
+PASS  deny rule present: Read(~/.aws/**)
+PASS  deny rule present: Edit(spec/**)
+PASS  deny rule present: Bash(aws s3 rb *)
+PASS  deny rule present: Bash(aws s3 rm *)
+PASS  deny rule present: Bash(aws dynamodb delete-table *)
+PASS  deny rule present: Bash(aws neptune delete-*)
+PASS  deny rule present: Bash(aws neptune-graph delete-*)
+PASS  deny rule present: Bash(aws s3vectors delete-index *)
+PASS  deny rule present: Bash(aws kms schedule-key-deletion *)
+PASS  deny rule present: Bash(aws emr terminate-clusters *)
+PASS  deny rule present: Bash(aws ecr delete-repository *)
+PASS  no auto-approved Bash rule of the write-or-execute class
+PASS  guard-paths.sh is registered for Read
+PASS  guard-paths.sh is registered for Grep
+PASS  guard-paths.sh is registered for Glob
+PASS  guard-paths.sh is registered for Write
+PASS  guard-paths.sh is registered for Edit
+PASS  guard-paths.sh is registered for MultiEdit
+PASS  guard-paths.sh is registered for NotebookEdit
+PASS  referenced hook exists: format-scala.sh
+PASS  referenced hook exists: guard-dangerous.sh
+PASS  referenced hook exists: guard-paths.sh
+PASS  referenced hook exists: validate-agent-files.sh
+PASS  referenced hook exists: verify-tests-ran.sh
+PASS  hook is referenced by settings: format-scala.sh
+PASS  hook is referenced by settings: guard-dangerous.sh
+PASS  hook is referenced by settings: guard-paths.sh
+PASS  hook is referenced by settings: validate-agent-files.sh
+PASS  hook is referenced by settings: verify-tests-ran.sh
+PASS  .mcp.json contains no secret-looking literal
+PASS  .mcp.json credential fields reference environment variables only
+PASS  .claude/hooks/format-scala.sh is executable
+PASS  .claude/hooks/format-scala.sh passes bash -n
+PASS  .claude/hooks/guard-dangerous.sh is executable
+PASS  .claude/hooks/guard-dangerous.sh passes bash -n
+PASS  .claude/hooks/guard-paths.sh is executable
+PASS  .claude/hooks/guard-paths.sh passes bash -n
+PASS  .claude/hooks/validate-agent-files.sh is executable
+PASS  .claude/hooks/validate-agent-files.sh passes bash -n
+PASS  .claude/hooks/verify-tests-ran.sh is executable
+PASS  .claude/hooks/verify-tests-ran.sh passes bash -n
+PASS  .claude/hooks/format-scala.sh has no --self-test mode (not required)
+PASS  .claude/hooks/guard-dangerous.sh --self-test passes (guard-dangerous self-test: 304/304 passed)
+PASS  .claude/hooks/guard-paths.sh --self-test passes (guard-paths self-test: 142/142 passed)
+PASS  .claude/hooks/verify-tests-ran.sh --self-test passes (verify-tests-ran self-test: 11/11 passed)
+PASS  .claude/commands/deploy.md names existing agent code-reviewer
+PASS  .claude/commands/deploy.md names existing agent deploy-engineer
+PASS  .claude/commands/deploy.md names existing agent incident-responder
+PASS  .claude/commands/deploy.md names existing agent infra-engineer
+PASS  .claude/commands/deploy.md names a responsible agent
+PASS  .claude/commands/deploy.md states its gates
+PASS  .claude/commands/deploy.md grants no allowed-tools
+PASS  .claude/commands/experiment.md names existing agent documentation-engineer
+PASS  .claude/commands/experiment.md names existing agent experiment-engineer
+PASS  .claude/commands/experiment.md names a responsible agent
+PASS  .claude/commands/experiment.md states its gates
+PASS  .claude/commands/experiment.md grants no allowed-tools
+PASS  .claude/commands/incident.md names existing agent incident-responder
+PASS  .claude/commands/incident.md names a responsible agent
+PASS  .claude/commands/incident.md states its gates
+PASS  .claude/commands/incident.md grants no allowed-tools
+PASS  .claude/commands/rollback.md names existing agent deploy-engineer
+PASS  .claude/commands/rollback.md names existing agent incident-responder
+PASS  .claude/commands/rollback.md names a responsible agent
+PASS  .claude/commands/rollback.md states its gates
+PASS  .claude/commands/rollback.md grants no allowed-tools
+PASS  .claude/commands/run-pipeline.md names existing agent deploy-engineer
+PASS  .claude/commands/run-pipeline.md names existing agent entity-resolution-engineer
+PASS  .claude/commands/run-pipeline.md names existing agent hadoop-engineer
+PASS  .claude/commands/run-pipeline.md names existing agent infra-engineer
+PASS  .claude/commands/run-pipeline.md names existing agent spark-engineer
+PASS  .claude/commands/run-pipeline.md names existing agent storage-engineer
+PASS  .claude/commands/run-pipeline.md names a responsible agent
+PASS  .claude/commands/run-pipeline.md states its gates
+PASS  .claude/commands/run-pipeline.md grants no allowed-tools
+validate-agent-files: 231/231 checks passed
+==> OK constitution
+==> STEP bash-syntax
+    ok   .claude/hooks/format-scala.sh
+    ok   .claude/hooks/guard-dangerous.sh
+    ok   .claude/hooks/guard-paths.sh
+    ok   .claude/hooks/validate-agent-files.sh
+    ok   .claude/hooks/verify-tests-ran.sh
+    ok   scripts/archive-evidence.sh
+    ok   scripts/check.sh
+    ok   scripts/cleanup.sh
+    ok   scripts/deploy.sh
+    ok   scripts/load-stores.sh
+    ok   scripts/package.sh
+    ok   scripts/plan.sh
+    ok   scripts/rollback.sh
+    ok   scripts/run-bounded-pipeline.sh
+    ok   scripts/run-experiment.sh
+    ok   scripts/smoke-test.sh
+    ok   scripts/emr/step.sh
+    ok   scripts/lib/common.sh
+    ok   datasets/scripts/build_samples.sh
+    ok   datasets/scripts/fetch_crossref.sh
+    ok   datasets/scripts/fetch_dblp.sh
+    ok   datasets/scripts/fetch_openalex.sh
+    ok   datasets/scripts/fetch_orcid.sh
+    ok   datasets/scripts/lib.sh
+    ok   datasets/scripts/make_fraction.sh
+    ok   datasets/scripts/validate.sh
+==> OK bash-syntax
+==> STEP shellcheck
+    SKIPPED: shellcheck not installed
+==> OK shellcheck
+==> STEP dataset-validation
+2026-11-15T03:45:21Z [PASS] bash -n datasets/scripts/build_samples.sh
+2026-11-15T03:45:21Z [PASS] bash -n datasets/scripts/fetch_crossref.sh
+2026-11-15T03:45:21Z [PASS] bash -n datasets/scripts/fetch_dblp.sh
+2026-11-15T03:45:21Z [PASS] bash -n datasets/scripts/fetch_openalex.sh
+2026-11-15T03:45:21Z [PASS] bash -n datasets/scripts/fetch_orcid.sh
+2026-11-15T03:45:21Z [PASS] bash -n datasets/scripts/lib.sh
+2026-11-15T03:45:21Z [PASS] bash -n datasets/scripts/make_fraction.sh
+2026-11-15T03:45:21Z [PASS] bash -n datasets/scripts/validate.sh
+SHIM python3: disable check, always fails
+2026-11-15T03:45:21Z [FAIL] python syntax datasets/scripts/dblp_extract.py
+SHIM python3: disable check, always fails
+2026-11-15T03:45:21Z [FAIL] python syntax datasets/scripts/make_fraction.py
+SHIM python3: disable check, always fails
+2026-11-15T03:45:21Z [FAIL] dblp_extract.py --self-test
+SHIM python3: disable check, always fails
+2026-11-15T03:45:21Z [FAIL] make_fraction.py --self-test (rule fraction-v1: exact DBLP rule, linkage, nesting, deterministic gzip)
+2026-11-15T03:45:21Z [PASS] config is valid JSON with venues, years, and pinned checksums
+2026-11-15T03:45:21Z [PASS] config orcid caps: sample_max_ids <= full_max_ids <= daily_request_cap < documented_anonymous_daily_reads, full_max_ids <= documented - 2000
+SHIM python3: disable check, always fails
+2026-11-15T03:45:21Z [FAIL] fetch_orcid.sh --self-test (selection priority, class a work ranking, and counts)
+SHIM python3: disable check, always fails
+2026-11-15T03:45:21Z [FAIL] validate: 6 check group(s) failed
+==> FAIL dataset-validation
+==> STEP terraform-fmt
+==> OK terraform-fmt
+==> STEP terraform-validate
+[32m[1mSuccess![0m The configuration is valid.
+[0m
+==> OK terraform-validate
+==> STEP sbt-check
+SHIM sbt: disable check only, sbt not run (args: -J-Xmx6g -batch check)
+==> OK sbt-check
+==> FAIL check failed: dataset-validation (exit 1)
+RUN A exit=1
+== RUN B: pre-fix check.sh in place, sha256 39655b3479c3ca3b3d7cab16d8721826f141f3daaa55d011b047f69c666cd1de
+==> STEP json
+==> OK json
+==> STEP constitution
+PASS  .claude/agents/build-engineer.md has name (build-engineer)
+PASS  .claude/agents/build-engineer.md has description (690 chars)
+PASS  .claude/agents/build-engineer.md has explicit tools (Read, Grep, Glob, Write, Edit, Bash)
+PASS  .claude/agents/build-engineer.md filename matches name
+PASS  .claude/agents/build-engineer.md has a refusal boundary
+PASS  .claude/agents/build-engineer.md has a structured report contract
+PASS  build-engineer is listed in docs/agents.md
+PASS  .claude/agents/code-reviewer.md has name (code-reviewer)
+PASS  .claude/agents/code-reviewer.md has description (701 chars)
+PASS  .claude/agents/code-reviewer.md has explicit tools (Read, Grep, Glob)
+PASS  .claude/agents/code-reviewer.md filename matches name
+PASS  .claude/agents/code-reviewer.md has a refusal boundary
+PASS  .claude/agents/code-reviewer.md has a structured report contract
+PASS  code-reviewer is listed in docs/agents.md
+PASS  .claude/agents/dataset-engineer.md has name (dataset-engineer)
+PASS  .claude/agents/dataset-engineer.md has description (646 chars)
+PASS  .claude/agents/dataset-engineer.md has explicit tools (Read, Grep, Glob, Write, Edit, Bash, WebFetch)
+PASS  .claude/agents/dataset-engineer.md filename matches name
+PASS  .claude/agents/dataset-engineer.md has a refusal boundary
+PASS  .claude/agents/dataset-engineer.md has a structured report contract
+PASS  dataset-engineer is listed in docs/agents.md
+PASS  .claude/agents/dependency-updater.md has name (dependency-updater)
+PASS  .claude/agents/dependency-updater.md has description (605 chars)
+PASS  .claude/agents/dependency-updater.md has explicit tools (Read, Grep, Glob, Edit, Bash, WebFetch, WebSearch)
+PASS  .claude/agents/dependency-updater.md filename matches name
+PASS  .claude/agents/dependency-updater.md has a refusal boundary
+PASS  .claude/agents/dependency-updater.md has a structured report contract
+PASS  dependency-updater is listed in docs/agents.md
+PASS  .claude/agents/deploy-engineer.md has name (deploy-engineer)
+PASS  .claude/agents/deploy-engineer.md has description (721 chars)
+PASS  .claude/agents/deploy-engineer.md has explicit tools (Read, Grep, Glob, Write, Bash, mcp__aws-api__call_aws)
+PASS  .claude/agents/deploy-engineer.md filename matches name
+PASS  .claude/agents/deploy-engineer.md has a refusal boundary
+PASS  .claude/agents/deploy-engineer.md has a structured report contract
+PASS  deploy-engineer is listed in docs/agents.md
+PASS  .claude/agents/documentation-engineer.md has name (documentation-engineer)
+PASS  .claude/agents/documentation-engineer.md has description (676 chars)
+PASS  .claude/agents/documentation-engineer.md has explicit tools (Read, Grep, Glob, Write, Edit, Bash, mcp__aws-docs__search_documentation, mcp__aws-docs__read_documentation)
+PASS  .claude/agents/documentation-engineer.md filename matches name
+PASS  .claude/agents/documentation-engineer.md has a refusal boundary
+PASS  .claude/agents/documentation-engineer.md has a structured report contract
+PASS  documentation-engineer is listed in docs/agents.md
+PASS  .claude/agents/domain-engineer.md has name (domain-engineer)
+PASS  .claude/agents/domain-engineer.md has description (778 chars)
+PASS  .claude/agents/domain-engineer.md has explicit tools (Read, Grep, Glob, Write, Edit, Bash)
+PASS  .claude/agents/domain-engineer.md filename matches name
+PASS  .claude/agents/domain-engineer.md has a refusal boundary
+PASS  .claude/agents/domain-engineer.md has a structured report contract
+PASS  domain-engineer is listed in docs/agents.md
+PASS  .claude/agents/entity-resolution-engineer.md has name (entity-resolution-engineer)
+PASS  .claude/agents/entity-resolution-engineer.md has description (801 chars)
+PASS  .claude/agents/entity-resolution-engineer.md has explicit tools (Read, Grep, Glob, Write, Edit, Bash)
+PASS  .claude/agents/entity-resolution-engineer.md filename matches name
+PASS  .claude/agents/entity-resolution-engineer.md has a refusal boundary
+PASS  .claude/agents/entity-resolution-engineer.md has a structured report contract
+PASS  entity-resolution-engineer is listed in docs/agents.md
+PASS  .claude/agents/experiment-engineer.md has name (experiment-engineer)
+PASS  .claude/agents/experiment-engineer.md has description (783 chars)
+PASS  .claude/agents/experiment-engineer.md has explicit tools (Read, Grep, Glob, Write, Edit, Bash, mcp__aws-api__call_aws)
+PASS  .claude/agents/experiment-engineer.md filename matches name
+PASS  .claude/agents/experiment-engineer.md has a refusal boundary
+PASS  .claude/agents/experiment-engineer.md has a structured report contract
+PASS  experiment-engineer is listed in docs/agents.md
+PASS  .claude/agents/factory-engineer.md has name (factory-engineer)
+PASS  .claude/agents/factory-engineer.md has description (575 chars)
+PASS  .claude/agents/factory-engineer.md has explicit tools (Read, Grep, Glob, Write, Edit, Bash)
+PASS  .claude/agents/factory-engineer.md filename matches name
+PASS  .claude/agents/factory-engineer.md has a refusal boundary
+PASS  .claude/agents/factory-engineer.md has a structured report contract
+PASS  factory-engineer is listed in docs/agents.md
+PASS  .claude/agents/hadoop-engineer.md has name (hadoop-engineer)
+PASS  .claude/agents/hadoop-engineer.md has description (751 chars)
+PASS  .claude/agents/hadoop-engineer.md has explicit tools (Read, Grep, Glob, Write, Edit, Bash, mcp__aws-docs__search_documentation, mcp__aws-docs__read_documentation)
+PASS  .claude/agents/hadoop-engineer.md filename matches name
+PASS  .claude/agents/hadoop-engineer.md has a refusal boundary
+PASS  .claude/agents/hadoop-engineer.md has a structured report contract
+PASS  hadoop-engineer is listed in docs/agents.md
+PASS  .claude/agents/incident-responder.md has name (incident-responder)
+PASS  .claude/agents/incident-responder.md has description (662 chars)
+PASS  .claude/agents/incident-responder.md has explicit tools (Read, Grep, Glob, Write, Edit, Bash, mcp__aws-api__call_aws, mcp__aws-docs__search_documentation, mcp__aws-docs__read_documentation)
+PASS  .claude/agents/incident-responder.md filename matches name
+PASS  .claude/agents/incident-responder.md has a refusal boundary
+PASS  .claude/agents/incident-responder.md has a structured report contract
+PASS  incident-responder is listed in docs/agents.md
+PASS  .claude/agents/infra-engineer.md has name (infra-engineer)
+PASS  .claude/agents/infra-engineer.md has description (875 chars)
+PASS  .claude/agents/infra-engineer.md has explicit tools (Read, Grep, Glob, Write, Edit, Bash, mcp__aws-api__call_aws, mcp__aws-api__suggest_aws_commands, mcp__terraform__SearchAwsProviderDocs, mcp__terraform__SearchAwsccProviderDocs, mcp__terraform__SearchSpecificAwsIaModules, mcp__terraform__SearchUserProvidedModule, mcp__terraform__RunCheckovScan, mcp__aws-docs__search_documentation, mcp__aws-docs__read_documentation, mcp__aws-docs__recommend)
+PASS  .claude/agents/infra-engineer.md filename matches name
+PASS  .claude/agents/infra-engineer.md has a refusal boundary
+PASS  .claude/agents/infra-engineer.md has a structured report contract
+PASS  infra-engineer is listed in docs/agents.md
+PASS  .claude/agents/rag-engineer.md has name (rag-engineer)
+PASS  .claude/agents/rag-engineer.md has description (850 chars)
+PASS  .claude/agents/rag-engineer.md has explicit tools (Read, Grep, Glob, Write, Edit, Bash, mcp__aws-docs__search_documentation, mcp__aws-docs__read_documentation)
+PASS  .claude/agents/rag-engineer.md filename matches name
+PASS  .claude/agents/rag-engineer.md has a refusal boundary
+PASS  .claude/agents/rag-engineer.md has a structured report contract
+PASS  rag-engineer is listed in docs/agents.md
+PASS  .claude/agents/service-engineer.md has name (service-engineer)
+PASS  .claude/agents/service-engineer.md has description (785 chars)
+PASS  .claude/agents/service-engineer.md has explicit tools (Read, Grep, Glob, Write, Edit, Bash)
+PASS  .claude/agents/service-engineer.md filename matches name
+PASS  .claude/agents/service-engineer.md has a refusal boundary
+PASS  .claude/agents/service-engineer.md has a structured report contract
+PASS  service-engineer is listed in docs/agents.md
+PASS  .claude/agents/spark-engineer.md has name (spark-engineer)
+PASS  .claude/agents/spark-engineer.md has description (787 chars)
+PASS  .claude/agents/spark-engineer.md has explicit tools (Read, Grep, Glob, Write, Edit, Bash, mcp__aws-docs__search_documentation, mcp__aws-docs__read_documentation)
+PASS  .claude/agents/spark-engineer.md filename matches name
+PASS  .claude/agents/spark-engineer.md has a refusal boundary
+PASS  .claude/agents/spark-engineer.md has a structured report contract
+PASS  spark-engineer is listed in docs/agents.md
+PASS  .claude/agents/storage-engineer.md has name (storage-engineer)
+PASS  .claude/agents/storage-engineer.md has description (847 chars)
+PASS  .claude/agents/storage-engineer.md has explicit tools (Read, Grep, Glob, Write, Edit, Bash, mcp__aws-docs__search_documentation, mcp__aws-docs__read_documentation)
+PASS  .claude/agents/storage-engineer.md filename matches name
+PASS  .claude/agents/storage-engineer.md has a refusal boundary
+PASS  .claude/agents/storage-engineer.md has a structured report contract
+PASS  storage-engineer is listed in docs/agents.md
+PASS  .claude/agents/test-engineer.md has name (test-engineer)
+PASS  .claude/agents/test-engineer.md has description (823 chars)
+PASS  .claude/agents/test-engineer.md has explicit tools (Read, Grep, Glob, Write, Edit, Bash)
+PASS  .claude/agents/test-engineer.md filename matches name
+PASS  .claude/agents/test-engineer.md has a refusal boundary
+PASS  .claude/agents/test-engineer.md has a structured report contract
+PASS  test-engineer is listed in docs/agents.md
+PASS  required agent factory-engineer exists
+PASS  required agent build-engineer exists
+PASS  required agent domain-engineer exists
+PASS  required agent dataset-engineer exists
+PASS  required agent hadoop-engineer exists
+PASS  required agent entity-resolution-engineer exists
+PASS  required agent spark-engineer exists
+PASS  required agent storage-engineer exists
+PASS  required agent rag-engineer exists
+PASS  required agent service-engineer exists
+PASS  required agent test-engineer exists
+PASS  required agent code-reviewer exists
+PASS  required agent infra-engineer exists
+PASS  required agent deploy-engineer exists
+PASS  required agent experiment-engineer exists
+PASS  required agent documentation-engineer exists
+PASS  required agent incident-responder exists
+PASS  required agent dependency-updater exists
+PASS  reviewer fence: code-reviewer tools are read-only (Read  Grep  Glob)
+PASS  .claude/settings.json parses as JSON
+PASS  .mcp.json parses as JSON
+PASS  .claude/settings.local.json does not exist
+PASS  bypass permissions mode is disabled
+PASS  deny rule present: Bash(terraform apply *)
+PASS  deny rule present: Bash(terraform destroy *)
+PASS  deny rule present: Bash(git push --force *)
+PASS  deny rule present: Bash(git push -f *)
+PASS  deny rule present: Bash(git push --force-with-lease *)
+PASS  deny rule present: Read(**/.env)
+PASS  deny rule present: Read(**/.env.*)
+PASS  deny rule present: Read(~/.aws/**)
+PASS  deny rule present: Edit(spec/**)
+PASS  deny rule present: Bash(aws s3 rb *)
+PASS  deny rule present: Bash(aws s3 rm *)
+PASS  deny rule present: Bash(aws dynamodb delete-table *)
+PASS  deny rule present: Bash(aws neptune delete-*)
+PASS  deny rule present: Bash(aws neptune-graph delete-*)
+PASS  deny rule present: Bash(aws s3vectors delete-index *)
+PASS  deny rule present: Bash(aws kms schedule-key-deletion *)
+PASS  deny rule present: Bash(aws emr terminate-clusters *)
+PASS  deny rule present: Bash(aws ecr delete-repository *)
+PASS  no auto-approved Bash rule of the write-or-execute class
+PASS  guard-paths.sh is registered for Read
+PASS  guard-paths.sh is registered for Grep
+PASS  guard-paths.sh is registered for Glob
+PASS  guard-paths.sh is registered for Write
+PASS  guard-paths.sh is registered for Edit
+PASS  guard-paths.sh is registered for MultiEdit
+PASS  guard-paths.sh is registered for NotebookEdit
+PASS  referenced hook exists: format-scala.sh
+PASS  referenced hook exists: guard-dangerous.sh
+PASS  referenced hook exists: guard-paths.sh
+PASS  referenced hook exists: validate-agent-files.sh
+PASS  referenced hook exists: verify-tests-ran.sh
+PASS  hook is referenced by settings: format-scala.sh
+PASS  hook is referenced by settings: guard-dangerous.sh
+PASS  hook is referenced by settings: guard-paths.sh
+PASS  hook is referenced by settings: validate-agent-files.sh
+PASS  hook is referenced by settings: verify-tests-ran.sh
+PASS  .mcp.json contains no secret-looking literal
+PASS  .mcp.json credential fields reference environment variables only
+PASS  .claude/hooks/format-scala.sh is executable
+PASS  .claude/hooks/format-scala.sh passes bash -n
+PASS  .claude/hooks/guard-dangerous.sh is executable
+PASS  .claude/hooks/guard-dangerous.sh passes bash -n
+PASS  .claude/hooks/guard-paths.sh is executable
+PASS  .claude/hooks/guard-paths.sh passes bash -n
+PASS  .claude/hooks/validate-agent-files.sh is executable
+PASS  .claude/hooks/validate-agent-files.sh passes bash -n
+PASS  .claude/hooks/verify-tests-ran.sh is executable
+PASS  .claude/hooks/verify-tests-ran.sh passes bash -n
+PASS  .claude/hooks/format-scala.sh has no --self-test mode (not required)
+PASS  .claude/hooks/guard-dangerous.sh --self-test passes (guard-dangerous self-test: 304/304 passed)
+PASS  .claude/hooks/guard-paths.sh --self-test passes (guard-paths self-test: 142/142 passed)
+PASS  .claude/hooks/verify-tests-ran.sh --self-test passes (verify-tests-ran self-test: 11/11 passed)
+PASS  .claude/commands/deploy.md names existing agent code-reviewer
+PASS  .claude/commands/deploy.md names existing agent deploy-engineer
+PASS  .claude/commands/deploy.md names existing agent incident-responder
+PASS  .claude/commands/deploy.md names existing agent infra-engineer
+PASS  .claude/commands/deploy.md names a responsible agent
+PASS  .claude/commands/deploy.md states its gates
+PASS  .claude/commands/deploy.md grants no allowed-tools
+PASS  .claude/commands/experiment.md names existing agent documentation-engineer
+PASS  .claude/commands/experiment.md names existing agent experiment-engineer
+PASS  .claude/commands/experiment.md names a responsible agent
+PASS  .claude/commands/experiment.md states its gates
+PASS  .claude/commands/experiment.md grants no allowed-tools
+PASS  .claude/commands/incident.md names existing agent incident-responder
+PASS  .claude/commands/incident.md names a responsible agent
+PASS  .claude/commands/incident.md states its gates
+PASS  .claude/commands/incident.md grants no allowed-tools
+PASS  .claude/commands/rollback.md names existing agent deploy-engineer
+PASS  .claude/commands/rollback.md names existing agent incident-responder
+PASS  .claude/commands/rollback.md names a responsible agent
+PASS  .claude/commands/rollback.md states its gates
+PASS  .claude/commands/rollback.md grants no allowed-tools
+PASS  .claude/commands/run-pipeline.md names existing agent deploy-engineer
+PASS  .claude/commands/run-pipeline.md names existing agent entity-resolution-engineer
+PASS  .claude/commands/run-pipeline.md names existing agent hadoop-engineer
+PASS  .claude/commands/run-pipeline.md names existing agent infra-engineer
+PASS  .claude/commands/run-pipeline.md names existing agent spark-engineer
+PASS  .claude/commands/run-pipeline.md names existing agent storage-engineer
+PASS  .claude/commands/run-pipeline.md names a responsible agent
+PASS  .claude/commands/run-pipeline.md states its gates
+PASS  .claude/commands/run-pipeline.md grants no allowed-tools
+validate-agent-files: 231/231 checks passed
+==> OK constitution
+==> STEP bash-syntax
+    ok   .claude/hooks/format-scala.sh
+    ok   .claude/hooks/guard-dangerous.sh
+    ok   .claude/hooks/guard-paths.sh
+    ok   .claude/hooks/validate-agent-files.sh
+    ok   .claude/hooks/verify-tests-ran.sh
+    ok   scripts/archive-evidence.sh
+    ok   scripts/check.sh
+    ok   scripts/cleanup.sh
+    ok   scripts/deploy.sh
+    ok   scripts/load-stores.sh
+    ok   scripts/package.sh
+    ok   scripts/plan.sh
+    ok   scripts/rollback.sh
+    ok   scripts/run-bounded-pipeline.sh
+    ok   scripts/run-experiment.sh
+    ok   scripts/smoke-test.sh
+    ok   scripts/emr/step.sh
+    ok   scripts/lib/common.sh
+==> OK bash-syntax
+==> STEP shellcheck
+    SKIPPED: shellcheck not installed
+==> OK shellcheck
+==> STEP terraform-fmt
+==> OK terraform-fmt
+==> STEP terraform-validate
+[32m[1mSuccess![0m The configuration is valid.
+[0m
+==> OK terraform-validate
+==> STEP sbt-check
+SHIM sbt: disable check only, sbt not run (args: -J-Xmx6g -batch check)
+==> OK sbt-check
+==> OK check: every gate passed
+RUN B exit=0
+== restored sha256 f7266c731ce008f345e5123d0fcb1afd696fa318d0c01d49050af7ceaa10c459

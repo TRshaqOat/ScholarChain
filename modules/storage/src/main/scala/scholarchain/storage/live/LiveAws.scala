@@ -4,6 +4,7 @@ import scholarchain.storage.TransientStoreException
 import software.amazon.awssdk.auth.credentials.{
   AwsCredentials,
   AwsCredentialsProvider,
+  DefaultCredentialsProvider,
   ProfileCredentialsProvider
 }
 import software.amazon.awssdk.awscore.client.builder.AwsClientBuilder
@@ -27,15 +28,27 @@ import java.time.Duration
 import scala.collection.concurrent.TrieMap
 import scala.jdk.CollectionConverters.*
 
-/** The explicit opt-in for live AWS calls: both --live and --profile, neither on by default
-  * (rulings 1 and 26). Nothing in this package runs unless a CLI was given one.
+/** The explicit opt-in for live AWS calls. The storage CLIs build one only from --live, off by
+  * default (rulings 1 and 26). --profile is optional in the four loader CLIs (Phase 12 work order
+  * 5) and in the services Launcher (work order 6); EmbedCli and the rag CLIs still need it.
+  * profileName None (an ECS task, which sets no profile; Phase 10 ruling 18) selects the SDK
+  * default credentials provider chain.
   */
-final case class LiveTarget(profile: String, region: String)
+final case class LiveTarget(profileName: Option[String], region: String):
+  /** The profile for log lines, or a label for the default chain. Never a credentials input. */
+  def profile: String = profileName.getOrElse(LiveTarget.DefaultChainLabel)
 
-/** Credentials of one named profile that are never resolved once for good. The SDK calls
-  * resolveCredentials for every request; the delegate (a ProfileCredentialsProvider, which caches
-  * and refreshes by the credentials' Expiration) is built on first use, and refresh() drops it so
-  * the next request re-reads the profile and reruns credential_process.
+object LiveTarget:
+  val DefaultChainLabel = "(none: SDK default credentials chain)"
+
+  /** A named profile (the human-run CLIs). */
+  def apply(profile: String, region: String): LiveTarget = LiveTarget(Some(profile), region)
+
+/** Credentials of one named profile (or of the default chain) that are never resolved once for
+  * good. The SDK calls resolveCredentials for every request; the delegate (LiveAws.provider, which
+  * caches and refreshes by the credentials' Expiration) is built on first use, and refresh() drops
+  * it so the next request re-reads the profile and reruns credential_process (or re-resolves the
+  * chain).
   */
 final class RefreshingCredentials(build: () => AwsCredentialsProvider)
     extends AwsCredentialsProvider
@@ -92,18 +105,28 @@ object LiveAws:
     require(timeoutMs >= 1, s"timeout $timeoutMs ms")
     overrides.toBuilder.apiCallTimeout(Duration.ofMillis(timeoutMs)).build()
 
-  private val profiles = TrieMap.empty[String, RefreshingCredentials]
+  private val profiles = TrieMap.empty[Option[String], RefreshingCredentials]
 
-  /** The one refreshing provider of t's profile, created on first request. build replaces the
-    * ProfileCredentialsProvider delegate factory (tests only; no profile file is read then).
+  /** The SDK provider for t: its named profile, or with no profile the SDK default chain (system
+    * properties, environment, web identity, the default profile, ECS container credentials, then
+    * the instance profile). Both cache and refresh by Expiration as the SDK does; constructing
+    * either reads no file and calls nothing.
+    */
+  def provider(t: LiveTarget): AwsCredentialsProvider =
+    t.profileName.fold[AwsCredentialsProvider](DefaultCredentialsProvider.builder().build())(
+      ProfileCredentialsProvider.create
+    )
+
+  /** The one refreshing provider of t's profile (or of the default chain), created on first
+    * request. build replaces the provider(t) delegate factory (tests only; nothing is read then).
     */
   def credentials(
       t: LiveTarget,
       build: Option[() => AwsCredentialsProvider] = None
   ): RefreshingCredentials =
     profiles.getOrElseUpdate(
-      t.profile,
-      RefreshingCredentials(build.getOrElse(() => ProfileCredentialsProvider.create(t.profile)))
+      t.profileName,
+      RefreshingCredentials(build.getOrElse(() => provider(t)))
     )
 
   private def configure[B <: AwsClientBuilder[B, ?]](

@@ -1,0 +1,54 @@
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+Cannot connect to the Docker daemon at unix:///Users/achyutpatel/.docker/run/docker.sock. Is the docker daemon running?
+Cannot connect to the Docker daemon at unix:///Users/achyutpatel/.docker/run/docker.sock. Is the docker daemon running?
+[info] Wrote /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/services/target/scala-3.3.7/services_3-0.1.0.pom
+[warn] multiple main classes detected: run 'show discoveredMainClasses' to see the list
+[info] Main Scala API documentation to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/services/target/scala-3.3.7/api...
+[info] Main Scala API documentation successful.
+[info] Wrote /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/core/target/scala-3.3.7/core_3-0.1.0.pom
+[info] Main Scala API documentation to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/core/target/scala-3.3.7/api...
+[info] Main Scala API documentation successful.
+[warn] multiple main classes detected: run 'show discoveredMainClasses' to see the list
+[info] Wrote /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/storage/target/scala-3.3.7/storage_3-0.1.0.pom
+[info] Main Scala API documentation to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/storage/target/scala-3.3.7/api...
+[info] Main Scala API documentation successful.
+[warn] multiple main classes detected: run 'show discoveredMainClasses' to see the list
+[info] Wrote /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/rag/target/scala-3.3.7/rag_3-0.1.0.pom
+[info] Main Scala API documentation to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/rag/target/scala-3.3.7/api...
+[info] Main Scala API documentation successful.
+[warn] [1] There are no exposed ports for your docker image
+[warn]  Configure the `dockerExposedPorts` or `dockerExposedUdpPorts` setting. E.g.
+[warn] 
+[warn]  // standard tcp ports
+[warn]  dockerExposedPorts ++= Seq(9000, 9001)
+[warn] 
+[warn]  // for udp ports
+[warn]  dockerExposedUdpPorts += 4444
+[warn]           
+[warn] [2] sbt-native-packager wasn't able to identify the docker version. Some features may not be enabled
+[warn] sbt-native packager tries to parse the `docker version` output. This can fail if
+[warn] 
+[warn]   - the output has changed:
+[warn]     $ docker version --format '{{.Server.APIVersion}}'
+[warn] 
+[warn]   - no `docker` executable is available
+[warn]     $ which docker
+[warn] 
+[warn]   - you have not the required privileges to run `docker`
+[warn] 
+[warn] You can display the parsed docker version in the sbt console with:
+[warn] 
+[warn]   sbt:your-project> show dockerApiVersion
+[warn] 
+[warn] As a last resort you could hard code the docker version, but it's not recommended!!
+[warn] 
+[warn]   import com.typesafe.sbt.packager.docker.DockerApiVersion
+[warn]   dockerApiVersion := Some(DockerApiVersion(1, 40))
+[warn]           
+[success] All package validations passed
+[success] Total time: 9 s, completed Nov 14, 2026, 3:12:51 PM

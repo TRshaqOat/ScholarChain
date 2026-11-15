@@ -1,0 +1,50 @@
+== disable check, Phase 12 WO1 storage-engineer, 2026-11-14T19:57:33Z
+== sha256 before:
+536e3328f0ee27beaf9bdde82f7c16b51ce2ff31962f8256ca83e3791d1c6173  modules/storage/src/main/scala/scholarchain/storage/live/LiveAws.scala
+== disabled (no-profile path reverted to the named-profile provider):
+114c114
+<     t.profileName.fold[AwsCredentialsProvider](DefaultCredentialsProvider.builder().build())(
+---
+>     t.profileName.fold[AwsCredentialsProvider](ProfileCredentialsProvider.create(t.profile))(
+== sha256 disabled:
+86fe8f369208ed856890c5b9c33a9a9cac4f5b650f5cc1036e7d2a5170449fda  modules/storage/src/main/scala/scholarchain/storage/live/LiveAws.scala
+== sbt storage/testOnly scholarchain.storage.LiveRequestSpec
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] compiling 1 Scala source to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/storage/target/scala-3.3.7/classes ...
+[info] done compiling
+SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+SLF4J: Defaulting to no-operation (NOP) logger implementation
+SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+[info] LiveRequestSpec:
+[info] - S3: write-once put carries If-None-Match and a SHA-256 checksum
+[info] - DynamoDB: attribute codec round trip and conditional put requests
+[info] - Neptune: loader request and status parsing
+[info] - S3 Vectors: put, get, and query requests; filter syntax; response parsing
+[info] - Bedrock: Titan V2 invoke request; transient error classification
+[info] - refreshing credentials: built lazily, re-resolved per call, rebuilt after refresh
+[info] - expired token: refresh and retry once; a second expiry or another 403 is not retried
+[info] - guarded refreshes the profile's credentials on an expired token and retries the call
+[info] - no profile (ECS) selects the SDK default chain; a profile keeps the named profile *** FAILED ***
+[info]   ProfileCredentialsProvider(profileName=(none: SDK default credentials chain)) was not instance of software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider (LiveRequestSpec.scala:227)
+[info] - every live client is built with the profile's refreshing credentials provider
+[info] - N1: the expired-token retry of a Titan call passes the caller's throttle first
+[info] - N2: a 403 on HeadObject gets one refresh and retry; a second 403 propagates
+[info] - N3: an expired token is detected by its error code alone
+[info] - N5: requests that fail on one expiry rerun credential_process once
+[info] Run completed in 514 milliseconds.
+[info] Total number of tests run: 14
+[info] Suites: completed 1, aborted 0
+[info] Tests: succeeded 13, failed 1, canceled 0, ignored 0, pending 0
+[info] *** 1 TEST FAILED ***
+[error] Failed tests:
+[error] 	scholarchain.storage.LiveRequestSpec
+[error] (storage / Test / testOnly) sbt.TestsFailedException: Tests unsuccessful
+[error] Total time: 3 s, completed Nov 14, 2026, 1:57:38 PM
+== sbt exit=1
+== restored; sha256 after:
+536e3328f0ee27beaf9bdde82f7c16b51ce2ff31962f8256ca83e3791d1c6173  modules/storage/src/main/scala/scholarchain/storage/live/LiveAws.scala

@@ -85,7 +85,7 @@ What each task needs, for the object reads and writes that the services wire. Th
 | graph-evidence-api | `logs/rag-runtime/*` (evidence payloads referenced by `payloadRef`) | none | not needed by its code paths. It has no S3 readiness probe, and it reads only keys that an EvidenceBundle item names. |
 
 **Window summaries (m3).** Only query-api and the worker open the window-summary object. graph-evidence-api answers no questions, so `GraphEvidenceApi` starts with `answers = false` and never opens it. It needs no `curated/window-summary/*` grant.
-- It still takes the key as a runtime run ID input, so its run ID equals that of query-api. In fake mode, the evidence records directory is named by that run ID.
+- When `SCHOLARCHAIN_WINDOW_SUMMARY_RUN` is set, it still takes the key as a runtime run ID input, so its run ID equals that of query-api. In fake mode, the evidence records directory is named by that run ID. On ECS it is not set (Phase 12 ruling 14a; section 5).
 - With `SCHOLARCHAIN_WINDOW_SUMMARY_RUN` set, it prints `window summaries: <key> not opened (this service answers no questions)`.
 - Tested: `CorpusQuerySpec` "graph-evidence-api never opens the window-summary object ...".
 
@@ -114,7 +114,7 @@ The run ID is `Workflow.runIdFor` over these inputs. Both tasks must have the sa
 Deployment rules (Phase 12 carry-forward, ruling 23):
 
 - Deploy query-api and the worker together, from one image and one task-definition revision of arguments and environment. A rolling deploy in which one task serves a different revision breaks results for jobs in flight.
-- graph-evidence-api should use the same inputs too. In live mode its evidence lookup does not depend on the run ID (it uses the evidenceById index).
+- graph-evidence-api does not set `SCHOLARCHAIN_WINDOW_SUMMARY_RUN` (Phase 12 ruling 14a, accepted), so its runtime run ID differs from that of query-api and the worker. This is harmless: in live mode its evidence lookup does not depend on the run ID (it uses the evidenceById index), and it answers no questions. Every other input above is the same for all three tasks.
 
 Each service prints its runtime run ID once at startup, on standard output. That line already existed and is unchanged:
 
@@ -122,6 +122,14 @@ Each service prints its runtime run ID once at startup, on standard output. That
 - `fake mode: runtime run <run ID>, snapshot <date>, outputs under <dir>`
 
 Compare the line of the query-api task with that of the worker task after every deployment.
+
+## 5a. Starting the services on ECS (Phase 12 work order 6)
+
+Command line (`Launcher.Usage`): `--live [--profile <name>] [--region <r>] --snapshot <date> --graph-run <runId> --items-run <runId> --vectors-run <runId>`. The API key comes from the variable `services.api-key-env` names (`SCHOLARCHAIN_API_KEY`, injected by ECS from Secrets Manager).
+
+- **No `--profile` on ECS.** `--live` without `--profile` builds `LiveTarget(None, region)`, which selects the SDK default credentials chain, so the task role supplies the credentials. `--profile <name>` gives `LiveTarget(Some(name), region)` (a human-run laptop start). What the task definition must and must not set for credentials is in `modules/storage/STORAGE.md` "Credentials on ECS". The region is `--region`, else the core `application.region` (`SCHOLARCHAIN_AWS_REGION`). Tested: `LauncherSpec`, with the task-definition arguments and variable names, no client built and no AWS call.
+- **Entry point.** The image keeps the sbt-native-packager default ENTRYPOINT `/opt/docker/bin/services`, which needs `-main <class>` because the package has several main classes. ECS appends `command` to the entrypoint, so a command `bin/query-api` would stop with "You need to pass -main argument". Each task definition therefore sets `entryPoint` to `/opt/docker/bin/<service>` (`query-api`, `graph-evidence-api`, `worker`) and passes only the arguments above as `command`. This supersedes the `bin/query-api` command form of Phase 10 ruling 18 (Phase 12 ruling 14b; the staged image of Phase 12 work order 3 has the three start scripts).
+- **Window summaries.** query-api and the worker set `SCHOLARCHAIN_WINDOW_SUMMARY_RUN`; graph-evidence-api does not (ruling 14a, section 5).
 
 ## 6. Request read timeout and unread bodies (Phase 11 D5)
 

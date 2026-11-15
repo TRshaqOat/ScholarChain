@@ -1,0 +1,29 @@
+python3 on the test PATH: none
+sbt on the test PATH: /private/tmp/claude-501/-Users-achyutpatel-Developer-Cloud-ScholarChain/4078c56e-a696-4232-9c44-5949bde6eb1d/scratchpad/r02a-nopy-bin/sbt
+== fixed check.sh sha256=bf733fd903fe7c65f1f97ad3059bef95ed1d4b950ce3ed67ab95597f3934ebb6
+==> FAIL missing tool: python3 (exit 2)
+fixed exit=2
+== pre-fix check.sh in place
+pre-fix sha256=f7266c731ce008f345e5123d0fcb1afd696fa318d0c01d49050af7ceaa10c459
+==> STEP json
+==> OK json
+==> STEP constitution
+==> OK constitution
+==> STEP bash-syntax
+==> OK bash-syntax
+==> STEP shellcheck
+==> OK shellcheck
+==> STEP dataset-validation
+2026-11-15T05:58:27Z [FAIL] required tool not found: python3
+==> FAIL dataset-validation
+==> STEP terraform-fmt
+==> OK terraform-fmt
+==> STEP terraform-validate
+==> OK terraform-validate
+==> STEP sbt-check
+==> OK sbt-check
+==> FAIL check failed: dataset-validation (exit 1)
+pre-fix exit=1
+== restore
+restored sha256=bf733fd903fe7c65f1f97ad3059bef95ed1d4b950ce3ed67ab95597f3934ebb6
+restore matches

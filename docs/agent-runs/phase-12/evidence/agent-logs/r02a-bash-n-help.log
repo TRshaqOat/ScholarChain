@@ -1,0 +1,55 @@
+bash -n ok scripts/check.sh
+bash -n ok scripts/run-experiment.sh
+shellcheck: not installed
+$ scripts/run-experiment.sh --help
+Usage: scripts/run-experiment.sh --manifest experiments/<path>.json [--profile <name>]
+                                 [--region us-east-2] [--results-root experiments/results] [--dry-run]
+
+Manifest (JSON, committed under experiments/ before the run):
+  {
+    "schemaVersion": "experiment-manifest-v1",
+    "experimentId": "<a-z 0-9 ->",                 used in the results path
+    "description": "<text>",
+    "command": ["<tracked executable under experiments/ or load-tests/>", "<arg>", ...],
+    "limits": {"maxMinutes": <1..240>, ...},       maxMinutes is enforced; every limit is recorded
+    "metrics": [{"namespace": "AWS/ECS", "metricName": "CPUUtilization",
+                 "dimensions": {"ClusterName": "...", "ServiceName": "..."}}, ...]
+  }
+
+Gates: the manifest is tracked by Git and unchanged from HEAD; the tree is clean (outside
+operations/ and experiments/results/); the command's first element is a tracked executable under
+experiments/ or load-tests/ (no other command can run); account and Region are printed first.
+The command runs from the repository root with SCHOLARCHAIN_EXPERIMENT_ID,
+SCHOLARCHAIN_EXPERIMENT_DIR (its raw results directory), AWS_PROFILE and AWS_REGION, and is stopped
+(TERM, then KILL after 30 s) at limits.maxMinutes.
+
+Writes <results-root>/<experimentId>/<UTC stamp>/: raw/ (the command's own outputs), stdout.txt,
+stderr.txt (.txt, not .log, because .gitignore ignores *.log), and run-record.json (commit,
+manifest path and sha256, limits, start and end times, exit code, account, Region, metric
+locations). The directory is made read-only afterwards (raw results are immutable).
+
+Environment: AWS_PROFILE (or --profile).
+Run by: experiment-engineer (/experiment) with an approved, committed manifest.
+Rollback: none; an experiment changes no deployed resource beyond what its manifest's command does
+within the approved bounds.
+Exit: 0 command exited 0; 1 command failed; 3 precondition (uncommitted manifest, dirty tree);
+6 maxMinutes reached.
+exit=0
+$ scripts/check.sh --help
+Usage: scripts/check.sh [--help]
+
+Gates, in order (all run; the exit code is 1 if any failed):
+  json               jq parses .claude/settings.json and .mcp.json
+  constitution       .claude/hooks/validate-agent-files.sh (agent files and hook self-tests)
+  bash-syntax        bash -n on .claude/hooks/*.sh, scripts/**/*.sh and datasets/scripts/*.sh
+  shellcheck         shellcheck -S error on scripts/**/*.sh (SKIPPED when not installed)
+  dataset-validation bash datasets/scripts/validate.sh (manifest, samples, checksums, self-tests;
+                     no network)
+  terraform-fmt      terraform fmt -check -recursive infra/terraform
+  terraform-validate terraform init -backend=false -lockfile=readonly, then validate
+  sbt-check          SPARK_LOCAL_IP=127.0.0.1 sbt -J-Xmx6g -batch check
+                     (scalafmt check, Test/compile, every test, markTestRun)
+
+Needs: jq, bash, python3 (dataset validation), terraform 1.16.6, sbt, a JDK. Network: only the first
+terraform init (provider download) and sbt dependency resolution. No AWS credentials are read.
+exit=0

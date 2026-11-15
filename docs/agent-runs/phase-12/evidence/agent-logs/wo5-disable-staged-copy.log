@@ -1,0 +1,14 @@
+disable staged-copy: modules/storage/src/main/scala/scholarchain/storage/cli/LoadNeptuneCli.scala line 231, sed 's/write(k, b)/None/'
+sha256 before 8d287100d18322b7de623e8a368aa8312d26c1bde998301ba6c1aef7d179a2c2
+disabled line:         case Some(b) => None
+sha256 disabled 7c492bd9db2e5f50af1f07bf1cb6db16461f312136fe77eedc1d1b861b159952
+[info] - WO5 stage-from-bucket: the staged copy matches the manifest; a rerun is unchanged *** FAILED ***
+[info] - WO5 stage-from-bucket: a sha256 mismatch is refused and not written *** FAILED ***
+[info] Tests: succeeded 14, failed 2, canceled 0, ignored 0, pending 0
+[info] *** 2 TESTS FAILED ***
+[error] Failed tests:
+[error] 	scholarchain.storage.CliSpec
+[error] (storage / Test / testOnly) sbt.TestsFailedException: Tests unsuccessful
+[error] Total time: 3 s, completed Nov 14, 2026, 4:51:18 PM
+sha256 restored 8d287100d18322b7de623e8a368aa8312d26c1bde998301ba6c1aef7d179a2c2
+RESTORE OK

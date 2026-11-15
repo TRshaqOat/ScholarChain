@@ -149,8 +149,30 @@ class ConfigLoaderSpec extends AnyFunSuite:
       "SCHOLARCHAIN_JOB_QUEUE_URL" -> queueUrl,
       "SCHOLARCHAIN_JOB_DLQ_URL" -> s"$queueUrl-dlq",
       "SCHOLARCHAIN_JOB_MAX_RECEIVE_COUNT" -> "5",
-      "SCHOLARCHAIN_WINDOW_SUMMARY_RUN" -> summaryRun
+      "SCHOLARCHAIN_WINDOW_SUMMARY_RUN" -> summaryRun,
+      "SCHOLARCHAIN_LLM_REQUESTS_PER_MINUTE" -> "4"
     )
+
+  test("phase 12 work order 4: SCHOLARCHAIN_LLM_REQUESTS_PER_MINUTE sets the Haiku throttle") {
+    val v = "SCHOLARCHAIN_LLM_REQUESTS_PER_MINUTE"
+    assert(load().runtime.llm.requestsPerMinute == 8) // reference default unchanged
+    assert(load(v -> "4").runtime.llm.requestsPerMinute == 4)
+    val f = file("scholarchain.runtime.llm.requests-per-minute = 2")
+    val overFile = load(ConfigLoader.ConfigFileEnv -> f.toString, v -> "4")
+    assert(overFile.runtime.llm.requestsPerMinute == 4) // the variable beats the file
+    assert(ConfigLoader.load(devEnv).map(_.runtime.llm.requestsPerMinute) == Right(4))
+    assert(load(v -> "1").runtime.llm.requestsPerMinute == 1)
+    for (x, msg) <- Seq(
+        "0" -> "rates, and timeouts must be positive",
+        "-1" -> "rates, and timeouts must be positive",
+        "9" -> "requests-per-minute must be at most 8",
+        "4.5" -> "whole number",
+        "" -> "runtime.llm.requests-per-minute",
+        "  " -> "runtime.llm.requests-per-minute"
+      )
+    do assert(errorsOf(devEnv + (v -> x)).contains(msg), s"'$x'")
+    assert(ConfigLoader.EnvOverrides(v) == "runtime.llm.requests-per-minute")
+  }
 
   private def errorsOf(env: Map[String, String]): String =
     ConfigLoader.load(env).fold(_.mkString("; "), c => fail(s"loaded: $c"))

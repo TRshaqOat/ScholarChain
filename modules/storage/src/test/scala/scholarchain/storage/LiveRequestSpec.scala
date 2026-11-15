@@ -5,6 +5,8 @@ import scholarchain.storage.live.*
 import software.amazon.awssdk.auth.credentials.{
   AwsBasicCredentials,
   AwsCredentialsProvider,
+  DefaultCredentialsProvider,
+  ProfileCredentialsProvider,
   StaticCredentialsProvider
 }
 import software.amazon.awssdk.awscore.exception.{AwsErrorDetails, AwsServiceException}
@@ -216,6 +218,20 @@ class LiveRequestSpec extends AnyFunSuite:
       if calls == 1 then throw expired("ExpiredTokenException") else c.resolveCredentials()
     }
     assert(calls == 2 && r.accessKeyId == "AKIDTEST2" && f.builds == 2)
+  }
+
+  test("no profile (ECS) selects the SDK default chain; a profile keeps the named profile") {
+    // Phase 10 ruling 18. Both providers are lazy: constructing one reads no file, calls nothing.
+    val ecs = LiveTarget(None, "us-east-2")
+    val named = LiveTarget("unit-test-select", "us-east-2")
+    assert(LiveAws.provider(ecs).isInstanceOf[DefaultCredentialsProvider])
+    assert(LiveAws.provider(named).isInstanceOf[ProfileCredentialsProvider])
+    assert(named.profileName.contains("unit-test-select") && named.region == "us-east-2")
+    assert(ecs.profile == LiveTarget.DefaultChainLabel && ecs.region == "us-east-2")
+    // One shared refreshing provider for the chain, never the entry of a profile named "default".
+    val c = LiveAws.credentials(ecs)
+    assert(LiveAws.credentials(ecs) eq c)
+    assert(!(LiveAws.credentials(LiveTarget("default", "us-east-2")) eq c))
   }
 
   test("every live client is built with the profile's refreshing credentials provider") {

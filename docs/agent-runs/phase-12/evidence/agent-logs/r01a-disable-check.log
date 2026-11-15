@@ -1,0 +1,76 @@
+== 2026-11-15T03:19:45Z r01a disable check (code review 1 F2)
+fixed sha256:   34b1a0961af615783f5d3940d5da51df46cae868e2c7cf70b9d6522baae21cd2
+36:sys.dont_write_bytecode = True  # python3 -I does not imply -B: no __pycache__ under datasets/scripts (code review 1 F2)
+-- pre-check: find datasets -name __pycache__ -o -name '*.pyc'
+(end)
+-- revert fix
+reverted sha256: 8fc2d137bde39a33a1419e678494870738ca0e5e1b140463f2c8c64076cbacc3
+0
+-- run python3 -I make_fraction.py --self-test (fix disabled)
+{"crossref": {"kept": 88, "percent": 22.0, "source": 400}, "dblp": {"kept": 88, "percent": 22.0, "source": 400}, "openalex": {"kept": 88, "percent": 21.945, "source": 401}, "orcid": {"kept": 264, "percent": 21.982, "source": 1201}}
+{"crossref": {"kept": 179, "percent": 44.75, "source": 400}, "dblp": {"kept": 179, "percent": 44.75, "source": 400}, "openalex": {"kept": 179, "percent": 44.638, "source": 401}, "orcid": {"kept": 537, "percent": 44.713, "source": 1201}}
+INFO full: dblp 400 records; rows {'openalex': 401, 'crossref': 400, 'orcid': 1201}; not linked by the fraction rule at 100 percent {'openalex': 1, 'crossref': 0, 'orcid': 1}
+PASS fraction=25 dblp/works.xml parses with expat and the DTD: 88 records
+PASS fraction=25 openalex/works.jsonl parses as JSON per line: 88 records
+PASS fraction=25 crossref/works.jsonl parses as JSON per line: 88 records
+PASS fraction=25 orcid/records.jsonl.gz parses as JSON per line: 264 records
+PASS fraction=25 dblp keys equal the rule applied to the full input: 88 kept, 88 expected
+PASS fraction=25 every OpenAlex and Crossref DOI is on a kept DBLP record (unlinked: openalex 0, crossref 0)
+PASS fraction=25 every ORCID iD appears on a kept record (unlinked: 0)
+PASS fraction=50 dblp/works.xml parses with expat and the DTD: 179 records
+PASS fraction=50 openalex/works.jsonl parses as JSON per line: 179 records
+PASS fraction=50 crossref/works.jsonl parses as JSON per line: 179 records
+PASS fraction=50 orcid/records.jsonl.gz parses as JSON per line: 537 records
+PASS fraction=50 dblp keys equal the rule applied to the full input: 179 kept, 179 expected
+PASS fraction=50 every OpenAlex and Crossref DOI is on a kept DBLP record (unlinked: openalex 0, crossref 0)
+PASS fraction=50 every ORCID iD appears on a kept record (unlinked: 0)
+PASS nesting dblp fraction=25 within fraction=50: 88 of 179 keys, byte-identical records
+PASS nesting openalex fraction=25 within fraction=50: 88 of 179 distinct records, byte-identical lines
+PASS nesting crossref fraction=25 within fraction=50: 88 of 179 distinct records, byte-identical lines
+PASS nesting orcid fraction=25 within fraction=50: 264 of 537 distinct records, byte-identical lines
+PASS nesting dblp fraction=50 within full: 179 of 400 keys, byte-identical records
+PASS nesting openalex fraction=50 within full: 179 of 401 distinct records, byte-identical lines
+PASS nesting crossref fraction=50 within full: 179 of 400 distinct records, byte-identical lines
+PASS nesting orcid fraction=50 within full: 537 of 1201 distinct records, byte-identical lines
+{"crossref": {"kept": 88, "percent": 22.0, "source": 400}, "dblp": {"kept": 88, "percent": 22.0, "source": 400}, "openalex": {"kept": 88, "percent": 21.945, "source": 401}, "orcid": {"kept": 264, "percent": 21.982, "source": 1201}}
+make_fraction self-test: OK
+exit=0
+-- find (fix disabled)
+datasets/scripts/__pycache__
+datasets/scripts/__pycache__/dblp_extract.cpython-313.pyc
+(end)
+-- delete the __pycache__ this check created
+-- restore fix
+restored sha256: 34b1a0961af615783f5d3940d5da51df46cae868e2c7cf70b9d6522baae21cd2
+MATCH fixed sha256
+-- run python3 -I make_fraction.py --self-test (fix enabled)
+{"crossref": {"kept": 88, "percent": 22.0, "source": 400}, "dblp": {"kept": 88, "percent": 22.0, "source": 400}, "openalex": {"kept": 88, "percent": 21.945, "source": 401}, "orcid": {"kept": 264, "percent": 21.982, "source": 1201}}
+{"crossref": {"kept": 179, "percent": 44.75, "source": 400}, "dblp": {"kept": 179, "percent": 44.75, "source": 400}, "openalex": {"kept": 179, "percent": 44.638, "source": 401}, "orcid": {"kept": 537, "percent": 44.713, "source": 1201}}
+INFO full: dblp 400 records; rows {'openalex': 401, 'crossref': 400, 'orcid': 1201}; not linked by the fraction rule at 100 percent {'openalex': 1, 'crossref': 0, 'orcid': 1}
+PASS fraction=25 dblp/works.xml parses with expat and the DTD: 88 records
+PASS fraction=25 openalex/works.jsonl parses as JSON per line: 88 records
+PASS fraction=25 crossref/works.jsonl parses as JSON per line: 88 records
+PASS fraction=25 orcid/records.jsonl.gz parses as JSON per line: 264 records
+PASS fraction=25 dblp keys equal the rule applied to the full input: 88 kept, 88 expected
+PASS fraction=25 every OpenAlex and Crossref DOI is on a kept DBLP record (unlinked: openalex 0, crossref 0)
+PASS fraction=25 every ORCID iD appears on a kept record (unlinked: 0)
+PASS fraction=50 dblp/works.xml parses with expat and the DTD: 179 records
+PASS fraction=50 openalex/works.jsonl parses as JSON per line: 179 records
+PASS fraction=50 crossref/works.jsonl parses as JSON per line: 179 records
+PASS fraction=50 orcid/records.jsonl.gz parses as JSON per line: 537 records
+PASS fraction=50 dblp keys equal the rule applied to the full input: 179 kept, 179 expected
+PASS fraction=50 every OpenAlex and Crossref DOI is on a kept DBLP record (unlinked: openalex 0, crossref 0)
+PASS fraction=50 every ORCID iD appears on a kept record (unlinked: 0)
+PASS nesting dblp fraction=25 within fraction=50: 88 of 179 keys, byte-identical records
+PASS nesting openalex fraction=25 within fraction=50: 88 of 179 distinct records, byte-identical lines
+PASS nesting crossref fraction=25 within fraction=50: 88 of 179 distinct records, byte-identical lines
+PASS nesting orcid fraction=25 within fraction=50: 264 of 537 distinct records, byte-identical lines
+PASS nesting dblp fraction=50 within full: 179 of 400 keys, byte-identical records
+PASS nesting openalex fraction=50 within full: 179 of 401 distinct records, byte-identical lines
+PASS nesting crossref fraction=50 within full: 179 of 400 distinct records, byte-identical lines
+PASS nesting orcid fraction=50 within full: 537 of 1201 distinct records, byte-identical lines
+{"crossref": {"kept": 88, "percent": 22.0, "source": 400}, "dblp": {"kept": 88, "percent": 22.0, "source": 400}, "openalex": {"kept": 88, "percent": 21.945, "source": 401}, "orcid": {"kept": 264, "percent": 21.982, "source": 1201}}
+make_fraction self-test: OK
+exit=0
+-- find (fix enabled)
+(end)

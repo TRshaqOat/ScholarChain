@@ -1,0 +1,8 @@
+fraction=25 works pass:
+{"bad_orcid_checksum": 0, "distinct_author_names": 62443, "distinct_dois": 27183, "distinct_orcids_on_author_elements": 19755, "records_scanned": 27993, "subset_matched": 27993, "written": 27993, "written_with_doi": 26722}
+fraction=25 orcid-work-counts pass:
+{"dblp_dois_on_several_records": 0, "dblp_records": 27993, "dblp_records_with_doi": 26722, "openalex_works": 27129, "openalex_works_matched_to_dblp_record": 27129, "openalex_works_unmatched_with_doi": 0, "openalex_works_without_doi": 0, "orcids_counted": 43041}
+fraction=50 works pass:
+{"bad_orcid_checksum": 0, "distinct_author_names": 101281, "distinct_dois": 54051, "distinct_orcids_on_author_elements": 32742, "records_scanned": 55598, "subset_matched": 55598, "written": 55598, "written_with_doi": 53120}
+fraction=50 orcid-work-counts pass:
+{"dblp_dois_on_several_records": 0, "dblp_records": 55598, "dblp_records_with_doi": 53120, "openalex_works": 53949, "openalex_works_matched_to_dblp_record": 53949, "openalex_works_unmatched_with_doi": 0, "openalex_works_without_doi": 0, "orcids_counted": 69547}

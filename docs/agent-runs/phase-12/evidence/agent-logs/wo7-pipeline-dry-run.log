@@ -1,0 +1,22 @@
+### --fraction 25 --dry-run
+==> STEP dry-run
+    no AWS, Terraform, or git call was made; steps that would run:
+    - refuse a dirty tree; HEAD must be 0000000000000000000000000000000000000000; jar and step.sh sha256 must equal the package record
+    - aws sts get-caller-identity; terraform output (bucket, emr); bounds check
+    - write-once upload of 5 inputs (fraction 25) under raw/, jars under artifacts/jobs/0000000000000000000000000000000000000000/
+    - aws emr create-cluster (once): emr-spark-8.0.0, 1 primary + core per the emr output, auto-terminate; steps classpath-probe, hadoop-pipeline (90 min), spark-pipeline (150 min, shuffle 16, reducers 2)
+    - poll describe-cluster until TERMINATED; collect steps, instance hours, run manifests, step logs
+    - write /Users/achyutpatel/Developer/Cloud/ScholarChain/operations/pipeline-runs/<stamp>-fraction25/run.json
+==> OK dry-run
+exit=0
+### --fraction 50 --dry-run
+==> STEP dry-run
+    no AWS, Terraform, or git call was made; steps that would run:
+    - refuse a dirty tree; HEAD must be 0000000000000000000000000000000000000000; jar and step.sh sha256 must equal the package record
+    - aws sts get-caller-identity; terraform output (bucket, emr); bounds check
+    - write-once upload of 5 inputs (fraction 50) under raw/, jars under artifacts/jobs/0000000000000000000000000000000000000000/
+    - aws emr create-cluster (once): emr-spark-8.0.0, 1 primary + core per the emr output, auto-terminate; steps classpath-probe, hadoop-pipeline (90 min), spark-pipeline (150 min, shuffle 16, reducers 2)
+    - poll describe-cluster until TERMINATED; collect steps, instance hours, run manifests, step logs
+    - write /Users/achyutpatel/Developer/Cloud/ScholarChain/operations/pipeline-runs/<stamp>-fraction50/run.json
+==> OK dry-run
+exit=0

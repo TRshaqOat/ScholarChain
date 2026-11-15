@@ -1,0 +1,1450 @@
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] scalafmt: Checking 1 Scala sources (/Users/achyutpatel/Developer/Cloud/ScholarChain)...
+[info] scalafmt: Checking 2 Scala sources (/Users/achyutpatel/Developer/Cloud/ScholarChain)...
+[success] Total time: 1 s, completed Nov 14, 2026, 4:18:18 PM
+[info] scalafmt: Checking 1 Scala sources (/Users/achyutpatel/Developer/Cloud/ScholarChain/modules/core)...
+[success] Total time: 0 s, completed Nov 14, 2026, 4:18:18 PM
+[info] compiling 1 Scala source to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/core/target/scala-3.3.7/classes ...
+[info] done compiling
+[info] compiling 1 Scala source to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/core/target/scala-3.3.7/test-classes ...
+[info] done compiling
+[success] Total time: 4 s, completed Nov 14, 2026, 4:18:23 PM
+WARNING: Using incubator modules: jdk.incubator.vector
+SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+SLF4J: Defaulting to no-operation (NOP) logger implementation
+SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+[info] StableIdsSpec:
+[info] - frozen formula values match an independent implementation
+[info] - IDs are deterministic across calls
+[info] - run IDs ignore input order but change with attempt, code, config, and inputs
+[info] - work IDs are namespace plus authoritative source ID
+[info] - researcher ID uses a validated ORCID, else a versioned ScholarChain identity ID
+[info] - ORCID checksum is enforced and synthetic fixture IDs are never ORCID iDs
+[info] - coauthor edge ID is independent of argument order and depends on window and policy
+[info] - graph edge ID canonicalizes undirected endpoints only, and evidence order is ignored
+[info] - community ID: frozen value (JOBS.md job 6 formula), shape, and window sensitivity
+[info] - chunk ID changes with any of its inputs
+[info] - affiliation-name ID: frozen value, canonical form, version, and empty names
+[info] - ID parts containing the separator are refused
+[info] - canonical pair rule: smaller ID first, self-pairs refused
+[info] - query ID: frozen value (RUNTIME.md audit formula), shape, input sensitivity, and guards
+[info] - Phase 10 job ID: frozen value, one job per query, shape, and guard
+[info] - Phase 10 node ID: every GraphNode ID shape is a node ID; other text is not
+[info] - ID format checks accept well-formed and reject malformed IDs
+{
+  "policyVersion": "er-v2",
+  "labelledRows": 9,
+  "byEntityType": {
+    "RESEARCHER": {
+      "overall": {
+        "n": 8,
+        "unsure": 1,
+        "tp": 2,
+        "fp": 1,
+        "fn": 2,
+        "tn": 3,
+        "precision": 0.6666666666666666,
+        "recall": 0.5,
+        "f1": 0.5714285714285715,
+        "coverage": 0.75,
+        "unresolvedRate": 0.25,
+        "confusion": {
+          "MATCH": {
+            "ACCEPTED": 2,
+            "CONFLICT": 0,
+            "REJECTED": 1,
+            "UNRESOLVED": 1
+          },
+          "NON_MATCH": {
+            "ACCEPTED": 1,
+            "CONFLICT": 1,
+            "REJECTED": 1,
+            "UNRESOLVED": 1
+          },
+          "UNSURE": {
+            "ACCEPTED": 1,
+            "CONFLICT": 0,
+            "REJECTED": 0,
+            "UNRESOLVED": 0
+          }
+        }
+      },
+      "byPath": {
+        "EXACT_ID": {
+          "n": 2,
+          "unsure": 0,
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "tn": 1,
+          "precision": 1,
+          "recall": 1,
+          "f1": 1,
+          "coverage": 1,
+          "unresolvedRate": 0,
+          "confusion": {
+            "MATCH": {
+              "ACCEPTED": 1,
+              "CONFLICT": 0,
+              "REJECTED": 0,
+              "UNRESOLVED": 0
+            },
+            "NON_MATCH": {
+              "ACCEPTED": 0,
+              "CONFLICT": 1,
+              "REJECTED": 0,
+              "UNRESOLVED": 0
+            },
+            "UNSURE": {
+              "ACCEPTED": 0,
+              "CONFLICT": 0,
+              "REJECTED": 0,
+              "UNRESOLVED": 0
+            }
+          }
+        },
+        "DETERMINISTIC": {
+          "n": 0,
+          "unsure": 0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "tn": 0,
+          "precision": null,
+          "recall": null,
+          "f1": null,
+          "coverage": null,
+          "unresolvedRate": null,
+          "confusion": {
+            "MATCH": {
+              "ACCEPTED": 0,
+              "CONFLICT": 0,
+              "REJECTED": 0,
+              "UNRESOLVED": 0
+            },
+            "NON_MATCH": {
+              "ACCEPTED": 0,
+              "CONFLICT": 0,
+              "REJECTED": 0,
+              "UNRESOLVED": 0
+            },
+            "UNSURE": {
+              "ACCEPTED": 0,
+              "CONFLICT": 0,
+              "REJECTED": 0,
+              "UNRESOLVED": 0
+            }
+          }
+        },
+        "PROBABILISTIC": {
+          "n": 5,
+          "unsure": 1,
+          "tp": 1,
+          "fp": 1,
+          "fn": 1,
+          "tn": 2,
+          "precision": 0.5,
+          "recall": 0.5,
+          "f1": 0.5,
+          "coverage": 0.8,
+          "unresolvedRate": 0.2,
+          "confusion": {
+            "MATCH": {
+              "ACCEPTED": 1,
+              "CONFLICT": 0,
+              "REJECTED": 1,
+              "UNRESOLVED": 0
+            },
+            "NON_MATCH": {
+              "ACCEPTED": 1,
+              "CONFLICT": 0,
+              "REJECTED": 1,
+              "UNRESOLVED": 1
+            },
+            "UNSURE": {
+              "ACCEPTED": 1,
+              "CONFLICT": 0,
+              "REJECTED": 0,
+              "UNRESOLVED": 0
+            }
+          }
+        },
+        "LLM_BAND": {
+          "n": 1,
+          "unsure": 0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 1,
+          "tn": 0,
+          "precision": null,
+          "recall": 0,
+          "f1": null,
+          "coverage": 0,
+          "unresolvedRate": 1,
+          "confusion": {
+            "MATCH": {
+              "ACCEPTED": 0,
+              "CONFLICT": 0,
+              "REJECTED": 0,
+              "UNRESOLVED": 1
+            },
+            "NON_MATCH": {
+              "ACCEPTED": 0,
+              "CONFLICT": 0,
+              "REJECTED": 0,
+              "UNRESOLVED": 0
+            },
+            "UNSURE": {
+              "ACCEPTED": 0,
+              "CONFLICT": 0,
+              "REJECTED": 0,
+              "UNRESOLVED": 0
+            }
+          }
+        },
+        "LLM": {
+          "n": 0,
+          "unsure": 0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "tn": 0,
+          "precision": null,
+          "recall": null,
+          "f1": null,
+          "coverage": null,
+          "unresolvedRate": null,
+          "confusion": {
+            "MATCH": {
+              "ACCEPTED": 0,
+              "CONFLICT": 0,
+              "REJECTED": 0,
+              "UNRESOLVED": 0
+            },
+            "NON_MATCH": {
+              "ACCEPTED": 0,
+              "CONFLICT": 0,
+              "REJECTED": 0,
+              "UNRESOLVED": 0
+            },
+            "UNSURE": {
+              "ACCEPTED": 0,
+              "CONFLICT": 0,
+              "REJECTED": 0,
+              "UNRESOLVED": 0
+            }
+          }
+        }
+      }
+    },
+    "WORK": {
+      "overall": {
+        "n": 0,
+        "unsure": 0,
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "tn": 0,
+        "precision": null,
+        "recall": null,
+        "f1": null,
+        "coverage": null,
+        "unresolvedRate": null,
+        "confusion": {
+          "MATCH": {
+            "ACCEPTED": 0,
+            "CONFLICT": 0,
+            "REJECTED": 0,
+            "UNRESOLVED": 0
+          },
+          "NON_MATCH": {
+            "ACCEPTED": 0,
+            "CONFLICT": 0,
+            "REJECTED": 0,
+            "UNRESOLVED": 0
+          },
+          "UNSURE": {
+            "ACCEPTED": 0,
+            "CONFLICT": 0,
+            "REJECTED": 0,
+            "UNRESOLVED": 0
+          }
+        }
+      },
+      "byPath": {
+        "EXACT_ID": {
+          "n": 0,
+          "unsure": 0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "tn": 0,
+          "precision": null,
+          "recall": null,
+          "f1": null,
+          "coverage": null,
+          "unresolvedRate": null,
+          "confusion": {
+            "MATCH": {
+              "ACCEPTED": 0,
+              "CONFLICT": 0,
+              "REJECTED": 0,
+              "UNRESOLVED": 0
+            },
+            "NON_MATCH": {
+              "ACCEPTED": 0,
+              "CONFLICT": 0,
+              "REJECTED": 0,
+              "UNRESOLVED": 0
+            },
+            "UNSURE": {
+              "ACCEPTED": 0,
+              "CONFLICT": 0,
+              "REJECTED": 0,
+              "UNRESOLVED": 0
+            }
+          }
+        },
+        "DETERMINISTIC": {
+          "n": 0,
+          "unsure": 0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "tn": 0,
+          "precision": null,
+          "recall": null,
+          "f1": null,
+          "coverage": null,
+          "unresolvedRate": null,
+          "confusion": {
+            "MATCH": {
+              "ACCEPTED": 0,
+              "CONFLICT": 0,
+              "REJECTED": 0,
+              "UNRESOLVED": 0
+            },
+            "NON_MATCH": {
+              "ACCEPTED": 0,
+              "CONFLICT": 0,
+              "REJECTED": 0,
+              "UNRESOLVED": 0
+            },
+            "UNSURE": {
+              "ACCEPTED": 0,
+              "CONFLICT": 0,
+              "REJECTED": 0,
+              "UNRESOLVED": 0
+            }
+          }
+        },
+        "PROBABILISTIC": {
+          "n": 0,
+          "unsure": 0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "tn": 0,
+          "precision": null,
+          "recall": null,
+          "f1": null,
+          "coverage": null,
+          "unresolvedRate": null,
+          "confusion": {
+            "MATCH": {
+              "ACCEPTED": 0,
+              "CONFLICT": 0,
+              "REJECTED": 0,
+              "UNRESOLVED": 0
+            },
+            "NON_MATCH": {
+              "ACCEPTED": 0,
+              "CONFLICT": 0,
+              "REJECTED": 0,
+              "UNRESOLVED": 0
+            },
+            "UNSURE": {
+              "ACCEPTED": 0,
+              "CONFLICT": 0,
+              "REJECTED": 0,
+              "UNRESOLVED": 0
+            }
+          }
+        },
+        "LLM_BAND": {
+          "n": 0,
+          "unsure": 0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "tn": 0,
+          "precision": null,
+          "recall": null,
+          "f1": null,
+          "coverage": null,
+          "unresolvedRate": null,
+          "confusion": {
+            "MATCH": {
+              "ACCEPTED": 0,
+              "CONFLICT": 0,
+              "REJECTED": 0,
+              "UNRESOLVED": 0
+            },
+            "NON_MATCH": {
+              "ACCEPTED": 0,
+              "CONFLICT": 0,
+              "REJECTED": 0,
+              "UNRESOLVED": 0
+            },
+            "UNSURE": {
+              "ACCEPTED": 0,
+              "CONFLICT": 0,
+              "REJECTED": 0,
+              "UNRESOLVED": 0
+            }
+          }
+        },
+        "LLM": {
+          "n": 0,
+          "unsure": 0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "tn": 0,
+          "precision": null,
+          "recall": null,
+          "f1": null,
+          "coverage": null,
+          "unresolvedRate": null,
+          "confusion": {
+            "MATCH": {
+              "ACCEPTED": 0,
+              "CONFLICT": 0,
+              "REJECTED": 0,
+              "UNRESOLVED": 0
+            },
+            "NON_MATCH": {
+              "ACCEPTED": 0,
+              "CONFLICT": 0,
+              "REJECTED": 0,
+              "UNRESOLVED": 0
+            },
+            "UNSURE": {
+              "ACCEPTED": 0,
+              "CONFLICT": 0,
+              "REJECTED": 0,
+              "UNRESOLVED": 0
+            }
+          }
+        }
+      }
+    }
+  }
+}
+[info] LogicSpec:
+[info] - pair expansion: 0 and 1 authors give no pairs
+[info] - pair expansion: 2 authors give exactly the pair (#1, #2)
+[info] - pair expansion: 3 authors give (#1,#2), (#1,#3), (#2,#3)
+[info] - pair expansion: 12 authors give 66 distinct canonical pairs; #10 sorts before #2
+[info] - pair records carry work ID, year, positions, source provenance, and validate
+[info] - a team lists mention IDs in author order and validates
+[info] - team-size buckets
+[info] - exact keys use core DOI and ORCID normalization
+[info] - exact DOI join: non-DBLP works match the single DBLP work; repeats count as duplicates
+[info] - exact DOI join: two DBLP works with one DOI are a conflict and nothing merges
+[info] - conflict cap: a conflicting group above max-conflict-group-size emits no pairs
+[info] - exact DOI join: two OpenAlex works with one DOI conflict; no work per DOI is assumed
+[info] - exact DOI join: no DBLP work means unmatched
+[info] - exact ORCID join: each mention matches the iD; two slots on one work are a conflict
+[info] - orcid suffix conflict (er-v2): Wei Wang 0001 and 0002 under one ORCID never merge
+[info] - orcid suffix conflict (er-v1): the same input is unchanged, both mentions match the iD
+[info] - orcid suffix conflict (er-v2): the whole group conflicts, all n(n-1)/2 pairs, no match
+[info] - orcid suffix conflict (er-v2): one suffixed and one unsuffixed mention still match
+[info] SourceNormalizersSpec:
+[info] - OpenAlex: work, authors, ORCID, author IDs, institutions, venue, and topic are kept
+[info] - every committed OpenAlex and Crossref sample line normalizes and validates
+[info] - Crossref: DOI work ID, year from issued, ORCID, ISSN venue, and named affiliations are kept
+[info] - ORCID: the fictional test record becomes a profile node, institutions, and affiliation edges
+[info] - ORCID: synthetic fixture IDs are rejected as unsupported identifiers, never turned into iDs
+[info] - name-only affiliations get core affiliationNameId; a name without letters is a reject
+[info] - malformed JSON, missing IDs, and nameless authors are rejected with counters
+[info] - ORCID v3.0: a full API record normalizes exactly like its committed projection
+[info] - ORCID v3.0: no orcid-identifier.path is a missing key; a wrong field type is malformed
+[info] BlockingSpec:
+[info] - researcher keys: primary, first-name fallback, coauthor fallback
+[info] - researcher keys ignore name order and homonym suffix; no coauthors gives '-'
+[info] - researcher keys are missing for names without letters or digits
+[info] - work keys: primary title prefix, year fallback, full-title fallback
+[info] - work keys: leading stopwords skipped, all-stopword titles, missing year and title
+[info] - oversize action: keep at the limit, re-key above it, report at the last level
+[info] - plan re-keys oversize researcher blocks level by level
+[info] - plan keeps blocks within the limit and reports blocks oversize at the last level
+[info] - plan re-keys an oversize work block by year
+[info] NormalizeSpec:
+[info] - foldUnicode: decomposition, diacritics, letters NFKD keeps, ligatures, non-Latin
+[info] - text: punctuation, apostrophes, and whitespace
+[info] - title markup is stripped without inserting space
+[info] - DBLP homonym suffix is split off and kept
+[info] - name order: 'Given Family' and 'Family, Given' agree
+[info] - initials from hyphenated, dotted, and full given names
+[info] - empty and punctuation-only names parse to empty
+[info] CalibrateSpec:
+[info] - candidate counts equal the distinct cross-work pairs of the OversizePolicy plan
+[info] - connectivity counts the largest retained component of each silver group
+[info] - silver score classification follows the policy rules with ORCID removed
+[info] - work silver scores use cross-source DOI labels with the DOI and arXiv features removed
+[info] AdjudicationSpec:
+[info] - a schema-valid reply is accepted and carries prompt and model versions
+[info] - schema validation rejects every malformed, fabricated, or out-of-schema reply
+[info] - a fabricated identifier becomes ABSTAIN after the bounded retry
+[info] - malformed JSON is retried once; a valid second reply is used
+[info] - the model may abstain, and abstention keeps the pair UNRESOLVED
+[info] - prompt injection in a title stays inside the data block and cannot close the delimiter
+[info] - cache: hits skip the client and the budget; only schema-valid replies are cached
+[info] - cache keys depend on input hash, prompt version, model version, and policy version
+[info] - JSONL file cache persists entries across instances
+[info] - budget: no call beyond the maximum adjudications or the token budget
+[info] - prompt and schema resources load, and the schema's reason codes match the validator
+[info] StoreFailureAdversarialSpec:
+[info] HaikuClientSpec:
+[info] - the request body is an Anthropic Messages body with temperature and no top_p
+[info] - the response parser joins text blocks and reads usage; other bodies are refused
+[info] - an expired token is retried once, after the caller's throttle hook, and both requests count
+[info] - Neptune: a query timeout is GraphReadTimeoutException after one call, never retried
+[info] - Neptune: throttling is retried within the policy, then surfaces as a transient failure
+[info] - Neptune: a frontier timeout during a path search is SEARCH_LIMIT, never 'no path'
+[info] - DynamoDB proxy self-check: the condition evaluator decides by the expression, not by names
+[info] ValidationSpec:
+[info] - every fixture is valid
+[info] - missing provenance is rejected
+[info] - incomplete provenance is rejected
+[info] - confidence outside [0, 1] is rejected
+[info] - unsupported schema versions are rejected, including a nested provenance version
+[info] - malformed stable IDs are rejected
+[info] - a coauthor edge ID that does not match its formula is rejected
+[info] - a synthetic ORCID fixture ID is accepted as a source record ID
+[info] - non-canonical and self pairs are rejected
+[info] - Community nodes need comm- IDs; MEMBER_OF runs from a researcher to a community
+[info] - a pair candidate's mentions must belong to its work
+[info] - windows whose start year exceeds the end year are rejected
+[info] - evidence bundles keep graph facts and semantic context apart
+[info] - supported claims must cite evidence; unsupported claims may not
+[info] - match decisions need reason codes and an ISO-8601 timestamp
+[info] - a null field is rejected, not thrown
+[info] - phase 11 finding 1: an authorship position below 1 is rejected, even with a matching ID
+[info] WireContractSpec:
+[info] - every record has a frozen wire example and no frozen example is orphaned
+[info] - Provenance: encoding matches the frozen wire example
+[info] - Provenance: the frozen wire example decodes to the fixture
+[info] - Provenance: round trip is lossless and the fixture is valid
+[info] - Provenance: an unsupported schema version is rejected
+[info] - WorkRecord: encoding matches the frozen wire example
+[info] - WorkRecord: the frozen wire example decodes to the fixture
+[info] - WorkRecord: round trip is lossless and the fixture is valid
+[info] - WorkRecord: an unsupported schema version is rejected
+[info] - WorkRecord: a record without provenance is rejected
+[info] - AuthorMention: encoding matches the frozen wire example
+[info] - AuthorMention: the frozen wire example decodes to the fixture
+[info] - AuthorMention: round trip is lossless and the fixture is valid
+[info] - AuthorMention: an unsupported schema version is rejected
+[info] - AuthorMention: a record without provenance is rejected
+[info] - CanonicalResearcher: encoding matches the frozen wire example
+[info] - CanonicalResearcher: the frozen wire example decodes to the fixture
+[info] - CanonicalResearcher: round trip is lossless and the fixture is valid
+[info] - CanonicalResearcher: an unsupported schema version is rejected
+[info] - CanonicalResearcher: a record without provenance is rejected
+[info] - AuthorshipRecord: encoding matches the frozen wire example
+[info] - AuthorshipRecord: the frozen wire example decodes to the fixture
+[info] - AuthorshipRecord: round trip is lossless and the fixture is valid
+[info] - AuthorshipRecord: an unsupported schema version is rejected
+[info] - AuthorshipRecord: a record without provenance is rejected
+[info] - PublicationTeam: encoding matches the frozen wire example
+[info] - PublicationTeam: the frozen wire example decodes to the fixture
+[info] - PublicationTeam: round trip is lossless and the fixture is valid
+[info] - PublicationTeam: an unsupported schema version is rejected
+[info] - PublicationTeam: a record without provenance is rejected
+[info] - CoauthorPairCandidate: encoding matches the frozen wire example
+[info] - CoauthorPairCandidate: the frozen wire example decodes to the fixture
+[info] - CoauthorPairCandidate: round trip is lossless and the fixture is valid
+[info] - CoauthorPairCandidate: an unsupported schema version is rejected
+[info] - CoauthorPairCandidate: a record without provenance is rejected
+[info] - CoauthorEdge: encoding matches the frozen wire example
+[info] - CoauthorEdge: the frozen wire example decodes to the fixture
+[info] - CoauthorEdge: round trip is lossless and the fixture is valid
+[info] - CoauthorEdge: an unsupported schema version is rejected
+[info] - CoauthorEdge: a record without provenance is rejected
+[info] - ResearcherMetrics: encoding matches the frozen wire example
+[info] - ResearcherMetrics: the frozen wire example decodes to the fixture
+[info] - ResearcherMetrics: round trip is lossless and the fixture is valid
+[info] - ResearcherMetrics: an unsupported schema version is rejected
+[info] - ResearcherMetrics: a record without provenance is rejected
+[info] - Venue: encoding matches the frozen wire example
+[info] - Venue: the frozen wire example decodes to the fixture
+[info] - Venue: round trip is lossless and the fixture is valid
+[info] - Venue: an unsupported schema version is rejected
+[info] - Venue: a record without provenance is rejected
+[info] - Institution: encoding matches the frozen wire example
+[info] - Institution: the frozen wire example decodes to the fixture
+[info] - Institution: round trip is lossless and the fixture is valid
+[info] - Institution: an unsupported schema version is rejected
+[info] - Institution: a record without provenance is rejected
+[info] - Topic: encoding matches the frozen wire example
+[info] - Topic: the frozen wire example decodes to the fixture
+[info] - Topic: round trip is lossless and the fixture is valid
+[info] - Topic: an unsupported schema version is rejected
+[info] - Topic: a record without provenance is rejected
+[info] - MatchCandidate: encoding matches the frozen wire example
+[info] - MatchCandidate: the frozen wire example decodes to the fixture
+[info] - MatchCandidate: round trip is lossless and the fixture is valid
+[info] - MatchCandidate: an unsupported schema version is rejected
+[info] - MatchCandidate: a record without provenance is rejected
+[info] - MatchDecision: encoding matches the frozen wire example
+[info] - MatchDecision: the frozen wire example decodes to the fixture
+[info] - MatchDecision: round trip is lossless and the fixture is valid
+[info] - MatchDecision: an unsupported schema version is rejected
+[info] - MatchDecision: a record without provenance is rejected
+[info] - GraphNode: encoding matches the frozen wire example
+[info] - GraphNode: the frozen wire example decodes to the fixture
+[info] - GraphNode: round trip is lossless and the fixture is valid
+[info] - GraphNode: an unsupported schema version is rejected
+[info] - GraphNode: a record without provenance is rejected
+[info] - GraphEdge: encoding matches the frozen wire example
+[info] - GraphEdge: the frozen wire example decodes to the fixture
+[info] - GraphEdge: round trip is lossless and the fixture is valid
+[info] - GraphEdge: an unsupported schema version is rejected
+[info] - GraphEdge: a record without provenance is rejected
+[info] - GraphNode.Community: encoding matches the frozen wire example
+[info] - GraphNode.Community: the frozen wire example decodes to the fixture
+[info] - GraphNode.Community: round trip is lossless and the fixture is valid
+[info] - GraphNode.Community: an unsupported schema version is rejected
+[info] - GraphNode.Community: a record without provenance is rejected
+[info] - GraphEdge.MEMBER_OF: encoding matches the frozen wire example
+[info] - GraphEdge.MEMBER_OF: the frozen wire example decodes to the fixture
+[info] - GraphEdge.MEMBER_OF: round trip is lossless and the fixture is valid
+[info] - GraphEdge.MEMBER_OF: an unsupported schema version is rejected
+[info] - GraphEdge.MEMBER_OF: a record without provenance is rejected
+[info] - EvidenceItem: encoding matches the frozen wire example
+[info] - EvidenceItem: the frozen wire example decodes to the fixture
+[info] - EvidenceItem: round trip is lossless and the fixture is valid
+[info] - EvidenceItem: an unsupported schema version is rejected
+[info] - EvidenceItem: a record without provenance is rejected
+[info] - EvidenceBundle: encoding matches the frozen wire example
+[info] - EvidenceBundle: the frozen wire example decodes to the fixture
+[info] - EvidenceBundle: round trip is lossless and the fixture is valid
+[info] - EvidenceBundle: an unsupported schema version is rejected
+[info] - EvidenceBundle: a record without provenance is rejected
+[info] - QueryPlan: encoding matches the frozen wire example
+[info] - QueryPlan: the frozen wire example decodes to the fixture
+[info] - QueryPlan: round trip is lossless and the fixture is valid
+[info] - QueryPlan: an unsupported schema version is rejected
+[info] - QueryPlan: a record without provenance is rejected
+[info] - AnswerClaim: encoding matches the frozen wire example
+[info] - AnswerClaim: the frozen wire example decodes to the fixture
+[info] - AnswerClaim: round trip is lossless and the fixture is valid
+[info] - AnswerClaim: an unsupported schema version is rejected
+[info] - AnswerClaim: a record without provenance is rejected
+[info] - AnswerResponse: encoding matches the frozen wire example
+[info] - AnswerResponse: the frozen wire example decodes to the fixture
+[info] - AnswerResponse: round trip is lossless and the fixture is valid
+[info] - AnswerResponse: an unsupported schema version is rejected
+[info] - AnswerResponse: a record without provenance is rejected
+[info] - every record's schema version is its current SchemaVersions constant
+[info] - DynamoDB: an expired claim can be taken over; an unexpired one cannot (TTL by the request's :now)
+[info] - absent options are JSON null and enums are their case names
+[info] - an unknown enum value is rejected
+[info] - evidence-v1 EvidenceType names are frozen; only TEXT_CHUNK and PROFILE are semantic
+[info] - the Phase 9 evidence types round-trip as evidence-v1 and are graph evidence only
+[info] - Phase 10 JobState: frozen names, wire form, and the only allowed transitions
+[info] - Phase 10 ErrorCode: frozen names, HTTP statuses (ruling 6), and retryable defaults
+[info] - malformed JSON is rejected, not thrown
+[info] ConfigLoaderSpec:
+[info] - the reference file alone loads as a valid local configuration
+[info] - default graph windows are the three D-10 windows
+[info] - one bucket per environment with the eight ruling-7 prefixes
+[info] - a layer that still sets a removed per-purpose bucket key is rejected
+[info] - precedence: the config file overrides the reference
+[info] - precedence: environment variables override the config file and the reference
+[info] - unlisted environment variables are ignored
+[info] - an invalid bucket name or malformed or duplicate prefix is rejected
+[info] - every documented environment variable maps to a path in the reference
+[info] - a missing config file is an error, not a silent fallback
+[info] - a non-local environment must replace every placeholder
+[info] - a non-local environment with every value supplied loads
+[info] - phase 12 work order 4: SCHOLARCHAIN_LLM_REQUESTS_PER_MINUTE sets the Haiku throttle
+[info] - phase 11 D11: an index entry set to null stops the load (no silently dropped index)
+[info] - phase 11 D12: outside local, a blank value from a file or an empty variable is refused
+[info] - phase 11 D13: a fractional value for an integer key is refused, never truncated
+[info] - phase 11 finding 2: the core community-max-iterations equals the Spark value, 10
+[info] - Phase 10 work order 10: runtime.window-summary.load-run default, override, and rule
+[info] - Phase 10: services defaults (work order 2) and the sync deadline
+[info] - Phase 10: queue and stub-LLM environment overrides; fake queue URLs fail outside local
+[info] - Phase 10: the API key variable is a name only and never enters configuration
+[info] - Phase 10: services bounds and cross-key checks are enforced
+[info] - every services leaf in the reference is read by the loader
+[info] - M10: table prefix and Neptune loader role ARN are keys with env overrides
+[info] - M10: malformed prefixes and ARNs are rejected; placeholders are rejected outside local
+[info] - Phase 9: planner and synthesis models default to Haiku 4.5 and are env-overridable
+[info] - Phase 9: runtime, ranking, and graph-read defaults (RUNTIME.md section 20)
+[info] - Phase 9: runtime bounds and cross-key checks are enforced
+[info] - every runtime and graph-read leaf in the reference is read by the loader
+[info] - entity-resolution thresholds must be ordered within [0, 1]
+[info] - entity-resolution policy version defaults to er-v2 and is env-overridable
+[info] - entity-resolution block and conflict-group limits: defaults, env overrides, positive
+[info] - a window whose start year exceeds its end year is rejected
+[info] - an unsupported config version is rejected
+[info] - DynamoDB: 16 concurrent job claims through the live adapter move the job exactly once
+[info] ReviewQueueSpec:
+[info] - selection is deterministic for a seed and independent of input order
+[info] - selection is stratified: every non-empty stratum is represented, none dominates
+[info] - the blind CSV shows evidence but never score, decision, path, or stratum; the key file does
+[info] - runs of er-v1 or er-v2 are accepted; the strata file records each item's policy version
+[info] - re-keying keeps row IDs and pairs and takes every decision field from the new run
+[info] - CSV round trip keeps commas, quotes, and newlines
+[info] - one pair decided twice (exact and blocked, either ID order) is sampled once
+[info] - thresholds are read from an ER run summary or a Hadoop run manifest
+[info] - part files of partitioned outputs are read through their subdirectories
+[info] - DynamoDB: racing job claims through the live adapter: one Moved, the rest Refused with the stored job
+[info] - DynamoDB: a throttled conditional write is one attempt and a transient failure, never a retry
+[info] - S3 Vectors: a throttled put through the live adapter is retried by the loader and then written
+[info] AskCliSpec:
+[info] - fake mode answers one question, writes the audit, answer, records, and a manifest under --out
+[info] - usage errors: live needs a profile, and the Haiku rate is at most 8 per minute
+[info] - S3 Vectors: a throttled query is a transient failure, not an empty result
+[info] - duplicate vector keys: in one batch both are rejected; across the input the first wins
+[info] TemplatesSpec:
+[info] - profile text is frozen for rendering-v1
+[info] - every document type renders; texts are deterministic and independent of key order
+[info] - path statuses, paper, community, and topic wording
+[info] - missing required facts fail; missing optional facts drop their sentence
+[info] - untrusted text is flattened, capped, and kept as data
+[info] RuntimeApiSpec:
+[info] - answer: one request under a deadline gives the answer, the audit, and the bundle
+[info] - answer: a passed deadline abstains and is flagged; the audit is still written
+[info] - lookups: audit and answer by query ID, evidence by query and evidence ID
+[info] - evidenceOf: a payloadRef object must match its payloadHash
+[info] InjectionSpec:
+[info] - planner prompt: one <question> block, holding the injected question only escaped
+[info] - synthesis prompt: one block per delimiter; question, title, name, and document escaped
+[info] - the injected question changes no plan operation, store call, or claim
+[info] PlannerSpec:
+[info] - the rule planner extracts names, windows, and operations of benchmark-style questions
+[info] - validation enforces the operation allowlist: scopes, researcher indexes, metrics, topN
+[info] - a researcher name or filter term that does not occur in the question is rejected
+[info] - window selection: stored windows exact, other ranges widen with a note, no corpus year abstains
+[info] - request fields override the model; retrieval limits are clamped to configuration
+[info] - output schemas: exact keys, enums equal the Scala enums, only the supported keywords
+[info] - the model planner retries once with the failed rule names, then falls back to the rules
+[info] - every model attempt passes the throttle, and an attempt over the token budget is not sent
+[info] - ruling 30: the recorded rule-2 and rule-7 failures name what is allowed; the corrections validate
+[info] - ruling 30: the retry prompt and the audit carry the allowed values, never the model's text
+[info] - ruling 30: planner-v2 states each operation's scopes and metrics from the allowlist
+[info] - ruling 30: every planner rule failure names what is allowed
+[info] RenderSpec:
+[info] - model versioning and selection constants
+[info] - candidates with facts pass the storage candidate validator unchanged
+[info] - rendered documents pass RenderedDocuments.validate and follow the key and hash rules
+[info] - bad inputs: missing facts, facts that disagree, rank gaps, wrong policy, duplicates
+[info] - render CLI writes write-once files and a manifest; a rerun is Unchanged
+[info] - render CLI refuses an unknown model and bad candidates without writing
+[info] SmokeSpec:
+[info] - structural smoke tests pass on the fake store with fake embeddings
+[info] - smoke queries use facts only, and a structural filter returns only matching documents
+[info] - smoke CLI: dry run passes; live needs --profile; unknown model is a usage error
+[info] - semantic context: evidence items, hash check, escaping, budget
+[info] - stale model versions: a vector of another embedding model is never returned to the runtime
+[info] ApiAuthAdversarialSpec:
+[info] - path and method tricks never reach a protected query-api route without a valid key
+[info] - graph-evidence-api: no key, no graph or evidence read; encoded IDs do not change that
+[info] BlockingSpec:
+[info] - members: one work member and one researcher member per mention, with ER blocking keys
+[info] - multi-pass J05 logic equals OversizePolicy.plan, for several maximum block sizes
+[info] - max 2 by hand: r0 wang|w (5) and r1 wang|wei (3) re-key; r2 wang|wei|lee (3) is oversize
+[info] - group: buffers at most max members, then streams; duplicates are dropped while buffering
+[info] - pairs: n members give n(n-1)/2 pairs in ID order; two mentions of one work are skipped
+[info] - features and candidates: ER Features applied unchanged; venue names from the side input
+[info] - J10 decisions: er-v1 applied unchanged; blocked work pairs add WorkPairFeatures
+[info] - J10 decisions: the given version reaches WorkPairFeatures and MatchPolicy (er-v2 rules)
+[info] - J10 never adjudicates: no hadoop source names adjudication, Bedrock, or the AWS SDK
+[info] - unauthenticated requests do not consume the per-instance query rate budget
+[info] - an unauthenticated oversized body is refused as 401, not read and not 400
+[info] - the API key comparison accepts exactly one value, of any length or content
+[info] WorkerRedeliveryAdversarialSpec:
+[info] BenchmarkSpec:
+[info] - question CSV: quoted commas and escaped quotes parse; bad rows are refused
+[info] - stored path reference: the stored researcher sequence and hop lookup in either direction
+[info] - fake mode: --max 1 answers one question, a rerun resumes by question ID, and the checks pass
+[info] - a stored path that differs from the runtime path fails path-hops and pair-edges
+[info] - claim-evidence fails a material claim that cites only semantic context or an unknown ID
+[info] - a model that never answers is a call failure (no result is recorded); fake mode is not
+[info] - usage: questions and path evidence are required, --max is at least 1, live needs a profile
+[info] LlmSpec:
+[info] - one enclosing code fence is accepted; prose, two objects, or an unclosed fence are not
+[info] - a recorded Haiku body with a fenced, pretty-printed plan parses and validates
+[info] - a rejected output records its failed rules and shape, never its text; the retry names them
+[info] - synthesis-output-v3: any rank.<k> fact needs rank.<k>.researcherId; the retry names it
+[info] - every Bedrock request is counted, the expired-token retry included (m5)
+[info] - ruling 19a: a synthesis output cut off at max_tokens gets a retry that says so and asks for fewer claims
+[info] WorkflowSpec:
+[info] - a dominant name resolves with its share; every material claim cites bundle evidence and verifies
+[info] - a shortest path: the PATH and PATH_HOP claims equal the path evidence hop by hop
+[info] - an ambiguous name abstains with every candidate and makes no synthesis call
+[info] - unsupported requests and missing evidence abstain or are stated, never filled in
+[info] - verification statuses: VERIFIED kept, PARTIALLY_SUPPORTED labelled, UNSUPPORTED and CONFLICTING removed
+[info] - model synthesis: bad claims are removed, and with no verified claim the answer abstains
+[info] - prompt injection in the question, a name, a retrieved document, or a title changes no operation, store call, or claim
+[info] - the evidence token budget cuts whole groups, lists the omissions, and cited omitted items fail
+[info] - the audit record, QuerySession, and EvidenceBundle items hold the run facts and no question text
+[info] - m1: stages 3 to 5 are timed separately; a stage the plan gives nothing to do is SKIPPED
+[info] - m2: a candidate list cut at its limit is AMBIGUOUS with a truncation note, never unknown
+[info] - m7: the question deadline is checked before every stage and before every store read
+[info] - m8: request years with yearFrom after yearTo are an invalid plan, stated as reversed
+[info] - repair-01 D4: a failed vector query degrades semantic context; graph facts still answer
+[info] DblpRecordReaderSpec:
+[info] - a two-way split at every byte offset yields every record exactly once, intact
+[info] - many small splits, including one-byte splits, yield every record exactly once
+[info] - the committed DBLP sample reads identically with one split and with 4 KB splits
+[info] - values are decoded from ISO-8859-1, so Latin-1 bytes become Unicode text
+[info] - a truncated final record is returned so the mapper can reject it
+[info] - compressed input is not split and still reads every record
+[info] EvaluationSpec:
+[info] - hand-computed metrics: precision, recall, F1, coverage, unresolved rate, confusion matrix
+[info] - metrics by match path, and undefined rates are None
+[info] - threshold sensitivity moves only score-decided rows
+[info] - error lists: false positives, then false negatives with rejections before abstentions
+[info] - join checks traceability to the key file and label values
+[info] - rows are scored on the key file's decision and path, not on the stratum they were sampled in
+[info] - the reported policy version comes from the key file, which must name exactly one
+[info] - the evaluator refuses a labels file outside a labels/ directory
+[info] - leakage check: only the evaluator mentions labels/ among main sources
+[info] MatchPolicySpec:
+[info] - exact identifier matches: DOI, arXiv, ORCID accepted with reason codes and confidence 1
+[info] - an OpenAlex author ID alone is not authoritative: UNRESOLVED, not LLM-eligible
+[info] - a conflicting exact-ID group is CONFLICT
+[info] - blocked pair with the same valid ORCID: ACCEPTED on the exact-ID path
+[info] - different ORCIDs never merge: REJECTED on weak evidence, CONFLICT when other evidence would accept
+[info] - same ORCID but different DBLP homonym numbers: CONFLICT
+[info] - different DBLP homonym numbers are strong negative evidence
+[info] - same name and same DBLP homonym number: deterministic ACCEPTED; same number, different name: not
+[info] - a matching name alone is not identity: UNRESOLVED in the LLM band
+[info] - weighted score: logistic of bias plus weighted deviations of present features
+[info] - absent features are neutral, never read as 0.0, and are recorded
+[info] - without the required feature the pair is UNRESOLVED for insufficient evidence
+[info] - threshold boundaries: accept inclusive, reject exclusive, LLM band inclusive inside UNRESOLVED
+[info] - thresholds come from configuration and must be ordered
+[info] - works: DOI agreement accepts, DOI disagreement never merges, title+year+authors is deterministic
+[info] - works: a generic title with different authors ("Workshop Introduction.") is not merged
+[info] - works: two different DBLP records never merge (REJECTED, or CONFLICT on strong evidence)
+[info] - work-pair features: normalized DOI equality, author overlap and order, absent without evidence
+[info] - decisions are deterministic and validate as core MatchDecision records with er-v1 provenance
+[info] - adjudication: confident ACCEPT or REJECT decides; low confidence and ABSTAIN stay UNRESOLVED
+[info] - the policy is pure: MatchPolicy.scala imports no AWS, Hadoop, Spark, or file APIs
+[info] FeaturesSpec:
+[info] - Jaro-Winkler textbook values
+[info] - name similarity compares comparable names, without the homonym suffix
+[info] - initials compatibility
+[info] - author-order agreement
+[info] - coauthor overlap
+[info] - affiliation compatibility compares shared namespaces only
+[info] - ORCID agreement: equal, conflicting, invalid, absent
+[info] - DBLP homonym-suffix agreement
+[info] - title similarity
+[info] - year distance
+[info] - venue compatibility: same-namespace IDs, acronyms, name tokens
+[info] - researcher feature map holds only features with evidence on both sides
+[info] - work feature map
+[info] - every feature stays in [0, 1] and is deterministic across a grid of inputs
+[info] AdjudicateSampleSpec:
+[info] - select is a seeded sample of LLM-band decisions only, independent of input order
+[info] - sessions are bounded by --max and resume from the cache without repeating calls
+[info] - the source decision is unchanged; ABSTAIN keeps the pair UNRESOLVED
+[info] - a client error after its retry halts the session; the rest stay pending
+[info] - live mode requires --live and --profile before any input is read
+[info] - an expired token refreshes the credentials and retries once, through the throttle
+[info] - a second expired token or any other error is not retried again
+[info] - RefreshingCredentials resolves through a delegate rebuilt after refresh
+[info] - Throttle spaces call starts at ceil(60000 / perMinute) ms and caps the rate at 8
+[info] - Throttle with the real clock and real sleep: first acquire at once, later ones spaced
+[info] - the live throttle's clock and sleep both use milliseconds
+[info] - each answer is appended to cache.jsonl as soon as it returns
+[info] - a run stopped partway resumes from the partial cache without repeating answered pairs
+[info] - a Haiku reply in a Markdown code fence validates through the Bedrock client
+[info] - prose around the JSON or a cut-off reply is still rejected, with its shape recorded
+[info] - replies that keep failing validation halt the session after 3 pairs in a row
+[info] - Runner.closing closes the SDK client after the body, also when it throws
+[info] MatchPolicyV2Spec:
+[info] - two OpenAlex works sharing a DOI: er-v2 CONFLICT (SAME_SOURCE_SHARED_DOI), er-v1 ACCEPTED
+[info] - ACM dual-DOI pair, same title, authors, and year, different DOIs: never ACCEPTED
+[info] - DOI-less pair: identical normalized title and authors, same year, venue 0: er-v2 rule
+[info] - one-year gap: er-v2 ACCEPTED (DETERMINISTIC), er-v1 LLM band; two years: unchanged
+[info] - er-v1 unchanged: feature maps, default version, and every decision on er-v1 features
+[info] - the decision records the version that decided; unknown versions never run
+[info] - calibration classifies with the run's policy: a one-year-gap pair is deterministic in er-v2
+[info] - review 1 finding 1: one ORCID on Wei Wang 0001 and Wei Wang 0002 is an er-v2 conflict
+[info] - er-v2: a mention without a suffix, or one shared suffix, is not a conflict
+[info] - er-v1 unchanged: the reviewer's failure input is not a group conflict
+[info] CorpusSpec:
+[info] - B13 and B15 shapes: corpus component counts of a window, verified, with row provenance
+[info] - B17 shape: communities of at least the stored minimum size; non-convergence is stated
+[info] - B24 shape: the stored pair of windows, with deltas, and the window lengths stated
+[info] - a model claim on corpus evidence is still checked: wrong measure or value is removed
+[info] - Phase 11 work order 2, live B13 and B24 shape: a share written as a percentage
+[info] - Phase 11 work order 2, live B17 shape: 'collaboration communities' names the count
+[info] - repair-02 D14 controls: the template's 'without' aside and 'failed to converge' verify
+[info] - without the window-summary port, corpus questions still abstain as NOT_STORED
+[info] - AskCli: --window-summary-root and --window-summary-run wire the port; bad use is refused
+[info] RuntimeRecordsSpec:
+[info] - request and planner output round-trip, with absent and present optional fields
+[info] - query plan round-trips and enums are their case names on the wire
+[info] - an unknown enum value fails decoding
+[info] - resolution and every graph-fact record round-trip
+[info] - semantic result, bundle, synthesis output, and verification round-trip
+[info] - answer and audit record round-trip
+[info] - metric attributes cover every core metric, and the ranked ones are the stored rankings
+[info] - schema versions are distinct
+[info] VerifierSpec:
+[info] - numbers: integers exact, decimals equal or rounded half-up from at least 2 decimals
+[info] - F1 (a): a number must be bound to the named fact it states, not to any fact or to none
+[info] - F1 (a): a rank number verifies only in a RANKING claim, against that researcher's rank
+[info] - F1 (b): PATH_HOP asserts every fact of its hop, and the joint count is the hop's
+[info] - F1 (c): a decimal never verifies as a rounded integer
+[info] - F2: a window name or year range in the text must be the claim's window
+[info] - F3: a semantic-only claim is never VERIFIED: context only, or removed
+[info] - F4: a name outside the bundle fails, whether a corpus researcher or absent from the corpus
+[info] - N1 (ruling 29): number words are written as digits before binding
+[info] - N1 (ruling 29): a wrong count written as words fails; the right word form verifies
+[info] - N2 (ruling 29): every name in a claim is a researcher of the facts its values assert
+[info] - R3-1: a list-position ordinal binds to the index k of an asserted hop or entry
+[info] - R3-1: an ordering word is no count, and an ordinal outside a ranking is no rank
+[info] - R3-2: the measure name 'on one paper' and fixed phrases are not counts
+[info] - n4 and review 2 n2: a rank is checked against a stored rank, never a year or a listed value
+[info] - n5: ordinals up to fiftieth (and beyond) are checked
+[info] - n6: the prompt's measure names verify: coauthors per paper, intensity in joint publications
+[info] - review 2 n3: a name inside a longer bundle text, or cut by a one-word text, is flagged
+[info] - n7: the audit records removed claims and left-out lines with their reasons
+[info] - ruling 29: the runtime run ID changes with the verifier version
+[info] - ruling 20: summary and uncertainty lines get the numbers, windows, names, and titles checks
+[info] - work order 9, live B18 shape: a number written with digit-group commas is one number
+[info] - work order 9, live B22 shape: a claim on one side of a stored comparison may take that side's window
+[info] - Phase 11 work order 2, live B23 shape: totalWorks is named as the works of the name
+[info] - N5 (Phase 10 review 2): fixed notes are read with number words before year ranges
+[info] - repair-01 D1: a quantity in words (hundreds of, dozens of, a dozen) is not verified
+[info] - repair-01 D2: a qualified number (more than 10, about 10, 10 or more) is not verified
+[info] - repair-01 D3: a negated number (does not have 10, it is false that) is not verified
+[info] - repair-01 controls: bound qualifiers and the template's negations still verify
+[info] - repair-02 D14: 'short of 10', 'falls short of 10', and 'lacks 10' are not verified
+[info] - repair-02 D14: the comparison families are not verified
+[info] - repair-02 D14: the negation families (lack, without, absent, fail to) are not verified
+[info] - repair-02 controls: exact statements, ratios, and an aside defining a measure still verify
+[info] - a forged message pairing a real job with another query ID is poison: never run
+[info] - a stored request that does not decode fails the job once and deletes the message
+[info] - a stored request whose question breaks the API rules is not run as a valid answer
+[info] EmbeddingSpec:
+[info] - rendered documents round trip and valid documents pass
+[info] - rendered documents: wrong hash, key, textRef, text in metadata, duplicates
+[info] - throttle: no 60-second window holds more than 50 call starts
+[info] - fake embedder is deterministic, normalized, and word-sensitive; Titan V2 bodies parse
+[info] - runner: --max cap, resume by textHash and model, publish once complete, rerun is a no-op
+[info] - runner: a real embedder is throttled (injected clock), the fake one is not
+[info] - runner: rejected documents go to the rejected file; exhausted retries stop the run
+[info] - runner: invalid input or a document for another model is refused before any call
+[info] WindowSummarySpec:
+[info] - rows from a Spark manifest carry the rebuilt provenance, nodeBasis and sourceRuns
+[info] - the port reads the store object back unchanged; a reload is Unchanged
+[info] - malformed rows, duplicate or missing windows, and mixed runs refuse the whole object
+[info] - phase 11 D10: counts no graph can have are refused; real-shaped counts still open
+[info] - a manifest with integrity violations, another schema, or another row count is refused
+[info] - the loader writes once under a new root, reloads as Unchanged, and refuses a conflict
+[info] - the loader refuses a run directory whose manifest names another run
+[info] CliSpec:
+[info] - validator CLI: counts and OK on a valid graph; grouped violations and exit 1 otherwise
+[info] - Neptune loader dry run: second pass all Unchanged; COAUTHORED_WITH expectations checked
+[info] - validator CLI: rendered documents and DynamoDB ranking items
+[info] - DynamoDB loader dry run: insert, registry skip, item-level recheck
+[info] - live opt-in: --live needs --profile, --profile needs --live, live loads need a non-local config
+[info] - embed (fake) then vector load and S3 manifest check, all idempotent on rerun
+[info] - M1: any Throwable, including OutOfMemoryError, exits 1 with a message; never success
+[info] - M8: CLIs read the environment they are given, not the shell's
+[info] - M3: the live Neptune pre-load check compares SHA-256 hashes with the run manifest
+[info] - N6: validator exits 1 when evidence objects are left untraced (no --evidence-root)
+[info] - M10: the live table prefix and loader role default to configuration; flags override
+[info] DblpParserSpec:
+[info] - the DTD defines the character entities, including those used by the sample
+[info] - entities resolve to Unicode; numeric references and builtins pass through the XML parser
+[info] - an undeclared entity rejects the record as a schema failure
+[info] - multiline titles keep their full text and inline markup contributes its text
+[info] - Unicode text decoded from ISO-8859-1 bytes is kept
+[info] - missing optional fields give None and empty collections, not rejects
+[info] - normalizedName and normalizedTitle come from entity-resolution Normalize (norm-v1)
+[info] - repeated authors keep separate positions and mention IDs and are counted
+[info] - fields map to the work record with provenance; DOI and arXiv come from ee links
+[info] - a record without a key is rejected as missing key
+[info] - unsupported record types and malformed years are rejected with reasons
+[info] - every record of the committed sample parses and validates
+[info] DynamoSpec:
+[info] - DynamoDB JSON item lines round trip
+[info] - conditional writes: insert, identical reload, conflict, explicit supersede
+[info] - append-only entries and port fences
+[info] - TTL: only on QuerySession and EvidenceBundle, and expired items are not read
+[info] - missing provenance, unknown windows, long lists, and oversize items are rejected
+[info] - ranking items: ordered top lists under RANKING#<metric> / TOP#<window>
+[info] - RunLedger on the key-value ports: append-only, retried append unchanged
+[info] - entity link keys follow the name-v1 rule
+[info] - item files: malformed lines, bad items, and duplicate keys are reported with counts
+[info] - number normalization: DynamoDB's canonical number text, exact to 38 digits
+[info] - fake: an item with 4.0 reloads as Unchanged, against 4.0 or 4; a different value conflicts
+[info] - live adapter: PutItem sends canonical numbers; a 4 read back for a written 4.0 is Unchanged
+[info] - N4: numbers outside the DynamoDB range or with invalid text are refused, never thrown
+[info] - runtime item schema versions are fixed: rag-query-session-v1, rag-evidence-bundle-item-v1
+[info] - item files load read-only into the fake; violations and conflicts load nothing
+[info] - file-backed runtime records: create-only, replayed on open, partial last line cut
+[info] - item-file reader: get and query equal the in-memory fake, from files it never writes
+[info] - item-file reader: malformed, invalid, or duplicate items and bad directories fail open
+[info] - item-file reader: a file changed after open is refused, never misread
+[info] VectorSpec:
+[info] - configured index names equal the contract
+[info] - candidate JSONL round trips and valid candidates pass
+[info] - missing fields, malformed lines, wrong hashes, and duplicate keys are reported
+[info] - metadata: no text, no unknown keys, required keys present, sizes within budget
+[info] - batched load, idempotent reload, duplicate keys, and key conflicts
+[info] - a batch with an in-call duplicate or an invalid vector rejects only those vectors
+[info] - transient failures are retried within the bound and recorded
+[info] - cosine query with metadata filters
+[info] NeptuneSpec:
+[info] - CSV serialization round trip keeps every typed value, including quotes and commas
+[info] - edge IDs follow the core formulas
+[info] - a valid directory loads, supports the pair lookup, and reloads idempotently
+[info] - a reload that changes an existing element is refused and changes nothing
+[info] - coauthor edges need existing endpoints of the right label
+[info] - F2: inline supporting works must be Work vertices that both endpoints AUTHORED
+[info] - coauthor edges need evidence that matches the joint publication count
+[info] - long evidence lists go through an S3 evidence object that must exist, match, and trace
+[info] - headers, types, provenance, duplicates, and stray files are reported
+SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+SLF4J: Defaulting to no-operation (NOP) logger implementation
+SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+[info] GraphReadSpec:
+[info] - fixture loads under the full validator (endpoints, evidence tracing, windows)
+[info] - shortest path: Spark job 5 tie-break (smallest predecessor), hops carry edge provenance
+[info] - shortest path statuses: BEYOND_DEPTH, UNREACHABLE, UNKNOWN_RESEARCHER, SEARCH_LIMIT
+[info] - coauthors: strongest first then edge ID, display names, truncated at the limit
+[info] - supporting works: inline lists and evidence objects, complete and checked against the count
+[info] - communities: members by internal degree, neighbors by cross edges, cross-community edges
+[info] - facets: community and researcher topics and venues in the window; member cap truncates
+[info] - institutions, topic researchers, lookup, authored counts
+[info] - neighbors: direction, depth, edge types, node limit, and provenance on every element
+[info] - neighbors pages: fixed order, pages concatenate to the whole walk, offset bounds
+[info] - user text is only a bound value: an injection string in a lookup changes no element
+[info] - live templates: fixed read-only text behind the timeout hint; every value is a parameter
+[info] - live responses: nodes and relationships parse back to the same typed elements
+[info] - live reader over a stub client: the same path and coauthors as the fake, values bound
+[info] - live reader: a query timeout is not retried (SEARCH_LIMIT for a path); 5xx is retried
+[info] - an expired job's message is poison: the job is never resurrected or run
+[info] ObjectStoreSpec:
+[info] - the eight prefixes equal the core storage.prefixes
+[info] - key layout: every key has a known prefix, snapshot and run, and safe characters
+[info] - objects are write-once and the run manifest verifies hashes and sources
+[info] - the run ledger is append-only and idempotent across reopen
+[info] - retry covers only transient failures, with bounded exponential delay
+[info] LiveRequestSpec:
+[info] - S3: write-once put carries If-None-Match and a SHA-256 checksum
+[info] - DynamoDB: attribute codec round trip and conditional put requests
+[info] - Neptune: loader request and status parsing
+[info] - S3 Vectors: put, get, and query requests; filter syntax; response parsing
+[info] - Bedrock: Titan V2 invoke request; transient error classification
+[info] - refreshing credentials: built lazily, re-resolved per call, rebuilt after refresh
+[info] - expired token: refresh and retry once; a second expiry or another 403 is not retried
+[info] - guarded refreshes the profile's credentials on an expired token and retries the call
+[info] - no profile (ECS) selects the SDK default chain; a profile keeps the named profile
+[info] - every live client is built with the profile's refreshing credentials provider
+[info] - N1: the expired-token retry of a Titan call passes the caller's throttle first
+[info] - N2: a 403 on HeadObject gets one refresh and retry; a second 403 propagates
+[info] - N3: an expired token is detected by its error code alone
+[info] - N5: requests that fail on one expiry rerun credential_process once
+[info] Run completed in 5 seconds, 64 milliseconds.
+[info] Total number of tests run: 191
+[info] Suites: completed 4, aborted 0
+[info] Tests: succeeded 191, failed 0, canceled 0, ignored 0, pending 0
+[info] All tests passed.
+[info] Run completed in 5 seconds, 67 milliseconds.
+[info] Total number of tests run: 111
+[info] Suites: completed 10, aborted 0
+[info] Tests: succeeded 111, failed 0, canceled 0, ignored 0, pending 0
+[info] All tests passed.
+[info] Run completed in 5 seconds, 68 milliseconds.
+[info] Total number of tests run: 116
+[info] Suites: completed 14, aborted 0
+[info] Tests: succeeded 116, failed 0, canceled 0, ignored 0, pending 0
+[info] All tests passed.
+[info] WorkerSpec:
+[info] - a redelivered or duplicated message never runs a job twice
+[info] - a message is deleted only after a final state; a stuck RUNNING job fails at its last delivery
+[info] - poison messages are never run or deleted; redrive moves them to the dead-letter queue
+[info] - a failing, late, or undecodable job ends FAILED with its typed error; its message is deleted
+[info] - async POST: 202 job reference, job IDs checked first, a send failure fails the job
+[info] - worker service: liveness, readiness, key-protected metrics, and the poll loop
+[info] ServiceStateSpec:
+[info] - jobs: create is conditional; a retried create is Unchanged, another request a Conflict
+[info] - jobs: only JobState.canMoveTo transitions, each conditional on the stored state
+[info] - jobs: eight workers race QUEUED -> RUNNING on one job and exactly one wins
+[info] - idempotency: claim, replay, conflict, TTL expiry, and the key is stored only as its hash
+[info] - file-backed fake: the log replays on reopen, a torn last line is cut, a bad line stops it
+[info] - ServiceState rules: 96 KB budget, fixed schema versions, and no other port writes it
+[info] - evidence by ID: the smallest unexpired queryId's EV# item, in memory and file-backed
+[info] - live ServiceState: conditional PutItem requests, ALL_OLD outcomes, and reads-only retry
+[info] - live evidence by ID: the evidenceById GSI query, unexpired only, first item
+[info] JobQueueSpec:
+[info] - job message: only the job and query IDs; anything else is a poison message
+[info] - fake queue: a receive hides the message for the visibility timeout; receives are counted
+[info] - fake queue: after max-receive-count receives the message moves to the dead-letter queue
+[info] - fake queue: change visibility, bounds, order, and a long poll woken by a send
+[info] - live SQS: requests carry the timeout (plus the long poll), receive counts are parsed
+[info] Run completed in 6 seconds, 59 milliseconds.
+[info] Total number of tests run: 110
+[info] Suites: completed 11, aborted 0
+[info] Tests: succeeded 110, failed 0, canceled 0, ignored 0, pending 0
+[info] All tests passed.
+[info] QueryApiSpec:
+[info] - a synchronous query returns an evidence-backed answer with links; IDs are echoed
+[info] - malformed JSON, invalid fields, a wrong Content-Type, and an oversized body are 400
+[info] - valid JSON with unsupported constraints or retrieval limits is 422
+[info] - Idempotency-Key: the same body replays the stored answer; a different body is 409
+[info] - a passed deadline is 504 (cooperative and hard); a failing store is 502; breakers open
+[info] - missing or wrong API key is 401 everywhere except /healthz and /readyz
+[info] - health and readiness differ; neither reveals configuration
+[info] - explain returns the plan, stages, versions, evidence, and counters; never hidden text
+[info] - POST /v1/query is rate limited per instance (429 with Retry-After)
+[info] - metrics: counts by route and status, latency percentiles, and answer counters
+[info] - no API key, question, or store error text appears in any log line or response
+[info] - launcher: fake mode starts on localhost; a missing key or incomplete live arguments stop it
+[info] - readiness probes S3 under the audit prefix query-api and the worker read (repair-01 m1)
+[info] SaturationSpec:
+[info] - query-api: with every workflow slot held, jobs, explain, and readiness still answer
+[info] - worker: an overrun job holds only its workflow slot; no job is claimed until it frees
+[info] ServicesContractSpec:
+[info] - every example is referenced, exists, and parses against its model
+[info] - the documented paths and methods are exactly the routes of query-api, graph-evidence-api, and worker
+[info] - flooding: 60 poison messages around one real job run that job exactly once
+[info] - async POST flooding is rate limited before any job or message is written
+[info] - the composed query-api (Apps.queryApi) applies the rate limit to async requests too
+SLF4J(W): Class path contains multiple SLF4J providers.
+SLF4J(W): Found provider [ch.qos.logback.classic.spi.LogbackServiceProvider@b06f7c0]
+SLF4J(W): Found provider [org.apache.logging.slf4j.SLF4JServiceProvider@35ff9a3]
+SLF4J(W): See https://www.slf4j.org/codes.html#multiple_bindings for an explanation.
+SLF4J(I): Actual provider is of type [ch.qos.logback.classic.spi.LogbackServiceProvider@b06f7c0]
+[info] DblpRecordReaderAdversarialSpec:
+16:18:32.516 WARN  o.a.hadoop.util.NativeCodeLoader - Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+[info] - splits made by DblpInputFormat at every size give every record once, intact, at its offset
+[info] - a truncated file never loses or repeats the complete records before the cut, at any split
+[info] - compressed input is one split and reads every record, whatever split it is handed
+[info] - a record start tag inside an XML comment is not a record, and the records after it stay intact (pending)
+[info] ConfigOmissionContractSpec:
+[info] - control: the reference loads locally, and the production-shaped file loads as prod
+[info] - every configuration key omitted (set to null) stops the load with an error
+[info] - a blank value for a required production setting is refused outside the local environment
+[info] - an empty environment variable overriding a required setting is refused outside local
+[info] - ill-typed and out-of-range environment overrides are refused
+[info] - a fractional value for an integer setting is refused, not truncated
+[info] - repair-01 D11 to D13 boundaries: whole decimals load, fractional years and empty indexes do not
+[info] - finding 2: the core community round cap equals the one the Spark jobs read
+[info] - a missing, unreadable, or malformed configuration file stops the load
+[info] - placeholder values and inconsistent limits never load outside local
+[info] - only the documented variables are read: an unknown SCHOLARCHAIN_ variable changes nothing
+[info] GraphBoundsTimeoutAdversarialSpec:
+[info] - neighbor parameters: overflow, signs, whitespace, repeats, and forged cursors are 400
+[info] - node IDs: injection shapes and oversized IDs are 404 without a graph read
+[info] - a Neptune query timeout is 504 DOWNSTREAM_TIMEOUT and counts toward the neptune breaker
+[info] BuildingBlocksSpec:
+[info] - breaker: opens after the threshold, fails fast while open, half-opens after the interval
+[info] - downstream calls: timeout, retries only for retryable reads, breaker per downstream
+[info] - waiting to start is no downstream failure: 503 OVERLOADED, no breaker (repair-01 F1)
+[info] - rate limiter: a sliding minute
+[info] - cursor: round trip, bound to its walk, and opaque garbage rejected
+[info] - IDs: valid client values echoed, anything else replaced
+[info] - API key: exact match only, any length; the key is never printed
+[info] GraphEvidenceApiSpec:
+[info] - query to evidence: every evidence ID an answer cites resolves with provenance
+[info] - missing evidence is 404; a malformed ID never reaches the store
+[info] - graph node: found with properties, unknown 404, encoded IDs with slashes work
+[info] - neighbors: bounded parameters, allowlisted edge types, and bound cursors
+[info] - a slow store is 504, a failing one 502, then the breaker fails fast and readiness drops
+[info] - an IllegalArgumentException inside a downstream call is 500 with no detail (repair-01 m5)
+[info] - beyond its threads and queue a service sheds load with 503 OVERLOADED
+[info] - a Neptune read that never answers is cut at services.timeouts.neptune-ms (504)
+[info] - the sync query deadline answers 504 while a store read is held; no breaker opens
+[info] GraphReadKnownGraphSpec:
+[info] - shortest paths on the known graph: lengths, hop order, the smallest predecessor, and bounds
+[info] - disconnected and isolated researchers: UNREACHABLE, never a path; unknown IDs are UNKNOWN_RESEARCHER
+[info] - an empty graph (researchers, no coauthor edge) answers UNREACHABLE and empty neighbor lists
+[info] - distinct degree versus weighted degree on the known graph: grace has 2 coauthors and 3 joint works
+[info] - an edge whose supporting-work count disagrees with its jointPublicationCount is refused
+[info] ApiBodyAdversarialSpec:
+[info] - deeply nested JSON within the size cap is a 400, not a stack overflow or a hang
+[info] - numbers outside the int range, fractions, strings, and booleans are 400 in int fields
+[info] - question text: control characters, blanks, and length boundaries
+[info] - a body that is not valid UTF-8 is MALFORMED_JSON, never answered as a different question (pending)
+[info] - a JSON-escaped lone surrogate in the question is a typed 400, never an answer (pending)
+[info] - the body must be one JSON object with known fields; JSON nulls only where optional
+[info] - Content-Type, Content-Length, and chunked transfer abuse give typed 4xx errors
+[info] - a declared body that never arrives does not hold the exchange open (refused, 401, or unread)
+[info] - repair-01 D5 on graph-evidence-api: an unread body that never comes frees the only thread; Connection: close
+[info] - repair-01 D5: starting any service sets the JDK request read timeout for this JVM
+[info] - Idempotency-Key and request-ID headers: bounded, visible ASCII, never echoed when invalid
+[info] DblpXmlAdversarialSpec:
+[info] - truncated, mismatched, and unclosed records are malformed-record rejects
+[info] - external entities and entity expansion bombs are refused; a missing external DTD changes nothing
+[info] - no external entity, parameter entity, or DTD reference is ever fetched (fetches counted)
+[info] - missing or blank keys, unsupported types, and malformed years are typed rejects
+[info] - an author with no name (empty, blank, or markup only) is a schema-validation reject (JOBS.md) (pending)
+[info] - record keys that are not DBLP keys never become malformed work IDs
+[info] - very large records parse: 5,000 authors, a 1 MB title, and repeated names keep every position
+[info] - CDATA, comments, and processing instructions inside a record keep only the text
+[info] LoggingRedactionAdversarialSpec:
+[info] - markers in the question, headers, query string, path, and body never reach a log line
+[info] - worker events and job errors carry IDs and codes only, never the question
+[info] - explain never returns question, prompt, retrieved, or model text
+[info] BlockingTeamAdversarialSpec:
+[info] - a 5,000-member common-name group at the last level is reported oversize with no member held or merged
+[info] - a 5,000-member group below the last level is re-keyed in full, each member exactly once
+[info] - duplicate member values before the overflow are de-duplicated and counted; a kept block is at most max
+[info] - common names over three levels: every keyed mention ends in exactly one kept block or one oversize report
+[info] - pair expansion: empty, solo, and duo teams; mentions of one work never pair inside a block
+[info] - a 2,000-author team expands lazily into exactly n(n-1)/2 canonical, valid pairs
+[info] IdentityAdversarialSpec:
+[info] - canonically and compatibly equivalent spellings give one comparable name and one blocking key
+[info] - invisible format characters inside a name do not split it or change its keys (pending)
+[info] - a mixed-script homoglyph of a name is not the same name and is never merged on the name alone
+[info] - names made only of punctuation, digits, or symbols get no blocking key (no giant empty block)
+[info] - two Wei Wang mentions with nothing else in common are never accepted
+[info] - DBLP homonym numbers: equal numbers merge deterministically, different numbers never merge
+[info] - conflicting ORCID iDs on identical names and coauthors are never merged
+[info] - reordered author lists: the comma form names the same person; a reordered team is not a deterministic duplicate
+[info] - a generic title with the same year but no author evidence is not identity
+[info] - DOI spellings of one DOI normalize to one key
+[info] - DOI normalization is idempotent (pending)
+[info] - a percent-encoded DOI URL (as DBLP writes SICI DOIs) is the same DOI as its plain form (pending)
+[info] - exact DOI groups: cross-source duplicates match DBLP; a within-source duplicate is a conflict, never a merge
+[info] - a DOI disagreement with otherwise identical bibliographic evidence is a conflict, never accepted
+[info] CoauthorGraphEndpointAdversarialSpec:
+[info] - unresolved endpoints and missing works are violations, never edges
+[info] - a pair whose two mentions resolved to one researcher is a self-pair, never a self-edge
+[info] - merged works, reversed pairs, and duplicated mention rows never inflate a joint count
+[info] - a pair outside every window is counted, not an edge; window bounds are inclusive
+[info] - integrity: an edge whose endpoint is not a canonical researcher is named, with its edge ID
+[info] UnsupportedClaimAdversarialSpec:
+[info] - controls: the stored values verify; a wrong digit, a fabricated ID, or a semantic-only claim do not
+[info] - a multiplier word after the stored digits (10 hundred, 10 thousand) is not that number
+[info] - a quantity stated only in words (hundreds of, dozens of, a dozen) is not verified
+[info] - a comparison the stored value contradicts (more than 10, fewer than 10) is not verified
+[info] - a negated statement of the stored value (does not have 10) is not verified
+[info] - verifier-v7 breadth: other comparison, approximation, vague-quantity, and negation wordings are not verified
+[info] - verifier-v7 controls: exact statements of the stored value still verify
+[info] - a comparison or negation outside the verifier-v7 word lists (short of 10, lacks 10) is not verified
+[info] - verifier-v8 breadth: the comparison words, the filler, and the after-number words repair-02 added are not verified
+[info] - verifier-v8 breadth: the negation words repair-02 added, and asides that must not hide them, are not verified
+[info] - verifier-v8 controls: exact statements of the stored value still verify
+[info] - verifier-v8 through the services composition: the corpus template's 'without' aside and 'did not converge' stay VERIFIED; v8 wordings on corpus counts do not
+[info] - a difference from another count, or a disputed or doubted statement of the stored value, is not verified (pending)
+[info] - an approximation idiom before the stored value (more or less, give or take, on the order of) is not verified (pending)
+[info] MatchPathContractSpec:
+[info] - the rule IDs found by reflection include every rule the Spark copy names
+[info] - Spark MatchPath.of and .tier equal MatchPolicy.pathOf on every small and seeded rule set
+[info] SparkKnownGraphSpec:
+[info] CorpusQuerySpec:
+[info] - B13 shape: corpus components in 2000-2014 answered with VERIFIED claims from the summary
+[info]   + claim-1 VERIFIED: In 2000-2014, the coauthorship graph has 33 connected components; the largest connected component has 252 researchers out of 400 researchers, a share of 0.6300. 
+[info]   + claim-2 VERIFIED: In 2000-2014, 13 singleton researchers (researchers without any coauthor edge in that window) are among the 400 researchers of the coauthorship graph. 
+[info] - an empty runtime.window-summary.load-run leaves the port unset: corpus questions abstain
+[info] - LocalRun passes --window-summary-root through; a bad or missing object stops startup
+[info] - graph-evidence-api never opens the window-summary object; same runtime run (repair-01 m3)
+[info] - the graph-evidence-api main itself passes answers = false (repair-01 Part C)
+[info] LifecycleSpec:
+[info] - query to evidence: sync and async answers, cited evidence, and explain
+[info] - local runner: three services on one backend, fake mode only
+[info] - components: min-label propagation equals union-find on known and seeded graphs, per window
+[info] - components: large-star/small-star agrees, including negative and extreme LONG node keys
+[info] - empty and disconnected graphs: no node, isolated nodes only, and a window with no edges
+[info] - k-core: known coreness (clique, cycle, star, tree, Petersen, clique with a tail) and seeded graphs
+[info] - communities: label propagation on known graphs equals the hand-worked and reference labels
+[info] - bridge measures: hand-computed degree, cross-community degree, communities, participation
+[info] RequestReadSpec:
+[info] - D5: a refused or unread body that never arrives does not hold the exchange or the thread
+[info] - D5: a body or header slower than the read timeout loses its connection; threads freed
+[info] - D5: a response to a body left unread says Connection: close, so no client reuses it
+[info] Run completed in 36 seconds, 188 milliseconds.
+[info] Total number of tests run: 47
+[info] Suites: completed 9, aborted 0
+[info] Tests: succeeded 47, failed 0, canceled 0, ignored 0, pending 0
+[info] All tests passed.
+[info] - Spark window summaries of known graphs, an empty window included, pass the storage identities (repair-01 D10)
+[info] RagModelOutputAdversarialSpec:
+[info] - injected title, name, profile, and abstract reach the synthesis prompt only escaped
+[info] - a synthesis that obeys the injection (999 coauthors, a fabricated evidence ID) keeps no claim of it
+[info] - a tampered chunk (text no longer matching its textHash) is dropped, never cited
+[info] - an injected question adds no operation, no unbound store call, and no asserted fact (fake mode)
+[info] - injection in the structured constraint fields stays a bound parameter of fixed templates
+[info] - injected filter terms reach the graph only as bound parameters of the live openCypher templates
+[info] - malformed or fabricated planner output: two attempts, then the rule planner; no model text kept
+[info] - malformed synthesis twice abstains BUDGET_EXHAUSTED with no claim; never a third attempt
+[info] - fabricated researcher and evidence IDs in an otherwise valid synthesis are removed
+[info] - verifier-v8 wordings in a recorded model synthesis: claims removed, summary replaced, uncertainty line left out
+[info] - a qualified or negated uncertainty line is left out even when its number also appears in a fixed note (pending)
+[info] - a throttled or failing model is tried at most max-attempts-per-call times per call
+[info] - an exhausted input-token budget sends no model request at all
+[info] - an output-token budget below one synthesis request skips synthesis, never overspends
+[info] - a throttled vector query (once, or every time) does not fail an answer the graph supports
+[info] - repair-01 D4 detail: only the failed index degrades, to a note without the error, and every claim stays
+[info] - repair-01 D4 boundary: a deadline passing inside a vector query still ends the question
+[info] - a pair whose work has no abstract and a researcher with no profile still answer from the graph
+[info] - a researcher with no institution gets no institution claim; nothing is invented
+[info] - an unknown researcher abstains UNKNOWN_RESEARCHER; an ambiguous common name abstains AMBIGUOUS
+[info] IdempotencyRaceAdversarialSpec:
+[info] - same key and body while the first sync query runs: 409, one workflow, then the replay
+[info] - eight concurrent identical keyed POSTs run one workflow and share one query ID
+[info] - async: a racing replay before the job exists is 409; afterwards one job and one message
+[info] - N3 (documented): a keyed sync POST answered 503 OVERLOADED keeps its key; the retry is 409
+[info] - an expired Idempotency-Key is a new request; the stored record holds only the key hash
+[info] - job transitions are linearizable: of 16 racing QUEUED -> RUNNING claims exactly one wins
+[info] WindowSummaryTamperAdversarialSpec:
+[info] - control: the untampered object opens and answers every configured window
+[info] - a changed count, fraction, ID, or provenance field refuses the whole object
+[info] - counts no coauthorship graph can have are refused (largest component plus the other components exceed the researchers)
+[info] - structural tampering: extra or missing fields, injected text, duplicates, mixed runs, truncation
+[info] - a missing object refuses to open; nothing is half-opened
+[info] BoundedFixtureEndToEndSpec:
+[info] - sync and async: verified claims, resolvable evidence, explain, and no injected text served
+WARNING: Using incubator modules: jdk.incubator.vector
+[info] CommunityPathSpec:
+Using Spark's default log4j profile: org/apache/spark/log4j2-defaults.properties
+26/11/14 16:19:02 INFO SparkContext: Running Spark version 4.0.2
+26/11/14 16:19:02 INFO SparkContext: OS info Mac OS X, 27.2.1, aarch64
+26/11/14 16:19:02 INFO SparkContext: Java version 17.0.21
+26/11/14 16:19:02 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+26/11/14 16:19:02 INFO ResourceUtils: ==============================================================
+26/11/14 16:19:02 INFO ResourceUtils: No custom resources configured for spark.driver.
+26/11/14 16:19:02 INFO ResourceUtils: ==============================================================
+26/11/14 16:19:02 INFO SparkContext: Submitted application: sparkAnalytics-tests
+26/11/14 16:19:02 INFO ResourceProfile: Default ResourceProfile created, executor resources: Map(cores -> name: cores, amount: 1, script: , vendor: , memory -> name: memory, amount: 1024, script: , vendor: , offHeap -> name: offHeap, amount: 0, script: , vendor: ), task resources: Map(cpus -> name: cpus, amount: 1.0)
+26/11/14 16:19:02 INFO ResourceProfile: Limiting resource is cpu
+26/11/14 16:19:02 INFO ResourceProfileManager: Added ResourceProfile id: 0
+26/11/14 16:19:02 INFO SecurityManager: Changing view acls to: achyutpatel
+26/11/14 16:19:02 INFO SecurityManager: Changing modify acls to: achyutpatel
+26/11/14 16:19:02 INFO SecurityManager: Changing view acls groups to: achyutpatel
+26/11/14 16:19:02 INFO SecurityManager: Changing modify acls groups to: achyutpatel
+26/11/14 16:19:02 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users with view permissions: achyutpatel groups with view permissions: EMPTY; users with modify permissions: achyutpatel; groups with modify permissions: EMPTY; RPC SSL disabled
+26/11/14 16:19:02 INFO Utils: Successfully started service 'sparkDriver' on port 54576.
+26/11/14 16:19:02 INFO SparkEnv: Registering MapOutputTracker
+26/11/14 16:19:02 INFO SparkEnv: Registering BlockManagerMaster
+26/11/14 16:19:02 INFO BlockManagerMasterEndpoint: Using org.apache.spark.storage.DefaultTopologyMapper for getting topology information
+26/11/14 16:19:02 INFO BlockManagerMasterEndpoint: BlockManagerMasterEndpoint up
+26/11/14 16:19:02 INFO SparkEnv: Registering BlockManagerMasterHeartbeat
+26/11/14 16:19:02 INFO DiskBlockManager: Created local directory at /private/var/folders/s4/bckpjsjs77bbl17cf5_h4fjw0000gn/T/blockmgr-896f5ed4-cc5d-4255-a33b-0981c26257c2
+26/11/14 16:19:02 INFO SparkEnv: Registering OutputCommitCoordinator
+26/11/14 16:19:02 INFO SecurityManager: Changing view acls to: achyutpatel
+26/11/14 16:19:02 INFO SecurityManager: Changing modify acls to: achyutpatel
+26/11/14 16:19:02 INFO SecurityManager: Changing view acls groups to: achyutpatel
+26/11/14 16:19:02 INFO SecurityManager: Changing modify acls groups to: achyutpatel
+26/11/14 16:19:02 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users with view permissions: achyutpatel groups with view permissions: EMPTY; users with modify permissions: achyutpatel; groups with modify permissions: EMPTY; RPC SSL disabled
+26/11/14 16:19:02 INFO Executor: Starting executor ID driver on host localhost
+26/11/14 16:19:02 INFO Executor: OS info Mac OS X, 27.2.1, aarch64
+26/11/14 16:19:02 INFO Executor: Java version 17.0.21
+26/11/14 16:19:02 INFO Executor: Starting executor with user classpath (userClassPathFirst = false): ''
+26/11/14 16:19:02 INFO Executor: Created or updated repl class loader org.apache.spark.util.MutableURLClassLoader@439b7e4e for default.
+26/11/14 16:19:02 INFO Utils: Successfully started service 'org.apache.spark.network.netty.NettyBlockTransferService' on port 54577.
+26/11/14 16:19:02 INFO NettyBlockTransferService: Server created on localhost:54577
+26/11/14 16:19:02 INFO BlockManager: Using org.apache.spark.storage.RandomBlockReplicationPolicy for block replication policy
+26/11/14 16:19:02 INFO BlockManagerMaster: Registering BlockManager BlockManagerId(driver, localhost, 54577, None)
+26/11/14 16:19:02 INFO BlockManagerMasterEndpoint: Registering block manager localhost:54577 with 1048.8 MiB RAM, BlockManagerId(driver, localhost, 54577, None)
+26/11/14 16:19:02 INFO BlockManagerMaster: Registered BlockManager BlockManagerId(driver, localhost, 54577, None)
+26/11/14 16:19:02 INFO BlockManager: Initialized BlockManager: BlockManagerId(driver, localhost, 54577, None)
+[info] - job 5: bounded BFS finds paths, flags unreachable and beyond-depth pairs, keeps hop works
+[info] - job 5: sampled BFS distances give the hand-computed path-length estimate
+[info] - jobs 6 and 7: label propagation separates two cliques; the bridge leads every measure
+[info] - job 6: labels are deterministic under row order and partitioning; the cap stops early
+[info] - pairs files are validated: header, field count, window, and researcher IDs
+[info] - the job writes paths, communities, bridges, and a manifest with no integrity violations
+[info] StoreConversionSpec:
+[info] - CSV fields follow RFC 4180 and doubles are plain decimals
+[info] - DynamoDB items: typed attributes, null attributes omitted, string lists
+[info] - rankings: value descending, ties by researcherId, nulls not ranked, top n
+[info] - entity links: name-v1 keys drop DBLP homonym numbers; one item per key and researcher
+[info] - benchmark names: dominant-name-v1 (ruling 30) resolves a dominant display-name candidate
+[info] - selection-v1: frozen rank keys and the metadata lists derived from facts
+[info] - selection-v1: tiers, ranks 1..n, skipped and repeated papers
+[info] - the store conversion writes every store file once, listed with its hash in the manifest
+[info] CanonicalGraphJobSpec:
+[info] - fixture ORCID iDs are valid
+[info] - chain A-B-C with two ORCIDs is refused at tier 2; A and B keep their tier-1 cluster
+[info] - a CONFLICT decision inside a tier-1 component refuses it; every member stays apart
+[info] - DBLP suffixes 0001 and 0002 in one component refuse the tier-2 cluster
+[info] - a suffix-conflict group of three plus an unsuffixed mention
+[info] - two members of an oversize-conflict group linked at tier 1 are refused at tier 1 (rule 5d)
+[info] - UNRESOLVED mentions stay separate canonical researchers
+[info] - a self-pair created by a merge is dropped and counted; AUTHORED lists all its mentions
+[info] - duplicate pairs across two works in different years aggregate per window, in canonical order
+[info] - a work cluster with a DOI conflict is refused; a clean DOI match merges onto the DBLP work
+[info] - counts: researchers, works, AUTHORED, edges, refusals, integrity violations
+[info] - the manifest lists every input with its count and every table with path, schema, and rows
+[info] - every table carries schemaVersion and this run's provenance; maps point at sources
+[info] - a rerun gets the next attempt, a new run ID, and identical tables
+[info] CorpusWindowSummarySpec:
+[info] - per window: nodes, edges, components, largest component, singletons, communities
+[info] - checks: member sums and every shared value against the Phase 6 window summary
+[info] - the job writes a new run equal to the Phase 6 window summary, with provenance
+[info] SparkSettingsSpec:
+[info] - defaults come from scholarchain-spark.conf and flags override them
+[info] - missing required flags, unknown flags, and bad values are refused
+[info] - the master is set only when spark.master is not already set (ruling 25)
+[info] TemporalSummarySpec:
+[info] - job 9: researchers are compared across non-overlapping windows by hand-worked rules
+[info] - job 10: profile, community, path, and topic texts are the hand-rendered templates
+[info] - the export refuses a table without schemaVersion and provenance, or with another run's
+[info] - the pipeline runs jobs 1 to 11, and the load manifest lists every table with checked counts
+[info] ConnectedComponentsSpec:
+[info] - a chain, a triangle, and a pair: each node gets the smallest node of its component
+[info] - a graph that is already a star needs no round; self-loops and duplicates are ignored
+[info] - a long chain with its minimum in the middle converges to that minimum
+[info] ResearcherAnalyticsSpec:
+[info] - job 3: P, C, T, A, M, W and the M_r work IDs on a five-node graph, per window
+[info] - job 4: min-label propagation finds two components and an isolated node per window
+[info] - job 8: k-core peeling gives the known coreness of a 4-clique attached to a path
+[info] - job 8: a level that needs more rounds than the cap fails the run
+[info] - the job writes metrics, components, and a manifest with no integrity violations
+[info] Run completed in 2 minutes, 20 seconds.
+[info] Total number of tests run: 141
+[info] Suites: completed 20, aborted 0
+[info] Tests: succeeded 141, failed 0, canceled 0, ignored 0, pending 10
+[info] All tests passed.
+[info] Run completed in 2 minutes, 20 seconds.
+[info] Total number of tests run: 46
+[info] Suites: completed 8, aborted 0
+[info] Tests: succeeded 46, failed 0, canceled 0, ignored 0, pending 0
+[info] All tests passed.
+[info] PipelineSpec:
+[info] - run ID: snapshots plus input fingerprints (path and bytes); manifest v3 records them
+[info] - input fingerprints: a changed input size changes the run ID; a missing input fails
+[info] - J01 counters: 40 records in, 40 accepted, none rejected; works and mentions written
+[info] - J02 counters: 86 enrichment records in, 3 synthetic ORCID records rejected to rejects-v1
+[info] - J03+J04: every enrichment work matches its DBLP work by DOI; candidates validate
+[info] - J07+J08: one team per work, n(n-1)/2 pairs per team, oversize teams counted
+[info] - J09: Spark-ready partitioned outputs; every record validates and carries provenance
+[info] - a rerun of the same inputs gets attempt 2, a new run ID, and logically equal output
+[info] - --attempt: parsed when positive; an existing attempt is refused, never overwritten
+[info] - J05: every pass together gives exactly the OversizePolicy.plan blocks of all works
+[info] - J06: one feature-carrying candidate per distinct pair of kept blocks; exported for Spark
+[info] - policy version: an unknown configured version fails before any job or run directory
+[info] - J10 er-v2 (configured default): one decision per candidate, recomputed; exported
+[info] - J10 er-v1 (env override): one decision per candidate, recomputed; manifest records it
+[info] - orcid suffix conflict er-v2: the group goes to conflicts/, is counted, decides CONFLICT
+[info] - orcid suffix conflict er-v1: the same input is unchanged, both mentions match the iD
+[info] Run completed in 4 minutes, 18 seconds.
+[info] Total number of tests run: 70
+[info] Suites: completed 6, aborted 0
+[info] Tests: succeeded 70, failed 0, canceled 0, ignored 0, pending 0
+[info] All tests passed.
+[info] markTestRun: tests passed, wrote /Users/achyutpatel/Developer/Cloud/ScholarChain/.claude/.last-test-run
+[success] Total time: 259 s (0:04:19.0), completed Nov 14, 2026, 4:22:42 PM

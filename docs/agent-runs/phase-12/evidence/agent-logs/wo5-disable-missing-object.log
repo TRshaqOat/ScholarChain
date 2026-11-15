@@ -1,0 +1,13 @@
+disable missing-object: modules/storage/src/main/scala/scholarchain/storage/cli/LoadNeptuneCli.scala line 225, sed 's/Some(s"$k is missing from the bucket")/None/'
+sha256 before 8d287100d18322b7de623e8a368aa8312d26c1bde998301ba6c1aef7d179a2c2
+disabled line:         case None => None
+sha256 disabled b04bf0eda0552c8bb983181187572a9d3d58b36081b71d58ffce7920892446f4
+[info] - WO5 stage-from-bucket: a missing object, a missing manifest, a wrong --dir and a timeout *** FAILED ***
+[info] Tests: succeeded 15, failed 1, canceled 0, ignored 0, pending 0
+[info] *** 1 TEST FAILED ***
+[error] Failed tests:
+[error] 	scholarchain.storage.CliSpec
+[error] (storage / Test / testOnly) sbt.TestsFailedException: Tests unsuccessful
+[error] Total time: 3 s, completed Nov 14, 2026, 4:51:13 PM
+sha256 restored 8d287100d18322b7de623e8a368aa8312d26c1bde998301ba6c1aef7d179a2c2
+RESTORE OK

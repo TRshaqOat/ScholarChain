@@ -298,6 +298,9 @@ object ConfigLoader:
     "SCHOLARCHAIN_VERIFICATION_MODEL_ID" -> "models.verification-model",
     "SCHOLARCHAIN_ADJUDICATION_MODEL_ID" -> "models.adjudication-model",
     "SCHOLARCHAIN_PROMPTS_DIR" -> "runtime.prompts-dir",
+    // Phase 12 work order 4: per-process Haiku throttle, so the deployment can keep the sum over
+    // processes at or below 8 per minute (Terraform sets 4 for query-api plus worker).
+    "SCHOLARCHAIN_LLM_REQUESTS_PER_MINUTE" -> "runtime.llm.requests-per-minute",
     "SCHOLARCHAIN_WINDOW_SUMMARY_RUN" -> "runtime.window-summary.load-run",
     "SCHOLARCHAIN_STUB_LLM" -> "services.stub-llm",
     "SCHOLARCHAIN_JOB_QUEUE_URL" -> "services.queue.url",

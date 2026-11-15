@@ -513,3 +513,13 @@ Review only the repair-03 changes against ruling 23 and code review 3. Confirm t
 - every role in repair-03's table is decided correctly against the code paths;
 - every comment and README claim matches the S3 rule in ruling 23.
 Verify every finding against the working tree. Return APPROVE or REQUEST_CHANGES. Under ruling 23, open items go to the gate as residual risks. Do not edit any file.
+
+## Human rulings after code review 4
+
+24. Code review 4 returned APPROVE (M1 to M3 minor).
+   - M1 (the neptune-bulk-loader S3 access pattern is uncited), M2 (the logs and logs/emr parent keys are defensive, not a known S3A dependency) and M3 (SERVICES.md:83 suggests a prefix-conditioned ListBucket) are residual risks.
+     - M1 is checked on the first window 2 load's --status output. If that shows an S3 access error, the fix is an unconditioned s3:ListBucket on the bulk-loader role through a reviewed Phase 14 change.
+     - M3 goes to the service-engineer backlog.
+   - repair-02.md's "turns that 403 into 404" claim is superseded by ruling 23. The report stays verbatim.
+   - The repeated "Grep tool unavailable" reports (repair-01 A, work order 8, repair-02, repair-03) are recorded as a factory-engineer item. They are accepted under ruling 23 (N5).
+   - Phase 12 is committed next, then planned (ruling 21).

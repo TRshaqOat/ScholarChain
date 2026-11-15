@@ -1,0 +1,39 @@
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] scalafmt: Formatting 1 Scala sources (/Users/achyutpatel/Developer/Cloud/ScholarChain/modules/services)...
+[info] scalafmt: Reformatted 1 Scala sources
+[success] Total time: 1 s, completed Nov 14, 2026, 5:05:06 PM
+[info] scalafmt: Formatting 1 Scala sources (/Users/achyutpatel/Developer/Cloud/ScholarChain/modules/services)...
+[info] scalafmt: Reformatted 1 Scala sources
+[success] Total time: 0 s, completed Nov 14, 2026, 5:05:07 PM
+[info] compiling 1 Scala source to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/services/target/scala-3.3.7/classes ...
+[info] done compiling
+[info] compiling 3 Scala sources to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/services/target/scala-3.3.7/test-classes ...
+[info] done compiling
+[info] LauncherSpec:
+[info] - ECS form: --live without --profile gives profileName None; --profile x gives Some(x)
+[info] - --live alone is no longer refused for --profile; the next missing argument is named
+[info] QueryApiSpec:
+[info] - a synchronous query returns an evidence-backed answer with links; IDs are echoed
+[info] - malformed JSON, invalid fields, a wrong Content-Type, and an oversized body are 400
+[info] - valid JSON with unsupported constraints or retrieval limits is 422
+[info] - Idempotency-Key: the same body replays the stored answer; a different body is 409
+[info] - a passed deadline is 504 (cooperative and hard); a failing store is 502; breakers open
+[info] - missing or wrong API key is 401 everywhere except /healthz and /readyz
+[info] - health and readiness differ; neither reveals configuration
+[info] - explain returns the plan, stages, versions, evidence, and counters; never hidden text
+[info] - POST /v1/query is rate limited per instance (429 with Retry-After)
+[info] - metrics: counts by route and status, latency percentiles, and answer counters
+[info] - no API key, question, or store error text appears in any log line or response
+[info] - launcher: fake mode starts on localhost; a missing key or incomplete live arguments stop it
+[info] - readiness probes S3 under the audit prefix query-api and the worker read (repair-01 m1)
+[info] Run completed in 1 second, 918 milliseconds.
+[info] Total number of tests run: 15
+[info] Suites: completed 2, aborted 0
+[info] Tests: succeeded 15, failed 0, canceled 0, ignored 0, pending 0
+[info] All tests passed.
+[success] Total time: 5 s, completed Nov 14, 2026, 5:05:12 PM

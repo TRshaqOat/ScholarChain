@@ -1,0 +1,13 @@
+== update-service, run-task, create-cluster, start-build, register-task-definition calls and their wrapper
+scripts/deploy.sh:150:      aws_once ecs update-service --cluster "$CLUSTER" --service "$s" --force-new-deployment \
+scripts/package.sh:122:  BUILD_ID="$(aws_once codebuild start-build --project-name "$PROJECT" \
+scripts/load-stores.sh:152:  task="$(aws_once ecs run-task --cluster "$CLUSTER" --task-definition "$FAMILY" --launch-type FARGATE --count 1 \
+scripts/rollback.sh:115:  NEW="$(aws_once ecs register-task-definition --cli-input-json "file://$INPUT" \
+scripts/rollback.sh:118:  aws_retry ecs update-service --cluster "$CLUSTER" --service "$s" --task-definition "$NEW" \
+scripts/run-bounded-pipeline.sh:215:CLUSTER_ID="$(aws_once emr create-cluster --name "scholarchain-course-pipeline-f$FRACTION-${COMMIT:0:12}" \
+== force-new-deployment
+146-  if [ "$RESUME" = 1 ]; then
+147:    step "force-new-deployment"
+--
+149-      # Not idempotent (each call starts another deployment): one attempt (code review 1 F3).
+150:      aws_once ecs update-service --cluster "$CLUSTER" --service "$s" --force-new-deployment \

@@ -42,12 +42,21 @@ object Cli:
       case x :: _ => Left(s"unexpected argument '$x'")
     go(args.toList, Args(Map.empty, Set.empty))
 
-  /** Live calls need both --live and --profile (rulings 1 and 26); both are off by default. */
-  def liveTarget(a: Args, defaultRegion: String): Either[String, Option[LiveTarget]] =
+  /** Live calls need --live, off by default (rulings 1 and 26). --profile names a profile. The live
+    * loader CLIs pass profileOptional, so --live alone gives LiveTarget(None, region), the SDK
+    * default credentials chain (an ECS task, Phase 12 work order 5); every other caller (EmbedCli,
+    * the rag CLIs) still needs --profile.
+    */
+  def liveTarget(
+      a: Args,
+      defaultRegion: String,
+      profileOptional: Boolean = false
+  ): Either[String, Option[LiveTarget]] =
     (a.flag("live"), a.get("profile")) match
-      case (false, None)    => Right(None)
-      case (true, Some(p))  => Right(Some(LiveTarget(p, a.get("region").getOrElse(defaultRegion))))
-      case (true, None)     => Left("--live needs --profile <name>")
+      case (false, None)                              => Right(None)
+      case (true, p) if p.nonEmpty || profileOptional =>
+        Right(Some(LiveTarget(p, a.get("region").getOrElse(defaultRegion))))
+      case (true, _)        => Left("--live needs --profile <name>")
       case (false, Some(_)) => Left("--profile is used only with --live")
 
   def config(env: Map[String, String] = sys.env): Either[String, ScholarChainConfig] =
@@ -62,13 +71,15 @@ object Cli:
       "live loads need SCHOLARCHAIN_ENVIRONMENT set to a non-local environment"
     )
 
-  def freeDiskProblem(dir: Path): Option[String] =
+  /** A problem when free disk under dir, less needBytes still to be written, is below the floor. */
+  def freeDiskProblem(dir: Path, needBytes: Long = 0L): Option[String] =
     val existing =
       Iterator.iterate(dir.toAbsolutePath)(_.getParent).takeWhile(_ != null).find(Files.exists(_))
     existing.flatMap { p =>
       val free = Files.getFileStore(p).getUsableSpace
-      Option.when(free < MinFreeBytes)(
-        s"BLOCKED-ON: ${free >> 20} MiB free under $p, below the 5 GiB floor (ruling 27)"
+      Option.when(free - needBytes < MinFreeBytes)(
+        s"BLOCKED-ON: ${free >> 20} MiB free under $p, ${needBytes >> 20} MiB to write, " +
+          "below the 5 GiB floor (ruling 27)"
       )
     }
 

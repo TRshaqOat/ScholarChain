@@ -1,0 +1,14 @@
+disable default-chain: modules/storage/src/main/scala/scholarchain/storage/cli/Cli.scala line 57, sed 's/p.nonEmpty || profileOptional/p.nonEmpty/'
+sha256 before 6a40a91f79b8a059221b89dee6a1be275e1e8002abb614582fe0ce08a2b71d53
+disabled line:       case (true, p) if p.nonEmpty =>
+sha256 disabled 388ddd784ce8b179889668a9f9692247f1ae6929251be926ada288e20b196da6
+[info] - WO5: --live without --profile selects the SDK default chain in every live loader CLI *** FAILED ***
+[info] - WO5 stage-from-bucket needs --live and is not used with --status *** FAILED ***
+[info] Tests: succeeded 14, failed 2, canceled 0, ignored 0, pending 0
+[info] *** 2 TESTS FAILED ***
+[error] Failed tests:
+[error] 	scholarchain.storage.CliSpec
+[error] (storage / Test / testOnly) sbt.TestsFailedException: Tests unsuccessful
+[error] Total time: 3 s, completed Nov 14, 2026, 4:51:23 PM
+sha256 restored 6a40a91f79b8a059221b89dee6a1be275e1e8002abb614582fe0ce08a2b71d53
+RESTORE OK

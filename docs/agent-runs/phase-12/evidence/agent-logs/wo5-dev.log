@@ -1,0 +1,59 @@
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] scalafmt: Formatting 5 Scala sources (/Users/achyutpatel/Developer/Cloud/ScholarChain/modules/storage)...
+[info] scalafmt: Reformatted 3 Scala sources
+[success] Total time: 1 s, completed Nov 14, 2026, 4:43:05 PM
+[info] scalafmt: Formatting 1 Scala sources (/Users/achyutpatel/Developer/Cloud/ScholarChain/modules/storage)...
+[info] scalafmt: Reformatted 1 Scala sources
+[success] Total time: 0 s, completed Nov 14, 2026, 4:43:05 PM
+[info] compiling 5 Scala sources to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/storage/target/scala-3.3.7/classes ...
+[info] done compiling
+[info] compiling 5 Scala sources to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/storage/target/scala-3.3.7/classes ...
+[info] done compiling
+[info] compiling 1 Scala source to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/storage/target/scala-3.3.7/test-classes ...
+[info] done compiling
+SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+SLF4J: Defaulting to no-operation (NOP) logger implementation
+SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+[info] CliSpec:
+[info] - validator CLI: counts and OK on a valid graph; grouped violations and exit 1 otherwise
+[info] - Neptune loader dry run: second pass all Unchanged; COAUTHORED_WITH expectations checked
+[info] - validator CLI: rendered documents and DynamoDB ranking items
+[info] - DynamoDB loader dry run: insert, registry skip, item-level recheck
+[info] - live opt-in: --profile needs --live, live loads need a non-local config
+[info] - embed (fake) then vector load and S3 manifest check, all idempotent on rerun
+[info] - M1: any Throwable, including OutOfMemoryError, exits 1 with a message; never success
+[info] - M8: CLIs read the environment they are given, not the shell's
+[info] - M3: the live Neptune pre-load check compares SHA-256 hashes with the run manifest
+[info] - N6: validator exits 1 when evidence objects are left untraced (no --evidence-root)
+[info] - M10: the live table prefix and loader role default to configuration; flags override
+[info] - WO5: --live without --profile selects the SDK default chain in every live loader CLI
+[info] - WO5 stage-from-bucket: the staged copy matches the manifest; a rerun is unchanged
+[info] - WO5 stage-from-bucket: a sha256 mismatch is refused and not written
+[info] - WO5 stage-from-bucket: a missing object, a missing manifest, a wrong --dir and a timeout
+[info] - WO5 stage-from-bucket needs --live and is not used with --status
+[info] LiveRequestSpec:
+[info] - S3: write-once put carries If-None-Match and a SHA-256 checksum
+[info] - DynamoDB: attribute codec round trip and conditional put requests
+[info] - Neptune: loader request and status parsing
+[info] - S3 Vectors: put, get, and query requests; filter syntax; response parsing
+[info] - Bedrock: Titan V2 invoke request; transient error classification
+[info] - refreshing credentials: built lazily, re-resolved per call, rebuilt after refresh
+[info] - expired token: refresh and retry once; a second expiry or another 403 is not retried
+[info] - guarded refreshes the profile's credentials on an expired token and retries the call
+[info] - no profile (ECS) selects the SDK default chain; a profile keeps the named profile
+[info] - every live client is built with the profile's refreshing credentials provider
+[info] - N1: the expired-token retry of a Titan call passes the caller's throttle first
+[info] - N2: a 403 on HeadObject gets one refresh and retry; a second 403 propagates
+[info] - N3: an expired token is detected by its error code alone
+[info] - N5: requests that fail on one expiry rerun credential_process once
+[info] Run completed in 565 milliseconds.
+[info] Total number of tests run: 30
+[info] Suites: completed 2, aborted 0
+[info] Tests: succeeded 30, failed 0, canceled 0, ignored 0, pending 0
+[info] All tests passed.
+[success] Total time: 4 s, completed Nov 14, 2026, 4:43:10 PM

@@ -1,0 +1,71 @@
+--- docs/agent-runs/phase-12/evidence/code-review-3/phase-12-cr3-changeset.txt	2026-11-15 00:26:42
++++ /private/tmp/claude-501/-Users-achyutpatel-Developer-Cloud-ScholarChain/09af5231-a09e-434b-94fd-5803b81a735c/scratchpad/phase-12-cr4-changeset.txt	2026-11-15 00:39:15
+@@ -1,5 +1,5 @@
+ ===== git rev-parse HEAD
+-49d71f48b93d94883e4bc2cd5e4bec44caf5199a
++d3fc7cb5d19fa0a583aa0362a572c055229ff7ed
+ 
+ ===== git status --short
+  M datasets/dataset-manifest.yaml
+@@ -26,6 +26,7 @@
+ ?? docs/agent-runs/phase-12/evidence/
+ ?? docs/agent-runs/phase-12/repair-01.md
+ ?? docs/agent-runs/phase-12/repair-02.md
++?? docs/agent-runs/phase-12/repair-03.md
+ ?? docs/agent-runs/phase-12/review-report.md
+ ?? infra/
+ ?? modules/services/src/test/scala/scholarchain/services/LauncherSpec.scala
+@@ -1738,7 +1739,7 @@
+ | Role | Grants |
+ |---|---|
+ | `scholarchain-course-emr-service` | AWS `AmazonEMRServicePolicy_v2` (EC2 actions limited to resources tagged `for-use-with-amazon-emr-managed-policies=true`); `iam:PassRole` on the EMR instance role to `ec2.amazonaws.com` |
+-| `scholarchain-course-emr-instance` (+ profile) | data bucket: GetBucketLocation, ListBucketMultipartUploads; ListBucket only with `s3:prefix` `raw/* curated/* artifacts/* logs/emr/*`; GetObject on `raw/ curated/ artifacts/`, and on the exact keys `curated` and `logs/emr` (the parent keys an S3A mkdirs or getFileStatus walk HEADs; they hold no data; repair-02 R1); Put, Delete, AbortMultipartUpload, ListMultipartUploadParts on `curated/ logs/emr/` (no `graph/`, `semantic-context/`, `runs/`, or `reports/` grant; code review 1 F1) |
++| `scholarchain-course-emr-instance` (+ profile) | data bucket: GetBucketLocation, ListBucketMultipartUploads; `s3:ListBucket` unconditioned (ruling 23: S3 answers 404 for a missing key only to a principal with GetObject on that key and ListBucket on the bucket, and a GET or HEAD carries no `s3:prefix`, so a prefix-conditioned ListBucket never applied and every S3A HEAD of a not-yet-existing path got 403; key names only, never data, as for query-api); GetObject on `raw/ curated/ artifacts/`, and on the exact keys `curated`, `logs`, and `logs/emr` (the parent keys an S3A mkdirs or getFileStatus walk HEADs; they hold no data; repair-02 R1, repair-03); Put, Delete, AbortMultipartUpload, ListMultipartUploadParts on `curated/ logs/emr/` (no `graph/`, `semantic-context/`, `runs/`, or `reports/` grant; code review 1 F1) |
+ | `scholarchain-course-codebuild-services-image` | Logs on its log group; GetObject, GetObjectVersion on `artifacts/codebuild/source/*`; GetBucketLocation, GetBucketAcl; `ecr:GetAuthorizationToken` (no resource scope exists); push and pull actions on the services repository only |
+ | `scholarchain-course-neptune-bulk-loader` | ListBucket (prefix `graph/*`), GetObject `graph/*` |
+ | `scholarchain-course-ecs-exec-services` | ECR pull on the services repository, `ecr:GetAuthorizationToken`, logs on the three service log groups, `secretsmanager:GetSecretValue` on the API key secret |
+@@ -3872,15 +3873,13 @@
+   # DeleteObject is needed by the s3a committers (temporary and rename files); versioning keeps
+   # every overwritten or deleted version.
+   write_prefixes = ["curated/", "logs/emr/"]
+-  # ListBucket only under the prefixes the role reads or writes (s3:prefix condition).
+-  list_prefixes = distinct(concat(local.read_prefixes, local.write_prefixes))
+-  # Repair-02 R1 (ruling 22): an S3A mkdirs or getFileStatus walk from a write root (output commit
+-  # setup, JobRun's mkdirs) HEADs each parent key, here "curated" and "logs/emr". "curated/*" and
+-  # "logs/emr/*" do not match those bare keys, so on a still-empty prefix the HEAD answers 403
+-  # (which S3A does not treat as not found) instead of 404. Nothing writes these keys, so they hold
+-  # no data; the grant only turns that 403 into 404. "logs" is not granted: no S3A walk reaches it
+-  # (EMR's log pusher PUTs objects without mkdirs), and its LIST probe on "logs/" stays denied.
+-  parent_keys = ["curated", "logs/emr"]
++  # S3 rule (ruling 23; iam/main.tf:181-183): S3 answers a GET or HEAD of a missing key with 404 only
++  # to a principal that holds s3:GetObject on that key and s3:ListBucket on the bucket; otherwise
++  # 403, which S3A raises as AccessDeniedException, not "not found". An S3A getFileStatus or mkdirs
++  # walk HEADs each parent of a write root ("curated", "logs/emr", "logs"), and output checks and the
++  # first write under curated/ HEAD keys that do not exist yet. Those bare parent keys match no
++  # "<prefix>*" grant, so they get exact-key GetObject here; nothing writes them, so they hold no data.
++  parent_keys = ["curated", "logs", "logs/emr"]
+ }
+ 
+ # ---------------------------------------------------------------------------------------------
+@@ -3976,16 +3975,14 @@
+     resources = [local.b]
+   }
+ 
++  # Unconditioned on purpose (ruling 23): a GetObject or HeadObject request carries no s3:prefix, so
++  # a prefix-conditioned ListBucket never applies to it, and every HEAD of a missing key would answer
++  # 403. This exposes key names in the data bucket, never object data: the same pattern and rationale
++  # as query-api (iam/main.tf:181-183; ruling 11). Reads and writes stay narrowed to the prefixes.
+   statement {
+-    sid       = "ListOwnPrefixes"
++    sid       = "ListDataBucket"
+     actions   = ["s3:ListBucket"]
+     resources = [local.b]
+-
+-    condition {
+-      test     = "StringLike"
+-      variable = "s3:prefix"
+-      values   = [for p in local.list_prefixes : "${p}*"]
+-    }
+   }
+ 
+   statement {

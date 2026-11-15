@@ -7,13 +7,13 @@ import java.nio.file.Paths
 
 /** Copies the objects of one run manifest from the file object store (<root>, default
   * scratch/stores/s3) to the environment bucket. Dry run (default) only verifies the manifest
-  * locally. Live (--live --profile): verifies locally, writes every object write-once
+  * locally. Live (--live [--profile]): verifies locally, writes every object write-once
   * (If-None-Match), writes the manifest last, then verifies the manifest against the bucket.
   */
 object LoadS3Cli:
   val UsageText =
     "storage/runMain scholarchain.storage.cli.LoadS3Cli --manifest runs/<stage>/snapshot=<d>/run=<r>/manifest.json " +
-      "[--root scratch/stores/s3] [--live --profile <name> [--region <r>]]"
+      "[--root scratch/stores/s3] [--live [--profile <name>] [--region <r>]]"
 
   def main(args: Array[String]): Unit = Cli.main("LoadS3Cli", args)(run(_, _))
 
@@ -28,7 +28,7 @@ object LoadS3Cli:
     ) { (a, cfg) =>
       for
         manifestKey <- a.req("manifest")
-        live <- Cli.liveTarget(a, cfg.region)
+        live <- Cli.liveTarget(a, cfg.region, profileOptional = true)
         _ <- if live.nonEmpty then Cli.liveConfig(cfg) else Right(())
         local = FileObjectStore(Paths.get(a.get("root").getOrElse("scratch/stores/s3")))
         bytes <- local.reader.get(manifestKey).toRight(s"no manifest at $manifestKey")

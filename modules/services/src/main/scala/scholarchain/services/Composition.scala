@@ -389,15 +389,17 @@ object Apps:
       () => wk.start()
     )
 
-/** Command line of the service mains. Fake mode binds 127.0.0.1; live mode (--live --profile, for
-  * Phase 12 and later; agents never start it) binds all interfaces.
+/** Command line of the service mains. Fake mode binds 127.0.0.1; live mode (--live [--profile
+  * <name>], for Phase 12 and later; agents never start it) binds all interfaces. Without --profile
+  * (an ECS task) live mode uses the SDK default credentials chain (STORAGE.md "Credentials on
+  * ECS").
   */
 object Launcher:
   val Usage: String =
     "--graph <neptune CSV run dir> --items <dynamodb item run dir> --objects <object store root> " +
       "--vectors <file vector store root> [--out <root, default scratch/services>] " +
       "[--window-summary-root <object store root, default --objects>] | " +
-      "--live --profile <name> [--region <r>] --snapshot <date> --graph-run <runId> " +
+      "--live [--profile <name>] [--region <r>] --snapshot <date> --graph-run <runId> " +
       "--items-run <runId> --vectors-run <runId>"
   private val Opts = Set(
     "graph",
@@ -414,6 +416,12 @@ object Launcher:
     "window-summary-root"
   )
 
+  def parse(args: Seq[String]): Either[String, Args] = Cli.parse(args, Set("live"), Opts)
+
+  /** No --profile gives profileName None: the SDK default credentials chain (Phase 12 WO6). */
+  def liveTarget(a: Args, cfg: ScholarChainConfig): LiveTarget =
+    LiveTarget(a.get("profile"), a.get("region").getOrElse(cfg.region))
+
   /** The backend the arguments name; Left is a usage or store problem. answers false: the service
     * answers no questions, so the window-summary object is not opened (repair-01 m3).
     */
@@ -425,7 +433,6 @@ object Launcher:
   ): Either[String, Backend] =
     if a.flag("live") then
       for
-        profile <- a.req("profile")
         snapshot <- a.req("snapshot")
         graphRun <- a.req("graph-run")
         itemsRun <- a.req("items-run")
@@ -433,7 +440,7 @@ object Launcher:
         b <- Composition.live(
           cfg,
           LiveRun(
-            LiveTarget(profile, a.get("region").getOrElse(cfg.region)),
+            liveTarget(a, cfg),
             snapshot,
             graphRun,
             itemsRun,
@@ -476,7 +483,7 @@ object Launcher:
       answers: Boolean = true
   ): Either[Int, (Args, ScholarChainConfig, ApiKeyAuth, Backend)] =
     val parsed = for
-      a <- Cli.parse(args, Set("live"), Opts)
+      a <- parse(args)
       cfg <- ConfigLoader.load(env).left.map(_.mkString("; "))
       // Ruling 5: the key is read once from the variable configuration names, never logged.
       key <- env

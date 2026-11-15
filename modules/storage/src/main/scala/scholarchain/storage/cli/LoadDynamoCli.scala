@@ -14,7 +14,7 @@ import scala.util.Using
 /** Loads DynamoDB item files (curated/dynamodb/snapshot=<d>/run=<r>/<Table>/part-*.jsonl).
   *
   * Dry run (default): the in-memory fake, --passes times in one process, ledger under <out>/ledger.
-  * Live (--live --profile; --table-prefix defaults to dynamodb.table-prefix): conditional PutItem
+  * Live (--live [--profile]; --table-prefix defaults to dynamodb.table-prefix): conditional PutItem
   * per item, --concurrency threads, RunLedger table. Every file is validated first; any violation
   * stops before a write. A table whose content hash ArtifactRegistry already records for this
   * source run is skipped unless --recheck.
@@ -25,7 +25,7 @@ object LoadDynamoCli:
   val UsageText =
     "storage/runMain scholarchain.storage.cli.LoadDynamoCli --dir <.../curated/dynamodb/snapshot=<d>/run=<r>> " +
       "[--out scratch/stores] [--passes n] [--recheck] " +
-      "[--live --profile <name> [--region <r>] [--table-prefix <p>] [--concurrency n]]"
+      "[--live [--profile <name>] [--region <r>] [--table-prefix <p>] [--concurrency n]]"
 
   def main(args: Array[String]): Unit = Cli.main("LoadDynamoCli", args)(run(_, _))
 
@@ -50,7 +50,7 @@ object LoadDynamoCli:
           .runSegments(dir)
           .toRight("--dir must contain snapshot=<d>/run=<r>")
         (snapshot, sourceRun) = seg
-        live <- Cli.liveTarget(a, cfg.region)
+        live <- Cli.liveTarget(a, cfg.region, profileOptional = true)
         _ <- if live.nonEmpty then Cli.liveConfig(cfg) else Right(())
         prefix = tablePrefix(a, cfg)
         passes <- a

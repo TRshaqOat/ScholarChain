@@ -1,0 +1,11 @@
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] scalafmt: Checking 1 Scala sources (/Users/achyutpatel/Developer/Cloud/ScholarChain/modules/services)...
+[warn] scalafmt: /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/services/src/main/scala/scholarchain/services/Composition.scala isn't formatted properly!
+[error] scalafmt: 1 files must be formatted (/Users/achyutpatel/Developer/Cloud/ScholarChain/modules/services)
+[error] (services / Compile / scalafmtCheck) scalafmt: 1 files must be formatted (/Users/achyutpatel/Developer/Cloud/ScholarChain/modules/services)
+[error] Total time: 1 s, completed Nov 14, 2026, 5:04:57 PM

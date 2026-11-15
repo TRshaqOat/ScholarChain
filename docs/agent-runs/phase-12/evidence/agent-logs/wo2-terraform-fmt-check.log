@@ -1,0 +1,2 @@
+$ terraform fmt -check -recursive infra/terraform
+exit 0

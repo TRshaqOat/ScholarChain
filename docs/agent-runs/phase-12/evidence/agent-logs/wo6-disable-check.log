@@ -1,0 +1,42 @@
+== sha256 before disable
+0a0d789b592e4bb193ad38c0359f1161a14484c459656816c0386124207331c3  modules/services/src/main/scala/scholarchain/services/Composition.scala
+== disabled diff
+423c423
+<     LiveTarget(a.get("profile"), a.get("region").getOrElse(cfg.region))
+---
+>     LiveTarget(a.get("profile").orElse(Some("default")), a.get("region").getOrElse(cfg.region))
+435a436
+>         _ <- a.req("profile")
+== sha256 disabled
+cccc4d85cada34b1e965182b028404ba2d26ea92f6059a1132c724765fd48eed  modules/services/src/main/scala/scholarchain/services/Composition.scala
+== sbt services/testOnly scholarchain.services.LauncherSpec (disabled)
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] compiling 1 Scala source to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/services/target/scala-3.3.7/classes ...
+[info] done compiling
+[info] LauncherSpec:
+[info] - ECS form: --live without --profile gives profileName None; --profile x gives Some(x) *** FAILED ***
+[info]   LiveTarget(Some("default"), "us-east-2") did not equal LiveTarget(None, "us-east-2") (LauncherSpec.scala:58)
+[info]   Analysis:
+[info]   LiveTarget(profileName: Some(value: default -> ))
+[info] - --live alone is no longer refused for --profile; the next missing argument is named *** FAILED ***
+[info]   Left("missing --profile") did not equal Left("missing --snapshot") (LauncherSpec.scala:73)
+[info]   Analysis:
+[info]   Left(value: "missing --[profile]" -> "missing --[snapshot]")
+[info] Run completed in 191 milliseconds.
+[info] Total number of tests run: 2
+[info] Suites: completed 1, aborted 0
+[info] Tests: succeeded 0, failed 2, canceled 0, ignored 0, pending 0
+[info] *** 2 TESTS FAILED ***
+[error] Failed tests:
+[error] 	scholarchain.services.LauncherSpec
+[error] (services / Test / testOnly) sbt.TestsFailedException: Tests unsuccessful
+[error] Total time: 3 s, completed Nov 14, 2026, 5:05:28 PM
+sbt exit=1
+== sha256 after restore
+0a0d789b592e4bb193ad38c0359f1161a14484c459656816c0386124207331c3  modules/services/src/main/scala/scholarchain/services/Composition.scala
+restore: identical to backup

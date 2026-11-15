@@ -1,0 +1,31 @@
+fixture plan sha256 484282e42a7a2aba9f63506beb306de0fa51abe6028caa0aa419deaea1840de1
+== case 1: window 1 plan, correct checksum
+==> STEP approval
+==> OK plan checksum approved: 484282e42a7a2aba9f63506beb306de0fa51abe6028caa0aa419deaea1840de1
+==> STEP dry-run
+    no AWS, Terraform, or git call was made; steps that would run:
+    - refuse a dirty tree; HEAD must equal plan commit 0123456789abcdef0123456789abcdef01234567
+    - aws sts get-caller-identity; account must be 000000000000, Region us-east-2
+    - terraform apply scratch/phase-12-logs/r01c-fixtures/plan/plan.tfplan (saved plan, output shown in full)
+    - terraform output -json into the release directory
+    - runtime_enabled=false: secret value check, wait stable (20 min), verify digests and runtime run IDs
+    - write /Users/achyutpatel/Developer/Cloud/ScholarChain/operations/releases/release-<stamp>-<sha12>.json
+==> OK dry-run
+exit=0
+== case 2: wrong checksum
+==> STEP approval
+==> FAIL plan sha256 484282e42a7a2aba9f63506beb306de0fa51abe6028caa0aa419deaea1840de1 does not equal the approved 0000000000000000000000000000000000000000000000000000000000000000; nothing applied (exit 4)
+exit=4
+== case 3: runtime plan, --resume
+==> STEP approval
+==> OK plan checksum approved: 484282e42a7a2aba9f63506beb306de0fa51abe6028caa0aa419deaea1840de1
+==> STEP dry-run
+    no AWS, Terraform, or git call was made; steps that would run:
+    - refuse a dirty tree; HEAD must equal plan commit 0123456789abcdef0123456789abcdef01234567
+    - aws sts get-caller-identity; account must be 000000000000, Region us-east-2
+    - skip apply (--resume)
+    - terraform output -json into the release directory
+    - runtime_enabled=true: secret value check, force a new deployment, wait stable (20 min), verify digests and runtime run IDs
+    - write /Users/achyutpatel/Developer/Cloud/ScholarChain/operations/releases/release-<stamp>-<sha12>.json
+==> OK dry-run
+exit=0

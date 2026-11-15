@@ -1,0 +1,14 @@
+2026-11-14T23:22:17Z [INFO] source dblp scratch/datasets/dblp/snapshot=2026-10-03/full/works.xml sha256=ea83a20b866084c41239c673b03bfc1be23787c4b2ad1d1bb9fd388dfbc60dab bytes=64330403
+2026-11-14T23:22:18Z [INFO] source openalex scratch/datasets/openalex/full/works.jsonl sha256=a60d466906c30d4b2a685bafdb4f6329269b7de94a25f84bdb8db18fdfbf6424 bytes=571554739
+2026-11-14T23:22:18Z [INFO] source crossref scratch/datasets/crossref/full/works.jsonl sha256=1caa06f05c2475cdba7ef212076d57e29134dc832044ed33bc285bb5765d57b1 bytes=181216501
+2026-11-14T23:22:18Z [INFO] source orcid scratch/datasets/orcid/full/records.jsonl.gz sha256=75d3d64c4da67fd619743108180856a1be4247c976a7e605e4f929cb4f87bbba bytes=237831658
+2026-11-14T23:22:18Z [INFO] source dtd scratch/datasets/dblp/snapshot=2026-10-03/raw/dblp.dtd sha256=2d864498f9eef9298662df11e3874171ff24cd4a21ab5974f1369c90acdb1ef6 bytes=13134
+2026-11-14T23:22:18Z [PLAN] fraction 50 -> scratch/datasets/fraction=50: projected 603 MiB, free 11382 MiB
+2026-11-14T23:22:18Z [STEP] select fraction 50 (rule fraction-v1)
+{"crossref": {"kept": 53607, "percent": 50.229, "source": 106726}, "dblp": {"kept": 55598, "percent": 50.148, "source": 110867}, "openalex": {"kept": 53949, "percent": 50.182, "source": 107506}, "orcid": {"kept": 18388, "percent": 80.035, "source": 22975}}
+2026-11-14T23:22:55Z [INFO] wrote scratch/datasets/fraction=50/crossref/works.jsonl bytes=90973343 sha256=78afebe8b0bae77a798403caef87cad766ff02b21ccd45a670db1ddc78dac6d3
+2026-11-14T23:22:55Z [INFO] wrote scratch/datasets/fraction=50/dblp/works.xml bytes=32251328 sha256=114f99f7115a5becc37a3af2bb4bef1b0b3cf1ae884e9928ee802d57ccb0e2ef
+2026-11-14T23:22:55Z [INFO] wrote scratch/datasets/fraction=50/openalex/works.jsonl bytes=287027525 sha256=c39a17d08eca72c79bd1cdec14f9a5cd1f3e17039de3a659c384ac53529ab594
+2026-11-14T23:22:55Z [INFO] wrote scratch/datasets/fraction=50/orcid/records.jsonl.gz bytes=210179820 sha256=a18113b503d788fe56233ef5e85295b2b5f0714b02e4e4495dc12ac5b9ba06a3
+2026-11-14T23:22:55Z [INFO] wrote scratch/datasets/fraction=50/run-info.json bytes=2552 sha256=0976180fae270ef62fd87d8cf547a6dffe68804530b4118df25acb3353a8b8ed
+2026-11-14T23:22:55Z [DONE] fraction 50 complete

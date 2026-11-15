@@ -1,0 +1,152 @@
+--- /private/tmp/claude-501/-Users-achyutpatel-Developer-Cloud-ScholarChain/647b30d8-a29e-43d0-9e41-a7e964cb44a3/scratchpad/phase-12-cr2-changeset.txt	2026-11-14 23:36:30
++++ /private/tmp/claude-501/-Users-achyutpatel-Developer-Cloud-ScholarChain/4078c56e-a696-4232-9c44-5949bde6eb1d/scratchpad/phase-12-cr3-changeset.txt	2026-11-15 00:04:56
+@@ -1,5 +1,5 @@
+ ===== git rev-parse HEAD
+-3145709e23c92c45ff9cb8dd84f1043920e55882
++49d71f48b93d94883e4bc2cd5e4bec44caf5199a
+ 
+ ===== git status --short
+  M datasets/dataset-manifest.yaml
+@@ -25,6 +25,7 @@
+ ?? docs/agent-runs/phase-12/agent-report.md
+ ?? docs/agent-runs/phase-12/evidence/
+ ?? docs/agent-runs/phase-12/repair-01.md
++?? docs/agent-runs/phase-12/repair-02.md
+ ?? docs/agent-runs/phase-12/review-report.md
+ ?? infra/
+ ?? modules/services/src/test/scala/scholarchain/services/LauncherSpec.scala
+@@ -1719,7 +1720,7 @@
+ 
+ ```
+ entryPoint /opt/docker/bin/query-api   (the -main option selects another class)
+-command    -main scholarchain.storage.cli.LoadNeptuneCli --live
++command    -main scholarchain.storage.cli.LoadNeptuneCli --live --stage-from-bucket
+            --dir /tmp/stores/s3/graph/neptune/snapshot=<d>/run=<r> --out /tmp/stores
+            [--loader-role-arn <neptune_loader_role_arn>]        (default: SCHOLARCHAIN_NEPTUNE_LOADER_ROLE_ARN)
+ command    -main scholarchain.storage.cli.LoadNeptuneCli --live --status <loadId>
+@@ -1737,7 +1738,7 @@
+ | Role | Grants |
+ |---|---|
+ | `scholarchain-course-emr-service` | AWS `AmazonEMRServicePolicy_v2` (EC2 actions limited to resources tagged `for-use-with-amazon-emr-managed-policies=true`); `iam:PassRole` on the EMR instance role to `ec2.amazonaws.com` |
+-| `scholarchain-course-emr-instance` (+ profile) | data bucket: GetBucketLocation, ListBucketMultipartUploads; ListBucket only with `s3:prefix` `raw/* curated/* artifacts/* logs/emr/*`; GetObject on `raw/ curated/ artifacts/`; Put, Delete, AbortMultipartUpload, ListMultipartUploadParts on `curated/ logs/emr/` (no `graph/`, `semantic-context/`, `runs/`, or `reports/` grant; code review 1 F1) |
++| `scholarchain-course-emr-instance` (+ profile) | data bucket: GetBucketLocation, ListBucketMultipartUploads; ListBucket only with `s3:prefix` `raw/* curated/* artifacts/* logs/emr/*`; GetObject on `raw/ curated/ artifacts/`, and on the exact keys `curated` and `logs/emr` (the parent keys an S3A mkdirs or getFileStatus walk HEADs; they hold no data; repair-02 R1); Put, Delete, AbortMultipartUpload, ListMultipartUploadParts on `curated/ logs/emr/` (no `graph/`, `semantic-context/`, `runs/`, or `reports/` grant; code review 1 F1) |
+ | `scholarchain-course-codebuild-services-image` | Logs on its log group; GetObject, GetObjectVersion on `artifacts/codebuild/source/*`; GetBucketLocation, GetBucketAcl; `ecr:GetAuthorizationToken` (no resource scope exists); push and pull actions on the services repository only |
+ | `scholarchain-course-neptune-bulk-loader` | ListBucket (prefix `graph/*`), GetObject `graph/*` |
+ | `scholarchain-course-ecs-exec-services` | ECR pull on the services repository, `ecr:GetAuthorizationToken`, logs on the three service log groups, `secretsmanager:GetSecretValue` on the API key secret |
+@@ -3873,6 +3874,13 @@
+   write_prefixes = ["curated/", "logs/emr/"]
+   # ListBucket only under the prefixes the role reads or writes (s3:prefix condition).
+   list_prefixes = distinct(concat(local.read_prefixes, local.write_prefixes))
++  # Repair-02 R1 (ruling 22): an S3A mkdirs or getFileStatus walk from a write root (output commit
++  # setup, JobRun's mkdirs) HEADs each parent key, here "curated" and "logs/emr". "curated/*" and
++  # "logs/emr/*" do not match those bare keys, so on a still-empty prefix the HEAD answers 403
++  # (which S3A does not treat as not found) instead of 404. Nothing writes these keys, so they hold
++  # no data; the grant only turns that 403 into 404. "logs" is not granted: no S3A walk reaches it
++  # (EMR's log pusher PUTs objects without mkdirs), and its LIST probe on "logs/" stays denied.
++  parent_keys = ["curated", "logs/emr"]
+ }
+ 
+ # ---------------------------------------------------------------------------------------------
+@@ -3987,6 +3995,12 @@
+   }
+ 
+   statement {
++    sid       = "ProbeWriteRootParents"
++    actions   = ["s3:GetObject"]
++    resources = [for k in local.parent_keys : "${local.b}/${k}"]
++  }
++
++  statement {
+     sid = "WriteOutputs"
+     actions = [
+       "s3:PutObject",
+@@ -5565,7 +5579,8 @@
+ `operations/**` belongs to the deploy-engineer and `experiments/**` to the experiment-engineer
+ (`docs/agents.md`); the scripts write there when those agents or the human run them. No new
+ `.gitignore` line is needed: plan files land under the ignored `scratch/`. Logs the scripts write
+-under `operations/` end in `.txt`, never `.log`, because `.gitignore` ignores `*.log`.
++under `operations/` and `experiments/results/` end in `.txt`, never `.log`, because `.gitignore`
++ignores `*.log`.
+ 
+ ## The flow
+ 
+@@ -5598,6 +5613,8 @@
+   self-tests; run through `bash` because those files are not executable); `terraform fmt -check -recursive
+   infra/terraform`; `terraform init -backend=false -lockfile=readonly` and `terraform validate`;
+   `sbt check` (scalafmt check, Test/compile, every test, markTestRun). All gates run; exit 1 if any failed.
++- **Prerequisites:** jq, bash, python3 (the dataset-validation gate), terraform 1.16.6, sbt, a JDK;
++  the script stops with exit 2 when jq, python3, terraform, or sbt is missing.
+ - **Environment:** none. Network: the first terraform init downloads the pinned provider; sbt resolves
+   pinned artifacts. No AWS credentials.
+ - **Runs it:** anyone, including agents (ruling 5). **Approval points:** none.
+@@ -5780,7 +5797,7 @@
+   `SCHOLARCHAIN_EXPERIMENT_DIR`, `AWS_PROFILE`, `AWS_REGION`.
+ - **Runs it:** experiment-engineer (`/experiment`). **Approval points:** the human approves and commits
+   the manifest before the run.
+-- **Evidence:** `experiments/results/<experimentId>/<stamp>/`: `raw/`, `stdout.log`, `stderr.log`,
++- **Evidence:** `experiments/results/<experimentId>/<stamp>/`: `raw/`, `stdout.txt`, `stderr.txt`,
+   `run-record.json` (commit, manifest and its sha256, limits, start and end, exit code, account,
+   Region, metric locations), made read-only.
+ - **Rollback:** none; the experiment's command must stay inside the approved bounds.
+@@ -6012,8 +6029,8 @@
+   sbt-check          SPARK_LOCAL_IP=127.0.0.1 sbt -J-Xmx6g -batch check
+                      (scalafmt check, Test/compile, every test, markTestRun)
+ 
+-Needs: jq, bash, terraform 1.16.6, sbt, a JDK. Network: only the first terraform init (provider
+-download) and sbt dependency resolution. No AWS credentials are read.
++Needs: jq, bash, python3 (dataset validation), terraform 1.16.6, sbt, a JDK. Network: only the first
++terraform init (provider download) and sbt dependency resolution. No AWS credentials are read.
+ EOF
+ }
+ 
+@@ -6023,7 +6040,7 @@
+   *) usage >&2; exit 2 ;;
+ esac
+ 
+-need jq terraform sbt
++need jq python3 terraform sbt
+ FAILED=""
+ 
+ gate() {
+@@ -7742,10 +7759,10 @@
+ SCHOLARCHAIN_EXPERIMENT_DIR (its raw results directory), AWS_PROFILE and AWS_REGION, and is stopped
+ (TERM, then KILL after 30 s) at limits.maxMinutes.
+ 
+-Writes <results-root>/<experimentId>/<UTC stamp>/: raw/ (the command's own outputs), stdout.log,
+-stderr.log, and run-record.json (commit, manifest path and sha256, limits, start and end times,
+-exit code, account, Region, metric locations). The directory is made read-only afterwards (raw
+-results are immutable).
++Writes <results-root>/<experimentId>/<UTC stamp>/: raw/ (the command's own outputs), stdout.txt,
++stderr.txt (.txt, not .log, because .gitignore ignores *.log), and run-record.json (commit,
++manifest path and sha256, limits, start and end times, exit code, account, Region, metric
++locations). The directory is made read-only afterwards (raw results are immutable).
+ 
+ Environment: AWS_PROFILE (or --profile).
+ Run by: experiment-engineer (/experiment) with an approved, committed manifest.
+@@ -7811,7 +7828,7 @@
+ step "run $EXP_ID"
+ START="$(utc_now)"
+ (cd "$SC_ROOT" && SCHOLARCHAIN_EXPERIMENT_ID="$EXP_ID" SCHOLARCHAIN_EXPERIMENT_DIR="$DIR/raw" \
+-  exec "${CMD[@]}" >"$DIR/stdout.log" 2>"$DIR/stderr.log") &
++  exec "${CMD[@]}" >"$DIR/stdout.txt" 2>"$DIR/stderr.txt") &
+ PID=$!
+ DEADLINE=$((SECONDS + MAX_MIN * 60))
+ TIMED_OUT=0
+@@ -7829,7 +7846,7 @@
+ RC=0
+ wait "$PID" || RC=$?
+ END="$(utc_now)"
+-tail -20 "$DIR/stdout.log" || true
++tail -20 "$DIR/stdout.txt" || true
+ 
+ jq -n --arg commit "$COMMIT" --arg manifest "$REL" --arg msha "$(sha256_hex "$SC_ROOT/$REL")" \
+   --arg start "$START" --arg end "$END" --argjson rc "$RC" --argjson timedOut "$TIMED_OUT" \
+@@ -7837,7 +7854,7 @@
+   '{schemaVersion: "experiment-run-record-v1", experimentId: $m[0].experimentId, commit: $commit,
+     manifest: $manifest, manifestSha256: $msha, limits: $m[0].limits, command: $m[0].command,
+     startedAt: $start, endedAt: $end, exitCode: $rc, timedOut: ($timedOut == 1),
+-    account: $account, region: $region, rawResults: "raw/", stdout: "stdout.log", stderr: "stderr.log",
++    account: $account, region: $region, rawResults: "raw/", stdout: "stdout.txt", stderr: "stderr.txt",
+     metricLocations: [($m[0].metrics // [])[] | . + {region: $region, source: "CloudWatch"}]}' >"$DIR/run-record.json"
+ chmod -R a-w "$DIR"
+ printf '==> EXPERIMENT id=%s record=%s exit=%s\n' "$EXP_ID" "$DIR/run-record.json" "$RC"

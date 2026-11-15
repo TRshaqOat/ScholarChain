@@ -1,0 +1,98 @@
+== 2026-11-15T03:20:04Z bash datasets/scripts/validate.sh (first direct invocation exited 126: scripts are mode 644; manifest validation command is the bash form)
+2026-11-15T03:20:04Z [PASS] bash -n datasets/scripts/build_samples.sh
+2026-11-15T03:20:04Z [PASS] bash -n datasets/scripts/fetch_crossref.sh
+2026-11-15T03:20:04Z [PASS] bash -n datasets/scripts/fetch_dblp.sh
+2026-11-15T03:20:04Z [PASS] bash -n datasets/scripts/fetch_openalex.sh
+2026-11-15T03:20:04Z [PASS] bash -n datasets/scripts/fetch_orcid.sh
+2026-11-15T03:20:04Z [PASS] bash -n datasets/scripts/lib.sh
+2026-11-15T03:20:04Z [PASS] bash -n datasets/scripts/make_fraction.sh
+2026-11-15T03:20:04Z [PASS] bash -n datasets/scripts/validate.sh
+2026-11-15T03:20:04Z [PASS] python syntax datasets/scripts/dblp_extract.py
+2026-11-15T03:20:04Z [PASS] python syntax datasets/scripts/make_fraction.py
+dblp_extract self-test: OK
+2026-11-15T03:20:04Z [PASS] dblp_extract.py --self-test
+{"crossref": {"kept": 88, "percent": 22.0, "source": 400}, "dblp": {"kept": 88, "percent": 22.0, "source": 400}, "openalex": {"kept": 88, "percent": 21.945, "source": 401}, "orcid": {"kept": 264, "percent": 21.982, "source": 1201}}
+{"crossref": {"kept": 179, "percent": 44.75, "source": 400}, "dblp": {"kept": 179, "percent": 44.75, "source": 400}, "openalex": {"kept": 179, "percent": 44.638, "source": 401}, "orcid": {"kept": 537, "percent": 44.713, "source": 1201}}
+INFO full: dblp 400 records; rows {'openalex': 401, 'crossref': 400, 'orcid': 1201}; not linked by the fraction rule at 100 percent {'openalex': 1, 'crossref': 0, 'orcid': 1}
+PASS fraction=25 dblp/works.xml parses with expat and the DTD: 88 records
+PASS fraction=25 openalex/works.jsonl parses as JSON per line: 88 records
+PASS fraction=25 crossref/works.jsonl parses as JSON per line: 88 records
+PASS fraction=25 orcid/records.jsonl.gz parses as JSON per line: 264 records
+PASS fraction=25 dblp keys equal the rule applied to the full input: 88 kept, 88 expected
+PASS fraction=25 every OpenAlex and Crossref DOI is on a kept DBLP record (unlinked: openalex 0, crossref 0)
+PASS fraction=25 every ORCID iD appears on a kept record (unlinked: 0)
+PASS fraction=50 dblp/works.xml parses with expat and the DTD: 179 records
+PASS fraction=50 openalex/works.jsonl parses as JSON per line: 179 records
+PASS fraction=50 crossref/works.jsonl parses as JSON per line: 179 records
+PASS fraction=50 orcid/records.jsonl.gz parses as JSON per line: 537 records
+PASS fraction=50 dblp keys equal the rule applied to the full input: 179 kept, 179 expected
+PASS fraction=50 every OpenAlex and Crossref DOI is on a kept DBLP record (unlinked: openalex 0, crossref 0)
+PASS fraction=50 every ORCID iD appears on a kept record (unlinked: 0)
+PASS nesting dblp fraction=25 within fraction=50: 88 of 179 keys, byte-identical records
+PASS nesting openalex fraction=25 within fraction=50: 88 of 179 distinct records, byte-identical lines
+PASS nesting crossref fraction=25 within fraction=50: 88 of 179 distinct records, byte-identical lines
+PASS nesting orcid fraction=25 within fraction=50: 264 of 537 distinct records, byte-identical lines
+PASS nesting dblp fraction=50 within full: 179 of 400 keys, byte-identical records
+PASS nesting openalex fraction=50 within full: 179 of 401 distinct records, byte-identical lines
+PASS nesting crossref fraction=50 within full: 179 of 400 distinct records, byte-identical lines
+PASS nesting orcid fraction=50 within full: 537 of 1201 distinct records, byte-identical lines
+{"crossref": {"kept": 88, "percent": 22.0, "source": 400}, "dblp": {"kept": 88, "percent": 22.0, "source": 400}, "openalex": {"kept": 88, "percent": 21.945, "source": 401}, "orcid": {"kept": 264, "percent": 21.982, "source": 1201}}
+make_fraction self-test: OK
+2026-11-15T03:20:04Z [PASS] make_fraction.py --self-test (rule fraction-v1: exact DBLP rule, linkage, nesting, deterministic gzip)
+2026-11-15T03:20:04Z [PASS] config is valid JSON with venues, years, and pinned checksums
+2026-11-15T03:20:04Z [PASS] config orcid caps: sample_max_ids <= full_max_ids <= daily_request_cap < documented_anonymous_daily_reads, full_max_ids <= documented - 2000
+fetch_orcid selection self-test: OK
+2026-11-15T03:20:04Z [PASS] fetch_orcid.sh --self-test (selection priority, class a work ranking, and counts)
+PASS manifest datasets are exactly ['dblp', 'openalex', 'crossref', 'orcid'] (found ['crossref', 'dblp', 'openalex', 'orcid'])
+PASS manifest dblp: all 27 required fields present
+PASS manifest dblp: s3_raw_prefix uses the configured-bucket placeholder
+PASS manifest dblp: owning_agent is dataset-engineer
+PASS manifest dblp: schema note datasets/schemas/dblp.md exists
+PASS manifest openalex: all 27 required fields present
+PASS manifest openalex: s3_raw_prefix uses the configured-bucket placeholder
+PASS manifest openalex: owning_agent is dataset-engineer
+PASS manifest openalex: schema note datasets/schemas/openalex.md exists
+PASS manifest crossref: all 27 required fields present
+PASS manifest crossref: s3_raw_prefix uses the configured-bucket placeholder
+PASS manifest crossref: owning_agent is dataset-engineer
+PASS manifest crossref: schema note datasets/schemas/crossref.md exists
+PASS manifest orcid: all 27 required fields present
+PASS manifest orcid: s3_raw_prefix uses the configured-bucket placeholder
+PASS manifest orcid: owning_agent is dataset-engineer
+PASS manifest orcid: schema note datasets/schemas/orcid.md exists
+INFO manifest markers: UNVERIFIED=11 UNKNOWN=3
+PASS manifest sample size datasets/samples/dblp/dblp-sample.xml: manifest 23094 bytes, file 23094 bytes
+PASS manifest sample size datasets/samples/dblp/dblp-2023-06-28.dtd: manifest 13134 bytes, file 13134 bytes
+PASS manifest sample size datasets/samples/dblp/dois.txt: manifest 958 bytes, file 958 bytes
+PASS manifest sample size datasets/samples/dblp/orcids.txt: manifest 1800 bytes, file 1800 bytes
+PASS manifest sample size datasets/samples/openalex/works-sample.jsonl: manifest 99797 bytes, file 99797 bytes
+PASS manifest sample size datasets/samples/crossref/works-sample.jsonl: manifest 66299 bytes, file 66299 bytes
+PASS manifest sample size datasets/samples/orcid/orcid-fictional-test-record.jsonl: manifest 935 bytes, file 935 bytes
+PASS manifest sample size datasets/samples/orcid/synthetic-orcid-records.jsonl: manifest 1801 bytes, file 1801 bytes
+PASS sample size datasets/samples/SHA256SUMS: 736 bytes < 200000
+PASS sample size datasets/samples/dblp/orcids.txt: 1800 bytes < 200000
+PASS sample size datasets/samples/dblp/dblp-2023-06-28.dtd: 13134 bytes < 200000
+PASS sample size datasets/samples/dblp/dois.txt: 958 bytes < 200000
+PASS sample size datasets/samples/dblp/dblp-sample.xml: 23094 bytes < 200000
+PASS sample size datasets/samples/orcid/orcid-fictional-test-record.jsonl: 935 bytes < 200000
+PASS jsonl parses datasets/samples/orcid/orcid-fictional-test-record.jsonl: 1 records
+PASS sample size datasets/samples/orcid/synthetic-orcid-records.jsonl: 1801 bytes < 200000
+PASS jsonl parses datasets/samples/orcid/synthetic-orcid-records.jsonl: 3 records
+PASS sample size datasets/samples/crossref/works-sample.jsonl: 66299 bytes < 200000
+PASS jsonl parses datasets/samples/crossref/works-sample.jsonl: 40 records
+PASS sample size datasets/samples/openalex/works-sample.jsonl: 99797 bytes < 200000
+PASS jsonl parses datasets/samples/openalex/works-sample.jsonl: 40 records
+PASS dblp sample is well-formed XML with DTD entities resolved: 40 records
+PASS openalex sample DOIs subset of dblp sample DOIs: 40/40 linked
+PASS crossref sample DOIs subset of dblp sample DOIs: 40/40 linked
+PASS orcid decision 1 datasets/samples/orcid/orcid-fictional-test-record.jsonl record 1: fictional test record 0000-0002-1825-0097, labeled, in a fictional-test-record file
+PASS orcid decision 1 datasets/samples/orcid/synthetic-orcid-records.jsonl record 1: synthetic record
+PASS orcid decision 1 datasets/samples/orcid/synthetic-orcid-records.jsonl record 2: synthetic record
+PASS orcid decision 1 datasets/samples/orcid/synthetic-orcid-records.jsonl record 3: synthetic record
+INFO orcid samples: fictional_test_records=1 synthetic_records=3
+INFO doi overlap: dblp=40 dblp&openalex=40 dblp&crossref=40 all_three=40
+PASS datasets/samples/SHA256SUMS verifies
+2026-11-15T03:20:04Z [DONE] validate: all checks passed
+exit=0
+-- find datasets -name __pycache__ -o -name '*.pyc'
+(end)

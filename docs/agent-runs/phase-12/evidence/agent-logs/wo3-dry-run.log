@@ -1,0 +1,143 @@
+######## scripts/plan.sh --runtime-enabled false --dry-run
+==> STEP dry-run
+    no AWS, Terraform, or git call was made; steps that would run:
+    - refuse a dirty tree; check terraform 1.16.6
+    - aws sts get-caller-identity; print account and Region us-east-2
+    - terraform init -input=false -lockfile=readonly (local backend)
+    - terraform plan -input=false -var-file=/Users/achyutpatel/Developer/Cloud/ScholarChain/infra/terraform/envs/course/course.tfvars -var runtime_enabled=false -var region=us-east-2 -out=<dir>/plan.tfplan (printed in full)
+    - terraform show -json; sha256; summary into /Users/achyutpatel/Developer/Cloud/ScholarChain/scratch/plans/<stamp>-<sha12>/ and /Users/achyutpatel/Developer/Cloud/ScholarChain/operations/plans/
+==> OK dry-run
+######## exit 0
+######## scripts/plan.sh --dry-run
+==> FAIL --runtime-enabled true|false is required (exit 2)
+######## exit 2
+######## scripts/deploy.sh --plan-file /private/tmp/claude-501/-Users-achyutpatel-Developer-Cloud-ScholarChain/8c25a195-dfb3-4a70-bc85-fdbe711bfe49/scratchpad/wo3/plan/plan.tfplan --approved-plan-sha256 9c9790c0cab36e60a8c9daa5febb94d13c8891f879c6ac2c4807e7d0cd203e83 --package-record /private/tmp/claude-501/-Users-achyutpatel-Developer-Cloud-ScholarChain/8c25a195-dfb3-4a70-bc85-fdbe711bfe49/scratchpad/wo3/package.json --dry-run
+==> STEP approval
+==> OK plan checksum approved: 9c9790c0cab36e60a8c9daa5febb94d13c8891f879c6ac2c4807e7d0cd203e83
+==> STEP dry-run
+    no AWS, Terraform, or git call was made; steps that would run:
+    - refuse a dirty tree; HEAD must equal plan commit 1111111111111111111111111111111111111111
+    - aws sts get-caller-identity; account must be 123456789012, Region us-east-2
+    - terraform apply /private/tmp/claude-501/-Users-achyutpatel-Developer-Cloud-ScholarChain/8c25a195-dfb3-4a70-bc85-fdbe711bfe49/scratchpad/wo3/plan/plan.tfplan (saved plan, output shown in full)
+    - terraform output -json into the release directory
+    - runtime_enabled=true: secret value check, wait stable (20 min), verify digests and runtime run IDs
+    - write /Users/achyutpatel/Developer/Cloud/ScholarChain/operations/releases/release-<stamp>-<sha12>.json
+==> OK dry-run
+######## exit 0
+######## scripts/deploy.sh --plan-file /private/tmp/claude-501/-Users-achyutpatel-Developer-Cloud-ScholarChain/8c25a195-dfb3-4a70-bc85-fdbe711bfe49/scratchpad/wo3/plan/plan.tfplan --approved-plan-sha256 0000000000000000000000000000000000000000000000000000000000000000 --package-record /private/tmp/claude-501/-Users-achyutpatel-Developer-Cloud-ScholarChain/8c25a195-dfb3-4a70-bc85-fdbe711bfe49/scratchpad/wo3/package.json --dry-run
+==> STEP approval
+==> FAIL plan sha256 9c9790c0cab36e60a8c9daa5febb94d13c8891f879c6ac2c4807e7d0cd203e83 does not equal the approved 0000000000000000000000000000000000000000000000000000000000000000; nothing applied (exit 4)
+######## exit 4
+######## scripts/deploy.sh --plan-file /private/tmp/claude-501/-Users-achyutpatel-Developer-Cloud-ScholarChain/8c25a195-dfb3-4a70-bc85-fdbe711bfe49/scratchpad/wo3/plan/plan.tfplan --approved-plan-sha256 9c9790c0cab36e60a8c9daa5febb94d13c8891f879c6ac2c4807e7d0cd203e83 --dry-run
+==> STEP approval
+==> OK plan checksum approved: 9c9790c0cab36e60a8c9daa5febb94d13c8891f879c6ac2c4807e7d0cd203e83
+==> FAIL --package-record is required for a runtime_enabled plan (exit 2)
+######## exit 2
+######## scripts/package.sh --dry-run
+==> STEP dry-run
+    no AWS, Terraform, or git call was made; steps that would run:
+    - refuse a dirty tree; commit = HEAD
+    - sbt -batch packageJobs; sha256 modules/hadoop/target/scala-3.3.7/hadoop-assembly-0.1.0.jar and modules/spark/target/scala-3.3.7/sparkAnalytics-assembly-0.1.0.jar
+    - SCHOLARCHAIN_IMAGE_TAG=<commit> sbt -batch services/Docker/stage; zip modules/services/target/docker/stage
+    - aws sts get-caller-identity; terraform output (bucket, CodeBuild project, ECR)
+    - upload jars and context write-once under artifacts/
+    - CodeBuild start-build (once) unless ECR has the tag; wait at most 30 min
+    - ECR describe-images: digest and scan status; write /Users/achyutpatel/Developer/Cloud/ScholarChain/operations/releases/package-<commit>.json
+==> OK dry-run
+######## exit 0
+######## scripts/rollback.sh --list
+==> STEP list
+######## exit 0
+######## scripts/rollback.sh --to-release /private/tmp/claude-501/-Users-achyutpatel-Developer-Cloud-ScholarChain/8c25a195-dfb3-4a70-bc85-fdbe711bfe49/scratchpad/wo3/release.json --dry-run
+==> STEP dry-run
+    no AWS, Terraform, or git call was made; steps that would run:
+    - aws sts get-caller-identity; account must be 123456789012; terraform output (cluster, repository)
+    - ECR describe-images 1111111111111111111111111111111111111111 must have digest sha256:aaaa
+    - register one task definition revision per service with image <repository>:1111111111111111111111111111111111111111; update-service query-api, graph-evidence-api, worker
+    - wait stable (20 min); verify digests and runtime run IDs; write /Users/achyutpatel/Developer/Cloud/ScholarChain/operations/releases/rollback-<stamp>.json
+==> OK dry-run
+######## exit 0
+######## scripts/smoke-test.sh --dry-run
+==> STEP dry-run
+    no AWS, Terraform, or git call was made; steps that would run:
+    - aws sts get-caller-identity; terraform output alb_dns_name and api_key_secret_arn
+    - GetSecretValue into a variable (never printed)
+    - healthz, readyz, query (question: Have Jack J. Dongarra and Yves Robert coauthored a paper?), evidence, idempotent repeat, 401 without a key
+    - write /Users/achyutpatel/Developer/Cloud/ScholarChain/operations/releases/smoke-<stamp>.json
+==> OK dry-run
+######## exit 0
+######## scripts/smoke-test.sh --base-url http://x;rm --dry-run
+==> FAIL --base-url must be http(s)://host[:port] (exit 2)
+######## exit 2
+######## scripts/run-bounded-pipeline.sh --fraction 100 --package-record /private/tmp/claude-501/-Users-achyutpatel-Developer-Cloud-ScholarChain/8c25a195-dfb3-4a70-bc85-fdbe711bfe49/scratchpad/wo3/package.json --dry-run
+==> STEP dry-run
+    no AWS, Terraform, or git call was made; steps that would run:
+    - refuse a dirty tree; HEAD must be 1111111111111111111111111111111111111111; jar and step.sh sha256 must equal the package record
+    - aws sts get-caller-identity; terraform output (bucket, emr); bounds check
+    - write-once upload of 5 inputs (fraction 100) under raw/, jars under artifacts/jobs/1111111111111111111111111111111111111111/
+    - aws emr create-cluster (once): emr-spark-8.0.0, 1 primary + core per the emr output, auto-terminate; steps classpath-probe, hadoop-pipeline (90 min), spark-pipeline (150 min, shuffle 16, reducers 2)
+    - poll describe-cluster until TERMINATED; collect steps, instance hours, run manifests, step logs
+    - write /Users/achyutpatel/Developer/Cloud/ScholarChain/operations/pipeline-runs/<stamp>-fraction100/run.json
+==> OK dry-run
+######## exit 0
+######## scripts/run-bounded-pipeline.sh --fraction 25 --package-record /private/tmp/claude-501/-Users-achyutpatel-Developer-Cloud-ScholarChain/8c25a195-dfb3-4a70-bc85-fdbe711bfe49/scratchpad/wo3/package.json --dry-run
+==> FAIL input missing: scratch/datasets/fraction=25/dblp/works.xml (25/50 percent subsets: BLOCKED-ON dataset-engineer, see scripts/README.md) (exit 3)
+######## exit 3
+######## scripts/run-bounded-pipeline.sh --fraction 30 --package-record /private/tmp/claude-501/-Users-achyutpatel-Developer-Cloud-ScholarChain/8c25a195-dfb3-4a70-bc85-fdbe711bfe49/scratchpad/wo3/package.json --dry-run
+==> FAIL --fraction 25|50|100 is required (exit 2)
+######## exit 2
+######## scripts/load-stores.sh --store-run run-1d6a86491812ff94887270c1ab885e69 --vectors-run run-13e2b27dca90db05937df33c4accb537 --dry-run
+==> STEP dry-run
+    no AWS, Terraform, or git call was made; steps that would run:
+    - refuse a dirty tree (the loaders run from this checkout); account and Region; terraform outputs
+    - s3: LoadS3Cli --live for runs/store-conversion/snapshot=2026-10-03/run=run-1d6a86491812ff94887270c1ab885e69/manifest.json (/Users/achyutpatel/Developer/Cloud/ScholarChain/scratch/stores/s3), runs/embed/snapshot=2026-10-03/run=run-13e2b27dca90db05937df33c4accb537/manifest.json (/Users/achyutpatel/Developer/Cloud/ScholarChain/scratch/stores/s3), runs/load-window-summary/snapshot=2026-10-03/run=run-6fbad498beb0d8f570df67665fb97544/manifest.json (/Users/achyutpatel/Developer/Cloud/ScholarChain/scratch/runtime/wo8/s3)
+    - neptune: ECS run-task scholarchain-course-neptune-loader (LoadNeptuneCli --live --stage-from-bucket, run run-1d6a86491812ff94887270c1ab885e69), then --status tasks until LOAD_COMPLETED (60 min)
+    - dynamodb: LoadDynamoCli --live --dir /Users/achyutpatel/Developer/Cloud/ScholarChain/scratch/stores/s3/curated/dynamodb/snapshot=2026-10-03/run=run-1d6a86491812ff94887270c1ab885e69 --concurrency 8
+    - vectors: LoadVectorsCli --live --input /Users/achyutpatel/Developer/Cloud/ScholarChain/scratch/stores/s3/vectors/backup/snapshot=2026-10-03/run=run-13e2b27dca90db05937df33c4accb537
+    - write /Users/achyutpatel/Developer/Cloud/ScholarChain/operations/pipeline-runs/store-load-<stamp>/run.json
+==> OK dry-run
+######## exit 0
+######## scripts/load-stores.sh --store-run run-1d6a86491812ff94887270c1ab885e69 --dry-run
+==> FAIL run IDs must be run-<32 hex> (--store-run and --vectors-run are required) (exit 2)
+######## exit 2
+######## scripts/run-experiment.sh --manifest /private/tmp/claude-501/-Users-achyutpatel-Developer-Cloud-ScholarChain/8c25a195-dfb3-4a70-bc85-fdbe711bfe49/scratchpad/wo3/package.json --dry-run
+==> FAIL the manifest must be a .json file under experiments/ (exit 2)
+######## exit 2
+######## scripts/archive-evidence.sh --out-dir /private/tmp/claude-501/-Users-achyutpatel-Developer-Cloud-ScholarChain/8c25a195-dfb3-4a70-bc85-fdbe711bfe49/scratchpad/wo3/archive --dry-run
+==> STEP dry-run
+    no AWS, Terraform, or git call was made; steps that would run:
+    - test reports: /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/core/target/test-reports /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/entity-resolution/target/test-reports /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/hadoop/target/test-reports /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/rag/target/test-reports /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/services/target/test-reports /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/spark/target/test-reports /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/storage/target/test-reports /Users/achyutpatel/Developer/Cloud/ScholarChain/tests/target/test-reports
+    - plans: /Users/achyutpatel/Developer/Cloud/ScholarChain/scratch/plans/*/{plan.sha256,plan-meta.json,summary.md}
+    - operations/ and experiments/results/ trees
+    - no metrics (no --metrics-from/--metrics-to)
+    - no S3 upload
+    - index.json and SHA256SUMS in /private/tmp/claude-501/-Users-achyutpatel-Developer-Cloud-ScholarChain/8c25a195-dfb3-4a70-bc85-fdbe711bfe49/scratchpad/wo3/archive
+==> OK dry-run
+######## exit 0
+######## scripts/archive-evidence.sh --out-dir /private/tmp/claude-501/-Users-achyutpatel-Developer-Cloud-ScholarChain/8c25a195-dfb3-4a70-bc85-fdbe711bfe49/scratchpad/wo3/archive --s3-prefix foo/ --dry-run
+==> FAIL --s3-prefix must look like reports/evidence/<name>/ (exit 2)
+######## exit 2
+######## scripts/cleanup.sh --stage runtime --dry-run
+==> STEP dry-run
+    no AWS, Terraform, or git call was made; steps that would run:
+    - refuse a dirty tree; account and Region; terraform outputs; inventory-before
+    - terraform plan -input=false -var-file=/Users/achyutpatel/Developer/Cloud/ScholarChain/infra/terraform/envs/course/course.tfvars -var region=us-east-2 -var runtime_enabled=false -out=<dir>/plan.tfplan (printed in full)
+    - list every resource destroyed and every resource kept with its reason; print the sha256
+    - nothing is destroyed until: scripts/cleanup.sh --plan-file <dir>/plan.tfplan --confirm <sha256>
+==> OK dry-run
+######## exit 0
+######## scripts/cleanup.sh --stage infra --dry-run
+==> STEP dry-run
+    no AWS, Terraform, or git call was made; steps that would run:
+    - refuse a dirty tree; account and Region; terraform outputs; inventory-before
+    - terraform plan -input=false -var-file=/Users/achyutpatel/Developer/Cloud/ScholarChain/infra/terraform/envs/course/course.tfvars -var region=us-east-2 -destroy -target=module.network -target=module.emr -target=module.build.aws_codebuild_project.services_image -target=module.build.aws_iam_role_policy.codebuild -target=module.build.aws_iam_role.codebuild -target=module.ecs -target=module.iam -target=module.neptune -target=module.dynamodb -target=module.vectors -target=module.messaging -target=module.apikey -out=<dir>/plan.tfplan (printed in full)
+    - list every resource destroyed and every resource kept with its reason; print the sha256
+    - nothing is destroyed until: scripts/cleanup.sh --plan-file <dir>/plan.tfplan --confirm <sha256>
+==> OK dry-run
+######## exit 0
+######## scripts/cleanup.sh --stage final --dry-run
+==> FAIL --stage final needs --evidence-archive <instructor-approved location> (exit 2)
+######## exit 2
+######## scripts/cleanup.sh --plan-file /private/tmp/claude-501/-Users-achyutpatel-Developer-Cloud-ScholarChain/8c25a195-dfb3-4a70-bc85-fdbe711bfe49/scratchpad/wo3/plan/plan.tfplan --confirm 0000000000000000000000000000000000000000000000000000000000000000
+==> FAIL cleanup-meta.json missing beside the plan (write cleanup plans only with this script) (exit 3)
+######## exit 3

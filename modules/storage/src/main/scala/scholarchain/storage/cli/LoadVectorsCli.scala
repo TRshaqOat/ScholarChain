@@ -9,16 +9,16 @@ import scala.collection.mutable
 
 /** Loads vector-record files (<index>/part-*.jsonl, the embedding runner's vector backup) into the
   * vector store: the file-backed fake at <out>/s3vectors by default, S3 Vectors with --live
-  * --profile. Batched (--batch-size, at most 500), transient failures retried, rejected vectors to
-  * <out>/work/load-vectors/snapshot=<d>/run=<r>/rejected-<index>.jsonl, batches in the RunLedger.
-  * CreateOnly unless --supersede.
+  * [--profile]. Batched (--batch-size, at most 500), transient failures retried, rejected vectors
+  * to <out>/work/load-vectors/snapshot=<d>/run=<r>/rejected-<index>.jsonl, batches in the
+  * RunLedger. CreateOnly unless --supersede.
   */
 object LoadVectorsCli:
   val Stage = "load-vectors"
   val CodeVersion = "load-vectors-v1"
   val UsageText =
     "storage/runMain scholarchain.storage.cli.LoadVectorsCli --input <.../vectors/backup/snapshot=<d>/run=<r>> " +
-      "[--out scratch/stores] [--batch-size 1..500] [--supersede] [--live --profile <name> [--region <r>]]"
+      "[--out scratch/stores] [--batch-size 1..500] [--supersede] [--live [--profile <name>] [--region <r>]]"
 
   def main(args: Array[String]): Unit = Cli.main("LoadVectorsCli", args)(run(_, _))
 
@@ -38,7 +38,7 @@ object LoadVectorsCli:
         batch <- a
           .int("batch-size", Some(100))
           .filterOrElse(b => b >= 1 && b <= VectorContract.MaxPutBatch, "--batch-size 1 to 500")
-        live <- Cli.liveTarget(a, cfg.region)
+        live <- Cli.liveTarget(a, cfg.region, profileOptional = true)
         _ <- if live.nonEmpty then Cli.liveConfig(cfg) else Right(())
       yield
         val root = Paths.get(a.get("out").getOrElse("scratch/stores"))

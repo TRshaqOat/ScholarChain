@@ -169,12 +169,11 @@ class CliSpec extends AnyFunSuite:
   }
 
   test(
-    "live opt-in: --live needs --profile, --profile needs --live, live loads need a non-local config"
+    "live opt-in: --profile needs --live, live loads need a non-local config"
   ) {
     withTemp { root =>
       val dir = dynamoDir(root).toString
       def code(extra: String*) = capture(LoadDynamoCli.run(Seq("--dir", dir) ++ extra, _, localEnv))
-      assert(code("--live")._2.exists(_.contains("--live needs --profile")))
       assert(code("--profile", "p")._1 == Cli.Usage)
       val (c, out) = code("--live", "--profile", "p", "--table-prefix", "x-")
       assert(c == Cli.Usage && out.exists(_.contains("non-local environment")))
@@ -329,4 +328,161 @@ class CliSpec extends AnyFunSuite:
     assert(
       LoadNeptuneCli.loaderRoleArn(Args(Map("loader-role-arn" -> arn), Set.empty), config) == arn
     )
+  }
+
+  // ---- Phase 12 work order 5: the in-VPC loader ------------------------------------------------
+
+  test("WO5: --live without --profile selects the SDK default chain in every live loader CLI") {
+    import scholarchain.storage.live.{LiveAws, LiveTarget}
+    val live = Args(Map.empty, Set("live"))
+    val t = Cli.liveTarget(live, "us-east-2", profileOptional = true)
+    assert(t == Right(Some(LiveTarget(None, "us-east-2"))))
+    assert(
+      LiveAws
+        .provider(t.toOption.flatten.get)
+        .isInstanceOf[software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider]
+    )
+    val named = Args(Map("profile" -> "p", "region" -> "eu-west-1"), Set("live"))
+    assert(
+      Cli.liveTarget(named, "us-east-2", profileOptional = true) ==
+        Right(Some(LiveTarget(Some("p"), "eu-west-1")))
+    )
+    // EmbedCli and the rag CLIs keep the strict form.
+    assert(Cli.liveTarget(live, "us-east-2") == Left("--live needs --profile <name>"))
+    // Each loader accepts --live alone; the local configuration then refuses it before any client.
+    withTemp { root =>
+      val vectors = root.resolve(s"v/snapshot=$snapshot/run=$runId").toString
+      val runs = Vector(
+        LoadS3Cli.run(Seq("--manifest", "runs/x/manifest.json", "--live"), _, localEnv),
+        LoadDynamoCli.run(Seq("--dir", dynamoDir(root).toString, "--live"), _, localEnv),
+        LoadVectorsCli.run(Seq("--input", vectors, "--live"), _, localEnv),
+        LoadNeptuneCli.run(Seq("--dir", "x", "--live"), _, localEnv),
+        LoadNeptuneCli.run(Seq("--live", "--status", "load-1"), _, localEnv)
+      )
+      runs.foreach { r =>
+        val (c, out) = capture(r)
+        assert(c == Cli.Usage && out.exists(_.contains("non-local environment")), out)
+        assert(!out.exists(_.contains("needs --profile")), out)
+      }
+    }
+  }
+
+  private val stagePrefix = S3Layout.neptuneRoot(snapshot, runId) + "/"
+  private val stageManifestKey = S3Layout.runManifest("store-conversion", snapshot, runId)
+  private val stageObjects = Vector(
+    stagePrefix + "vertices/researcher/part-00000.csv" -> "id,label\n",
+    stagePrefix + "edges/authored/part-00000.csv" -> "from,to\n",
+    S3Layout.coauthorEvidence(snapshot, runId, "all-years", "cae-1") -> "{}",
+    S3Layout.dynamoItems(snapshot, runId, "ResearcherMetricCache") + "/part-00000.jsonl" -> "{}\n"
+  )
+
+  /** A fake bucket holding stageObjects (except the omitted keys, and with overrides of their
+    * bytes) and the store-conversion manifest of all of them.
+    */
+  private def stageBucket(
+      root: Path,
+      omit: Set[String] = Set.empty,
+      tamper: Map[String, String] = Map.empty
+  ): (ObjectReadPort, RunManifest) =
+    val bucket = FileObjectStore(root.resolve("bucket"))
+    val m = RunManifest(
+      RunManifest.SchemaVersion,
+      "store-conversion",
+      runId,
+      snapshot,
+      stageObjects.map((k, v) => ManifestEntry(k, Hashing.sha256(v), v.length.toLong, "src"))
+    )
+    stageObjects.foreach((k, v) =>
+      if !omit(k) then bucket.loader.putNew(k, tamper.getOrElse(k, v).getBytes(UTF_8))
+    )
+    bucket.loader.putNew(stageManifestKey, RunManifest.toJson(m))
+    (bucket.reader, m)
+
+  private def stage(
+      remote: ObjectReadPort,
+      s3root: Path,
+      prefix: String = stagePrefix,
+      now: () => Long = () => 0L
+  ): (Vector[String], Vector[String]) =
+    val lines = mutable.ArrayBuffer.empty[String]
+    val problems = LoadNeptuneCli.stageFromBucket(
+      remote,
+      s3root,
+      snapshot,
+      runId,
+      prefix,
+      lines += _,
+      timeoutMs = 1000,
+      now = now,
+      sleep = _ => ()
+    )
+    (problems, lines.toVector)
+
+  test("WO5 stage-from-bucket: the staged copy matches the manifest; a rerun is unchanged") {
+    withTemp { root =>
+      val (bucket, m) = stageBucket(root)
+      val s3 = root.resolve("out/s3")
+      val (problems, out) = stage(bucket, s3)
+      assert(problems.isEmpty, out)
+      assert(out.head == s"stage: 3 objects, 19 bytes (from $stageManifestKey) into $s3", out)
+      val staged = FileObjectStore(s3).reader
+      // The graph prefix, the run's coauthor evidence, and the manifest; nothing else (no dynamodb).
+      assert(staged.list("") == (stageObjects.take(3).map(_._1) :+ stageManifestKey).sorted)
+      m.entries
+        .take(3)
+        .foreach(e => assert(staged.get(e.key).map(Hashing.sha256).contains(e.sha256)))
+      assert(staged.get(stageManifestKey).map(RunManifest.fromJson).contains(m))
+      assert(stage(bucket, s3)._1.isEmpty) // write-once: identical objects are Unchanged
+    }
+  }
+
+  test("WO5 stage-from-bucket: a sha256 mismatch is refused and not written") {
+    withTemp { root =>
+      val bad = stageObjects(1)._1
+      val (bucket, _) = stageBucket(root, tamper = Map(bad -> "FROM,TO\n")) // same size
+      val s3 = root.resolve("out/s3")
+      val (problems, out) = stage(bucket, s3)
+      assert(problems.size == 1 && problems.head.startsWith(s"$bad is sha256:"), out)
+      assert(problems.head.contains(s"manifest ${Hashing.sha256("from,to\n")}"))
+      val staged = FileObjectStore(s3).reader
+      assert(staged.get(bad).isEmpty && staged.get(stageManifestKey).isEmpty)
+      // A local copy with other bytes is never overwritten either.
+      val (good, _) = stageBucket(root.resolve("2"))
+      FileObjectStore(s3).loader.putNew(bad, "FROM,TO\n".getBytes(UTF_8))
+      assert(stage(good, s3)._1.exists(_.startsWith(s"local $bad has")))
+    }
+  }
+
+  test("WO5 stage-from-bucket: a missing object, a missing manifest, a wrong --dir and a timeout") {
+    withTemp { root =>
+      val gone = stageObjects(2)._1
+      val (bucket, _) = stageBucket(root, omit = Set(gone))
+      val s3 = root.resolve("out/s3")
+      val (problems, out) = stage(bucket, s3)
+      assert(problems == Vector(s"$gone is missing from the bucket"), out)
+      assert(FileObjectStore(s3).reader.get(stageManifestKey).isEmpty)
+      val empty = FileObjectStore(root.resolve("none")).reader
+      assert(stage(empty, s3)._1 == Vector(s"no run manifest at $stageManifestKey in the bucket"))
+      val other = S3Layout.neptuneRoot(snapshot, otherRunId) + "/"
+      assert(stage(bucket, s3, prefix = other)._1.head.startsWith("--dir must be"))
+      var t = 0L
+      val (slow, _) = stage(
+        stageBucket(root.resolve("3"))._1,
+        root.resolve("o3"),
+        now = () => {
+          t += 600; t
+        }
+      )
+      assert(slow == Vector("timeout after 1 of 3 objects (1 s)"), slow)
+    }
+  }
+
+  test("WO5 stage-from-bucket needs --live and is not used with --status") {
+    val (c, out) =
+      capture(LoadNeptuneCli.run(Seq("--dir", "x", "--stage-from-bucket"), _, localEnv))
+    assert(c == Cli.Usage && out.exists(_.contains("--stage-from-bucket needs --live")), out)
+    val (s, out2) = capture(
+      LoadNeptuneCli.run(Seq("--live", "--status", "l", "--stage-from-bucket"), _, localEnv)
+    )
+    assert(s == Cli.Usage && out2.exists(_.contains("--status needs no staging")), out2)
   }
