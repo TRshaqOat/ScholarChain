@@ -368,3 +368,65 @@ Edit only modules/hadoop/JOBS.md. Line 33 names `<raw-bucket>` and `<curated-buc
      - the run-bounded-pipeline.sh --dry-run output does not print the resolved input paths.
    - storage-engineer: modules/storage/STORAGE.md:487.
 17. ORCID does not scale with the size fraction under the fraction-v1 linkage rule: 64.9 percent of records at 25 and 80.0 percent at 50, because a researcher is kept when any one of their works is kept. This is accepted. The D-13 size-scaling analysis uses DBLP works (and the derived authors and edges) as the scaling variable, and the final report states the ORCID behaviour as a limitation. No change.
+
+## Human rulings after code review 1
+
+18. Ruling 11 read-only checks, run by the human (2026-11-14):
+   - The US Haiku 4.5 inference profile routes to us-east-1, us-east-2 and us-west-2. course.tfvars:50 also lists us-west-1, which repair-01 removes.
+   - Neptune 1.4.8.1 on db.t4g.medium is orderable in us-east-2a, 2b and 2c.
+   - emr-spark-8.0.0 supports m6g.xlarge (AARCH64).
+19. Code review 1 returned REQUEST_CHANGES: F1 is major, and F2 to F9 are minor. One repair round (ruling 9), repair-01, grouped by owner and run in this order: Part A dataset-engineer, Part B storage-engineer, Part C infra-engineer. Part C runs last so that its check.sh run covers the final tree. Routing decisions:
+   - F7a: correct infra/terraform/README.md:237. Do not add an aws:SourceAccount condition to the EMR instance role's EC2 trust; an unverified trust condition could stop clusters from launching.
+   - F9: rename the script evidence logs under operations/ to .txt. No .gitignore change (build-engineer is not invoked).
+   - The optional .gitignore entry for __pycache__ is not made; Part A removes the cause. The human deleted the existing datasets/scripts/__pycache__/.
+20. Code review 2 reviews only the repair-01 changes, and confirms each code review 1 finding as resolved, or open with its reason. If it returns REQUEST_CHANGES, the exit is human escalation: open items become residual risks or Phase 14+ items. No second repair round.
+21. Commit and plan order. plan.sh refuses a dirty tree, and deploy.sh requires the plan's commit to equal HEAD. So:
+   - after code review 2 (APPROVE or escalation), the human commits Phase 12 with phase_commit 12;
+   - the human then runs scripts/plan.sh --runtime-enabled false on that commit (expected 43/0/0), and reads every IAM and subnet line of the full plan;
+   - the human signs the plan sha256 in human-gate.md, committed as a follow-up.
+   Apply (Phase 14) requires that signed checksum, so the spec gate "human signs the plan before any apply" holds.
+
+## Repair-01
+
+Report to docs/agent-runs/phase-12/repair-01.md, one section per part. Ruling 8 constraints, as amended by ruling 10, apply. Each part cites the code review 1 finding it closes. Each code change gets a logged disable check (sha256 restore) where a test or a check can show it.
+
+### Part A: dataset-engineer (F2)
+Edit only datasets/**.
+- make_fraction.py must not write bytecode when it loads dblp_extract.py: set sys.dont_write_bytecode = True before exec_module, or equivalent.
+- Run datasets/scripts/validate.sh and make_fraction.sh --verify, then confirm that no __pycache__ directory exists anywhere under datasets/.
+
+### Part B: storage-engineer (F8 storage item, ruling 16)
+Edit only modules/storage/**.
+- Correct the doc comment at LiveAws.scala:31-32, and STORAGE.md:487, to match work orders 5 and 6: --profile is optional for the four loaders and for the services Launcher.
+- Run storage/scalafmtCheck and storage/compile. (Part C's check.sh run covers the full sbt check.)
+
+### Part C: infra-engineer (F1, F3 to F8, ruling 16 items, ruling 18)
+Edit only infra/** and scripts/**.
+1. F1 (major). The EMR instance role:
+   - writes and deletes only curated/* and logs/emr/*;
+   - reads only raw/*, curated/* and artifacts/*;
+   - lists the bucket only with those prefixes.
+   Correct infra/terraform/README.md:227 to match. Show by grep or a terraform console expression that no other prefix remains.
+2. F3: deploy.sh:148 force-new-deployment uses aws_once.
+3. F4: check.sh also runs bash -n on datasets/scripts/*.sh and runs datasets/scripts/validate.sh.
+4. F5: haiku_calls_per_minute_cap is validated to be between 1 and 8.
+5. F6: replace the aws_availability_zones data source with a variable availability_zones: exactly two distinct names in the Region, default ["us-east-2a", "us-east-2b"]. Neptune is orderable in both (ruling 18).
+6. F7:
+   - (a) correct the README trust claim (ruling 19);
+   - (b) add --cli-connect-timeout and --cli-read-timeout to every aws call in scripts/emr/step.sh and in the bootstrap string of run-bounded-pipeline.sh;
+   - (c) make the EMR security-group claim conditional, and add a read-only post-cluster check to run-bounded-pipeline.sh: describe-security-groups for both EMR groups, warn loudly and record any 0.0.0.0/0 or ::/0 ingress.
+7. F8 and the ruling 16 items: fix all stale text:
+   - variables.tf:397;
+   - load-stores.sh:43-44;
+   - run-bounded-pipeline.sh:18-20 and :98;
+   - scripts/README.md:207, :304 and :313-317;
+   - infra/terraform/README.md:36-37 and :218-221.
+   The run-bounded-pipeline.sh --dry-run prints each resolved input path with its size and sha256.
+8. F9: script evidence logs under operations/ are written as .txt, and scripts/README.md matches.
+9. Ruling 18: haiku_destination_regions is ["us-east-1", "us-east-2", "us-west-2"] in course.tfvars and in the variable default.
+10. Validation:
+   - terraform fmt -check, the ruling 5 init and validate;
+   - bash -n on every script;
+   - the --dry-run of run-bounded-pipeline.sh --fraction 25 and of deploy.sh (fixture plan);
+   - scripts/check.sh once on the final tree, after Parts A and B (it includes sbt check and the dataset validation).
+   Report the expected plan counts if they changed.
