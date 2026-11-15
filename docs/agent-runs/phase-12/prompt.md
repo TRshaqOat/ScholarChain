@@ -469,3 +469,47 @@ Review only the repair-02 changes. Check them against ruling 22, repair-02 and c
 - they give no read access to any data object;
 - no other permission changed.
 Verify every finding against the working tree. Return APPROVE or REQUEST_CHANGES; under ruling 22, a REQUEST_CHANGES exits to human escalation. Do not edit any file.
+
+## Human rulings after code review 3
+
+23. Code review 3 returned REQUEST_CHANGES (N4 major, N5 minor). The human accepts N4.
+   - Root cause: repair-01 Part C item 1 ("lists the bucket only with those prefixes") was the human's wording. It conditioned the EMR instance role's s3:ListBucket on s3:prefix.
+   - S3 answers 404 for a missing key only to a principal with s3:GetObject on that key and s3:ListBucket on the bucket. A GetObject or HeadObject request carries no s3:prefix, so a prefix-conditioned ListBucket never applies to it.
+   - Every S3A HEAD of a path that does not exist yet would therefore get 403: output existence checks, mkdirs parent walks, the first write under curated/. The repair-02 claim "turns that 403 into 404" was wrong without ListBucket.
+   - Repair-03 is a second human exception to ruling 20:
+     - the EMR instance role gets s3:ListBucket on the data bucket with no condition. This exposes key names only, never data: the same pattern and rationale as query-api (iam/main.tf:181-183; ruling 11);
+     - the F1 read and write prefix narrowing stays;
+     - the exact-key ProbeWriteRootParents grant stays and adds the key logs. These keys hold no data;
+     - infra-engineer checks every other role for the same 404 dependency and fixes it the same way, each change justified.
+   - N5 (Bash grep when the Grep tool was reported unavailable) is an accepted process deviation, like ruling 10(a).
+   - Code review 4 reviews only repair-03. If it returns REQUEST_CHANGES, the open items go to the gate as residual risks. There is no further repair round in Phase 12.
+
+## Repair-03 (human exception, ruling 23)
+
+Report to docs/agent-runs/phase-12/repair-03.md. Rulings 8 and 10 constraints apply.
+
+### Part A: infra-engineer (N4, ruling 23)
+Edit only infra/** and scripts/**.
+1. infra/terraform/modules/emr/main.tf:
+   - replace the prefix-conditioned ListOwnPrefixes statement with s3:ListBucket on the data bucket ARN, with no condition;
+   - keep ReadInputs and WriteOutputs exactly as they are;
+   - keep ProbeWriteRootParents, with parent_keys = ["curated", "logs", "logs/emr"];
+   - rewrite the comments at about :54-59 and the ListBucket rationale so they state the S3 rule in ruling 23 and cite iam/main.tf:181-183.
+2. infra/terraform/README.md: correct the IAM summary (about :229) and any text that repeats the "403 into 404" claim.
+3. Every other role (iam, ecs, build, neptune and emr modules): list each role that can GET or HEAD a key that may be missing in a normal code path. Read the callers in modules/ and scripts/ with Read and Grep; for example graph-evidence-api reading audit objects under logs/rag-runtime/, or the neptune loader.
+   - Where such a role lacks s3:ListBucket that applies to that request (no condition, or a condition that applies to that request), add an unconditioned s3:ListBucket on the data bucket, and justify it.
+   - Where a 403 on a missing key is harmless or impossible, say why and change nothing.
+   - Report a table: role, missing-key path, current ListBucket, decision.
+4. Validation:
+   - terraform fmt -check, the ruling 5 init and validate;
+   - scripts/check.sh once on the final tree.
+   The plan counts should be unchanged (policy content only); report any change.
+
+## Code review 4: code-reviewer
+
+Review only the repair-03 changes against ruling 23 and code review 3. Confirm that:
+- the EMR instance role's ListBucket is unconditioned, and nothing else in that role was widened;
+- the ProbeWriteRootParents keys are exact;
+- every role in repair-03's table is decided correctly against the code paths;
+- every comment and README claim matches the S3 rule in ruling 23.
+Verify every finding against the working tree. Return APPROVE or REQUEST_CHANGES. Under ruling 23, open items go to the gate as residual risks. Do not edit any file.
