@@ -430,3 +430,42 @@ Edit only infra/** and scripts/**.
    - the --dry-run of run-bounded-pipeline.sh --fraction 25 and of deploy.sh (fixture plan);
    - scripts/check.sh once on the final tree, after Parts A and B (it includes sbt check and the dataset validation).
    Report the expected plan counts if they changed.
+
+## Human rulings after code review 2
+
+22. Code review 2 returned APPROVE. Dispositions:
+   - The human placed docs/agent-runs/phase-12/evidence/code-review-1/ (a copy of the code review 1 change set, saved before the scratchpad could be wiped).
+   - R1 is decided now, before cloud window 1. Repair-02, a human exception to ruling 20 like Phase 11 ruling 20, adds exact-key GetObject grants for the parent keys that an S3A mkdirs or getFileStatus walk can probe. Those keys hold no data. A failure here would cost cloud window 1 a re-plan, a re-apply and a rerun.
+   - N1, N2 and the F9 remainder (experiments/results *.log) are fixed in repair-02, because window 2's experiments need committed evidence.
+   - N3 is a residual risk, superseded by the first window 1 run's security-groups.json.
+   - R2 to R6 are residual risks recorded at the gate. For R3, every pipeline run record quotes emrSecurityGroups.openIngress.
+   - The Phase 13 gate item "README uses the scripts" is a Phase 17 documentation-engineer item.
+   - Repair-02 and code review 3 run in one session, without Ponytail (ruling 9 requires that only of code-reviewer). Code review 3 reviews only the repair-02 changes. A REQUEST_CHANGES exits to human escalation.
+
+## Repair-02 (human exception, ruling 22)
+
+Report to docs/agent-runs/phase-12/repair-02.md. Rulings 8 and 10 constraints apply.
+
+### Part A: infra-engineer (R1, N1, N2, F9 remainder)
+Edit only infra/** and scripts/**.
+1. R1. In infra/terraform/modules/emr/main.tf, add s3:GetObject on exact object ARNs (no wildcard) for every parent key above each EMR write root that an S3A mkdirs or getFileStatus walk can probe on a bucket where the prefix is still empty: at least <bucket>/curated and <bucket>/logs/emr. Rules:
+   - add no ListBucket grant without a prefix condition, and widen nothing else;
+   - explain in a comment why these keys are needed and that they hold no data;
+   - update infra/terraform/README.md (IAM summary, about :229);
+   - show the final policy statements with Grep.
+2. N1: the loader command block in infra/terraform/README.md (about :209-215) adds --stage-from-bucket, matching scripts/load-stores.sh:171.
+3. N2: python3 is a documented prerequisite: check.sh:24, the `need` list at :35, and scripts/README.md.
+4. F9 remainder: run-experiment.sh writes stdout and stderr as .txt, and scripts/README.md matches.
+5. Validation:
+   - terraform fmt -check, the ruling 5 init and validate;
+   - bash -n on the changed scripts, and run-experiment.sh --help;
+   - scripts/check.sh once on the final tree (it includes sbt check and the dataset validation).
+   The plan counts should be unchanged (policy content only); say so or report the change.
+
+## Code review 3: code-reviewer
+
+Review only the repair-02 changes. Check them against ruling 22, repair-02 and code review 2 (R1, N1, N2, F9 remainder). Confirm each item RESOLVED or OPEN, with file and line. Also confirm that:
+- the new grants are exact keys with no wildcard;
+- they give no read access to any data object;
+- no other permission changed.
+Verify every finding against the working tree. Return APPROVE or REQUEST_CHANGES; under ruling 22, a REQUEST_CHANGES exits to human escalation. Do not edit any file.
