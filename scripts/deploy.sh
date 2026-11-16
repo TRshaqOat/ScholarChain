@@ -30,7 +30,8 @@ Gates, in order:
      (.apply.txt, not .log, so that Git does not ignore it)
 
 Flags:
-  --plan-file              required; written by scripts/plan.sh
+  --plan-file              required; written by scripts/plan.sh; a relative path is resolved against the
+                           current directory to an absolute path before the first gate
   --approved-plan-sha256   required; the checksum the human signed at the plan gate
   --package-record         required when the plan has runtime_enabled = true (scripts/package.sh)
   --release-dir            default operations/releases
@@ -73,6 +74,10 @@ while [ $# -gt 0 ]; do
 done
 
 [ -f "$PLAN_FILE" ] || die "--plan-file not found: ${PLAN_FILE:-<none>}" 2
+# terraform runs with -chdir (tf in lib/common.sh), so every gate and the apply read one absolute path
+# (ruling 12, P14-D1). Bash 3.2: no realpath or readlink -f.
+PLAN_FILE="$(CDPATH='' cd -- "$(dirname "$PLAN_FILE")" && pwd -P)/$(basename "$PLAN_FILE")"
+info "plan file $PLAN_FILE"
 is_hex64 "$APPROVED" || die "--approved-plan-sha256 must be 64 lower-case hex" 2
 printf '%s' "$STABLE_MIN" | grep -Eq '^[0-9]+$' && [ "$STABLE_MIN" -ge 1 ] && [ "$STABLE_MIN" -le 60 ] ||
   die "--stable-timeout-minutes must be 1 to 60" 2

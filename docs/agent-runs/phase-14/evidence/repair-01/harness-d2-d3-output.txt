@@ -1,0 +1,176 @@
+################ P14-D2: package.sh scan record ################
+--- extracted scan block ---
+SCAN="$(aws_retry ecr describe-images --repository-name "$REPO_NAME" --image-ids "imageTag=$COMMIT" \
+  --query 'imageDetails[0].{status: imageScanStatus.status, severityCounts: imageScanFindingsSummary.findingSeverityCounts}' --output json |
+  jq -c 'if (.status? // null) == null then null
+         else {status, severityCounts: (.severityCounts // (if .status == "COMPLETE" then {} else null end))} end')" || SCAN=null
+SCAN="${SCAN:-null}"
+printf '==> IMAGE %s:%s digest=%s\n' "$REPO_URL" "$COMMIT" "$DIGEST"
+info "scan: $SCAN"
+--- extracted record block ---
+step "record"
+mkdir -p "$RECORD_DIR"
+REC="$RECORD_DIR/package-$COMMIT.json"
+jq -n --arg commit "$COMMIT" --arg at "$(utc_now)" --arg account "$ACCOUNT" --arg region "$REGION" \
+  --arg bucket "$BUCKET" --arg jp "$JOBS_PREFIX" --arg hs "$HADOOP_SHA" --arg ss "$SPARK_SHA" \
+  --arg stepSha "$(sha256_hex "$SC_ROOT/scripts/emr/step.sh")" --arg ctx "$SOURCE_KEY" --arg cs "$CONTEXT_SHA" \
+  --arg repo "$REPO_URL" --arg digest "$DIGEST" --arg build "$BUILD_ID" --argjson scan "$SCAN" \
+  '{schemaVersion: "package-record-v1", commit: $commit, createdAt: $at, account: $account, region: $region,
+    jobs: [{name: "hadoop", key: ($jp + "/hadoop-assembly.jar"), sha256: $hs, mainClass: "scholarchain.hadoop.Pipeline"},
+           {name: "spark", key: ($jp + "/sparkAnalytics-assembly.jar"), sha256: $ss, mainClass: "scholarchain.spark.PipelineJob"},
+           {name: "emr-step", key: ($jp + "/step.sh"), sha256: $stepSha}],
+    bucket: $bucket, dockerContext: {key: $ctx, sha256: $cs},
+    image: {repository: $repo, tag: $commit, digest: $digest, buildId: (if $build == "" then null else $build end), scan: $scan}}' >"$REC"
+printf '==> PACKAGE record=%s\n' "$REC"
+
+=== case no-scan-status (CLI exit 0, stdout: '{"status": null, "severityCounts": null}')
+==> IMAGE stub.dkr.ecr.us-east-2.amazonaws.com/stub:d33ce8e8d507145cd46fb39bf319e985bc9a428a digest=sha256:stub
+    scan: null
+==> STEP record
+==> PACKAGE record=/private/tmp/claude-501/-Users-achyutpatel-Developer-Cloud-ScholarChain/d2925ebd-d0c7-47c5-a75d-6905867a3626/scratchpad/harness-out/d2-no-scan-status/package-d33ce8e8d507145cd46fb39bf319e985bc9a428a.json
+record .image.scan = null
+
+=== case no-image-details (CLI exit 0, stdout: 'null')
+==> IMAGE stub.dkr.ecr.us-east-2.amazonaws.com/stub:d33ce8e8d507145cd46fb39bf319e985bc9a428a digest=sha256:stub
+    scan: null
+==> STEP record
+==> PACKAGE record=/private/tmp/claude-501/-Users-achyutpatel-Developer-Cloud-ScholarChain/d2925ebd-d0c7-47c5-a75d-6905867a3626/scratchpad/harness-out/d2-no-image-details/package-d33ce8e8d507145cd46fb39bf319e985bc9a428a.json
+record .image.scan = null
+
+=== case in-progress (CLI exit 0, stdout: '{"status": "IN_PROGRESS", "severityCounts": null}')
+==> IMAGE stub.dkr.ecr.us-east-2.amazonaws.com/stub:d33ce8e8d507145cd46fb39bf319e985bc9a428a digest=sha256:stub
+    scan: {"status":"IN_PROGRESS","severityCounts":null}
+==> STEP record
+==> PACKAGE record=/private/tmp/claude-501/-Users-achyutpatel-Developer-Cloud-ScholarChain/d2925ebd-d0c7-47c5-a75d-6905867a3626/scratchpad/harness-out/d2-in-progress/package-d33ce8e8d507145cd46fb39bf319e985bc9a428a.json
+record .image.scan = {"status":"IN_PROGRESS","severityCounts":null}
+
+=== case complete (CLI exit 0, stdout: '{"status": "COMPLETE", "severityCounts": {"CRITICAL": 10, "HIGH": 48, "MEDIUM": 62, "LOW": 18, "UNDEFINED": 6}}')
+==> IMAGE stub.dkr.ecr.us-east-2.amazonaws.com/stub:d33ce8e8d507145cd46fb39bf319e985bc9a428a digest=sha256:stub
+    scan: {"status":"COMPLETE","severityCounts":{"CRITICAL":10,"HIGH":48,"MEDIUM":62,"LOW":18,"UNDEFINED":6}}
+==> STEP record
+==> PACKAGE record=/private/tmp/claude-501/-Users-achyutpatel-Developer-Cloud-ScholarChain/d2925ebd-d0c7-47c5-a75d-6905867a3626/scratchpad/harness-out/d2-complete/package-d33ce8e8d507145cd46fb39bf319e985bc9a428a.json
+record .image.scan = {"status":"COMPLETE","severityCounts":{"CRITICAL":10,"HIGH":48,"MEDIUM":62,"LOW":18,"UNDEFINED":6}}
+
+=== case complete-no-findings (CLI exit 0, stdout: '{"status": "COMPLETE", "severityCounts": null}')
+==> IMAGE stub.dkr.ecr.us-east-2.amazonaws.com/stub:d33ce8e8d507145cd46fb39bf319e985bc9a428a digest=sha256:stub
+    scan: {"status":"COMPLETE","severityCounts":{}}
+==> STEP record
+==> PACKAGE record=/private/tmp/claude-501/-Users-achyutpatel-Developer-Cloud-ScholarChain/d2925ebd-d0c7-47c5-a75d-6905867a3626/scratchpad/harness-out/d2-complete-no-findings/package-d33ce8e8d507145cd46fb39bf319e985bc9a428a.json
+record .image.scan = {"status":"COMPLETE","severityCounts":{}}
+
+=== case cli-failure (CLI exit 255, stdout: '')
+==> IMAGE stub.dkr.ecr.us-east-2.amazonaws.com/stub:d33ce8e8d507145cd46fb39bf319e985bc9a428a digest=sha256:stub
+    scan: null
+==> STEP record
+==> PACKAGE record=/private/tmp/claude-501/-Users-achyutpatel-Developer-Cloud-ScholarChain/d2925ebd-d0c7-47c5-a75d-6905867a3626/scratchpad/harness-out/d2-cli-failure/package-d33ce8e8d507145cd46fb39bf319e985bc9a428a.json
+record .image.scan = null
+
+=== case empty-output (CLI exit 0, stdout: '')
+==> IMAGE stub.dkr.ecr.us-east-2.amazonaws.com/stub:d33ce8e8d507145cd46fb39bf319e985bc9a428a digest=sha256:stub
+    scan: null
+==> STEP record
+==> PACKAGE record=/private/tmp/claude-501/-Users-achyutpatel-Developer-Cloud-ScholarChain/d2925ebd-d0c7-47c5-a75d-6905867a3626/scratchpad/harness-out/d2-empty-output/package-d33ce8e8d507145cd46fb39bf319e985bc9a428a.json
+record .image.scan = null
+
+################ P14-D3: run-bounded-pipeline.sh create-cluster ################
+--- extracted block ---
+CC_ERR="$(mktemp "${TMPDIR:-/tmp}/sc-create-cluster.XXXXXX")"
+CC_RC=0
+CLUSTER_ID="$(aws_once emr create-cluster --name "scholarchain-course-pipeline-f$FRACTION-${COMMIT:0:12}" \
+  --release-label "$RELEASE" --applications Name=Spark \
+  --service-role "$(emr .service_role)" \
+  --ec2-attributes "InstanceProfile=$(emr .instance_profile),SubnetId=$(emr .subnet_id),EmrManagedMasterSecurityGroup=$(emr .primary_security_group_id),EmrManagedSlaveSecurityGroup=$(emr .core_security_group_id)" \
+  --instance-groups "file://$REC/instance-groups.json" --steps "file://$REC/steps.json" \
+  --log-uri "$LOG_URI" --auto-terminate \
+  --tags for-use-with-amazon-emr-managed-policies=true Project=ScholarChain Environment=course Course=CS441 \
+  Owner=scholarchain-human-architect Expiration=2026-12-15 ManagedBy=scripts/run-bounded-pipeline.sh \
+  --query ClusterId --output text 2>"$CC_ERR")" || CC_RC=$?
+cat "$CC_ERR" >&2
+if [ "$CC_RC" != 0 ]; then
+  jq -n --arg commit "$COMMIT" --arg fraction "$FRACTION" --arg snap "$SC_SNAPSHOT" --arg es "$ENRICH_SNAPSHOT" \
+    --arg inputRun "$INPUT_RUN" --arg account "$ACCOUNT" --arg region "$REGION" --arg release "$RELEASE" \
+    --arg itype "$ITYPE" --argjson core "$CORE" --arg reducers "$REDUCERS" --arg shuffle "$SHUFFLE" \
+    --rawfile inputs "$LINES" --rawfile error "$CC_ERR" --argjson rc "$CC_RC" \
+    '{schemaVersion: "pipeline-run-record-v1", commit: $commit, codeVersion: $commit, fraction: ($fraction | tonumber),
+      snapshots: {dblp: $snap, openalex: $es, crossref: $es, orcid: $es}, inputRun: $inputRun,
+      inputs: ($inputs | split("\n") | map(select(test(" ")) | split(" ") | {path: .[0], sha256: .[1], bytes: (.[2] | tonumber)})),
+      account: $account, region: $region,
+      configuration: {releaseLabel: $release, instanceType: $itype, primary: 1, core: $core, market: "ON_DEMAND",
+                      reducers: ($reducers | tonumber), shufflePartitions: ($shuffle | tonumber)},
+      clusterId: null, finalState: null, stateChangeReason: null, normalizedInstanceHours: null, steps: [],
+      outputs: {hadoopRuns: [], sparkRuns: []}, emrSecurityGroups: {checked: false, openIngress: [], file: null},
+      logs: "logs/", manifests: "manifests/",
+      failure: {step: "submit", command: "aws emr create-cluster", cliExitCode: $rc, error: ($error | gsub("^\\s+|\\s+$"; ""))}}' >"$REC/run.json"
+  rm -f "$CC_ERR"
+  die "create-cluster failed (AWS CLI exit $CC_RC), recorded in $REC/run.json; no cluster ID was returned: check list-clusters before any rerun" 1
+fi
+rm -f "$CC_ERR"
+
+=== case submit-failed (CLI exit 254)
+
+An error occurred (ValidationException) when calling the RunJobFlow operation: Specified application: Hadoop is invalid
+==> FAIL create-cluster failed (AWS CLI exit 254), recorded in /private/tmp/claude-501/-Users-achyutpatel-Developer-Cloud-ScholarChain/d2925ebd-d0c7-47c5-a75d-6905867a3626/scratchpad/harness-out/d3-submit-failed/run.json; no cluster ID was returned: check list-clusters before any rerun (exit 1)
+subshell exit=1
+applications argument passed to the CLI: --applications Name=Spark 
+run.json:
+{
+  "schemaVersion": "pipeline-run-record-v1",
+  "commit": "d33ce8e8d507145cd46fb39bf319e985bc9a428a",
+  "codeVersion": "d33ce8e8d507145cd46fb39bf319e985bc9a428a",
+  "fraction": 25,
+  "snapshots": {
+    "dblp": "2026-10-03",
+    "openalex": "2026-11-03",
+    "crossref": "2026-11-03",
+    "orcid": "2026-11-03"
+  },
+  "inputRun": "run-7a5abdee2b5848146b12f0eef8ef9d99",
+  "inputs": [
+    {
+      "path": "scratch/datasets/fraction=25/dblp/works.xml",
+      "sha256": "03e790be",
+      "bytes": 16234807
+    }
+  ],
+  "account": "000000000000",
+  "region": "us-east-2",
+  "configuration": {
+    "releaseLabel": "emr-spark-8.0.0",
+    "instanceType": "m6g.xlarge",
+    "primary": 1,
+    "core": 2,
+    "market": "ON_DEMAND",
+    "reducers": 2,
+    "shufflePartitions": 16
+  },
+  "clusterId": null,
+  "finalState": null,
+  "stateChangeReason": null,
+  "normalizedInstanceHours": null,
+  "steps": [],
+  "outputs": {
+    "hadoopRuns": [],
+    "sparkRuns": []
+  },
+  "emrSecurityGroups": {
+    "checked": false,
+    "openIngress": [],
+    "file": null
+  },
+  "logs": "logs/",
+  "manifests": "manifests/",
+  "failure": {
+    "step": "submit",
+    "command": "aws emr create-cluster",
+    "cliExitCode": 254,
+    "error": "An error occurred (ValidationException) when calling the RunJobFlow operation: Specified application: Hadoop is invalid"
+  }
+}
+leftover sc-create-cluster temp files: 0
+
+=== case submit-ok (CLI exit 0)
+(block finished; the script would continue with CLUSTER_ID=j-STUBCLUSTER0001)
+subshell exit=0
+applications argument passed to the CLI: --applications Name=Spark 
+run.json: not written
+leftover sc-create-cluster temp files: 0

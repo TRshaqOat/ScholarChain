@@ -1,0 +1,14 @@
+$ ./scripts/deploy.sh --plan-file scratch/plans/20261116T060222Z-d33ce8e8d507/plan.tfplan --approved-plan-sha256 9930298cd1a9ecafd5f616471681145e80918234ee6dd7805b3a6e973acedc63 --dry-run
+    plan file /Users/achyutpatel/Developer/Cloud/ScholarChain/scratch/plans/20261116T060222Z-d33ce8e8d507/plan.tfplan
+==> STEP approval
+==> OK plan checksum approved: 9930298cd1a9ecafd5f616471681145e80918234ee6dd7805b3a6e973acedc63
+==> STEP dry-run
+    no AWS, Terraform, or git call was made; steps that would run:
+    - refuse a dirty tree; HEAD must equal plan commit d33ce8e8d507145cd46fb39bf319e985bc9a428a
+    - aws sts get-caller-identity; account must be 834519512655, Region us-east-2
+    - terraform apply /Users/achyutpatel/Developer/Cloud/ScholarChain/scratch/plans/20261116T060222Z-d33ce8e8d507/plan.tfplan (saved plan, output shown in full)
+    - terraform output -json into the release directory
+    - runtime_enabled=false: secret value check, wait stable (20 min), verify digests and runtime run IDs
+    - write /Users/achyutpatel/Developer/Cloud/ScholarChain/operations/releases/release-<stamp>-<sha12>.json
+==> OK dry-run
+exit=0

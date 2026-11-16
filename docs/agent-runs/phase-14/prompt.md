@@ -111,3 +111,9 @@ Fix P14-D1 to P14-D4 exactly as ruling 12 scopes them, in scripts/run-bounded-pi
 ## Code review 1 (code-reviewer, after work order 2)
 
 Review the repair-01 change set (the orchestrator builds it with read-only git diff of the changed files) against ruling 12 only: each of P14-D1 to D4 fixed as scoped, nothing else changed, scripts/cleanup.sh untouched, no secret in output, bash 3.2 compatible. Verdict APPROVE or REQUEST_CHANGES.
+
+13. Repair-01 accepted (code review 1 APPROVE).
+   - P14-D1 to D4 fixed as ruling 12 scoped them, in scripts/README.md, deploy.sh, package.sh and run-bounded-pipeline.sh only; scripts/cleanup.sh and scripts/lib/common.sh unchanged. Dry runs and the D2/D3 harness are in evidence/repair-01/ and evidence/agent-logs/.
+   - Review finding 1 (pre-edit copies in scratch/phase-14-logs/orig/): minor. They stay in the ignored scratch/ and are not evidence; git holds the originals. Review finding 2 (one read-only git status by the infra-engineer, self-reported): recorded, no action.
+   - factory-engineer backlog: an owner row for scratch/phase-NN-logs/, so agents can use the Write tool there (guard-paths blocked it as unowned).
+   - Next (ruling 12): the human runs check.sh and commits; package.sh runs again at the new HEAD; then the 25% run.

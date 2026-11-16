@@ -102,7 +102,9 @@ After the evidence is archived: cleanup.sh --stage infra; after the instructor a
 - **Environment:** `AWS_PROFILE`. **Runs it:** the human or deploy-engineer after cloud window 1 is
   applied. **Approval points:** none beyond the applied window 1 plan (ECR and CodeBuild come from it).
 - **Evidence:** `operations/releases/package-<commit>.json` (commit, jar keys and sha256 values, Docker
-  context sha256, repository, tag, digest, build ID, scan status).
+  context sha256, repository, tag, digest, build ID, and `scan`: JSON `{status, severityCounts}`, where
+  `severityCounts` is null until the scan is `COMPLETE`, or `null` when ECR has no scan status yet or
+  the call failed; never raw CLI text).
 - **Rollback:** none needed: artifacts are additive and keyed by commit.
 
 ## plan.sh
@@ -128,6 +130,9 @@ After the evidence is archived: cleanup.sh --stage infra; after the instructor a
 
 - **Purpose:** apply exactly one approved saved plan and verify the deployed revision (ruling 6).
 - **Command:** `scripts/deploy.sh --plan-file scratch/plans/<dir>/plan.tfplan --approved-plan-sha256 <sha> [--package-record operations/releases/package-<sha>.json] [--profile p] [--region us-east-2] [--release-dir operations/releases] [--stable-timeout-minutes 20] [--resume] [--dry-run]`
+- **Plan path:** a relative `--plan-file` is resolved against the current directory to an absolute
+  path before the first gate, so the checksum gate, `plan-meta.json` beside it, and `terraform
+  -chdir=infra/terraform/envs/course apply` read the same file (ruling 12, P14-D1).
 - **Gates:** sha256 of the plan file must equal `--approved-plan-sha256` (else exit 4, nothing
   applied); clean tree; HEAD, account, and Region equal the plan's (`plan-meta.json`); `terraform apply
   <plan file>` (a saved plan needs no prompt; `-auto-approve` is never used; no other input is
@@ -190,7 +195,8 @@ After the evidence is archived: cleanup.sh --stage infra; after the instructor a
   ruling 2 bounds re-checked from the `emr` output (emr-spark-8.0.0, 1 primary, 1 to 2 core, Graviton,
   on-demand); write-once uploads of the five inputs to
   `raw/<dataset>/snapshot=<d>/run=<input run>/` (input run = hash of the fraction and the file hashes)
-  and of the jars; one `create-cluster` (no retry, `--auto-terminate`, tag
+  and of the jars; one `create-cluster` (no retry, `--applications Name=Spark` only because
+  emr-spark-8.0.0 offers no Hadoop application (ruling 12, P14-D4), `--auto-terminate`, tag
   `for-use-with-amazon-emr-managed-policies=true` that the v2 EMR service policy requires) with three
   steps through `command-runner.jar` and `emr/step.sh`:
   1. `classpath-probe` (CONTINUE): Java, Hadoop, Spark versions and the Typesafe Config, AWS SDK v2,
@@ -226,6 +232,11 @@ After the evidence is archived: cleanup.sh --stage infra; after the instructor a
   state and reason, step names, states and timestamps, normalized instance hours, output run
   directories, `emrSecurityGroups` with any open ingress), `steps.json` as submitted, `cluster.json`,
   `steps-result.json`, `security-groups.json`, `input-hashes.txt`, `manifests/`, `logs/`.
+- **Exit codes:** 0 all steps completed and manifests found; 1 a step or check failed, or
+  `create-cluster` failed (ruling 12, P14-D3): the script prints `==> FAIL ... (exit 1)` and writes
+  `run.json` with `clusterId: null`, empty `steps` and `outputs`, and
+  `failure: {step: "submit", command, cliExitCode, error}` (the CLI's error text); 3 precondition;
+  6 timeout. After a failed `create-cluster`, check `list-clusters` before any rerun.
 - **Rollback:** nothing to roll back: outputs are new write-once run directories and the cluster
   terminates itself. On timeout (exit 6) the cluster ID is printed; terminating a stuck cluster is a
   human action.
@@ -294,7 +305,11 @@ After the evidence is archived: cleanup.sh --stage infra; after the instructor a
   with the reason, and the plan sha256. Nothing changes.
 - **Command, second invocation:** `scripts/cleanup.sh --plan-file scratch/plans/cleanup-<stamp>-<stage>/plan.tfplan --confirm <sha256>`.
   It checks the checksum, HEAD, and account, applies the saved plan, takes the second inventory, and
-  writes `record.json` listing every retained resource and why.
+  writes `record.json` listing every retained resource and why. `--plan-file` must be the **absolute**
+  path (for example `"$PWD/scratch/plans/cleanup-<stamp>-<stage>/plan.tfplan"`; the first invocation
+  prints it absolute only with the default `--out-dir`): cleanup.sh passes it unchanged to terraform,
+  which runs with `-chdir`, so a relative path passes the checksum gate but fails at apply (ruling 11;
+  cleanup.sh is unchanged, ruling 12).
 - **Stages and what is kept:**
 
 | Stage | Destroys | Keeps |

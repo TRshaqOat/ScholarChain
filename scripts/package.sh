@@ -22,7 +22,8 @@ Steps:
      (no retry), wait for it (bounded); ECR tags are immutable, so an existing tag is reused
   6. read the image digest and the scan-on-push status from ECR
   7. write <record-dir>/package-<commit>.json: commit, jar sha256 values and S3 keys, context
-     sha256, image repository, tag, digest, build ID, scan status
+     sha256, image repository, tag, digest, build ID, scan (JSON {status, severityCounts}, or null
+     when ECR has no scan status yet)
 
 Flags:
   --record-dir             default operations/releases
@@ -138,10 +139,15 @@ else
   DIGEST="$(image_digest)" || die "build succeeded but ECR has no $REPO_NAME:$COMMIT" 1
 fi
 printf '%s' "$DIGEST" | grep -Eq '^sha256:[0-9a-f]{64}$' || die "unexpected image digest: $DIGEST" 1
+# JSON, never raw CLI text (ruling 12, P14-D2): {status, severityCounts}, or null when ECR has no scan
+# status yet or the call fails. severityCounts stays null until the scan is COMPLETE.
 SCAN="$(aws_retry ecr describe-images --repository-name "$REPO_NAME" --image-ids "imageTag=$COMMIT" \
-  --query 'imageDetails[0].[imageScanStatus.status, to_string(imageScanFindingsSummary.findingSeverityCounts)]' --output text || echo "unknown")"
+  --query 'imageDetails[0].{status: imageScanStatus.status, severityCounts: imageScanFindingsSummary.findingSeverityCounts}' --output json |
+  jq -c 'if (.status? // null) == null then null
+         else {status, severityCounts: (.severityCounts // (if .status == "COMPLETE" then {} else null end))} end')" || SCAN=null
+SCAN="${SCAN:-null}"
 printf '==> IMAGE %s:%s digest=%s\n' "$REPO_URL" "$COMMIT" "$DIGEST"
-info "scan (status, severity counts): $SCAN"
+info "scan: $SCAN"
 
 step "record"
 mkdir -p "$RECORD_DIR"
@@ -149,7 +155,7 @@ REC="$RECORD_DIR/package-$COMMIT.json"
 jq -n --arg commit "$COMMIT" --arg at "$(utc_now)" --arg account "$ACCOUNT" --arg region "$REGION" \
   --arg bucket "$BUCKET" --arg jp "$JOBS_PREFIX" --arg hs "$HADOOP_SHA" --arg ss "$SPARK_SHA" \
   --arg stepSha "$(sha256_hex "$SC_ROOT/scripts/emr/step.sh")" --arg ctx "$SOURCE_KEY" --arg cs "$CONTEXT_SHA" \
-  --arg repo "$REPO_URL" --arg digest "$DIGEST" --arg build "$BUILD_ID" --arg scan "$SCAN" \
+  --arg repo "$REPO_URL" --arg digest "$DIGEST" --arg build "$BUILD_ID" --argjson scan "$SCAN" \
   '{schemaVersion: "package-record-v1", commit: $commit, createdAt: $at, account: $account, region: $region,
     jobs: [{name: "hadoop", key: ($jp + "/hadoop-assembly.jar"), sha256: $hs, mainClass: "scholarchain.hadoop.Pipeline"},
            {name: "spark", key: ($jp + "/sparkAnalytics-assembly.jar"), sha256: $ss, mainClass: "scholarchain.spark.PipelineJob"},

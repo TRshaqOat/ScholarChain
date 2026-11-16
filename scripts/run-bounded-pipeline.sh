@@ -28,7 +28,7 @@ Steps:
   3. write-once uploads (skipped when present with the same sha256): inputs to
      raw/<dataset>/snapshot=<d>/run=<input run>/ (input run = hash of the fraction and file hashes),
      jars and step.sh to artifacts/jobs/<commit>/
-  4. one create-cluster call (no retry), auto-terminate, three steps:
+  4. one create-cluster call (no retry), applications Spark only, auto-terminate, three steps:
      classpath-probe (CONTINUE), hadoop-pipeline J01..J10 (TERMINATE_CLUSTER),
      spark-pipeline jobs 1..11 (TERMINATE_CLUSTER); each job step has a timeout on the node
   5. wait for TERMINATED (bounded); collect step timings, instance hours, the new Hadoop and Spark
@@ -44,7 +44,8 @@ Environment: AWS_PROFILE (or --profile).
 Run by: deploy-engineer (/run-pipeline) or the human, after cloud window 1 is applied and
 scripts/package.sh recorded the jars. Rollback: nothing to roll back; outputs are new write-once
 run directories, and the cluster terminates itself (a hung step is killed by its timeout).
-Exit: 0 all steps completed and manifests found; 1 a step or check failed (cluster ID recorded);
+Exit: 0 all steps completed and manifests found; 1 a step or check failed (cluster ID recorded),
+or create-cluster failed (run.json records the CLI exit code and error under "failure", clusterId null);
 3 precondition; 6 timeout (the cluster ID is printed; the human may terminate it).
 EOF
 }
@@ -122,7 +123,7 @@ dry_run_exit \
   "refuse a dirty tree; HEAD must be $COMMIT; jar and step.sh sha256 must equal the package record" \
   "aws sts get-caller-identity; terraform output (bucket, emr); bounds check" \
   "write-once upload of 5 inputs (fraction $FRACTION) under raw/, jars under artifacts/jobs/$COMMIT/" \
-  "aws emr create-cluster (once): emr-spark-8.0.0, 1 primary + core per the emr output, auto-terminate; steps classpath-probe, hadoop-pipeline (${HADOOP_MIN} min), spark-pipeline (${SPARK_MIN} min, shuffle $SHUFFLE, reducers $REDUCERS)" \
+  "aws emr create-cluster (once): emr-spark-8.0.0, --applications Name=Spark, 1 primary + core per the emr output, auto-terminate; steps classpath-probe, hadoop-pipeline (${HADOOP_MIN} min), spark-pipeline (${SPARK_MIN} min, shuffle $SHUFFLE, reducers $REDUCERS)" \
   "poll describe-cluster until TERMINATED; collect steps, instance hours, run manifests, step logs" \
   "describe-security-groups (read-only) of both EMR groups; warn about and record any 0.0.0.0/0 or ::/0 ingress" \
   "write $RECORD_DIR/<stamp>-fraction$FRACTION/run.json"
@@ -212,15 +213,39 @@ jq -n --arg t "$ITYPE" --argjson c "$CORE" \
   '[{InstanceGroupType: "MASTER", InstanceCount: 1, InstanceType: $t},
     {InstanceGroupType: "CORE", InstanceCount: $c, InstanceType: $t}]' >"$REC/instance-groups.json"
 
+# emr-spark-8.0.0 offers no Hadoop application (ruling 12, P14-D4): request Spark only.
+# A failed call is recorded in run.json and ends with exit 1, never the CLI's raw code (P14-D3).
+CC_ERR="$(mktemp "${TMPDIR:-/tmp}/sc-create-cluster.XXXXXX")"
+CC_RC=0
 CLUSTER_ID="$(aws_once emr create-cluster --name "scholarchain-course-pipeline-f$FRACTION-${COMMIT:0:12}" \
-  --release-label "$RELEASE" --applications Name=Hadoop Name=Spark \
+  --release-label "$RELEASE" --applications Name=Spark \
   --service-role "$(emr .service_role)" \
   --ec2-attributes "InstanceProfile=$(emr .instance_profile),SubnetId=$(emr .subnet_id),EmrManagedMasterSecurityGroup=$(emr .primary_security_group_id),EmrManagedSlaveSecurityGroup=$(emr .core_security_group_id)" \
   --instance-groups "file://$REC/instance-groups.json" --steps "file://$REC/steps.json" \
   --log-uri "$LOG_URI" --auto-terminate \
   --tags for-use-with-amazon-emr-managed-policies=true Project=ScholarChain Environment=course Course=CS441 \
   Owner=scholarchain-human-architect Expiration=2026-12-15 ManagedBy=scripts/run-bounded-pipeline.sh \
-  --query ClusterId --output text)"
+  --query ClusterId --output text 2>"$CC_ERR")" || CC_RC=$?
+cat "$CC_ERR" >&2
+if [ "$CC_RC" != 0 ]; then
+  jq -n --arg commit "$COMMIT" --arg fraction "$FRACTION" --arg snap "$SC_SNAPSHOT" --arg es "$ENRICH_SNAPSHOT" \
+    --arg inputRun "$INPUT_RUN" --arg account "$ACCOUNT" --arg region "$REGION" --arg release "$RELEASE" \
+    --arg itype "$ITYPE" --argjson core "$CORE" --arg reducers "$REDUCERS" --arg shuffle "$SHUFFLE" \
+    --rawfile inputs "$LINES" --rawfile error "$CC_ERR" --argjson rc "$CC_RC" \
+    '{schemaVersion: "pipeline-run-record-v1", commit: $commit, codeVersion: $commit, fraction: ($fraction | tonumber),
+      snapshots: {dblp: $snap, openalex: $es, crossref: $es, orcid: $es}, inputRun: $inputRun,
+      inputs: ($inputs | split("\n") | map(select(test(" ")) | split(" ") | {path: .[0], sha256: .[1], bytes: (.[2] | tonumber)})),
+      account: $account, region: $region,
+      configuration: {releaseLabel: $release, instanceType: $itype, primary: 1, core: $core, market: "ON_DEMAND",
+                      reducers: ($reducers | tonumber), shufflePartitions: ($shuffle | tonumber)},
+      clusterId: null, finalState: null, stateChangeReason: null, normalizedInstanceHours: null, steps: [],
+      outputs: {hadoopRuns: [], sparkRuns: []}, emrSecurityGroups: {checked: false, openIngress: [], file: null},
+      logs: "logs/", manifests: "manifests/",
+      failure: {step: "submit", command: "aws emr create-cluster", cliExitCode: $rc, error: ($error | gsub("^\\s+|\\s+$"; ""))}}' >"$REC/run.json"
+  rm -f "$CC_ERR"
+  die "create-cluster failed (AWS CLI exit $CC_RC), recorded in $REC/run.json; no cluster ID was returned: check list-clusters before any rerun" 1
+fi
+rm -f "$CC_ERR"
 printf '==> CLUSTER id=%s\n' "$CLUSTER_ID"
 printf '%s\n' "$CLUSTER_ID" >"$REC/cluster-id.txt"
 

@@ -1,0 +1,231 @@
+### git status --porcelain --untracked-files=all
+ M scripts/README.md
+ M scripts/deploy.sh
+ M scripts/package.sh
+ M scripts/run-bounded-pipeline.sh
+?? docs/agent-runs/phase-14/repair-01.md
+?? operations/deployments/window-1-20261116T061720Z.md
+?? operations/deployments/window-1-20261116T062456Z.md
+?? operations/pipeline-runs/20261116T063500Z-fraction25/hadoop-runs-before.txt
+?? operations/pipeline-runs/20261116T063500Z-fraction25/input-hashes.txt
+?? operations/pipeline-runs/20261116T063500Z-fraction25/instance-groups.json
+?? operations/pipeline-runs/20261116T063500Z-fraction25/spark-runs-before.txt
+?? operations/pipeline-runs/20261116T063500Z-fraction25/steps.json
+?? operations/plans/20261116T053901Z-3e0983e6a0c7.md
+?? operations/plans/20261116T060222Z-d33ce8e8d507-APPROVED.txt
+?? operations/plans/20261116T060222Z-d33ce8e8d507.md
+?? operations/releases/package-d33ce8e8d507145cd46fb39bf319e985bc9a428a.json
+?? operations/releases/release-20261116T061659Z-d33ce8e8d507.apply.txt
+?? operations/releases/release-20261116T062349Z-d33ce8e8d507.apply.txt
+?? operations/releases/release-20261116T062349Z-d33ce8e8d507.json
+?? operations/releases/release-20261116T062349Z-d33ce8e8d507.outputs.json
+?? operations/rulings/phase-14-ruling-11.txt
+
+### git diff --stat -- scripts/
+ scripts/README.md               | 21 ++++++++++++++++++---
+ scripts/deploy.sh               |  7 ++++++-
+ scripts/package.sh              | 14 ++++++++++----
+ scripts/run-bounded-pipeline.sh | 35 ++++++++++++++++++++++++++++++-----
+ 4 files changed, 64 insertions(+), 13 deletions(-)
+
+### git diff -- scripts/README.md scripts/deploy.sh scripts/package.sh scripts/run-bounded-pipeline.sh
+diff --git a/scripts/README.md b/scripts/README.md
+index 2f4859a..13a55d8 100644
+--- a/scripts/README.md
++++ b/scripts/README.md
+@@ -102,7 +102,9 @@ After the evidence is archived: cleanup.sh --stage infra; after the instructor a
+ - **Environment:** `AWS_PROFILE`. **Runs it:** the human or deploy-engineer after cloud window 1 is
+   applied. **Approval points:** none beyond the applied window 1 plan (ECR and CodeBuild come from it).
+ - **Evidence:** `operations/releases/package-<commit>.json` (commit, jar keys and sha256 values, Docker
+-  context sha256, repository, tag, digest, build ID, scan status).
++  context sha256, repository, tag, digest, build ID, and `scan`: JSON `{status, severityCounts}`, where
++  `severityCounts` is null until the scan is `COMPLETE`, or `null` when ECR has no scan status yet or
++  the call failed; never raw CLI text).
+ - **Rollback:** none needed: artifacts are additive and keyed by commit.
+ 
+ ## plan.sh
+@@ -128,6 +130,9 @@ After the evidence is archived: cleanup.sh --stage infra; after the instructor a
+ 
+ - **Purpose:** apply exactly one approved saved plan and verify the deployed revision (ruling 6).
+ - **Command:** `scripts/deploy.sh --plan-file scratch/plans/<dir>/plan.tfplan --approved-plan-sha256 <sha> [--package-record operations/releases/package-<sha>.json] [--profile p] [--region us-east-2] [--release-dir operations/releases] [--stable-timeout-minutes 20] [--resume] [--dry-run]`
++- **Plan path:** a relative `--plan-file` is resolved against the current directory to an absolute
++  path before the first gate, so the checksum gate, `plan-meta.json` beside it, and `terraform
++  -chdir=infra/terraform/envs/course apply` read the same file (ruling 12, P14-D1).
+ - **Gates:** sha256 of the plan file must equal `--approved-plan-sha256` (else exit 4, nothing
+   applied); clean tree; HEAD, account, and Region equal the plan's (`plan-meta.json`); `terraform apply
+   <plan file>` (a saved plan needs no prompt; `-auto-approve` is never used; no other input is
+@@ -190,7 +195,8 @@ After the evidence is archived: cleanup.sh --stage infra; after the instructor a
+   ruling 2 bounds re-checked from the `emr` output (emr-spark-8.0.0, 1 primary, 1 to 2 core, Graviton,
+   on-demand); write-once uploads of the five inputs to
+   `raw/<dataset>/snapshot=<d>/run=<input run>/` (input run = hash of the fraction and the file hashes)
+-  and of the jars; one `create-cluster` (no retry, `--auto-terminate`, tag
++  and of the jars; one `create-cluster` (no retry, `--applications Name=Spark` only because
++  emr-spark-8.0.0 offers no Hadoop application (ruling 12, P14-D4), `--auto-terminate`, tag
+   `for-use-with-amazon-emr-managed-policies=true` that the v2 EMR service policy requires) with three
+   steps through `command-runner.jar` and `emr/step.sh`:
+   1. `classpath-probe` (CONTINUE): Java, Hadoop, Spark versions and the Typesafe Config, AWS SDK v2,
+@@ -226,6 +232,11 @@ After the evidence is archived: cleanup.sh --stage infra; after the instructor a
+   state and reason, step names, states and timestamps, normalized instance hours, output run
+   directories, `emrSecurityGroups` with any open ingress), `steps.json` as submitted, `cluster.json`,
+   `steps-result.json`, `security-groups.json`, `input-hashes.txt`, `manifests/`, `logs/`.
++- **Exit codes:** 0 all steps completed and manifests found; 1 a step or check failed, or
++  `create-cluster` failed (ruling 12, P14-D3): the script prints `==> FAIL ... (exit 1)` and writes
++  `run.json` with `clusterId: null`, empty `steps` and `outputs`, and
++  `failure: {step: "submit", command, cliExitCode, error}` (the CLI's error text); 3 precondition;
++  6 timeout. After a failed `create-cluster`, check `list-clusters` before any rerun.
+ - **Rollback:** nothing to roll back: outputs are new write-once run directories and the cluster
+   terminates itself. On timeout (exit 6) the cluster ID is printed; terminating a stuck cluster is a
+   human action.
+@@ -294,7 +305,11 @@ After the evidence is archived: cleanup.sh --stage infra; after the instructor a
+   with the reason, and the plan sha256. Nothing changes.
+ - **Command, second invocation:** `scripts/cleanup.sh --plan-file scratch/plans/cleanup-<stamp>-<stage>/plan.tfplan --confirm <sha256>`.
+   It checks the checksum, HEAD, and account, applies the saved plan, takes the second inventory, and
+-  writes `record.json` listing every retained resource and why.
++  writes `record.json` listing every retained resource and why. `--plan-file` must be the **absolute**
++  path (for example `"$PWD/scratch/plans/cleanup-<stamp>-<stage>/plan.tfplan"`; the first invocation
++  prints it absolute only with the default `--out-dir`): cleanup.sh passes it unchanged to terraform,
++  which runs with `-chdir`, so a relative path passes the checksum gate but fails at apply (ruling 11;
++  cleanup.sh is unchanged, ruling 12).
+ - **Stages and what is kept:**
+ 
+ | Stage | Destroys | Keeps |
+diff --git a/scripts/deploy.sh b/scripts/deploy.sh
+index 0f3a8ed..1349835 100755
+--- a/scripts/deploy.sh
++++ b/scripts/deploy.sh
+@@ -30,7 +30,8 @@ Gates, in order:
+      (.apply.txt, not .log, so that Git does not ignore it)
+ 
+ Flags:
+-  --plan-file              required; written by scripts/plan.sh
++  --plan-file              required; written by scripts/plan.sh; a relative path is resolved against the
++                           current directory to an absolute path before the first gate
+   --approved-plan-sha256   required; the checksum the human signed at the plan gate
+   --package-record         required when the plan has runtime_enabled = true (scripts/package.sh)
+   --release-dir            default operations/releases
+@@ -73,6 +74,10 @@ while [ $# -gt 0 ]; do
+ done
+ 
+ [ -f "$PLAN_FILE" ] || die "--plan-file not found: ${PLAN_FILE:-<none>}" 2
++# terraform runs with -chdir (tf in lib/common.sh), so every gate and the apply read one absolute path
++# (ruling 12, P14-D1). Bash 3.2: no realpath or readlink -f.
++PLAN_FILE="$(CDPATH='' cd -- "$(dirname "$PLAN_FILE")" && pwd -P)/$(basename "$PLAN_FILE")"
++info "plan file $PLAN_FILE"
+ is_hex64 "$APPROVED" || die "--approved-plan-sha256 must be 64 lower-case hex" 2
+ printf '%s' "$STABLE_MIN" | grep -Eq '^[0-9]+$' && [ "$STABLE_MIN" -ge 1 ] && [ "$STABLE_MIN" -le 60 ] ||
+   die "--stable-timeout-minutes must be 1 to 60" 2
+diff --git a/scripts/package.sh b/scripts/package.sh
+index 6e19f6e..7b23f01 100755
+--- a/scripts/package.sh
++++ b/scripts/package.sh
+@@ -22,7 +22,8 @@ Steps:
+      (no retry), wait for it (bounded); ECR tags are immutable, so an existing tag is reused
+   6. read the image digest and the scan-on-push status from ECR
+   7. write <record-dir>/package-<commit>.json: commit, jar sha256 values and S3 keys, context
+-     sha256, image repository, tag, digest, build ID, scan status
++     sha256, image repository, tag, digest, build ID, scan (JSON {status, severityCounts}, or null
++     when ECR has no scan status yet)
+ 
+ Flags:
+   --record-dir             default operations/releases
+@@ -138,10 +139,15 @@ else
+   DIGEST="$(image_digest)" || die "build succeeded but ECR has no $REPO_NAME:$COMMIT" 1
+ fi
+ printf '%s' "$DIGEST" | grep -Eq '^sha256:[0-9a-f]{64}$' || die "unexpected image digest: $DIGEST" 1
++# JSON, never raw CLI text (ruling 12, P14-D2): {status, severityCounts}, or null when ECR has no scan
++# status yet or the call fails. severityCounts stays null until the scan is COMPLETE.
+ SCAN="$(aws_retry ecr describe-images --repository-name "$REPO_NAME" --image-ids "imageTag=$COMMIT" \
+-  --query 'imageDetails[0].[imageScanStatus.status, to_string(imageScanFindingsSummary.findingSeverityCounts)]' --output text || echo "unknown")"
++  --query 'imageDetails[0].{status: imageScanStatus.status, severityCounts: imageScanFindingsSummary.findingSeverityCounts}' --output json |
++  jq -c 'if (.status? // null) == null then null
++         else {status, severityCounts: (.severityCounts // (if .status == "COMPLETE" then {} else null end))} end')" || SCAN=null
++SCAN="${SCAN:-null}"
+ printf '==> IMAGE %s:%s digest=%s\n' "$REPO_URL" "$COMMIT" "$DIGEST"
+-info "scan (status, severity counts): $SCAN"
++info "scan: $SCAN"
+ 
+ step "record"
+ mkdir -p "$RECORD_DIR"
+@@ -149,7 +155,7 @@ REC="$RECORD_DIR/package-$COMMIT.json"
+ jq -n --arg commit "$COMMIT" --arg at "$(utc_now)" --arg account "$ACCOUNT" --arg region "$REGION" \
+   --arg bucket "$BUCKET" --arg jp "$JOBS_PREFIX" --arg hs "$HADOOP_SHA" --arg ss "$SPARK_SHA" \
+   --arg stepSha "$(sha256_hex "$SC_ROOT/scripts/emr/step.sh")" --arg ctx "$SOURCE_KEY" --arg cs "$CONTEXT_SHA" \
+-  --arg repo "$REPO_URL" --arg digest "$DIGEST" --arg build "$BUILD_ID" --arg scan "$SCAN" \
++  --arg repo "$REPO_URL" --arg digest "$DIGEST" --arg build "$BUILD_ID" --argjson scan "$SCAN" \
+   '{schemaVersion: "package-record-v1", commit: $commit, createdAt: $at, account: $account, region: $region,
+     jobs: [{name: "hadoop", key: ($jp + "/hadoop-assembly.jar"), sha256: $hs, mainClass: "scholarchain.hadoop.Pipeline"},
+            {name: "spark", key: ($jp + "/sparkAnalytics-assembly.jar"), sha256: $ss, mainClass: "scholarchain.spark.PipelineJob"},
+diff --git a/scripts/run-bounded-pipeline.sh b/scripts/run-bounded-pipeline.sh
+index 6605714..7d48ca2 100755
+--- a/scripts/run-bounded-pipeline.sh
++++ b/scripts/run-bounded-pipeline.sh
+@@ -28,7 +28,7 @@ Steps:
+   3. write-once uploads (skipped when present with the same sha256): inputs to
+      raw/<dataset>/snapshot=<d>/run=<input run>/ (input run = hash of the fraction and file hashes),
+      jars and step.sh to artifacts/jobs/<commit>/
+-  4. one create-cluster call (no retry), auto-terminate, three steps:
++  4. one create-cluster call (no retry), applications Spark only, auto-terminate, three steps:
+      classpath-probe (CONTINUE), hadoop-pipeline J01..J10 (TERMINATE_CLUSTER),
+      spark-pipeline jobs 1..11 (TERMINATE_CLUSTER); each job step has a timeout on the node
+   5. wait for TERMINATED (bounded); collect step timings, instance hours, the new Hadoop and Spark
+@@ -44,7 +44,8 @@ Environment: AWS_PROFILE (or --profile).
+ Run by: deploy-engineer (/run-pipeline) or the human, after cloud window 1 is applied and
+ scripts/package.sh recorded the jars. Rollback: nothing to roll back; outputs are new write-once
+ run directories, and the cluster terminates itself (a hung step is killed by its timeout).
+-Exit: 0 all steps completed and manifests found; 1 a step or check failed (cluster ID recorded);
++Exit: 0 all steps completed and manifests found; 1 a step or check failed (cluster ID recorded),
++or create-cluster failed (run.json records the CLI exit code and error under "failure", clusterId null);
+ 3 precondition; 6 timeout (the cluster ID is printed; the human may terminate it).
+ EOF
+ }
+@@ -122,7 +123,7 @@ dry_run_exit \
+   "refuse a dirty tree; HEAD must be $COMMIT; jar and step.sh sha256 must equal the package record" \
+   "aws sts get-caller-identity; terraform output (bucket, emr); bounds check" \
+   "write-once upload of 5 inputs (fraction $FRACTION) under raw/, jars under artifacts/jobs/$COMMIT/" \
+-  "aws emr create-cluster (once): emr-spark-8.0.0, 1 primary + core per the emr output, auto-terminate; steps classpath-probe, hadoop-pipeline (${HADOOP_MIN} min), spark-pipeline (${SPARK_MIN} min, shuffle $SHUFFLE, reducers $REDUCERS)" \
++  "aws emr create-cluster (once): emr-spark-8.0.0, --applications Name=Spark, 1 primary + core per the emr output, auto-terminate; steps classpath-probe, hadoop-pipeline (${HADOOP_MIN} min), spark-pipeline (${SPARK_MIN} min, shuffle $SHUFFLE, reducers $REDUCERS)" \
+   "poll describe-cluster until TERMINATED; collect steps, instance hours, run manifests, step logs" \
+   "describe-security-groups (read-only) of both EMR groups; warn about and record any 0.0.0.0/0 or ::/0 ingress" \
+   "write $RECORD_DIR/<stamp>-fraction$FRACTION/run.json"
+@@ -212,15 +213,39 @@ jq -n --arg t "$ITYPE" --argjson c "$CORE" \
+   '[{InstanceGroupType: "MASTER", InstanceCount: 1, InstanceType: $t},
+     {InstanceGroupType: "CORE", InstanceCount: $c, InstanceType: $t}]' >"$REC/instance-groups.json"
+ 
++# emr-spark-8.0.0 offers no Hadoop application (ruling 12, P14-D4): request Spark only.
++# A failed call is recorded in run.json and ends with exit 1, never the CLI's raw code (P14-D3).
++CC_ERR="$(mktemp "${TMPDIR:-/tmp}/sc-create-cluster.XXXXXX")"
++CC_RC=0
+ CLUSTER_ID="$(aws_once emr create-cluster --name "scholarchain-course-pipeline-f$FRACTION-${COMMIT:0:12}" \
+-  --release-label "$RELEASE" --applications Name=Hadoop Name=Spark \
++  --release-label "$RELEASE" --applications Name=Spark \
+   --service-role "$(emr .service_role)" \
+   --ec2-attributes "InstanceProfile=$(emr .instance_profile),SubnetId=$(emr .subnet_id),EmrManagedMasterSecurityGroup=$(emr .primary_security_group_id),EmrManagedSlaveSecurityGroup=$(emr .core_security_group_id)" \
+   --instance-groups "file://$REC/instance-groups.json" --steps "file://$REC/steps.json" \
+   --log-uri "$LOG_URI" --auto-terminate \
+   --tags for-use-with-amazon-emr-managed-policies=true Project=ScholarChain Environment=course Course=CS441 \
+   Owner=scholarchain-human-architect Expiration=2026-12-15 ManagedBy=scripts/run-bounded-pipeline.sh \
+-  --query ClusterId --output text)"
++  --query ClusterId --output text 2>"$CC_ERR")" || CC_RC=$?
++cat "$CC_ERR" >&2
++if [ "$CC_RC" != 0 ]; then
++  jq -n --arg commit "$COMMIT" --arg fraction "$FRACTION" --arg snap "$SC_SNAPSHOT" --arg es "$ENRICH_SNAPSHOT" \
++    --arg inputRun "$INPUT_RUN" --arg account "$ACCOUNT" --arg region "$REGION" --arg release "$RELEASE" \
++    --arg itype "$ITYPE" --argjson core "$CORE" --arg reducers "$REDUCERS" --arg shuffle "$SHUFFLE" \
++    --rawfile inputs "$LINES" --rawfile error "$CC_ERR" --argjson rc "$CC_RC" \
++    '{schemaVersion: "pipeline-run-record-v1", commit: $commit, codeVersion: $commit, fraction: ($fraction | tonumber),
++      snapshots: {dblp: $snap, openalex: $es, crossref: $es, orcid: $es}, inputRun: $inputRun,
++      inputs: ($inputs | split("\n") | map(select(test(" ")) | split(" ") | {path: .[0], sha256: .[1], bytes: (.[2] | tonumber)})),
++      account: $account, region: $region,
++      configuration: {releaseLabel: $release, instanceType: $itype, primary: 1, core: $core, market: "ON_DEMAND",
++                      reducers: ($reducers | tonumber), shufflePartitions: ($shuffle | tonumber)},
++      clusterId: null, finalState: null, stateChangeReason: null, normalizedInstanceHours: null, steps: [],
++      outputs: {hadoopRuns: [], sparkRuns: []}, emrSecurityGroups: {checked: false, openIngress: [], file: null},
++      logs: "logs/", manifests: "manifests/",
++      failure: {step: "submit", command: "aws emr create-cluster", cliExitCode: $rc, error: ($error | gsub("^\\s+|\\s+$"; ""))}}' >"$REC/run.json"
++  rm -f "$CC_ERR"
++  die "create-cluster failed (AWS CLI exit $CC_RC), recorded in $REC/run.json; no cluster ID was returned: check list-clusters before any rerun" 1
++fi
++rm -f "$CC_ERR"
+ printf '==> CLUSTER id=%s\n' "$CLUSTER_ID"
+ printf '%s\n' "$CLUSTER_ID" >"$REC/cluster-id.txt"
+ 

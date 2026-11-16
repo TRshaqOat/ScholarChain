@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "package-record-v1",
+  "commit": "d33ce8e8d507145cd46fb39bf319e985bc9a428a",
+  "createdAt": "2026-11-16T06:53:30Z",
+  "account": "000000000000",
+  "region": "us-east-2",
+  "jobs": [
+    {
+      "name": "hadoop",
+      "key": "artifacts/jobs/d33ce8e8d507145cd46fb39bf319e985bc9a428a/hadoop-assembly.jar",
+      "sha256": "stub",
+      "mainClass": "scholarchain.hadoop.Pipeline"
+    },
+    {
+      "name": "spark",
+      "key": "artifacts/jobs/d33ce8e8d507145cd46fb39bf319e985bc9a428a/sparkAnalytics-assembly.jar",
+      "sha256": "stub",
+      "mainClass": "scholarchain.spark.PipelineJob"
+    },
+    {
+      "name": "emr-step",
+      "key": "artifacts/jobs/d33ce8e8d507145cd46fb39bf319e985bc9a428a/step.sh",
+      "sha256": "ec7fb8b8dbec6605c99cf377d448b9d300a9d1abd54d77006c52272ed4f270a5"
+    }
+  ],
+  "bucket": "stub-bucket",
+  "dockerContext": {
+    "key": "stub.zip",
+    "sha256": "stub"
+  },
+  "image": {
+    "repository": "stub.dkr.ecr.us-east-2.amazonaws.com/stub",
+    "tag": "d33ce8e8d507145cd46fb39bf319e985bc9a428a",
+    "digest": "sha256:stub",
+    "buildId": "stub-build",
+    "scan": {
+      "status": "IN_PROGRESS",
+      "severityCounts": null
+    }
+  }
+}

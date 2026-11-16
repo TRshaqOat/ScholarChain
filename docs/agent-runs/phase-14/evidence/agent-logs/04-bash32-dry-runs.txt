@@ -1,0 +1,72 @@
+$ command -v bash; bash --version | head -1
+/bin/bash
+GNU bash, version 3.2.57(1)-release (arm64-apple-darwin26)
+
+$ /bin/bash scripts/run-bounded-pipeline.sh --fraction 25 --package-record operations/releases/package-d33ce8e8d507145cd46fb39bf319e985bc9a428a.json --dry-run | grep create-cluster
+    - aws emr create-cluster (once): emr-spark-8.0.0, --applications Name=Spark, 1 primary + core per the emr output, auto-terminate; steps classpath-probe, hadoop-pipeline (90 min), spark-pipeline (150 min, shuffle 16, reducers 2)
+exit=
+
+$ /bin/bash scripts/deploy.sh --plan-file scratch/plans/20261116T060222Z-d33ce8e8d507/plan.tfplan --approved-plan-sha256 9930...c63 --dry-run
+    plan file /Users/achyutpatel/Developer/Cloud/ScholarChain/scratch/plans/20261116T060222Z-d33ce8e8d507/plan.tfplan
+==> STEP approval
+==> OK plan checksum approved: 9930298cd1a9ecafd5f616471681145e80918234ee6dd7805b3a6e973acedc63
+==> STEP dry-run
+    no AWS, Terraform, or git call was made; steps that would run:
+    - refuse a dirty tree; HEAD must equal plan commit d33ce8e8d507145cd46fb39bf319e985bc9a428a
+    - aws sts get-caller-identity; account must be 834519512655, Region us-east-2
+    - terraform apply /Users/achyutpatel/Developer/Cloud/ScholarChain/scratch/plans/20261116T060222Z-d33ce8e8d507/plan.tfplan (saved plan, output shown in full)
+    - terraform output -json into the release directory
+    - runtime_enabled=false: secret value check, wait stable (20 min), verify digests and runtime run IDs
+    - write /Users/achyutpatel/Developer/Cloud/ScholarChain/operations/releases/release-<stamp>-<sha12>.json
+==> OK dry-run
+exit=0
+
+$ (cd scratch/plans && /bin/bash ../../scripts/deploy.sh --plan-file ./20261116T060222Z-d33ce8e8d507/../20261116T060222Z-d33ce8e8d507/plan.tfplan --approved-plan-sha256 9930...c63 --dry-run)
+    plan file /Users/achyutpatel/Developer/Cloud/ScholarChain/scratch/plans/20261116T060222Z-d33ce8e8d507/plan.tfplan
+==> STEP approval
+==> OK plan checksum approved: 9930298cd1a9ecafd5f616471681145e80918234ee6dd7805b3a6e973acedc63
+==> STEP dry-run
+    no AWS, Terraform, or git call was made; steps that would run:
+    - refuse a dirty tree; HEAD must equal plan commit d33ce8e8d507145cd46fb39bf319e985bc9a428a
+    - aws sts get-caller-identity; account must be 834519512655, Region us-east-2
+    - terraform apply /Users/achyutpatel/Developer/Cloud/ScholarChain/scratch/plans/20261116T060222Z-d33ce8e8d507/plan.tfplan (saved plan, output shown in full)
+    - terraform output -json into the release directory
+    - runtime_enabled=false: secret value check, wait stable (20 min), verify digests and runtime run IDs
+    - write /Users/achyutpatel/Developer/Cloud/ScholarChain/operations/releases/release-<stamp>-<sha12>.json
+==> OK dry-run
+exit=0
+
+$ CDPATH=/tmp /bin/bash scripts/deploy.sh --plan-file scratch/plans/20261116T060222Z-d33ce8e8d507/plan.tfplan ... --dry-run | grep 'plan file'
+    plan file /Users/achyutpatel/Developer/Cloud/ScholarChain/scratch/plans/20261116T060222Z-d33ce8e8d507/plan.tfplan
+exit=
+
+$ /bin/bash scripts/deploy.sh --plan-file scratch/plans/missing/plan.tfplan --approved-plan-sha256 9930...c63 --dry-run
+==> FAIL --plan-file not found: scratch/plans/missing/plan.tfplan (exit 2)
+exit=2
+
+$ /bin/bash scripts/deploy.sh --plan-file scratch/plans/20261116T060222Z-d33ce8e8d507/plan.tfplan --approved-plan-sha256 <64 zeros> --dry-run
+    plan file /Users/achyutpatel/Developer/Cloud/ScholarChain/scratch/plans/20261116T060222Z-d33ce8e8d507/plan.tfplan
+==> STEP approval
+==> FAIL plan sha256 9930298cd1a9ecafd5f616471681145e80918234ee6dd7805b3a6e973acedc63 does not equal the approved 0000000000000000000000000000000000000000000000000000000000000000; nothing applied (exit 4)
+exit=4
+
+$ /bin/bash scripts/package.sh --dry-run
+==> STEP dry-run
+    no AWS, Terraform, or git call was made; steps that would run:
+    - refuse a dirty tree; commit = HEAD
+    - sbt -batch packageJobs; sha256 modules/hadoop/target/scala-3.3.7/hadoop-assembly-0.1.0.jar and modules/spark/target/scala-3.3.7/sparkAnalytics-assembly-0.1.0.jar
+    - SCHOLARCHAIN_IMAGE_TAG=<commit> sbt -batch services/Docker/stage; zip modules/services/target/docker/stage
+    - aws sts get-caller-identity; terraform output (bucket, CodeBuild project, ECR)
+    - upload jars and context write-once under artifacts/
+    - CodeBuild start-build (once) unless ECR has the tag; wait at most 30 min
+    - ECR describe-images: digest and scan status; write /Users/achyutpatel/Developer/Cloud/ScholarChain/operations/releases/package-<commit>.json
+==> OK dry-run
+exit=0
+
+# re-record of the two grep cases above under /bin/bash (zsh has no PIPESTATUS; those exit= lines are blank)
+$ /bin/bash scripts/run-bounded-pipeline.sh --fraction 25 --package-record operations/releases/package-d33ce8e8d507145cd46fb39bf319e985bc9a428a.json --dry-run | grep -c Name=Spark
+1
+pipeline exit=0
+$ CDPATH=/tmp /bin/bash scripts/deploy.sh ... --dry-run | grep -c "plan file /Users"
+1
+pipeline exit=0

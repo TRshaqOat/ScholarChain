@@ -1,0 +1,12 @@
+$ /bin/bash --version | head -1
+GNU bash, version 3.2.57(1)-release (arm64-apple-darwin26)
+$ /bin/bash -n scripts/deploy.sh
+exit=0
+$ /bin/bash -n scripts/run-bounded-pipeline.sh
+exit=0
+$ /bin/bash -n scripts/package.sh
+exit=0
+$ /bin/bash -n scripts/lib/common.sh
+exit=0
+$ command -v shellcheck
+shellcheck: not installed (exit 1)

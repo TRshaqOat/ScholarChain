@@ -1,0 +1,53 @@
+{
+  "schemaVersion": "pipeline-run-record-v1",
+  "commit": "d33ce8e8d507145cd46fb39bf319e985bc9a428a",
+  "codeVersion": "d33ce8e8d507145cd46fb39bf319e985bc9a428a",
+  "fraction": 25,
+  "snapshots": {
+    "dblp": "2026-10-03",
+    "openalex": "2026-11-03",
+    "crossref": "2026-11-03",
+    "orcid": "2026-11-03"
+  },
+  "inputRun": "run-7a5abdee2b5848146b12f0eef8ef9d99",
+  "inputs": [
+    {
+      "path": "scratch/datasets/fraction=25/dblp/works.xml",
+      "sha256": "03e790be",
+      "bytes": 16234807
+    }
+  ],
+  "account": "000000000000",
+  "region": "us-east-2",
+  "configuration": {
+    "releaseLabel": "emr-spark-8.0.0",
+    "instanceType": "m6g.xlarge",
+    "primary": 1,
+    "core": 2,
+    "market": "ON_DEMAND",
+    "reducers": 2,
+    "shufflePartitions": 16
+  },
+  "clusterId": null,
+  "finalState": null,
+  "stateChangeReason": null,
+  "normalizedInstanceHours": null,
+  "steps": [],
+  "outputs": {
+    "hadoopRuns": [],
+    "sparkRuns": []
+  },
+  "emrSecurityGroups": {
+    "checked": false,
+    "openIngress": [],
+    "file": null
+  },
+  "logs": "logs/",
+  "manifests": "manifests/",
+  "failure": {
+    "step": "submit",
+    "command": "aws emr create-cluster",
+    "cliExitCode": 254,
+    "error": "An error occurred (ValidationException) when calling the RunJobFlow operation: Specified application: Hadoop is invalid"
+  }
+}
