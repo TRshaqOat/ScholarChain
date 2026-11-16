@@ -83,3 +83,31 @@ Steps:
 5. Write the report (report contract in .claude/agents/deploy-engineer.md) as a new file operations/deployments/window-1-<UTC stamp>.md, then return it.
 
 Not applicable in window 1 (window 2 items): smoke-test.sh, running image digests, task revisions, service stabilization, alarms. Report them as "window 2".
+
+## Human rulings during cloud window 1
+
+11. Deploy plan path (session 1).
+   - The first deploy.sh run exited 1 at apply; nothing was applied. deploy.sh passes --plan-file unchanged to terraform, which runs with -chdir=infra/terraform/envs/course (scripts/lib/common.sh:108, scripts/deploy.sh:121), so a repo-relative plan path does not load; deploy.sh's own gates resolve it from the repo root and passed. The relative path came from the human's session prompt; plan.sh prints the absolute path.
+   - Decision (option b): the same deploy.sh command with the absolute plan path, same plan sha256, commit and approval record. It ran once and exited 0: 43 added, 0 changed, 0 destroyed (operations/releases/release-20261116T062349Z-d33ce8e8d507.json). The failed first attempt's report and .apply.txt stay as evidence.
+   - Defect P14-D1 (relative --plan-file) goes to repair-01 (ruling 12). Until fixed, every deploy.sh and cleanup.sh call uses the absolute plan path. This ruling was first recorded in operations/rulings/phase-14-ruling-11.txt during the window.
+
+12. Pipeline submit failure and repair-01.
+   - Finding: run-bounded-pipeline.sh --fraction 25 stopped at submit (AWS CLI exit 254): ValidationException "Specified application: Hadoop is invalid". No cluster was created (list-clusters empty). The inputs were uploaded write-once under input run run-7a5abdee2b5848146b12f0eef8ef9d99. The partial record operations/pipeline-runs/20261116T063500Z-fraction25/ stays as failure evidence.
+   - describe-release-label emr-spark-8.0.0 (Nov 16): AmazonCloudWatchAgent 1.300032.2, JupyterEnterpriseGateway 2.6.0, Livy 0.8.0, Spark 4.0.2. There is no Hadoop application; emr-spark-8.0.0 is a separate line from the emr-7.x labels.
+   - Earlier findings: package.sh recorded the ECR scan as raw text ("None\tnull") before the scan finished (P14-D2); the scan later completed with CRITICAL 10, HIGH 48, MEDIUM 62, LOW 18, UNDEFINED 6 (to be reviewed before window 2). run-bounded-pipeline.sh exited with the CLI's raw code 254 instead of a documented code and wrote no run.json (P14-D3).
+   - Decision: one repair round, repair-01 (work order 2, infra-engineer), then code review 1 of the repair (code-reviewer), in one NEW session with Ponytail OFF throughout. Scope, and nothing else:
+     - P14-D4: run-bounded-pipeline.sh requests --applications Name=Spark only.
+     - P14-D1: deploy.sh resolves --plan-file to an absolute path before its first gate, so its gates and terraform read the same file. scripts/cleanup.sh is not touched by any agent (Phase 12 ruling 10); scripts/README.md states that cleanup.sh needs the absolute plan path.
+     - P14-D2: package.sh records the scan as JSON (status and severity counts, or null when not yet available), never raw CLI text.
+     - P14-D3: a failed create-cluster ends with a "==> FAIL" line and a documented exit code (1), and writes run.json with the failure and the error message.
+     - No Terraform change (no new plan), no Scala change, no other script change.
+   - Accepted risk: whether `hadoop jar` and the MapReduce framework exist on emr-spark-8.0.0 with only Spark selected is unverified. The 25% run's classpath-probe (CONTINUE) and hadoop-pipeline steps answer it on the cheapest cluster. If MapReduce is missing: stop; a fallback (for example an emr-7.x cluster for the Hadoop jobs, which changes D-03) needs a new ruling.
+   - Ruling 3 amended: the deploy is done, so the repair commit is allowed. After APPROVE the human runs check.sh, commits, reruns package.sh at the new HEAD, then the 25% run. The d33ce8e package record stays as evidence; window 2 deploys the newest package.
+
+## Work order 2: infra-engineer (repair-01, ruling 12)
+
+Fix P14-D1 to P14-D4 exactly as ruling 12 scopes them, in scripts/run-bounded-pipeline.sh, scripts/deploy.sh, scripts/package.sh, scripts/lib/common.sh (only if needed) and scripts/README.md. Never touch scripts/cleanup.sh. No AWS, Terraform, git or sbt calls. Validate with bash -n on each changed script and with --dry-run runs (which make no AWS, Terraform or git call): run-bounded-pipeline.sh --fraction 25 --package-record operations/releases/package-d33ce8e8d507145cd46fb39bf319e985bc9a428a.json --dry-run, and deploy.sh with the relative plan path scratch/plans/20261116T060222Z-d33ce8e8d507/plan.tfplan and the approved sha256 with --dry-run, showing that the path is resolved to the absolute one. Save the logs under scratch/phase-14-logs/. Report with the infra-engineer report contract, including the full diff summary per file.
+
+## Code review 1 (code-reviewer, after work order 2)
+
+Review the repair-01 change set (the orchestrator builds it with read-only git diff of the changed files) against ruling 12 only: each of P14-D1 to D4 fixed as scoped, nothing else changed, scripts/cleanup.sh untouched, no secret in output, bash 3.2 compatible. Verdict APPROVE or REQUEST_CHANGES.
