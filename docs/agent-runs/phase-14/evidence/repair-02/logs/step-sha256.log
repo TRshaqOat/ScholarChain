@@ -1,0 +1,7 @@
+== emr-step sha256 in operations/releases/package-1232927b8ac8828dd57f30e93e06e263bd57ac2a.json
+ec7fb8b8dbec6605c99cf377d448b9d300a9d1abd54d77006c52272ed4f270a5
+== sha256 of the edited scripts/emr/step.sh
+4db0784fe306c6e9d7dba266e68edef024c0e17db4518055a27e4718eb02ad4f  scripts/emr/step.sh
+== run-bounded-pipeline.sh: dry_run_exit line vs check_sha emr-step line (the dry run exits before the hash gates)
+122:dry_run_exit \
+139:check_sha emr-step "$STEP_SH"

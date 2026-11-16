@@ -133,3 +133,150 @@ BLOCKED-ON OWNER: none
 BLOCKED-ON EVIDENCE: none
 
 NEXT GATE: finding 1 goes to the human architect (with the factory-engineer for any ownership row), and finding 2 is recorded against infra-engineer process. Neither needs a code repair or re-review. Then the human gate on this APPROVE: check.sh, commit, package.sh, then the 25% run.
+
+## Code review 2: repair-02 (work order 3, infra-engineer), against ruling 14 (code-reviewer, verbatim)
+
+STATUS: COMPLETE
+OWNER: code-reviewer
+WORK ORDER: Phase 14, code review 2 (after work order 3, repair-02, human ruling 14). I reviewed the repair-02 change set against ruling 14 only: P14-D5 fixed for an empty and a non-empty earlier list, the argument checks in step.sh, nothing else changed, scripts/cleanup.sh untouched, bash 3.2 compatible.
+
+VERDICT: APPROVE
+
+SCOPE REVIEWED:
+- Diff: /private/tmp/claude-501/-Users-achyutpatel-Developer-Cloud-ScholarChain/7acc9282-a10a-4d93-9a18-e3b0ee5f563a/scratchpad/repair-02-changeset.diff. It is identical to the diff pasted in the work order: step.sh +27/-2, run-bounded-pipeline.sh +2.
+- Full current files:
+  - /Users/achyutpatel/Developer/Cloud/ScholarChain/scripts/emr/step.sh
+  - /Users/achyutpatel/Developer/Cloud/ScholarChain/scripts/run-bounded-pipeline.sh
+  - the relevant parts of scripts/lib/common.sh (`dry_run_exit` at line 57, `tfo` at line 128, `SC_SNAPSHOT`)
+  - scripts/README.md, the run-bounded-pipeline.sh section at lines 190-218
+- Failure evidence: operations/pipeline-runs/20261116T071214Z-fraction25/steps.json, run.json and hadoop-runs-after.txt, plus operations/releases/package-1232927b8ac8828dd57f30e93e06e263bd57ac2a.json.
+- Harness: /private/tmp/claude-501/-Users-achyutpatel-Developer-Cloud-ScholarChain/7acc9282-a10a-4d93-9a18-e3b0ee5f563a/scratchpad/repair-02-harness/harness.sh
+- Logs in /Users/achyutpatel/Developer/Cloud/ScholarChain/scratch/phase-14-logs/repair-02/: syntax.log, dry-run-pipeline.log, step-sha256.log, harness.log.
+- Infra-engineer report: docs/agent-runs/phase-14/repair-02.md.
+
+VERIFIED AGAINST RULING 14 (no defects found):
+
+1. Empty earlier list.
+   - run-bounded-pipeline.sh:192-194: `EARLIER="$(paste -sd, ...)"` is followed by `[ -n "$EARLIER" ] || EARLIER=none`. `$earlier` (from `--arg earlier "$EARLIER"`, line 201) is the only value placed in a positional slot of the spark Args (line 211), so that slot can no longer be "".
+   - step.sh:67 maps "none" back to "" after `shift 5`.
+   - step.sh:71: `case ",$earlier," in *",$d,"*)` with an empty `earlier` tests ",," and matches no `run=...` directory, so every listed run counts as new. This is the same behavior as before the bug.
+   - harness.log lines 54-71: spark-submit received `--input s3a://.../run=run-620f... --out s3a://.../curated/spark --checkpoint-dir hdfs:///... --code-version <sha> --shuffle-partitions 16`, in order, exit 0.
+
+2. Non-empty earlier list.
+   - The value passes through unchanged. harness.log lines 145-209: the earlier run `run=run-1111...` is skipped and the new run is chosen.
+   - spark-submit received the same vector as the empty case, in order, exit 0.
+
+3. The harness is faithful to the shipped code.
+   - harness.sh:49-50 extracts the jq Args filter from run-bounded-pipeline.sh at run time. I checked that the awk start pattern matches line 204, the end pattern matches line 213, and the sed strips exactly the leading `'` and the trailing `' >"$REC/steps.json"`.
+   - harness.sh:51 greps the two shipped EARLIER lines (192 and 194) and evals them (lines 63-65). It aborts if both are not found (line 54), and harness.log lines 3-4 print them.
+   - It runs the repository's scripts/emr/step.sh directly (`$STEP`, line 13), not a copy, so it cannot drift from the shipped code.
+   - Empty-string removal is `select(. != "")` over the Args (line 77). That removes exactly the "" entries and keeps the order.
+   - The only deviation from production is the boot (line 60), which skips the S3 copy of step.sh and uses /bin/bash.
+   - Stubs only: harness.sh:41-45 puts the stubs first on PATH="stubs:/usr/bin:/bin" and asserts that aws, hadoop, spark-submit and timeout resolve to the stubs, and harness.log line 1 confirms it.
+   - Case 3 replays the real failed vector from steps.json, in which I verified the "" at line 69 before "--out". step.sh exits 2 with "positional argument 5 of 5 ... is '--out'" before any stub call (harness.log lines 282-298).
+
+4. Argument checks in every mode (step.sh:19-37, 45, 57, 64).
+   - Missing mode exits 2.
+   - classpath expects 0 arguments.
+   - hadoop checks its 2 positionals. The Pipeline flags that follow are not checked, which is correct because they are flags, not positionals. If the jar is dropped, "--out" lands in position 2 and is caught. If the timeout is dropped, "--out" is still in position 2 and is caught.
+   - spark checks its 5 positionals. Any drop among the 5 moves "--out" into position 5 or earlier, or leaves fewer than 5 arguments, and both are caught.
+   - An unknown mode, including one starting with "--", still exits 2 (lines 82-84).
+   - Every check runs before `fetch` or `aws_t` in step.sh.
+   - Each check is exercised in harness.log lines 300-324.
+
+5. The "none" sentinel cannot collide with a real run name.
+   - Hadoop run directories are named `run=run-<hex>` (hadoop-runs-after.txt line 1; list_runs prints the PRE names).
+   - The only way to collide is a hand-made directory named exactly "none" as the only earlier entry. step.sh would then treat it as new, find n=2, and exit 1 at step.sh:74. That fails closed and never selects the wrong input.
+
+6. Behavior under `set -u`.
+   - `$mode` is assigned at line 36, before any `need` call. `local ... a` and `for a in "$@"` are safe.
+   - An empty `"$@"` under set -u in bash 3.2 is exercised and works: harness case 4 "no mode" runs the boot `exec /bin/bash $STEP "$@"` with set -u and zero arguments and reaches usage_fail with exit 2 (harness.log lines 301-304).
+   - Inside `need`, the count check runs before the loop, so the loop never iterates an empty list when `want` is 2 or more.
+
+7. bash 3.2 compatibility.
+   - The change uses only `local`, `$(( ))`, `case`, `[ ]` and `for ... in "$@"`. There are no arrays, `${var,,}`, `mapfile` or `[[ =~ ]]` forms.
+   - syntax.log: `/bin/bash -n` exit 0 on both files under GNU bash 3.2.57. The harness ran every case under /bin/bash 3.2.57.
+
+8. The two flagged behavior changes fit the work order.
+   - The work order says "In every mode, step.sh also checks that it received its expected positional arguments ... otherwise it exits 2 with a clear message."
+   - Missing mode now exits 2 instead of 1. The mode is the first expected positional, and exit 2 is the documented usage-error code.
+   - classpath now rejects extra arguments. Its expected positional count is 0.
+   - Neither affects the submitted steps: classpath Args are exactly `step classpath` (run-bounded-pipeline.sh:205), and that step is ActionOnFailure CONTINUE.
+
+9. Nothing else changed.
+   - The diff touches only the step.sh header comment, the two helpers, mode parsing, the three mode checks and the "none" mapping, plus the two lines in run-bounded-pipeline.sh.
+   - Run discovery, aws_t/fetch, the hadoop jar command and the spark-submit command are unchanged.
+   - scripts/README.md does not list step.sh positionals (lines 201-213 describe the steps and the job flags only), so leaving it unchanged is correct under work order 3.
+   - The `git diff` of scripts/cleanup.sh, scripts/lib/common.sh and scripts/README.md is empty, as supplied by the orchestrator. I have no Bash, so I cannot run git myself.
+
+10. Other steps carrying empty arguments.
+   - The hadoop Args values are non-empty by construction: commit is checked by is_sha40 (line 117), reducers by in_range (line 81), the snapshots are literals or config, the input keys are built from non-empty parts, and BUCKET comes from the Terraform output.
+   - The classpath Args have no variables.
+   - If a hadoop positional were ever dropped, the new `need 2` catches it. A dropped Pipeline flag value is outside P14-D5 and outside "positional".
+
+FINDINGS:
+
+1. MINOR. File: docs/agent-runs/phase-14/repair-02.md:60, the claim "(harness exit=0)".
+   - Failure input: harness.log has no line recording the harness's own exit status. It ends at the last case-4 line, "step.sh exit=2".
+   - Evidence: harness.sh runs under `set -euo pipefail`, every case is logged through to the last statement, and the last statement is an `echo`. This strongly implies exit 0, but the claimed exit code itself was not captured.
+   - Impact: none on correctness. Under law 4 it is a claim without directly observed output.
+   - Owning agent: infra-engineer. No re-work is needed for this verdict. Future harness logs should record the exit code.
+
+2. MINOR (coverage gap, not a defect). File: the harness script, cases 1-4.
+   - Not exercised: classpath with zero arguments (the normal path), hadoop with zero positionals, and a spark earlier list with two or more comma-separated runs.
+   - Evidence: I read these paths in the code and they are correct. `[ "$#" = 0 ]` holds for the submitted classpath Args. `need 2` with no arguments fails the count check at step.sh:25 before the loop. The comma-list matching at step.sh:71 did not change in this diff.
+   - Impact: low.
+   - Owning agent: infra-engineer.
+
+No CRITICAL or MAJOR findings.
+
+OWNERSHIP CHECK:
+- scripts/emr/step.sh: owner infra-engineer; author infra-engineer. Matches: yes.
+- scripts/run-bounded-pipeline.sh: owner infra-engineer; author infra-engineer. Matches: yes.
+- docs/agent-runs/phase-14/repair-02.md: a report file the orchestrator assembles, in an open phase folder. phase-14 has no commit.txt; I checked the folder listing (prompt.md, repair-01.md, repair-02.md, review-report.md). Matches: yes.
+- Harness and logs: the session scratchpad and the gitignored scratch/. These are not repository artifacts.
+- Out of scope: the untracked operations/ tree (script records).
+
+FLOOR AND FENCE CHECK: No hook, permission rule, `check`, `markTestRun` or reviewer-fence file is touched, so nothing is widened or weakened. No Terraform, IAM or bound changed. step.sh now fails faster and fails closed.
+
+EVIDENCE GAPS:
+- Finding 1: the harness exit=0 is implied by the log but not captured.
+- The stderr.gz excerpt in repair-02.md (PipelineJob "flags come in --name value pairs" with "--out" missing) is quoted by the infra-engineer. I cannot decompress it with Read. It is consistent with what I verified: steps.json line 69 holds "", and run.json shows spark-pipeline FAILED after about 6 seconds. Ruling 14 also records the same cause.
+- The step.sh sha256 mismatch against the 1232927 record was not reported by the dry run, because of a premise error in the work order rather than a defect in the change.
+  - Work order 3 called the mismatch acceptable "if the dry run reports it".
+  - The dry run cannot report it. `dry_run_exit` at run-bounded-pipeline.sh:122 exits (common.sh:57-64) before `check_sha emr-step` at line 139, and this is behavior from before the change.
+  - dry-run-pipeline.log only prints the planned gate "jar and step.sh sha256 must equal the package record".
+  - The infra-engineer disclosed this and recorded the mismatch separately in step-sha256.log: record ec7fb8b8...0a5, edited file 4db0784f...ad4f. I checked the record value against the package record at line 23.
+  - Making the dry run hash-check would have broken "change nothing else". A real run against the 1232927 record would stop at check_sha with exit 3, and ruling 14's sequence (package.sh at the new HEAD) produces a matching record.
+  - The human may want to note that the work order's expectation does not match the script's documented dry-run behavior. This does not block.
+
+FILES CREATED: none
+FILES MODIFIED: none
+COMMANDS RUN: none (no Bash tool). Read, Grep and Glob only.
+
+TEST RESULTS (as supplied, quoted from the logs):
+- harness.log:
+  - Case 1 (empty list): spark-submit `[--input] [s3a://.../run=run-620fccae97a621ed9437af85f2a590c4] [--out] [s3a://.../curated/spark] [--checkpoint-dir] [hdfs:///scholarchain/spark/checkpoints] [--code-version] [0123...4567] [--shuffle-partitions] [16]`, "step.sh exit=0". The hadoop step gave "step.sh exit=0".
+  - Case 2 (non-empty list): the same spark-submit vector, "step.sh exit=0". The hadoop step gave "step.sh exit=0".
+  - Case 3: "step.sh: spark positional argument 5 of 5 (...) is '--out'; an earlier argument is missing", "step.sh exit=2".
+  - Case 4: six checks, each "step.sh exit=2".
+
+VALIDATION RESULTS:
+- syntax.log: `/bin/bash -n` exit=0 on both files. "GNU bash, version 3.2.57(1)-release". "shellcheck not installed".
+- dry-run-pipeline.log: "==> OK dry-run", "exit=0".
+- step-sha256.log: the record's emr-step sha256 is ec7fb8b8dbec6605c99cf377d448b9d300a9d1abd54d77006c52272ed4f270a5, and the edited step.sh is 4db0784fe306c6e9d7dba266e68edef024c0e17db4518055a27e4718eb02ad4f. The two differ, as expected.
+
+ASSUMPTIONS:
+- The orchestrator-supplied git status and the empty diffs of cleanup.sh, common.sh and README.md are accurate.
+- The bash on the EMR node (invoked as `bash` by the boot) is at least as capable as 3.2.
+- EMR command-runner drops only empty strings and does not otherwise alter the arguments. The failure evidence supports this, but only a live run proves it.
+
+RISKS:
+- As ruling 14 says, the next live run cannot exercise the empty-list path, because curated/hadoop already holds a run. The harness is the only evidence for that path.
+- A spark-step exit 2 still happens after the roughly 17-minute Hadoop step, because the check runs on the node. That is inherent to the design, not to this change.
+- step.sh defines a helper named `need` that has different semantics from common.sh's `need` (command presence). step.sh does not source common.sh, so there is no runtime conflict, but the shared name could confuse readers.
+
+MANUAL ACTION REQUIRED: per ruling 14, the human does the evidence copy, runs check.sh, commits, runs package.sh at the new HEAD, then the 25% run.
+BLOCKED-ON OWNER: none
+BLOCKED-ON EVIDENCE: none
+NEXT GATE: the human gate on APPROVE (ruling 14 sequence). The two MINOR findings go to infra-engineer as notes only and need no repair round.

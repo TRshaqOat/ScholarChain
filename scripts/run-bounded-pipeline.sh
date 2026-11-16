@@ -190,6 +190,8 @@ SPARK_ROOT="curated/spark/snapshot=$SC_SNAPSHOT/"
 list_runs "$HADOOP_ROOT" >"$REC/hadoop-runs-before.txt"
 list_runs "$SPARK_ROOT" >"$REC/spark-runs-before.txt"
 EARLIER="$(paste -sd, "$REC/hadoop-runs-before.txt")"
+# EMR command-runner drops empty-string arguments (P14-D5); step.sh maps "none" to an empty list
+[ -n "$EARLIER" ] || EARLIER=none
 
 step "submit"
 S3A="s3a://$BUCKET"

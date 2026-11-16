@@ -1,0 +1,8 @@
+== /bin/bash -n scripts/emr/step.sh
+exit=0
+== /bin/bash -n scripts/run-bounded-pipeline.sh
+exit=0
+== /bin/bash --version
+GNU bash, version 3.2.57(1)-release (arm64-apple-darwin26)
+== shellcheck
+shellcheck not installed

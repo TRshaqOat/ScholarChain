@@ -1,0 +1,3 @@
+#!/bin/bash
+echo "  spark-submit argv:"
+printf '    [%s]\n' "$@"

@@ -1,0 +1,79 @@
+diff --git a/scripts/emr/step.sh b/scripts/emr/step.sh
+index d977a8c..8f7654b 100755
+--- a/scripts/emr/step.sh
++++ b/scripts/emr/step.sh
+@@ -7,12 +7,33 @@
+ #       Phase 11 check (Typesafe Config, AWS SDK v2, Scala libraries); never fails the cluster
+ #   step.sh hadoop <timeout s> <s3 jar> <Pipeline args...>
+ #       hadoop jar (Main-Class scholarchain.hadoop.Pipeline, J01 to J10 in their documented order)
+-#   step.sh spark <timeout s> <s3 jar> <bucket> <snapshot> <comma list of earlier Hadoop run dirs> <PipelineJob args...>
++#   step.sh spark <timeout s> <s3 jar> <bucket> <snapshot> <comma list of earlier Hadoop run dirs, or none> <PipelineJob args...>
+ #       finds the one Hadoop run directory this cluster created (not in the earlier list, with
+ #       _manifest.json), then spark-submit PipelineJob (Spark jobs 1 to 11) with --input set to it
++#
++# EMR command-runner drops empty-string arguments, which shifts every later positional (P14-D5), so
++# the caller passes "none" for an empty earlier list, and each mode checks its positionals: present,
++# non-empty, and not starting with "--". A failed check exits 2 before any AWS call.
+ set -euo pipefail
+ 
+-mode="${1:?mode}"
++usage_fail() { echo "step.sh: $1" >&2; exit 2; }
++
++# need <count> <names> "$@": the first <count> arguments are the positionals named in <names>
++need() {
++  local want="$1" names="$2" i=0 a
++  shift 2
++  [ "$#" -ge "$want" ] || usage_fail "$mode expects $want positional arguments ($names), got $#"
++  for a in "$@"; do
++    [ "$i" -lt "$want" ] || break
++    i=$((i + 1))
++    case "$a" in
++      "" | --*) usage_fail "$mode positional argument $i of $want ($names) is '$a'; an earlier argument is missing" ;;
++    esac
++  done
++}
++
++[ "$#" -ge 1 ] || usage_fail "missing mode (classpath, hadoop, or spark)"
++mode="$1"
+ shift
+ 
+ # Every AWS CLI call has explicit timeouts (scripts/README.md conventions; code review 1 F7b).
+@@ -21,6 +42,7 @@ fetch() { aws_t s3 cp --only-show-errors "$1" "$2"; }
+ 
+ case "$mode" in
+   classpath)
++    [ "$#" = 0 ] || usage_fail "classpath takes no arguments, got $#"
+     set +e
+     java -version 2>&1
+     hadoop version 2>&1 | head -3
+@@ -32,14 +54,17 @@ case "$mode" in
+     exit 0
+     ;;
+   hadoop)
++    need 2 "timeout s, s3 jar" "$@"
+     timeout_s="$1" jar="$2"
+     shift 2
+     fetch "$jar" /tmp/scholarchain-hadoop.jar
+     exec timeout "$timeout_s" hadoop jar /tmp/scholarchain-hadoop.jar "$@"
+     ;;
+   spark)
++    need 5 "timeout s, s3 jar, bucket, snapshot, earlier runs or none" "$@"
+     timeout_s="$1" jar="$2" bucket="$3" snapshot="$4" earlier="$5"
+     shift 5
++    [ "$earlier" != none ] || earlier=""
+     base="s3://$bucket/curated/hadoop/snapshot=$snapshot/"
+     run="" n=0
+     for d in $(aws_t s3 ls "$base" | awk '$1 == "PRE" {sub("/$", "", $2); print $2}'); do
+diff --git a/scripts/run-bounded-pipeline.sh b/scripts/run-bounded-pipeline.sh
+index 7d48ca2..b022cab 100755
+--- a/scripts/run-bounded-pipeline.sh
++++ b/scripts/run-bounded-pipeline.sh
+@@ -190,6 +190,8 @@ SPARK_ROOT="curated/spark/snapshot=$SC_SNAPSHOT/"
+ list_runs "$HADOOP_ROOT" >"$REC/hadoop-runs-before.txt"
+ list_runs "$SPARK_ROOT" >"$REC/spark-runs-before.txt"
+ EARLIER="$(paste -sd, "$REC/hadoop-runs-before.txt")"
++# EMR command-runner drops empty-string arguments (P14-D5); step.sh maps "none" to an empty list
++[ -n "$EARLIER" ] || EARLIER=none
+ 
+ step "submit"
+ S3A="s3a://$BUCKET"

@@ -133,3 +133,10 @@ Validate: bash -n on both files; run-bounded-pipeline.sh --fraction 25 --package
 ## Code review 2 (code-reviewer, after work order 3)
 
 Review the repair-02 change set against ruling 14 only: P14-D5 fixed for the empty and non-empty earlier list, the argument checks in step.sh, nothing else changed, scripts/cleanup.sh untouched, bash 3.2 compatible. Verdict APPROVE or REQUEST_CHANGES.
+
+15. Repair-02 accepted (code review 2 APPROVE).
+   - P14-D5 fixed in scripts/run-bounded-pipeline.sh (+2) and scripts/emr/step.sh (+27/-2) only; scripts/README.md, cleanup.sh and lib/common.sh unchanged. The harness, change set and logs are in evidence/repair-02/.
+   - Review minors, residual (infra-engineer notes, no repair): the harness's own exit code was not captured in harness.log; three paths (classpath with zero arguments, hadoop with zero positionals, an earlier list of two or more runs) were read in code, not exercised.
+   - Work order 3's premise was the human's error: the dry run cannot report the step.sh sha256 mismatch, because dry_run_exit runs before check_sha. The mismatch is recorded in step-sha256.log; package.sh at the new HEAD resolves it.
+   - The infra-engineer's session context said "Ponytail mode active" (PONYTAIL_SUBAGENT_MATCHER covers implementation agents), although this was a code-review session with Ponytail OFF; the agent followed the ruling. factory-engineer backlog: the matcher has no notion of review sessions.
+   - Next: check.sh, commit, package.sh at the new HEAD, then the 25% run. Hadoop runs again and writes a new write-once run; the earlier list now holds run-620fccae97a621ed9437af85f2a590c4, so step.sh picks only the new run.
