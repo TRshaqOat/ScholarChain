@@ -42,18 +42,23 @@ Human architect: Achyut Patel
 - [x] Buckets and databases not public. The only internet ingress is the HTTP ALB (ruling 11).
 - [x] Default capacity bounded: ECS 1 to 2 tasks, EMR 1 primary plus at most 2 core on demand, a Neptune class allowlist, the Haiku cap at most 8 per minute, CodeBuild concurrency 1.
 - [x] Secrets absent from source and outputs. The API key secret has no value in Terraform.
-- [ ] Human reviews and signs the plan before any apply: PENDING (ruling 21); see "Plan sign-off".
+- [x] Human reviews and signs the plan before any apply (see "Plan sign-off").
 - [x] Code reviewer approves the infrastructure diff (code review 4).
 
 ## Phase 13 gate (spec)
 - [x] A clean checkout runs all non-cloud validation through scripts/check.sh (working tree; replayed on the committed tree under "Plan sign-off").
-- [ ] Terraform planning reproducible and plan checksum archived: PENDING (ruling 21).
+- [x] Terraform planning reproducible and plan checksum archived (see "Plan sign-off").
 - [x] Deployment cannot proceed without the documented human approval. deploy.sh exits 4 on a checksum mismatch and never uses -auto-approve.
 - [x] Smoke tests exercise a real bounded query (by code; run in window 2).
 - [ ] The README uses the same scripts: deferred to Phase 17 (ruling 22).
 
 ## Plan sign-off (ruling 21)
-PENDING: filled in after phase_commit 12, from scripts/plan.sh --runtime-enabled false on the committed tree.
+- Plan: scripts/plan.sh --runtime-enabled false at commit 3e0983e, account 834519512655, us-east-2, TF_VAR_alarm_email empty. Plan directory scratch/plans/20261116T053901Z-3e0983e6a0c7.
+- Result: 43 to add, 0 to change, 0 to destroy. Four subnets, in us-east-2a and us-east-2b only. The EMR instance policy JSON is computed at apply (bucket ARN), so the reviewed code (infra/terraform/modules/emr/main.tf, code review 4) is the reference. No secret values (the only match is the ECR login command in the buildspec).
+- Plan sha256: 2955206c828fb7a8f39d276d9c8122695cbc7e234d9fac7b862da9b821796011 (evidence/plan/).
+- check.sh replay on the committed tree: every gate passed, 839 passed, 0 failed, 10 pending (evidence/plan/check-committed-tree.txt).
+- Signed by Achyut Patel, 2026-11-15 23:47 CST.
+- deploy.sh requires HEAD to equal the plan's commit, so this plan is gate evidence. The Phase 14 apply uses a fresh plan made immediately before apply (Phase 14 ruling).
 
 ## Human rulings recorded at the gate
 - Rulings 1 to 24 are in prompt.md.
@@ -61,7 +66,7 @@ PENDING: filled in after phase_commit 12, from scripts/plan.sh --runtime-enabled
 - Accepted deviations: ruling 10 (git reads; the cleanup.sh wrapper) and N5 (Grep reported unavailable).
 
 ## Decision
-ACCEPTED, pending the plan signature. Code review 4 APPROVE. M1 to M3 are residual risks (ruling 24).
+ACCEPTED. Code review 4 APPROVE. M1 to M3 are residual risks (ruling 24).
 
 ## Manual changes
 - No manual edits to agent-owned files.
