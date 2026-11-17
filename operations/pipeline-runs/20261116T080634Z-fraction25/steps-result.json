@@ -1,0 +1,118 @@
+{
+    "Steps": [
+        {
+            "Id": "s-03025992J6OOWUU1W2G",
+            "Name": "spark-pipeline",
+            "Config": {
+                "Jar": "command-runner.jar",
+                "Properties": {},
+                "Args": [
+                    "bash",
+                    "-c",
+                    "set -euo pipefail; aws --cli-connect-timeout 10 --cli-read-timeout 120 s3 cp --only-show-errors s3://scholarchain-course-data-834519512655-us-east-2/artifacts/jobs/fa93806df7ca4b65e5de6d13779d865909de273b/step.sh /tmp/scholarchain-step.sh; exec bash /tmp/scholarchain-step.sh \"$@\"",
+                    "step",
+                    "spark",
+                    "9000",
+                    "s3://scholarchain-course-data-834519512655-us-east-2/artifacts/jobs/fa93806df7ca4b65e5de6d13779d865909de273b/sparkAnalytics-assembly.jar",
+                    "scholarchain-course-data-834519512655-us-east-2",
+                    "2026-10-03",
+                    "run=run-620fccae97a621ed9437af85f2a590c4",
+                    "--out",
+                    "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark",
+                    "--checkpoint-dir",
+                    "hdfs:///scholarchain/spark/checkpoints",
+                    "--code-version",
+                    "fa93806df7ca4b65e5de6d13779d865909de273b",
+                    "--shuffle-partitions",
+                    "16"
+                ]
+            },
+            "ActionOnFailure": "TERMINATE_CLUSTER",
+            "Status": {
+                "State": "COMPLETED",
+                "FailureDetails": {},
+                "Timeline": {
+                    "CreationDateTime": "2026-11-16T02:06:44.795000-06:00",
+                    "StartDateTime": "2026-11-16T02:27:15.469000-06:00",
+                    "EndDateTime": "2026-11-16T02:40:13.601000-06:00"
+                }
+            }
+        },
+        {
+            "Id": "s-03025923SHOE1PCE65W2",
+            "Name": "hadoop-pipeline",
+            "Config": {
+                "Jar": "command-runner.jar",
+                "Properties": {},
+                "Args": [
+                    "bash",
+                    "-c",
+                    "set -euo pipefail; aws --cli-connect-timeout 10 --cli-read-timeout 120 s3 cp --only-show-errors s3://scholarchain-course-data-834519512655-us-east-2/artifacts/jobs/fa93806df7ca4b65e5de6d13779d865909de273b/step.sh /tmp/scholarchain-step.sh; exec bash /tmp/scholarchain-step.sh \"$@\"",
+                    "step",
+                    "hadoop",
+                    "5400",
+                    "s3://scholarchain-course-data-834519512655-us-east-2/artifacts/jobs/fa93806df7ca4b65e5de6d13779d865909de273b/hadoop-assembly.jar",
+                    "--out",
+                    "s3a://scholarchain-course-data-834519512655-us-east-2/curated/hadoop",
+                    "--code-version",
+                    "fa93806df7ca4b65e5de6d13779d865909de273b",
+                    "--dblp",
+                    "s3a://scholarchain-course-data-834519512655-us-east-2/raw/dblp/snapshot=2026-10-03/run=run-7a5abdee2b5848146b12f0eef8ef9d99/works.xml",
+                    "--dblp-dtd",
+                    "s3a://scholarchain-course-data-834519512655-us-east-2/raw/dblp/snapshot=2026-10-03/run=run-7a5abdee2b5848146b12f0eef8ef9d99/dblp.dtd",
+                    "--dblp-snapshot",
+                    "2026-10-03",
+                    "--openalex",
+                    "s3a://scholarchain-course-data-834519512655-us-east-2/raw/openalex/snapshot=2026-11-03/run=run-7a5abdee2b5848146b12f0eef8ef9d99/works.jsonl",
+                    "--openalex-snapshot",
+                    "2026-11-03",
+                    "--crossref",
+                    "s3a://scholarchain-course-data-834519512655-us-east-2/raw/crossref/snapshot=2026-11-03/run=run-7a5abdee2b5848146b12f0eef8ef9d99/works.jsonl",
+                    "--crossref-snapshot",
+                    "2026-11-03",
+                    "--orcid",
+                    "s3a://scholarchain-course-data-834519512655-us-east-2/raw/orcid/snapshot=2026-11-03/run=run-7a5abdee2b5848146b12f0eef8ef9d99/records.jsonl.gz",
+                    "--orcid-snapshot",
+                    "2026-11-03",
+                    "--reducers",
+                    "2"
+                ]
+            },
+            "ActionOnFailure": "TERMINATE_CLUSTER",
+            "Status": {
+                "State": "COMPLETED",
+                "FailureDetails": {},
+                "Timeline": {
+                    "CreationDateTime": "2026-11-16T02:06:44.795000-06:00",
+                    "StartDateTime": "2026-11-16T02:10:38.806000-06:00",
+                    "EndDateTime": "2026-11-16T02:27:14.959000-06:00"
+                }
+            }
+        },
+        {
+            "Id": "s-03025931RDOZ7WIOWEVP",
+            "Name": "classpath-probe",
+            "Config": {
+                "Jar": "command-runner.jar",
+                "Properties": {},
+                "Args": [
+                    "bash",
+                    "-c",
+                    "set -euo pipefail; aws --cli-connect-timeout 10 --cli-read-timeout 120 s3 cp --only-show-errors s3://scholarchain-course-data-834519512655-us-east-2/artifacts/jobs/fa93806df7ca4b65e5de6d13779d865909de273b/step.sh /tmp/scholarchain-step.sh; exec bash /tmp/scholarchain-step.sh \"$@\"",
+                    "step",
+                    "classpath"
+                ]
+            },
+            "ActionOnFailure": "CONTINUE",
+            "Status": {
+                "State": "COMPLETED",
+                "FailureDetails": {},
+                "Timeline": {
+                    "CreationDateTime": "2026-11-16T02:06:44.795000-06:00",
+                    "StartDateTime": "2026-11-16T02:10:32.040000-06:00",
+                    "EndDateTime": "2026-11-16T02:10:38.294000-06:00"
+                }
+            }
+        }
+    ]
+}

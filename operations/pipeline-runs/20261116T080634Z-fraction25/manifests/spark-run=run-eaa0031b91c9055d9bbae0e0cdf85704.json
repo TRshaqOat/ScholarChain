@@ -1,0 +1,1187 @@
+{
+  "schemaVersion": "spark-run-manifest-v1",
+  "stage": "spark-canonical-graph",
+  "runId": "run-eaa0031b91c9055d9bbae0e0cdf85704",
+  "attempt": 1,
+  "runDir": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-eaa0031b91c9055d9bbae0e0cdf85704",
+  "snapshot": "2026-10-03",
+  "codeVersion": "fa93806df7ca4b65e5de6d13779d865909de273b",
+  "configVersion": "config-v1",
+  "input": {
+    "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/hadoop/snapshot=2026-10-03/run=run-0b051c05dfc9b385b76b08818f0425c7",
+    "hadoopRunId": "run-0b051c05dfc9b385b76b08818f0425c7",
+    "matchPolicyVersion": "er-v2"
+  },
+  "settings": {
+    "master": "yarn",
+    "shufflePartitions": 16,
+    "adaptiveExecution": "true",
+    "checkpointDir": "hdfs:/scholarchain/spark/checkpoints/run-eaa0031b91c9055d9bbae0e0cdf85704",
+    "canonicalPolicy": "canon-v1.er-v2",
+    "graphPolicy": "graph-v1",
+    "windows": [
+      {
+        "name": "all-years",
+        "startYear": 2000,
+        "endYear": 2026
+      },
+      {
+        "name": "2000-2014",
+        "startYear": 2000,
+        "endYear": 2014
+      },
+      {
+        "name": "2015-2026",
+        "startYear": 2015,
+        "endYear": 2026
+      }
+    ],
+    "ccMaxIterations": 60,
+    "minFreeDiskGiB": 5,
+    "driverMaxHeapBytes": 2147483648,
+    "availableProcessors": 4
+  },
+  "lineage": {
+    "inputHadoopRunId": "run-0b051c05dfc9b385b76b08818f0425c7",
+    "matchPolicyVersion": "er-v2"
+  },
+  "fingerprints": [
+    "hadoop-run=run-0b051c05dfc9b385b76b08818f0425c7",
+    "input:hadoop=s3a://scholarchain-course-data-834519512655-us-east-2/curated/hadoop/snapshot=2026-10-03/run=run-0b051c05dfc9b385b76b08818f0425c7:757031645",
+    "config:canonical-policy=canon-v1.er-v2",
+    "config:graph-policy=graph-v1",
+    "config:windows=all-years:2000-2026,2000-2014:2000-2014,2015-2026:2015-2026",
+    "config:cc-max-iterations=60"
+  ],
+  "startedAt": "2026-11-16T08:27:41.342283982Z",
+  "inputs": [
+    {
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/hadoop/snapshot=2026-10-03/run=run-0b051c05dfc9b385b76b08818f0425c7/j09-graph-export/author-mentions",
+      "exists": true,
+      "rows": 320663
+    },
+    {
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/hadoop/snapshot=2026-10-03/run=run-0b051c05dfc9b385b76b08818f0425c7/j09-graph-export/works",
+      "exists": true,
+      "rows": 82064
+    },
+    {
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/hadoop/snapshot=2026-10-03/run=run-0b051c05dfc9b385b76b08818f0425c7/j09-graph-export/coauthor-pair-candidates",
+      "exists": true,
+      "rows": 238031
+    },
+    {
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/hadoop/snapshot=2026-10-03/run=run-0b051c05dfc9b385b76b08818f0425c7/j09-graph-export/match-decisions/entity_type=RESEARCHER/outcome=ACCEPTED",
+      "exists": true,
+      "rows": 1311029
+    },
+    {
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/hadoop/snapshot=2026-10-03/run=run-0b051c05dfc9b385b76b08818f0425c7/j09-graph-export/match-decisions/entity_type=RESEARCHER/outcome=CONFLICT",
+      "exists": true,
+      "rows": 8361
+    },
+    {
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/hadoop/snapshot=2026-10-03/run=run-0b051c05dfc9b385b76b08818f0425c7/j09-graph-export/match-decisions/entity_type=RESEARCHER/outcome=UNRESOLVED",
+      "exists": true,
+      "rows": 1253801
+    },
+    {
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/hadoop/snapshot=2026-10-03/run=run-0b051c05dfc9b385b76b08818f0425c7/j09-graph-export/match-decisions/entity_type=WORK/outcome=ACCEPTED",
+      "exists": true,
+      "rows": 130919
+    },
+    {
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/hadoop/snapshot=2026-10-03/run=run-0b051c05dfc9b385b76b08818f0425c7/j09-graph-export/match-decisions/entity_type=WORK/outcome=CONFLICT",
+      "exists": true,
+      "rows": 3649
+    },
+    {
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/hadoop/snapshot=2026-10-03/run=run-0b051c05dfc9b385b76b08818f0425c7/j09-graph-export/match-decisions/entity_type=WORK/outcome=UNRESOLVED",
+      "exists": true,
+      "rows": 25
+    },
+    {
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/hadoop/snapshot=2026-10-03/run=run-0b051c05dfc9b385b76b08818f0425c7/j03-j04-exact-identifier/suffix-conflicts",
+      "exists": true,
+      "rows": 3
+    },
+    {
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/hadoop/snapshot=2026-10-03/run=run-0b051c05dfc9b385b76b08818f0425c7/j03-j04-exact-identifier/oversize-conflicts",
+      "exists": false,
+      "rows": 0
+    },
+    {
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/hadoop/snapshot=2026-10-03/run=run-0b051c05dfc9b385b76b08818f0425c7/j09-graph-export/venues",
+      "exists": true,
+      "rows": 229
+    },
+    {
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/hadoop/snapshot=2026-10-03/run=run-0b051c05dfc9b385b76b08818f0425c7/j09-graph-export/topics",
+      "exists": true,
+      "rows": 783
+    },
+    {
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/hadoop/snapshot=2026-10-03/run=run-0b051c05dfc9b385b76b08818f0425c7/j09-graph-export/institutions",
+      "exists": true,
+      "rows": 25552
+    },
+    {
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/hadoop/snapshot=2026-10-03/run=run-0b051c05dfc9b385b76b08818f0425c7/j09-graph-export/graph-edges/edge_type=HAS_TOPIC",
+      "exists": true,
+      "rows": 26910
+    },
+    {
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/hadoop/snapshot=2026-10-03/run=run-0b051c05dfc9b385b76b08818f0425c7/j09-graph-export/graph-edges/edge_type=AFFILIATED_WITH",
+      "exists": true,
+      "rows": 19303
+    }
+  ],
+  "tables": [
+    {
+      "name": "canonical/mention-map",
+      "schemaVersion": "spark-canonical-mention-map-v1",
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-eaa0031b91c9055d9bbae0e0cdf85704/canonical/mention-map",
+      "format": "parquet",
+      "partitionColumns": [],
+      "hashPartitionKey": "researcherId",
+      "writePartitions": 3,
+      "schema": "mentionId STRING,researcherId STRING,sourceWorkId STRING,sourceDataset STRING,sourceRecordId STRING,assignedTier STRING,clusterMentionCount BIGINT,separationReason STRING,tier2RefusalRules ARRAY<STRING>,tier1RefusalRules ARRAY<STRING>,identityConfidence DOUBLE,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING",
+      "rowCount": 320663,
+      "intendedTargets": [
+        "s3"
+      ],
+      "fileCount": 3,
+      "totalBytes": 27702352,
+      "minFileBytes": 9149828,
+      "maxFileBytes": 9283035
+    },
+    {
+      "name": "canonical/researcher-refusals",
+      "schemaVersion": "spark-canonical-researcher-refusals-v1",
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-eaa0031b91c9055d9bbae0e0cdf85704/canonical/researcher-refusals",
+      "format": "parquet",
+      "partitionColumns": [],
+      "hashPartitionKey": null,
+      "writePartitions": 1,
+      "schema": "tier STRING,clusterKey BIGINT,clusterMemberCount BIGINT,clusterNodeCount BIGINT,sampleMember STRING,rules ARRAY<STRING>,entityType STRING,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING",
+      "rowCount": 1322,
+      "intendedTargets": [
+        "s3"
+      ],
+      "fileCount": 1,
+      "totalBytes": 62568,
+      "minFileBytes": 62568,
+      "maxFileBytes": 62568
+    },
+    {
+      "name": "canonical/work-map",
+      "schemaVersion": "spark-canonical-work-map-v1",
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-eaa0031b91c9055d9bbae0e0cdf85704/canonical/work-map",
+      "format": "parquet",
+      "partitionColumns": [],
+      "hashPartitionKey": "workId",
+      "writePartitions": 3,
+      "schema": "sourceWorkId STRING,workId STRING,sourceDataset STRING,sourceRecordId STRING,assignedTier STRING,clusterMemberCount BIGINT,separationReason STRING,tier2RefusalRules ARRAY<STRING>,tier1RefusalRules ARRAY<STRING>,identityConfidence DOUBLE,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING",
+      "rowCount": 82064,
+      "intendedTargets": [
+        "s3"
+      ],
+      "fileCount": 3,
+      "totalBytes": 4159388,
+      "minFileBytes": 1368855,
+      "maxFileBytes": 1400076
+    },
+    {
+      "name": "canonical/work-refusals",
+      "schemaVersion": "spark-canonical-work-refusals-v1",
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-eaa0031b91c9055d9bbae0e0cdf85704/canonical/work-refusals",
+      "format": "parquet",
+      "partitionColumns": [],
+      "hashPartitionKey": null,
+      "writePartitions": 1,
+      "schema": "tier STRING,clusterKey BIGINT,clusterMemberCount BIGINT,clusterNodeCount BIGINT,sampleMember STRING,rules ARRAY<STRING>,entityType STRING,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING",
+      "rowCount": 66,
+      "intendedTargets": [
+        "s3"
+      ],
+      "fileCount": 1,
+      "totalBytes": 8164,
+      "minFileBytes": 8164,
+      "maxFileBytes": 8164
+    },
+    {
+      "name": "canonical/researchers",
+      "schemaVersion": "spark-canonical-researchers-v1",
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-eaa0031b91c9055d9bbae0e0cdf85704/canonical/researchers",
+      "format": "parquet",
+      "partitionColumns": [],
+      "hashPartitionKey": "researcherId",
+      "writePartitions": 3,
+      "schema": "researcherId STRING,displayName STRING,alternateNames ARRAY<STRING>,orcid STRING,mentionCount BIGINT,anchorMentionId STRING,sourceDatasets ARRAY<STRING>,dblpAnchored BOOLEAN,assignedTier STRING,separationReason STRING,identityConfidence DOUBLE,uncertainty STRING,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING",
+      "rowCount": 78232,
+      "intendedTargets": [
+        "neptune",
+        "dynamodb",
+        "s3"
+      ],
+      "fileCount": 3,
+      "totalBytes": 8588426,
+      "minFileBytes": 2853981,
+      "maxFileBytes": 2867509
+    },
+    {
+      "name": "canonical/works",
+      "schemaVersion": "spark-canonical-works-v1",
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-eaa0031b91c9055d9bbae0e0cdf85704/canonical/works",
+      "format": "parquet",
+      "partitionColumns": [],
+      "hashPartitionKey": "workId",
+      "writePartitions": 3,
+      "schema": "workId STRING,title STRING,normalizedTitle STRING,year INT,venueId STRING,workType STRING,doi STRING,memberWorkIds ARRAY<STRING>,sourceDatasets ARRAY<STRING>,dblpAnchored BOOLEAN,assignedTier STRING,separationReason STRING,identityConfidence DOUBLE,uncertainty STRING,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING",
+      "rowCount": 28540,
+      "intendedTargets": [
+        "neptune",
+        "dynamodb",
+        "s3"
+      ],
+      "fileCount": 3,
+      "totalBytes": 4781600,
+      "minFileBytes": 1576086,
+      "maxFileBytes": 1604924
+    },
+    {
+      "name": "canonical/authored",
+      "schemaVersion": "spark-canonical-authored-v1",
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-eaa0031b91c9055d9bbae0e0cdf85704/canonical/authored",
+      "format": "parquet",
+      "partitionColumns": [],
+      "hashPartitionKey": "researcherId",
+      "writePartitions": 3,
+      "schema": "researcherId STRING,workId STRING,mentionIds ARRAY<STRING>,position INT,year INT,sourceDatasets ARRAY<STRING>,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING",
+      "rowCount": 125841,
+      "intendedTargets": [
+        "neptune",
+        "dynamodb"
+      ],
+      "fileCount": 3,
+      "totalBytes": 16234869,
+      "minFileBytes": 5361958,
+      "maxFileBytes": 5445441
+    },
+    {
+      "name": "canonical/venues",
+      "schemaVersion": "spark-canonical-venues-v1",
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-eaa0031b91c9055d9bbae0e0cdf85704/canonical/venues",
+      "format": "parquet",
+      "partitionColumns": [],
+      "hashPartitionKey": null,
+      "writePartitions": 1,
+      "schema": "venueId STRING,name STRING,venueType STRING,externalIds MAP<STRING, STRING>,sourceProvenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING",
+      "rowCount": 229,
+      "intendedTargets": [
+        "neptune",
+        "s3"
+      ],
+      "fileCount": 1,
+      "totalBytes": 20660,
+      "minFileBytes": 20660,
+      "maxFileBytes": 20660
+    },
+    {
+      "name": "canonical/topics",
+      "schemaVersion": "spark-canonical-topics-v1",
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-eaa0031b91c9055d9bbae0e0cdf85704/canonical/topics",
+      "format": "parquet",
+      "partitionColumns": [],
+      "hashPartitionKey": null,
+      "writePartitions": 1,
+      "schema": "topicId STRING,name STRING,subfield STRING,field STRING,sourceProvenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING",
+      "rowCount": 783,
+      "intendedTargets": [
+        "neptune",
+        "s3"
+      ],
+      "fileCount": 1,
+      "totalBytes": 39910,
+      "minFileBytes": 39910,
+      "maxFileBytes": 39910
+    },
+    {
+      "name": "canonical/institutions",
+      "schemaVersion": "spark-canonical-institutions-v1",
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-eaa0031b91c9055d9bbae0e0cdf85704/canonical/institutions",
+      "format": "parquet",
+      "partitionColumns": [],
+      "hashPartitionKey": null,
+      "writePartitions": 1,
+      "schema": "institutionId STRING,name STRING,countryCode STRING,externalIds MAP<STRING, STRING>,sourceProvenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING",
+      "rowCount": 25552,
+      "intendedTargets": [
+        "neptune",
+        "s3"
+      ],
+      "fileCount": 1,
+      "totalBytes": 2103946,
+      "minFileBytes": 2103946,
+      "maxFileBytes": 2103946
+    },
+    {
+      "name": "canonical/work-topics",
+      "schemaVersion": "spark-canonical-work-topics-v1",
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-eaa0031b91c9055d9bbae0e0cdf85704/canonical/work-topics",
+      "format": "parquet",
+      "partitionColumns": [],
+      "hashPartitionKey": null,
+      "writePartitions": 1,
+      "schema": "workId STRING,topicId STRING,evidenceEdgeIds ARRAY<STRING>,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING",
+      "rowCount": 26910,
+      "intendedTargets": [
+        "neptune"
+      ],
+      "fileCount": 1,
+      "totalBytes": 1706637,
+      "minFileBytes": 1706637,
+      "maxFileBytes": 1706637
+    },
+    {
+      "name": "canonical/researcher-institutions",
+      "schemaVersion": "spark-canonical-researcher-institutions-v1",
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-eaa0031b91c9055d9bbae0e0cdf85704/canonical/researcher-institutions",
+      "format": "parquet",
+      "partitionColumns": [],
+      "hashPartitionKey": null,
+      "writePartitions": 2,
+      "schema": "researcherId STRING,institutionId STRING,via ARRAY<STRING>,evidenceIds ARRAY<STRING>,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING",
+      "rowCount": 132337,
+      "intendedTargets": [
+        "neptune"
+      ],
+      "fileCount": 2,
+      "totalBytes": 14796796,
+      "minFileBytes": 7397874,
+      "maxFileBytes": 7398922
+    },
+    {
+      "name": "graph/coauthor-edges",
+      "schemaVersion": "spark-graph-coauthor-edges-v1",
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-eaa0031b91c9055d9bbae0e0cdf85704/graph/coauthor-edges",
+      "format": "parquet",
+      "partitionColumns": [
+        "window"
+      ],
+      "hashPartitionKey": "researcherA",
+      "writePartitions": 3,
+      "schema": "edgeId STRING,researcherA STRING,researcherB STRING,windowStartYear INT,windowEndYear INT,jointPublicationCount BIGINT,firstCollaborationYear INT,lastCollaborationYear INT,representativeWorkIds ARRAY<STRING>,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING,window STRING",
+      "rowCount": 423192,
+      "intendedTargets": [
+        "neptune",
+        "dynamodb"
+      ],
+      "fileCount": 9,
+      "totalBytes": 47322074,
+      "minFileBytes": 2103713,
+      "maxFileBytes": 8062487
+    },
+    {
+      "name": "graph/self-pairs",
+      "schemaVersion": "spark-graph-self-pairs-v1",
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-eaa0031b91c9055d9bbae0e0cdf85704/graph/self-pairs",
+      "format": "parquet",
+      "partitionColumns": [],
+      "hashPartitionKey": null,
+      "writePartitions": 1,
+      "schema": "authorA STRING,authorB STRING,workId STRING,year INT,researcherId STRING,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING",
+      "rowCount": 36,
+      "intendedTargets": [
+        "s3"
+      ],
+      "fileCount": 1,
+      "totalBytes": 9805,
+      "minFileBytes": 9805,
+      "maxFileBytes": 9805
+    },
+    {
+      "name": "integrity-violations",
+      "schemaVersion": "spark-integrity-violations-v1",
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-eaa0031b91c9055d9bbae0e0cdf85704/integrity-violations",
+      "format": "parquet",
+      "partitionColumns": [],
+      "hashPartitionKey": null,
+      "writePartitions": 1,
+      "schema": "check STRING,subjectId STRING,relatedId STRING,detail STRING,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING",
+      "rowCount": 0,
+      "intendedTargets": [
+        "s3"
+      ],
+      "fileCount": 1,
+      "totalBytes": 1470,
+      "minFileBytes": 1470,
+      "maxFileBytes": 1470
+    }
+  ],
+  "counts": {
+    "decisionEdgesByTierAndPath": [
+      {
+        "entityType": "RESEARCHER",
+        "tier": 1,
+        "path": "DETERMINISTIC",
+        "count": 30792
+      },
+      {
+        "entityType": "RESEARCHER",
+        "tier": 1,
+        "path": "EXACT_ID",
+        "count": 636042
+      },
+      {
+        "entityType": "RESEARCHER",
+        "tier": 2,
+        "path": "PROBABILISTIC",
+        "count": 644195
+      },
+      {
+        "entityType": "WORK",
+        "tier": 1,
+        "path": "DETERMINISTIC",
+        "count": 11
+      },
+      {
+        "entityType": "WORK",
+        "tier": 1,
+        "path": "EXACT_ID",
+        "count": 130908
+      }
+    ],
+    "researcherRefusalsByTierAndRule": [
+      {
+        "tier": "TIER1",
+        "rule": "CONFLICT_DECISION",
+        "count": 35
+      },
+      {
+        "tier": "TIER1",
+        "rule": "HOMONYM_SUFFIX_DISAGREEMENT",
+        "count": 3
+      },
+      {
+        "tier": "TIER1",
+        "rule": "IDENTIFIER_CONFLICT_GROUP",
+        "count": 3
+      },
+      {
+        "tier": "TIER1",
+        "rule": "TWO_VALID_ORCIDS",
+        "count": 24
+      },
+      {
+        "tier": "TIER2",
+        "rule": "CONFLICT_DECISION",
+        "count": 1125
+      },
+      {
+        "tier": "TIER2",
+        "rule": "HOMONYM_SUFFIX_DISAGREEMENT",
+        "count": 241
+      },
+      {
+        "tier": "TIER2",
+        "rule": "IDENTIFIER_CONFLICT_GROUP",
+        "count": 3
+      },
+      {
+        "tier": "TIER2",
+        "rule": "TWO_VALID_ORCIDS",
+        "count": 1215
+      }
+    ],
+    "researcherRefusedClustersByTier": [
+      {
+        "tier": "TIER1",
+        "clusters": 35,
+        "members": 830
+      },
+      {
+        "tier": "TIER2",
+        "clusters": 1287,
+        "members": 19004
+      }
+    ],
+    "workRefusalsByTierAndRule": [
+      {
+        "tier": "TIER1",
+        "rule": "CONFLICT_DECISION",
+        "count": 33
+      },
+      {
+        "tier": "TIER2",
+        "rule": "CONFLICT_DECISION",
+        "count": 33
+      }
+    ],
+    "workRefusedClustersByTier": [
+      {
+        "tier": "TIER1",
+        "clusters": 33,
+        "members": 121
+      },
+      {
+        "tier": "TIER2",
+        "clusters": 33,
+        "members": 121
+      }
+    ],
+    "researcherConflictGroupCheck": [
+      {
+        "identifier": "orcid:0000-0001-7988-8943",
+        "groupSize": 5,
+        "origin": "suffix-conflicts",
+        "memberCount": 5
+      },
+      {
+        "identifier": "orcid:0000-0002-0414-7910",
+        "groupSize": 11,
+        "origin": "suffix-conflicts",
+        "memberCount": 11
+      },
+      {
+        "identifier": "orcid:0000-0002-0726-2025",
+        "groupSize": 12,
+        "origin": "suffix-conflicts",
+        "memberCount": 12
+      }
+    ],
+    "workConflictGroupCheck": [],
+    "mentionsByTierAndReason": [
+      {
+        "assignedTier": "SINGLETON",
+        "separationReason": "NO_ACCEPTED_LINK",
+        "count": 2655
+      },
+      {
+        "assignedTier": "SINGLETON",
+        "separationReason": "REFUSED_TIER1",
+        "count": 830
+      },
+      {
+        "assignedTier": "SINGLETON",
+        "separationReason": "REFUSED_TIER2",
+        "count": 9035
+      },
+      {
+        "assignedTier": "SINGLETON",
+        "separationReason": "UNRESOLVED",
+        "count": 4902
+      },
+      {
+        "assignedTier": "TIER1",
+        "separationReason": "REFUSED_TIER2",
+        "count": 9139
+      },
+      {
+        "assignedTier": "TIER2",
+        "separationReason": null,
+        "count": 294102
+      }
+    ],
+    "worksByTierAndReason": [
+      {
+        "assignedTier": "SINGLETON",
+        "separationReason": "NO_ACCEPTED_LINK",
+        "count": 1321
+      },
+      {
+        "assignedTier": "SINGLETON",
+        "separationReason": "REFUSED_TIER1",
+        "count": 121
+      },
+      {
+        "assignedTier": "SINGLETON",
+        "separationReason": "UNRESOLVED",
+        "count": 1
+      },
+      {
+        "assignedTier": "TIER2",
+        "separationReason": null,
+        "count": 80621
+      }
+    ],
+    "researcherClusterSizes": [
+      {
+        "mentions": "1",
+        "researchers": 17422
+      },
+      {
+        "mentions": "2",
+        "researchers": 2297
+      },
+      {
+        "mentions": "3-5",
+        "researchers": 44444
+      },
+      {
+        "mentions": "6-10",
+        "researchers": 9912
+      },
+      {
+        "mentions": "11-20",
+        "researchers": 2599
+      },
+      {
+        "mentions": "21-50",
+        "researchers": 1291
+      },
+      {
+        "mentions": "51-100",
+        "researchers": 224
+      },
+      {
+        "mentions": "101-500",
+        "researchers": 43
+      }
+    ],
+    "largestResearcherClusters": [
+      {
+        "researcherId": "scr:canon-v1.er-v2:db09f26745fd95aae1c02cf7407707c2",
+        "displayName": "Jack J. Dongarra",
+        "mentionCount": 268,
+        "assignedTier": "TIER2",
+        "sourceDatasets": [
+          "CROSSREF",
+          "DBLP",
+          "OPENALEX"
+        ],
+        "orcid": "0000-0003-3247-1782"
+      },
+      {
+        "researcherId": "scr:canon-v1.er-v2:9bcf84f5bd05a12c84947a2b2a958855",
+        "displayName": "Dhabaleswar K. Panda 0001",
+        "mentionCount": 266,
+        "assignedTier": "TIER2",
+        "sourceDatasets": [
+          "CROSSREF",
+          "DBLP",
+          "OPENALEX"
+        ],
+        "orcid": "0000-0002-0356-1781"
+      },
+      {
+        "researcherId": "scr:canon-v1.er-v2:36c8bc996a672e189b6d9ff2e672896e",
+        "displayName": "Albert Y. Zomaya",
+        "mentionCount": 219,
+        "assignedTier": "TIER2",
+        "sourceDatasets": [
+          "CROSSREF",
+          "DBLP",
+          "OPENALEX"
+        ],
+        "orcid": "0000-0002-3090-1059"
+      },
+      {
+        "researcherId": "scr:canon-v1.er-v2:055b1b567f66fc780e9d49153cfb6b75",
+        "displayName": "Rajkumar Buyya",
+        "mentionCount": 208,
+        "assignedTier": "TIER2",
+        "sourceDatasets": [
+          "CROSSREF",
+          "DBLP",
+          "OPENALEX"
+        ],
+        "orcid": "0000-0001-9754-6496"
+      },
+      {
+        "researcherId": "scr:canon-v1.er-v2:84a0a600f9fc8efeb0a87b085e316bfd",
+        "displayName": "Franck Cappello",
+        "mentionCount": 204,
+        "assignedTier": "TIER2",
+        "sourceDatasets": [
+          "CROSSREF",
+          "DBLP",
+          "OPENALEX"
+        ],
+        "orcid": "0000-0002-7890-3934"
+      },
+      {
+        "researcherId": "scr:canon-v1.er-v2:d2859c18de6e5d370fae5566480f09bd",
+        "displayName": "Mahmut Taylan Kandemir",
+        "mentionCount": 201,
+        "assignedTier": "TIER2",
+        "sourceDatasets": [
+          "CROSSREF",
+          "DBLP",
+          "OPENALEX"
+        ],
+        "orcid": "0000-0002-9940-9951"
+      },
+      {
+        "researcherId": "scr:canon-v1.er-v2:da313f0e2000da8c4a71b4f8646b8f72",
+        "displayName": "Hai Jin 0001",
+        "mentionCount": 190,
+        "assignedTier": "TIER1",
+        "sourceDatasets": [
+          "CROSSREF",
+          "DBLP",
+          "OPENALEX"
+        ],
+        "orcid": "0000-0002-3934-7605"
+      },
+      {
+        "researcherId": "scr:canon-v1.er-v2:d442047be29e18253b683bc87ccc08e9",
+        "displayName": "Torsten Hoefler",
+        "mentionCount": 178,
+        "assignedTier": "TIER2",
+        "sourceDatasets": [
+          "CROSSREF",
+          "DBLP",
+          "OPENALEX"
+        ],
+        "orcid": "0000-0002-1333-9797"
+      },
+      {
+        "researcherId": "scr:canon-v1.er-v2:17629ed1ca5b24d25ea571101a54cb5a",
+        "displayName": "Rachid Guerraoui",
+        "mentionCount": 176,
+        "assignedTier": "TIER2",
+        "sourceDatasets": [
+          "CROSSREF",
+          "DBLP",
+          "OPENALEX"
+        ],
+        "orcid": "0000-0002-4794-8902"
+      },
+      {
+        "researcherId": "scr:canon-v1.er-v2:703dd8d86f1ee179e526b78c9776b7af",
+        "displayName": "José Duato",
+        "mentionCount": 170,
+        "assignedTier": "TIER2",
+        "sourceDatasets": [
+          "CROSSREF",
+          "DBLP",
+          "OPENALEX"
+        ],
+        "orcid": "0000-0002-7785-0607"
+      }
+    ],
+    "workClusterSizes": [
+      {
+        "members": "1",
+        "works": 1443
+      },
+      {
+        "members": "2",
+        "works": 672
+      },
+      {
+        "members": "3-5",
+        "works": 26425
+      }
+    ],
+    "largestRefusedResearcherClusters": [
+      {
+        "tier": "TIER2",
+        "clusterMemberCount": 353,
+        "clusterNodeCount": 360,
+        "sampleMember": "dblp:conf/ccgrid/HeL15#2",
+        "rules": [
+          "CONFLICT_DECISION",
+          "HOMONYM_SUFFIX_DISAGREEMENT",
+          "TWO_VALID_ORCIDS"
+        ]
+      },
+      {
+        "tier": "TIER2",
+        "clusterMemberCount": 269,
+        "clusterNodeCount": 271,
+        "sampleMember": "dblp:conf/IEEEcloud/XuWX0ZSLRYJ20#4",
+        "rules": [
+          "CONFLICT_DECISION",
+          "TWO_VALID_ORCIDS"
+        ]
+      },
+      {
+        "tier": "TIER2",
+        "clusterMemberCount": 180,
+        "clusterNodeCount": 188,
+        "sampleMember": "dblp:conf/ccgrid/MaoWLZXW24#6",
+        "rules": [
+          "CONFLICT_DECISION",
+          "HOMONYM_SUFFIX_DISAGREEMENT",
+          "TWO_VALID_ORCIDS"
+        ]
+      },
+      {
+        "tier": "TIER1",
+        "clusterMemberCount": 163,
+        "clusterNodeCount": 164,
+        "sampleMember": "dblp:conf/icdcs/AiLCPL17#5",
+        "rules": [
+          "CONFLICT_DECISION"
+        ]
+      },
+      {
+        "tier": "TIER2",
+        "clusterMemberCount": 163,
+        "clusterNodeCount": 165,
+        "sampleMember": "dblp:conf/IEEEpact/TianDZRFUJLCTC20#2",
+        "rules": [
+          "CONFLICT_DECISION",
+          "TWO_VALID_ORCIDS"
+        ]
+      }
+    ],
+    "highestDegreeResearchersWidestWindow": [
+      {
+        "researcherId": "scr:canon-v1.er-v2:da313f0e2000da8c4a71b4f8646b8f72",
+        "degree": 254,
+        "displayName": "Hai Jin 0001"
+      },
+      {
+        "researcherId": "scr:canon-v1.er-v2:721fae790d7046496cdf0a2b505f7282",
+        "degree": 213,
+        "displayName": "Scott Klasky"
+      },
+      {
+        "researcherId": "scr:canon-v1.er-v2:84a0a600f9fc8efeb0a87b085e316bfd",
+        "degree": 210,
+        "displayName": "Franck Cappello"
+      },
+      {
+        "researcherId": "scr:canon-v1.er-v2:d8e22e2745a6c09bcf33f1754be2a1ed",
+        "degree": 194,
+        "displayName": "Venkatram Vishwanath"
+      },
+      {
+        "researcherId": "scr:canon-v1.er-v2:110ec38e39367e47da67835ca2ce45cc",
+        "degree": 182,
+        "displayName": "Minyi Guo"
+      }
+    ],
+    "largestDblpTeams": [
+      {
+        "workId": "dblp:conf/sosp/0001AABBCCCCCCC23",
+        "teamSize": 57
+      },
+      {
+        "workId": "dblp:journals/ijhpca/ChildsAABBBBBCD20",
+        "teamSize": 57
+      },
+      {
+        "workId": "dblp:conf/asplos/AnselYHGJVBBBBC24",
+        "teamSize": 49
+      },
+      {
+        "workId": "dblp:journals/sigops/BalBH00",
+        "teamSize": 49
+      },
+      {
+        "workId": "dblp:journals/fgcs/LeighRJJJSSSAWVLSPGKGLVDBCPDWLTRPCDWSKKHKCZBG06",
+        "teamSize": 41
+      }
+    ],
+    "worksWithSeveralDblpMembers": 2,
+    "researchers": 78232,
+    "dblpAnchoredResearchers": 67279,
+    "works": 28540,
+    "dblpAnchoredWorks": 27991,
+    "authoredEdges": 125841,
+    "perWindow": [
+      {
+        "window": "2000-2014",
+        "windowStartYear": 2000,
+        "windowEndYear": 2014,
+        "works": 11892,
+        "dblpAnchoredWorks": 11547,
+        "authoredEdges": 46090,
+        "activeResearchers": 28611,
+        "activeDblpAnchoredResearchers": 24385,
+        "coauthorEdges": 60971,
+        "sumJointPublicationCount": 70051,
+        "maxJointPublicationCount": 18,
+        "maxSupportingWorkIds": 18,
+        "researchersWithCoauthorEdge": 23460
+      },
+      {
+        "window": "all-years",
+        "windowStartYear": 2000,
+        "windowEndYear": 2026,
+        "works": 28540,
+        "dblpAnchoredWorks": 27991,
+        "authoredEdges": 125841,
+        "activeResearchers": 78232,
+        "activeDblpAnchoredResearchers": 67279,
+        "coauthorEdges": 210161,
+        "sumJointPublicationCount": 237886,
+        "maxJointPublicationCount": 33,
+        "maxSupportingWorkIds": 33,
+        "researchersWithCoauthorEdge": 65937
+      },
+      {
+        "window": "2015-2026",
+        "windowStartYear": 2015,
+        "windowEndYear": 2026,
+        "works": 16648,
+        "dblpAnchoredWorks": 16444,
+        "authoredEdges": 79751,
+        "activeResearchers": 54880,
+        "activeDblpAnchoredResearchers": 47946,
+        "coauthorEdges": 152060,
+        "sumJointPublicationCount": 167835,
+        "maxJointPublicationCount": 27,
+        "maxSupportingWorkIds": 27,
+        "researchersWithCoauthorEdge": 47357
+      }
+    ],
+    "selfPairsDropped": 36,
+    "selfPairWorks": 36,
+    "pairsOutsideEveryWindow": 0,
+    "orcidAffiliationsNotLinked": 36,
+    "integrityViolationsByCheck": [],
+    "connectedComponentRounds": {
+      "researcherTier1": 4,
+      "researcherTier2": 3,
+      "workTier1": 2,
+      "workTier2": 0
+    }
+  },
+  "stepSeconds": {
+    "read inputs": 32.484270713,
+    "cluster researchers": 56.058511528,
+    "write canonical/mention-map": 9.744694119,
+    "write canonical/researcher-refusals": 8.062803043,
+    "cluster works": 12.039978063,
+    "write canonical/work-map": 2.925733116,
+    "write canonical/work-refusals": 1.960242568,
+    "write canonical/researchers": 4.321999935,
+    "write canonical/works": 2.884479933,
+    "write canonical/authored": 3.494287632,
+    "write canonical/venues": 0.857815067,
+    "write canonical/topics": 0.910446921,
+    "write canonical/institutions": 1.343572463,
+    "write canonical/work-topics": 1.471956794,
+    "write canonical/researcher-institutions": 2.93589533,
+    "researcher institutions": 0.461801731,
+    "write graph/coauthor-edges": 6.498424252,
+    "write graph/self-pairs": 2.643096928,
+    "coauthor graph": 1.145023901,
+    "write integrity-violations": 4.652047738,
+    "report": 6.866564035
+  },
+  "stagesByStep": [
+    {
+      "step": "read inputs",
+      "stages": 50,
+      "tasks": 115,
+      "maxTasksInAStage": 8,
+      "shuffleReadBytes": 4733,
+      "shuffleWriteBytes": 3760,
+      "spillDiskBytes": 0,
+      "stageMs": 21972
+    },
+    {
+      "step": "cluster researchers",
+      "stages": 245,
+      "tasks": 1436,
+      "maxTasksInAStage": 16,
+      "shuffleReadBytes": 589027231,
+      "shuffleWriteBytes": 579645016,
+      "spillDiskBytes": 0,
+      "stageMs": 107724
+    },
+    {
+      "step": "write canonical/mention-map",
+      "stages": 21,
+      "tasks": 140,
+      "maxTasksInAStage": 12,
+      "shuffleReadBytes": 153464427,
+      "shuffleWriteBytes": 133222735,
+      "spillDiskBytes": 0,
+      "stageMs": 11858
+    },
+    {
+      "step": "write canonical/researcher-refusals",
+      "stages": 58,
+      "tasks": 359,
+      "maxTasksInAStage": 14,
+      "shuffleReadBytes": 94402255,
+      "shuffleWriteBytes": 94402255,
+      "spillDiskBytes": 0,
+      "stageMs": 49192
+    },
+    {
+      "step": "cluster works",
+      "stages": 87,
+      "tasks": 283,
+      "maxTasksInAStage": 12,
+      "shuffleReadBytes": 57981934,
+      "shuffleWriteBytes": 59492117,
+      "spillDiskBytes": 0,
+      "stageMs": 15122
+    },
+    {
+      "step": "write canonical/work-map",
+      "stages": 18,
+      "tasks": 63,
+      "maxTasksInAStage": 8,
+      "shuffleReadBytes": 13135448,
+      "shuffleWriteBytes": 13135448,
+      "spillDiskBytes": 0,
+      "stageMs": 3578
+    },
+    {
+      "step": "write canonical/work-refusals",
+      "stages": 18,
+      "tasks": 93,
+      "maxTasksInAStage": 11,
+      "shuffleReadBytes": 9555442,
+      "shuffleWriteBytes": 9555442,
+      "spillDiskBytes": 0,
+      "stageMs": 3028
+    },
+    {
+      "step": "write canonical/researchers",
+      "stages": 8,
+      "tasks": 44,
+      "maxTasksInAStage": 12,
+      "shuffleReadBytes": 84074049,
+      "shuffleWriteBytes": 84074049,
+      "spillDiskBytes": 0,
+      "stageMs": 3875
+    },
+    {
+      "step": "write canonical/works",
+      "stages": 7,
+      "tasks": 30,
+      "maxTasksInAStage": 11,
+      "shuffleReadBytes": 24741212,
+      "shuffleWriteBytes": 24741212,
+      "spillDiskBytes": 0,
+      "stageMs": 2227
+    },
+    {
+      "step": "write canonical/authored",
+      "stages": 8,
+      "tasks": 36,
+      "maxTasksInAStage": 13,
+      "shuffleReadBytes": 41381293,
+      "shuffleWriteBytes": 41381293,
+      "spillDiskBytes": 0,
+      "stageMs": 3012
+    },
+    {
+      "step": "write canonical/venues",
+      "stages": 5,
+      "tasks": 6,
+      "maxTasksInAStage": 2,
+      "shuffleReadBytes": 22639,
+      "shuffleWriteBytes": 22639,
+      "spillDiskBytes": 0,
+      "stageMs": 393
+    },
+    {
+      "step": "write canonical/topics",
+      "stages": 5,
+      "tasks": 6,
+      "maxTasksInAStage": 2,
+      "shuffleReadBytes": 72611,
+      "shuffleWriteBytes": 72611,
+      "spillDiskBytes": 0,
+      "stageMs": 427
+    },
+    {
+      "step": "write canonical/institutions",
+      "stages": 5,
+      "tasks": 6,
+      "maxTasksInAStage": 2,
+      "shuffleReadBytes": 3090283,
+      "shuffleWriteBytes": 3090283,
+      "spillDiskBytes": 0,
+      "stageMs": 635
+    },
+    {
+      "step": "write canonical/work-topics",
+      "stages": 7,
+      "tasks": 13,
+      "maxTasksInAStage": 4,
+      "shuffleReadBytes": 3933711,
+      "shuffleWriteBytes": 3933711,
+      "spillDiskBytes": 0,
+      "stageMs": 769
+    },
+    {
+      "step": "write canonical/researcher-institutions",
+      "stages": 9,
+      "tasks": 40,
+      "maxTasksInAStage": 11,
+      "shuffleReadBytes": 31149799,
+      "shuffleWriteBytes": 31149799,
+      "spillDiskBytes": 0,
+      "stageMs": 2369
+    },
+    {
+      "step": "researcher institutions",
+      "stages": 4,
+      "tasks": 8,
+      "maxTasksInAStage": 3,
+      "shuffleReadBytes": 538608,
+      "shuffleWriteBytes": 538608,
+      "spillDiskBytes": 0,
+      "stageMs": 274
+    },
+    {
+      "step": "write graph/coauthor-edges",
+      "stages": 10,
+      "tasks": 58,
+      "maxTasksInAStage": 13,
+      "shuffleReadBytes": 174991223,
+      "shuffleWriteBytes": 174991223,
+      "spillDiskBytes": 0,
+      "stageMs": 5438
+    },
+    {
+      "step": "write graph/self-pairs",
+      "stages": 8,
+      "tasks": 27,
+      "maxTasksInAStage": 8,
+      "shuffleReadBytes": 7107,
+      "shuffleWriteBytes": 7107,
+      "spillDiskBytes": 0,
+      "stageMs": 1812
+    },
+    {
+      "step": "coauthor graph",
+      "stages": 5,
+      "tasks": 21,
+      "maxTasksInAStage": 8,
+      "shuffleReadBytes": 400,
+      "shuffleWriteBytes": 400,
+      "spillDiskBytes": 0,
+      "stageMs": 705
+    },
+    {
+      "step": "write integrity-violations",
+      "stages": 23,
+      "tasks": 126,
+      "maxTasksInAStage": 57,
+      "shuffleReadBytes": 2061387,
+      "shuffleWriteBytes": 2061387,
+      "spillDiskBytes": 0,
+      "stageMs": 6031
+    },
+    {
+      "step": "report",
+      "stages": 76,
+      "tasks": 172,
+      "maxTasksInAStage": 10,
+      "shuffleReadBytes": 26555882,
+      "shuffleWriteBytes": 26549158,
+      "spillDiskBytes": 0,
+      "stageMs": 6024
+    }
+  ],
+  "stageCount": 677,
+  "disk": {
+    "freeBeforeBytes": 9223372036854775807,
+    "freeAfterBytes": 9223372036854775807
+  },
+  "wallSeconds": 164.435389494,
+  "finishedAt": "2026-11-16T08:30:25.777678728Z"
+}

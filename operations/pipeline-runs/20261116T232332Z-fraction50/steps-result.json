@@ -1,0 +1,121 @@
+{
+    "Steps": [
+        {
+            "Id": "s-04825839SLG0NEJXQZ1",
+            "Name": "spark-pipeline",
+            "Config": {
+                "Jar": "command-runner.jar",
+                "Properties": {},
+                "Args": [
+                    "bash",
+                    "-c",
+                    "set -euo pipefail; aws --cli-connect-timeout 10 --cli-read-timeout 120 s3 cp --only-show-errors s3://scholarchain-course-data-834519512655-us-east-2/artifacts/jobs/fa93806df7ca4b65e5de6d13779d865909de273b/step.sh /tmp/scholarchain-step.sh; exec bash /tmp/scholarchain-step.sh \"$@\"",
+                    "step",
+                    "spark",
+                    "9000",
+                    "s3://scholarchain-course-data-834519512655-us-east-2/artifacts/jobs/fa93806df7ca4b65e5de6d13779d865909de273b/sparkAnalytics-assembly.jar",
+                    "scholarchain-course-data-834519512655-us-east-2",
+                    "2026-10-03",
+                    "run=run-06f96f2488d29eddc55405db35b47d84,run=run-0b051c05dfc9b385b76b08818f0425c7,run=run-620fccae97a621ed9437af85f2a590c4",
+                    "--out",
+                    "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark",
+                    "--checkpoint-dir",
+                    "hdfs:///scholarchain/spark/checkpoints",
+                    "--code-version",
+                    "fa93806df7ca4b65e5de6d13779d865909de273b",
+                    "--shuffle-partitions",
+                    "40"
+                ]
+            },
+            "ActionOnFailure": "TERMINATE_CLUSTER",
+            "Status": {
+                "State": "FAILED",
+                "FailureDetails": {
+                    "Reason": "Unknown Error.",
+                    "LogFile": "s3://scholarchain-course-data-834519512655-us-east-2/logs/emr/j-05229833T1R31VERH2IA/steps/s-04825839SLG0NEJXQZ1/"
+                },
+                "Timeline": {
+                    "CreationDateTime": "2026-11-16T17:23:42.735000-06:00",
+                    "StartDateTime": "2026-11-16T17:55:21.244000-06:00",
+                    "EndDateTime": "2026-11-16T18:14:45.454000-06:00"
+                }
+            }
+        },
+        {
+            "Id": "s-04825763G7UXH6TF42MY",
+            "Name": "hadoop-pipeline",
+            "Config": {
+                "Jar": "command-runner.jar",
+                "Properties": {},
+                "Args": [
+                    "bash",
+                    "-c",
+                    "set -euo pipefail; aws --cli-connect-timeout 10 --cli-read-timeout 120 s3 cp --only-show-errors s3://scholarchain-course-data-834519512655-us-east-2/artifacts/jobs/fa93806df7ca4b65e5de6d13779d865909de273b/step.sh /tmp/scholarchain-step.sh; exec bash /tmp/scholarchain-step.sh \"$@\"",
+                    "step",
+                    "hadoop",
+                    "5400",
+                    "s3://scholarchain-course-data-834519512655-us-east-2/artifacts/jobs/fa93806df7ca4b65e5de6d13779d865909de273b/hadoop-assembly.jar",
+                    "--out",
+                    "s3a://scholarchain-course-data-834519512655-us-east-2/curated/hadoop",
+                    "--code-version",
+                    "fa93806df7ca4b65e5de6d13779d865909de273b",
+                    "--dblp",
+                    "s3a://scholarchain-course-data-834519512655-us-east-2/raw/dblp/snapshot=2026-10-03/run=run-94e3a7a3e03c0e963754e95b2ff5b615/works.xml",
+                    "--dblp-dtd",
+                    "s3a://scholarchain-course-data-834519512655-us-east-2/raw/dblp/snapshot=2026-10-03/run=run-94e3a7a3e03c0e963754e95b2ff5b615/dblp.dtd",
+                    "--dblp-snapshot",
+                    "2026-10-03",
+                    "--openalex",
+                    "s3a://scholarchain-course-data-834519512655-us-east-2/raw/openalex/snapshot=2026-11-03/run=run-94e3a7a3e03c0e963754e95b2ff5b615/works.jsonl",
+                    "--openalex-snapshot",
+                    "2026-11-03",
+                    "--crossref",
+                    "s3a://scholarchain-course-data-834519512655-us-east-2/raw/crossref/snapshot=2026-11-03/run=run-94e3a7a3e03c0e963754e95b2ff5b615/works.jsonl",
+                    "--crossref-snapshot",
+                    "2026-11-03",
+                    "--orcid",
+                    "s3a://scholarchain-course-data-834519512655-us-east-2/raw/orcid/snapshot=2026-11-03/run=run-94e3a7a3e03c0e963754e95b2ff5b615/records.jsonl.gz",
+                    "--orcid-snapshot",
+                    "2026-11-03",
+                    "--reducers",
+                    "2"
+                ]
+            },
+            "ActionOnFailure": "TERMINATE_CLUSTER",
+            "Status": {
+                "State": "COMPLETED",
+                "FailureDetails": {},
+                "Timeline": {
+                    "CreationDateTime": "2026-11-16T17:23:42.735000-06:00",
+                    "StartDateTime": "2026-11-16T17:28:06.548000-06:00",
+                    "EndDateTime": "2026-11-16T17:55:20.736000-06:00"
+                }
+            }
+        },
+        {
+            "Id": "s-0482577164MB2SWPFZ0P",
+            "Name": "classpath-probe",
+            "Config": {
+                "Jar": "command-runner.jar",
+                "Properties": {},
+                "Args": [
+                    "bash",
+                    "-c",
+                    "set -euo pipefail; aws --cli-connect-timeout 10 --cli-read-timeout 120 s3 cp --only-show-errors s3://scholarchain-course-data-834519512655-us-east-2/artifacts/jobs/fa93806df7ca4b65e5de6d13779d865909de273b/step.sh /tmp/scholarchain-step.sh; exec bash /tmp/scholarchain-step.sh \"$@\"",
+                    "step",
+                    "classpath"
+                ]
+            },
+            "ActionOnFailure": "CONTINUE",
+            "Status": {
+                "State": "COMPLETED",
+                "FailureDetails": {},
+                "Timeline": {
+                    "CreationDateTime": "2026-11-16T17:23:42.735000-06:00",
+                    "StartDateTime": "2026-11-16T17:27:59.760000-06:00",
+                    "EndDateTime": "2026-11-16T17:28:06.037000-06:00"
+                }
+            }
+        }
+    ]
+}

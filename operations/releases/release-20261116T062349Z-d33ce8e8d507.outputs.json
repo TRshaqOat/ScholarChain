@@ -1,0 +1,160 @@
+{
+  "account_id": {
+    "sensitive": false,
+    "type": "string",
+    "value": "834519512655"
+  },
+  "codebuild_project_name": {
+    "sensitive": false,
+    "type": "string",
+    "value": "scholarchain-course-services-image"
+  },
+  "codebuild_source_prefix": {
+    "sensitive": false,
+    "type": "string",
+    "value": "artifacts/codebuild/source/"
+  },
+  "data_bucket_name": {
+    "sensitive": false,
+    "type": "string",
+    "value": "scholarchain-course-data-834519512655-us-east-2"
+  },
+  "data_bucket_prefixes": {
+    "sensitive": false,
+    "type": [
+      "object",
+      {
+        "artifacts": "string",
+        "curated": "string",
+        "graph": "string",
+        "logs": "string",
+        "raw": "string",
+        "reports": "string",
+        "runs": "string",
+        "semantic_context": "string",
+        "vectors": "string"
+      }
+    ],
+    "value": {
+      "artifacts": "artifacts/",
+      "curated": "curated/",
+      "graph": "graph/",
+      "logs": "logs/",
+      "raw": "raw/",
+      "reports": "reports/",
+      "runs": "runs/",
+      "semantic_context": "semantic-context/",
+      "vectors": "vectors/"
+    }
+  },
+  "ecr_repository_name": {
+    "sensitive": false,
+    "type": "string",
+    "value": "scholarchain-course-services"
+  },
+  "ecr_repository_url": {
+    "sensitive": false,
+    "type": "string",
+    "value": "834519512655.dkr.ecr.us-east-2.amazonaws.com/scholarchain-course-services"
+  },
+  "emr": {
+    "sensitive": false,
+    "type": [
+      "object",
+      {
+        "artifacts_prefix": "string",
+        "core_instance_count": "number",
+        "core_security_group_id": "string",
+        "instance_profile": "string",
+        "instance_type": "string",
+        "log_uri": "string",
+        "primary_instance_count": "number",
+        "primary_security_group_id": "string",
+        "release_label": "string",
+        "service_role": "string",
+        "subnet_id": "string"
+      }
+    ],
+    "value": {
+      "artifacts_prefix": "artifacts/jobs/",
+      "core_instance_count": 2,
+      "core_security_group_id": "sg-045cdc6a597240486",
+      "instance_profile": "scholarchain-course-emr-instance",
+      "instance_type": "m6g.xlarge",
+      "log_uri": "s3://scholarchain-course-data-834519512655-us-east-2/logs/emr/",
+      "primary_instance_count": 1,
+      "primary_security_group_id": "sg-06850b56e702003b3",
+      "release_label": "emr-spark-8.0.0",
+      "service_role": "scholarchain-course-emr-service",
+      "subnet_id": "subnet-01ba5443d067a76f4"
+    }
+  },
+  "log_group_names": {
+    "sensitive": false,
+    "type": [
+      "object",
+      {
+        "codebuild": "string",
+        "graph-evidence-api": "string",
+        "neptune-loader": "string",
+        "query-api": "string",
+        "worker": "string"
+      }
+    ],
+    "value": {
+      "codebuild": "/scholarchain/scholarchain-course/codebuild/services-image",
+      "graph-evidence-api": "/scholarchain/scholarchain-course/ecs/graph-evidence-api",
+      "neptune-loader": "/scholarchain/scholarchain-course/ecs/neptune-loader",
+      "query-api": "/scholarchain/scholarchain-course/ecs/query-api",
+      "worker": "/scholarchain/scholarchain-course/ecs/worker"
+    }
+  },
+  "name_prefix": {
+    "sensitive": false,
+    "type": "string",
+    "value": "scholarchain-course"
+  },
+  "private_subnet_ids": {
+    "sensitive": false,
+    "type": [
+      "tuple",
+      [
+        "string",
+        "string"
+      ]
+    ],
+    "value": [
+      "subnet-08e8a7e37da4af95f",
+      "subnet-0d62d88d3791db7bc"
+    ]
+  },
+  "public_subnet_ids": {
+    "sensitive": false,
+    "type": [
+      "tuple",
+      [
+        "string",
+        "string"
+      ]
+    ],
+    "value": [
+      "subnet-01ba5443d067a76f4",
+      "subnet-0e94ae0d8ed9a3c09"
+    ]
+  },
+  "region": {
+    "sensitive": false,
+    "type": "string",
+    "value": "us-east-2"
+  },
+  "runtime_enabled": {
+    "sensitive": false,
+    "type": "bool",
+    "value": false
+  },
+  "vpc_id": {
+    "sensitive": false,
+    "type": "string",
+    "value": "vpc-0fd8e31fa7b48c139"
+  }
+}

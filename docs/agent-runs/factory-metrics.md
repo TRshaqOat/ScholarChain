@@ -124,3 +124,11 @@ Running log for the Phase 16 agentic-factory evaluation. One row per agent invoc
 | 2026-11-15 | 12 | code-reviewer (review 3) | REQUEST_CHANGES | y | 0/1/1 | 2 | 0 | ? | N4 major (S3 404 needs ListBucket) |
 | 2026-11-15 | 12 | infra-engineer (repair-03 A) | COMPLETE | n | - | 3 | 0 | ? | N4, role table (ruling 23); review 4 M1, M2 |
 | 2026-11-15 | 12 | code-reviewer (review 4) | APPROVE | y | 0/0/3 | 3 | 0 | ? | M1-M3 residual (ruling 24) |
+| 2026-11-16 | 14 | deploy-engineer (WO1 attempt 1) | FAILED | n | - | 0 | 0 | ? | see ruling 11 |
+| 2026-11-16 | 14 | deploy-engineer (WO1 attempt 2) | COMPLETE | y | - | 0 | 0 | ? | window 1 apply (43) |
+| 2026-11-16 | 14 | infra-engineer (repair-01) | COMPLETE | y | - | 1 | 0 | ? | see repair-01.md |
+| 2026-11-16 | 14 | code-reviewer (review 1) | APPROVE | y | ? | 1 | 0 | ? | |
+| 2026-11-16 | 14 | infra-engineer (repair-02) | COMPLETE | y | - | 2 | 0 | ? | P14-D5 step.sh positionals |
+| 2026-11-16 | 14 | code-reviewer (review 2) | APPROVE | y | ? | 2 | 0 | ? | |
+| 2026-11-16 | 14 | infra-engineer (repair-03) | COMPLETE | y | - | 3 | 0 | ? | P14-D6, P14-D7; read-only git deviation (ruling 20) |
+| 2026-11-16 | 14 | code-reviewer (review 3) | APPROVE | y | 0/0/3 | 3 | 0 | ? | minors to Phase 17 (rulings 20, 22) |

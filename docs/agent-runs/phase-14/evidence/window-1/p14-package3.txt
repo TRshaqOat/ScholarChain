@@ -1,0 +1,83 @@
+==> STEP clean-tree
+==> OK clean-tree at fa93806df7ca4b65e5de6d13779d865909de273b
+==> STEP package-jobs
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] Assembly jar up to date: /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/hadoop/target/scala-3.3.7/hadoop-assembly-0.1.0.jar
+[success] Total time: 1 s, completed Nov 16, 2026, 2:05:25 AM
+[warn] multiple main classes detected: run 'show discoveredMainClasses' to see the list
+[info] Assembly jar up to date: /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/spark/target/scala-3.3.7/sparkAnalytics-assembly-0.1.0.jar
+[success] Total time: 0 s, completed Nov 16, 2026, 2:05:25 AM
+    hadoop 5c320d45270921ad68cc50f7c486920817b78c7a6f5f8146bf3fe3ea7696f120
+    spark  0045d22310cd559fd5502829aed974d8394c2df71ae887375e44e86fe633d1fc
+==> STEP stage-image
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] Wrote /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/services/target/scala-3.3.7/services_3-0.1.0.pom
+Cannot connect to the Docker daemon at unix:///Users/achyutpatel/.docker/run/docker.sock. Is the docker daemon running?
+Cannot connect to the Docker daemon at unix:///Users/achyutpatel/.docker/run/docker.sock. Is the docker daemon running?
+[warn] multiple main classes detected: run 'show discoveredMainClasses' to see the list
+[info] Wrote /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/core/target/scala-3.3.7/core_3-0.1.0.pom
+[warn] multiple main classes detected: run 'show discoveredMainClasses' to see the list
+[info] Wrote /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/storage/target/scala-3.3.7/storage_3-0.1.0.pom
+[warn] multiple main classes detected: run 'show discoveredMainClasses' to see the list
+[info] Wrote /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/rag/target/scala-3.3.7/rag_3-0.1.0.pom
+[warn] [1] There are no exposed ports for your docker image
+[warn]  Configure the `dockerExposedPorts` or `dockerExposedUdpPorts` setting. E.g.
+[warn] 
+[warn]  // standard tcp ports
+[warn]  dockerExposedPorts ++= Seq(9000, 9001)
+[warn] 
+[warn]  // for udp ports
+[warn]  dockerExposedUdpPorts += 4444
+[warn]           
+[warn] [2] sbt-native-packager wasn't able to identify the docker version. Some features may not be enabled
+[warn] sbt-native packager tries to parse the `docker version` output. This can fail if
+[warn] 
+[warn]   - the output has changed:
+[warn]     $ docker version --format '{{.Server.APIVersion}}'
+[warn] 
+[warn]   - no `docker` executable is available
+[warn]     $ which docker
+[warn] 
+[warn]   - you have not the required privileges to run `docker`
+[warn] 
+[warn] You can display the parsed docker version in the sbt console with:
+[warn] 
+[warn]   sbt:your-project> show dockerApiVersion
+[warn] 
+[warn] As a last resort you could hard code the docker version, but it's not recommended!!
+[warn] 
+[warn]   import com.typesafe.sbt.packager.docker.DockerApiVersion
+[warn]   dockerApiVersion := Some(DockerApiVersion(1, 40))
+[warn]           
+[success] All package validations passed
+[success] Total time: 1 s, completed Nov 16, 2026, 2:05:28 AM
+    context 841c79464c3c9f6fe5cff1eadb985cce246fbdbc64869bcc10e16dd1fece666a
+==> STEP target
+==> TARGET account=834519512655 region=us-east-2 profile=scholarchain-sdk
+==> STEP terraform-outputs
+==> OK outputs for account 834519512655
+==> STEP upload
+    uploaded s3://scholarchain-course-data-834519512655-us-east-2/artifacts/jobs/fa93806df7ca4b65e5de6d13779d865909de273b/hadoop-assembly.jar
+    uploaded s3://scholarchain-course-data-834519512655-us-east-2/artifacts/jobs/fa93806df7ca4b65e5de6d13779d865909de273b/sparkAnalytics-assembly.jar
+    uploaded s3://scholarchain-course-data-834519512655-us-east-2/artifacts/jobs/fa93806df7ca4b65e5de6d13779d865909de273b/step.sh
+    uploaded s3://scholarchain-course-data-834519512655-us-east-2/artifacts/codebuild/source/fa93806df7ca4b65e5de6d13779d865909de273b.zip
+==> STEP image-build
+==> BUILD id=scholarchain-course-services-image:6bc7b12d-1618-4380-b5f3-ea4b5cb9d5be
+    build IN_PROGRESS
+    build IN_PROGRESS
+    build SUCCEEDED
+==> IMAGE 834519512655.dkr.ecr.us-east-2.amazonaws.com/scholarchain-course-services:fa93806df7ca4b65e5de6d13779d865909de273b digest=sha256:e5764049111f32e1afe6fb356f8fd3ed63ebd641a3eb14b066d1c438ae84de37
+    scan: null
+==> STEP record
+==> PACKAGE record=/Users/achyutpatel/Developer/Cloud/ScholarChain/operations/releases/package-fa93806df7ca4b65e5de6d13779d865909de273b.json
+==> OK package complete

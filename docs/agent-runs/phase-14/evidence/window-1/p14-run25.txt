@@ -1,0 +1,28 @@
+==> STEP inputs
+    input scratch/datasets/fraction=25/dblp/works.xml bytes=16234807 sha256=03e790beabb37695f51aa4bbff1a3d8b1a76117518bd311b6138215b242a1aa3
+    input scratch/datasets/dblp/snapshot=2026-10-03/raw/dblp.dtd bytes=13134 sha256=2d864498f9eef9298662df11e3874171ff24cd4a21ab5974f1369c90acdb1ef6
+    input scratch/datasets/fraction=25/openalex/works.jsonl bytes=144354332 sha256=1490664d97a85250fcfb07e025e5fd0050ed26983e7ba81775329dd26bca9b0b
+    input scratch/datasets/fraction=25/crossref/works.jsonl bytes=45677021 sha256=6f4b71fc13dea4ee2d4536ebc9ff4bdd192ddc43f4f47d196b27dc86f3908a37
+    input scratch/datasets/fraction=25/orcid/records.jsonl.gz bytes=174426953 sha256=40f289397f8591ba85508e73b7dca38c67637e7824a7801eb2299d62870f0a3d
+==> STEP clean-tree
+==> OK clean-tree at d33ce8e8d507145cd46fb39bf319e985bc9a428a
+==> STEP target
+==> TARGET account=834519512655 region=us-east-2 profile=scholarchain-sdk
+==> STEP terraform-outputs
+==> OK outputs for account 834519512655
+==> STEP bounds
+==> OK bounds: emr-spark-8.0.0, 1 primary + 2 core m6g.xlarge, on-demand
+==> STEP upload-inputs
+    input run run-7a5abdee2b5848146b12f0eef8ef9d99
+    uploaded s3://scholarchain-course-data-834519512655-us-east-2/raw/dblp/snapshot=2026-10-03/run=run-7a5abdee2b5848146b12f0eef8ef9d99/works.xml
+    uploaded s3://scholarchain-course-data-834519512655-us-east-2/raw/dblp/snapshot=2026-10-03/run=run-7a5abdee2b5848146b12f0eef8ef9d99/dblp.dtd
+    uploaded s3://scholarchain-course-data-834519512655-us-east-2/raw/openalex/snapshot=2026-11-03/run=run-7a5abdee2b5848146b12f0eef8ef9d99/works.jsonl
+    uploaded s3://scholarchain-course-data-834519512655-us-east-2/raw/crossref/snapshot=2026-11-03/run=run-7a5abdee2b5848146b12f0eef8ef9d99/works.jsonl
+    uploaded s3://scholarchain-course-data-834519512655-us-east-2/raw/orcid/snapshot=2026-11-03/run=run-7a5abdee2b5848146b12f0eef8ef9d99/records.jsonl.gz
+==> STEP upload-jobs
+    present  s3://scholarchain-course-data-834519512655-us-east-2/artifacts/jobs/d33ce8e8d507145cd46fb39bf319e985bc9a428a/hadoop-assembly.jar
+    present  s3://scholarchain-course-data-834519512655-us-east-2/artifacts/jobs/d33ce8e8d507145cd46fb39bf319e985bc9a428a/sparkAnalytics-assembly.jar
+    present  s3://scholarchain-course-data-834519512655-us-east-2/artifacts/jobs/d33ce8e8d507145cd46fb39bf319e985bc9a428a/step.sh
+==> STEP submit
+
+aws: [ERROR]: An error occurred (ValidationException) when calling the RunJobFlow operation (reached max retries: 0): Specified application: Hadoop is invalid.

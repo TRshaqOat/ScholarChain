@@ -1,0 +1,170 @@
+{
+    "Cluster": {
+        "Id": "j-01340552J6069AJL37F6",
+        "Name": "scholarchain-course-pipeline-f50-fa93806df7ca",
+        "Status": {
+            "State": "TERMINATED_WITH_ERRORS",
+            "StateChangeReason": {
+                "Code": "STEP_FAILURE",
+                "Message": "Shut down as step failed"
+            },
+            "Timeline": {
+                "CreationDateTime": "2026-11-16T15:22:23.854000-06:00",
+                "ReadyDateTime": "2026-11-16T15:26:06.448000-06:00",
+                "EndDateTime": "2026-11-16T16:13:35.005000-06:00"
+            }
+        },
+        "Ec2InstanceAttributes": {
+            "Ec2SubnetId": "subnet-01ba5443d067a76f4",
+            "RequestedEc2SubnetIds": [
+                "subnet-01ba5443d067a76f4"
+            ],
+            "Ec2AvailabilityZone": "us-east-2a",
+            "RequestedEc2AvailabilityZones": [],
+            "IamInstanceProfile": "scholarchain-course-emr-instance",
+            "EmrManagedMasterSecurityGroup": "sg-06850b56e702003b3",
+            "EmrManagedSlaveSecurityGroup": "sg-045cdc6a597240486"
+        },
+        "InstanceCollectionType": "INSTANCE_GROUP",
+        "LogUri": "s3n://scholarchain-course-data-834519512655-us-east-2/logs/emr/",
+        "ReleaseLabel": "emr-spark-8.0.0",
+        "AutoTerminate": true,
+        "TerminationProtected": false,
+        "UnhealthyNodeReplacement": true,
+        "VisibleToAllUsers": true,
+        "Applications": [
+            {
+                "Name": "Spark",
+                "Version": "4.0.2"
+            }
+        ],
+        "Tags": [
+            {
+                "Key": "Project",
+                "Value": "ScholarChain"
+            },
+            {
+                "Key": "Owner",
+                "Value": "scholarchain-human-architect"
+            },
+            {
+                "Key": "ManagedBy",
+                "Value": "scripts/run-bounded-pipeline.sh"
+            },
+            {
+                "Key": "Expiration",
+                "Value": "2026-12-15"
+            },
+            {
+                "Key": "Environment",
+                "Value": "course"
+            },
+            {
+                "Key": "for-use-with-amazon-emr-managed-policies",
+                "Value": "true"
+            },
+            {
+                "Key": "Course",
+                "Value": "CS441"
+            }
+        ],
+        "ServiceRole": "scholarchain-course-emr-service",
+        "NormalizedInstanceHours": 24,
+        "MasterPublicDnsName": "ec2-18-117-231-193.us-east-2.compute.amazonaws.com",
+        "Configurations": [],
+        "ScaleDownBehavior": "TERMINATE_AT_TASK_COMPLETION",
+        "KerberosAttributes": {},
+        "ClusterArn": "arn:aws:elasticmapreduce:us-east-2:834519512655:cluster/j-01340552J6069AJL37F6",
+        "StepConcurrencyLevel": 1,
+        "PlacementGroups": [],
+        "OSReleaseLabel": "2023.12.20261102.0",
+        "SessionEnabled": false,
+        "BootstrapActions": [],
+        "InstanceGroups": [
+            {
+                "Id": "ig-05223501A7IQV31ZMB7V",
+                "Name": "CORE",
+                "Market": "ON_DEMAND",
+                "InstanceGroupType": "CORE",
+                "InstanceType": "m6g.xlarge",
+                "RequestedInstanceCount": 2,
+                "RunningInstanceCount": 0,
+                "Status": {
+                    "State": "TERMINATED",
+                    "StateChangeReason": {
+                        "Code": "CLUSTER_TERMINATED",
+                        "Message": "Job flow terminated"
+                    },
+                    "Timeline": {
+                        "CreationDateTime": "2026-11-16T15:22:23.868000-06:00",
+                        "ReadyDateTime": "2026-11-16T15:26:06.448000-06:00",
+                        "EndDateTime": "2026-11-16T16:13:34.985000-06:00"
+                    }
+                },
+                "Configurations": [],
+                "ConfigurationsVersion": 0,
+                "LastSuccessfullyAppliedConfigurations": [],
+                "LastSuccessfullyAppliedConfigurationsVersion": 0,
+                "EbsBlockDevices": [
+                    {
+                        "VolumeSpecification": {
+                            "VolumeType": "gp2",
+                            "SizeInGB": 32
+                        },
+                        "Device": "/dev/sdb"
+                    },
+                    {
+                        "VolumeSpecification": {
+                            "VolumeType": "gp2",
+                            "SizeInGB": 32
+                        },
+                        "Device": "/dev/sdc"
+                    }
+                ],
+                "ShrinkPolicy": {}
+            },
+            {
+                "Id": "ig-022494139WMHGDJA4J8W",
+                "Name": "MASTER",
+                "Market": "ON_DEMAND",
+                "InstanceGroupType": "MASTER",
+                "InstanceType": "m6g.xlarge",
+                "RequestedInstanceCount": 1,
+                "RunningInstanceCount": 0,
+                "Status": {
+                    "State": "TERMINATED",
+                    "StateChangeReason": {
+                        "Code": "CLUSTER_TERMINATED",
+                        "Message": "Job flow terminated"
+                    },
+                    "Timeline": {
+                        "CreationDateTime": "2026-11-16T15:22:23.868000-06:00",
+                        "ReadyDateTime": "2026-11-16T15:25:39.018000-06:00",
+                        "EndDateTime": "2026-11-16T16:13:34.985000-06:00"
+                    }
+                },
+                "Configurations": [],
+                "ConfigurationsVersion": 0,
+                "LastSuccessfullyAppliedConfigurations": [],
+                "LastSuccessfullyAppliedConfigurationsVersion": 0,
+                "EbsBlockDevices": [
+                    {
+                        "VolumeSpecification": {
+                            "VolumeType": "gp2",
+                            "SizeInGB": 32
+                        },
+                        "Device": "/dev/sdb"
+                    },
+                    {
+                        "VolumeSpecification": {
+                            "VolumeType": "gp2",
+                            "SizeInGB": 32
+                        },
+                        "Device": "/dev/sdc"
+                    }
+                ],
+                "ShrinkPolicy": {}
+            }
+        ]
+    }
+}

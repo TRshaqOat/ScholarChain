@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "package-record-v1",
+  "commit": "deef29516bf395ac2b551beb93710b6a48a937a8",
+  "createdAt": "2026-11-17T01:09:25Z",
+  "account": "834519512655",
+  "region": "us-east-2",
+  "jobs": [
+    {
+      "name": "hadoop",
+      "key": "artifacts/jobs/deef29516bf395ac2b551beb93710b6a48a937a8/hadoop-assembly.jar",
+      "sha256": "5c320d45270921ad68cc50f7c486920817b78c7a6f5f8146bf3fe3ea7696f120",
+      "mainClass": "scholarchain.hadoop.Pipeline"
+    },
+    {
+      "name": "spark",
+      "key": "artifacts/jobs/deef29516bf395ac2b551beb93710b6a48a937a8/sparkAnalytics-assembly.jar",
+      "sha256": "0045d22310cd559fd5502829aed974d8394c2df71ae887375e44e86fe633d1fc",
+      "mainClass": "scholarchain.spark.PipelineJob"
+    },
+    {
+      "name": "emr-step",
+      "key": "artifacts/jobs/deef29516bf395ac2b551beb93710b6a48a937a8/step.sh",
+      "sha256": "930f28615c516998d3e7fa663f89c3b03c63144c79eb25a7cbc151da4825e1c5"
+    }
+  ],
+  "bucket": "scholarchain-course-data-834519512655-us-east-2",
+  "dockerContext": {
+    "key": "artifacts/codebuild/source/deef29516bf395ac2b551beb93710b6a48a937a8.zip",
+    "sha256": "6968a921ec1caac20385a317f60cf54931d087893087770aca08e7c09236938d"
+  },
+  "image": {
+    "repository": "834519512655.dkr.ecr.us-east-2.amazonaws.com/scholarchain-course-services",
+    "tag": "deef29516bf395ac2b551beb93710b6a48a937a8",
+    "digest": "sha256:5c751b1e1341fd9dd86101cdc8fffc9b8b9c91284b83ec1757758218588047ea",
+    "buildId": "scholarchain-course-services-image:6d6dec43-47d5-4fcf-91e5-33e4492ebc9f",
+    "scan": null
+  }
+}

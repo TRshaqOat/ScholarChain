@@ -1,0 +1,6 @@
+Phase 14 human ruling 16 (cloud window 1, queued 50% and 100% runs)
+- Ruling 6 required a checked record before each next fraction. For the overnight runs, a script in /tmp (p14-chain.sh, copied to evidence at Step W1) does the check: the newest record of the previous fraction is from HEAD's commit, run-bounded-pipeline.sh exited 0, finalState TERMINATED, all three steps COMPLETED, exactly one Hadoop and one Spark output run, emrSecurityGroups.openIngress empty, no AccessDenied or 403 in the step logs, and the J01 ACCEPTED count equals the fraction's DBLP works (25: 27993; 50: 55598; 100: 110867).
+- Before each run: HEAD is unchanged and equals the package commit, the tree shows only "?? operations/", and the window 1 normalized instance hours are at most 160 (about $4 at $0.60 per cluster hour; ruling 8).
+- Any failed check stops the chain. Nothing is rerun; one cluster at a time. The human reviews every record in the morning before Step W1.
+- Recorded in operations/ because a commit would move HEAD off the package commit; appended to prompt.md at Step W1.
+- Approved by Achyut Patel.

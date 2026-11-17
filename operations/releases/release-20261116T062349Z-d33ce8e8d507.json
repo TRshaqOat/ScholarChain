@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "release-record-v1",
+  "commit": "d33ce8e8d507145cd46fb39bf319e985bc9a428a",
+  "planSha256": "9930298cd1a9ecafd5f616471681145e80918234ee6dd7805b3a6e973acedc63",
+  "account": "834519512655",
+  "region": "us-east-2",
+  "environment": "course",
+  "deployedAt": "2026-11-16T06:24:50Z",
+  "runtimeEnabled": false,
+  "resumed": false,
+  "image": null,
+  "services": [],
+  "runtimeRunIds": {},
+  "outputsFile": "release-20261116T062349Z-d33ce8e8d507.outputs.json",
+  "verified": true
+}

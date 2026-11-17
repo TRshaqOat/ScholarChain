@@ -1,0 +1,89 @@
+==> STEP inputs
+    input scratch/datasets/fraction=50/dblp/works.xml bytes=32251328 sha256=114f99f7115a5becc37a3af2bb4bef1b0b3cf1ae884e9928ee802d57ccb0e2ef
+    input scratch/datasets/dblp/snapshot=2026-10-03/raw/dblp.dtd bytes=13134 sha256=2d864498f9eef9298662df11e3874171ff24cd4a21ab5974f1369c90acdb1ef6
+    input scratch/datasets/fraction=50/openalex/works.jsonl bytes=287027525 sha256=c39a17d08eca72c79bd1cdec14f9a5cd1f3e17039de3a659c384ac53529ab594
+    input scratch/datasets/fraction=50/crossref/works.jsonl bytes=90973343 sha256=78afebe8b0bae77a798403caef87cad766ff02b21ccd45a670db1ddc78dac6d3
+    input scratch/datasets/fraction=50/orcid/records.jsonl.gz bytes=210179820 sha256=a18113b503d788fe56233ef5e85295b2b5f0714b02e4e4495dc12ac5b9ba06a3
+==> STEP clean-tree
+==> OK clean-tree at deef29516bf395ac2b551beb93710b6a48a937a8
+==> STEP target
+==> TARGET account=834519512655 region=us-east-2 profile=scholarchain-sdk
+==> STEP terraform-outputs
+==> OK outputs for account 834519512655
+==> STEP bounds
+==> OK bounds: emr-spark-8.0.0, 1 primary + 2 core m6g.xlarge, on-demand
+==> STEP upload-inputs
+    input run run-94e3a7a3e03c0e963754e95b2ff5b615
+    present  s3://scholarchain-course-data-834519512655-us-east-2/raw/dblp/snapshot=2026-10-03/run=run-94e3a7a3e03c0e963754e95b2ff5b615/works.xml
+    present  s3://scholarchain-course-data-834519512655-us-east-2/raw/dblp/snapshot=2026-10-03/run=run-94e3a7a3e03c0e963754e95b2ff5b615/dblp.dtd
+    present  s3://scholarchain-course-data-834519512655-us-east-2/raw/openalex/snapshot=2026-11-03/run=run-94e3a7a3e03c0e963754e95b2ff5b615/works.jsonl
+    present  s3://scholarchain-course-data-834519512655-us-east-2/raw/crossref/snapshot=2026-11-03/run=run-94e3a7a3e03c0e963754e95b2ff5b615/works.jsonl
+    present  s3://scholarchain-course-data-834519512655-us-east-2/raw/orcid/snapshot=2026-11-03/run=run-94e3a7a3e03c0e963754e95b2ff5b615/records.jsonl.gz
+==> STEP upload-jobs
+    present  s3://scholarchain-course-data-834519512655-us-east-2/artifacts/jobs/deef29516bf395ac2b551beb93710b6a48a937a8/hadoop-assembly.jar
+    present  s3://scholarchain-course-data-834519512655-us-east-2/artifacts/jobs/deef29516bf395ac2b551beb93710b6a48a937a8/sparkAnalytics-assembly.jar
+    present  s3://scholarchain-course-data-834519512655-us-east-2/artifacts/jobs/deef29516bf395ac2b551beb93710b6a48a937a8/step.sh
+==> STEP submit
+==> CLUSTER id=j-0442672LR2FYKZBT6WQ
+==> STEP wait
+    2026-11-17T01:09:40Z cluster STARTING
+    2026-11-17T01:10:41Z cluster STARTING
+    2026-11-17T01:11:43Z cluster STARTING
+    2026-11-17T01:12:45Z cluster STARTING
+    2026-11-17T01:13:47Z cluster RUNNING
+    2026-11-17T01:14:49Z cluster RUNNING
+    2026-11-17T01:15:51Z cluster RUNNING
+    2026-11-17T01:16:53Z cluster RUNNING
+    2026-11-17T01:17:55Z cluster RUNNING
+    2026-11-17T01:18:57Z cluster RUNNING
+    2026-11-17T01:19:59Z cluster RUNNING
+    2026-11-17T01:21:00Z cluster RUNNING
+    2026-11-17T01:22:02Z cluster RUNNING
+    2026-11-17T01:23:04Z cluster RUNNING
+    2026-11-17T01:24:06Z cluster RUNNING
+    2026-11-17T01:25:08Z cluster RUNNING
+    2026-11-17T01:26:09Z cluster RUNNING
+    2026-11-17T01:27:12Z cluster RUNNING
+    2026-11-17T01:28:14Z cluster RUNNING
+    2026-11-17T01:29:16Z cluster RUNNING
+    2026-11-17T01:30:17Z cluster RUNNING
+    2026-11-17T01:31:19Z cluster RUNNING
+    2026-11-17T01:32:21Z cluster RUNNING
+    2026-11-17T01:33:23Z cluster RUNNING
+    2026-11-17T01:34:25Z cluster RUNNING
+    2026-11-17T01:35:27Z cluster RUNNING
+    2026-11-17T01:36:29Z cluster RUNNING
+    2026-11-17T01:37:31Z cluster RUNNING
+    2026-11-17T01:38:33Z cluster RUNNING
+    2026-11-17T01:39:34Z cluster RUNNING
+    2026-11-17T01:40:36Z cluster RUNNING
+    2026-11-17T01:41:39Z cluster RUNNING
+    2026-11-17T01:42:40Z cluster RUNNING
+    2026-11-17T01:43:42Z cluster RUNNING
+    2026-11-17T01:44:44Z cluster RUNNING
+    2026-11-17T01:45:46Z cluster RUNNING
+    2026-11-17T01:46:48Z cluster RUNNING
+    2026-11-17T01:47:50Z cluster RUNNING
+    2026-11-17T01:48:52Z cluster RUNNING
+    2026-11-17T01:49:53Z cluster RUNNING
+    2026-11-17T01:50:55Z cluster RUNNING
+    2026-11-17T01:51:57Z cluster RUNNING
+    2026-11-17T01:52:59Z cluster RUNNING
+    2026-11-17T01:54:01Z cluster RUNNING
+    2026-11-17T01:55:03Z cluster RUNNING
+    2026-11-17T01:56:04Z cluster RUNNING
+    2026-11-17T01:57:06Z cluster RUNNING
+    2026-11-17T01:58:08Z cluster RUNNING
+    2026-11-17T01:59:10Z cluster RUNNING
+    2026-11-17T02:00:12Z cluster RUNNING
+    2026-11-17T02:01:14Z cluster TERMINATING
+    2026-11-17T02:02:16Z cluster TERMINATED_WITH_ERRORS
+==> STEP collect
+fatal error: An error occurred (404) when calling the HeadObject operation: Key "curated/spark/snapshot=2026-10-03/run=run-9fbd0ad611075346eb3cf7d0f627b521/_manifest.json" does not exist
+==> WARN no manifest in curated/spark/snapshot=2026-10-03/run=run-9fbd0ad611075346eb3cf7d0f627b521
+fatal error: An error occurred (404) when calling the HeadObject operation: Key "curated/spark/snapshot=2026-10-03/run=run-bf69f4131d44125a499d486e1713b1f3/_manifest.json" does not exist
+==> WARN no manifest in curated/spark/snapshot=2026-10-03/run=run-bf69f4131d44125a499d486e1713b1f3
+==> STEP emr-security-groups
+==> OK no 0.0.0.0/0 or ::/0 ingress on the EMR groups
+==> PIPELINE record=/Users/achyutpatel/Developer/Cloud/ScholarChain/operations/pipeline-runs/20261117T010927Z-fraction50/run.json cluster=j-0442672LR2FYKZBT6WQ state=TERMINATED_WITH_ERRORS reason=STEP_FAILURE instance-hours=24
+==> FAIL cluster ended TERMINATED_WITH_ERRORS/STEP_FAILURE; see /Users/achyutpatel/Developer/Cloud/ScholarChain/operations/pipeline-runs/20261117T010927Z-fraction50/steps-result.json and /Users/achyutpatel/Developer/Cloud/ScholarChain/operations/pipeline-runs/20261117T010927Z-fraction50/logs/ (exit 1)

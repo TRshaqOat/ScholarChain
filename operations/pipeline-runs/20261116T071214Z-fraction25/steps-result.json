@@ -1,0 +1,121 @@
+{
+    "Steps": [
+        {
+            "Id": "s-00071463A9E279I4JLDO",
+            "Name": "spark-pipeline",
+            "Config": {
+                "Jar": "command-runner.jar",
+                "Properties": {},
+                "Args": [
+                    "bash",
+                    "-c",
+                    "set -euo pipefail; aws --cli-connect-timeout 10 --cli-read-timeout 120 s3 cp --only-show-errors s3://scholarchain-course-data-834519512655-us-east-2/artifacts/jobs/1232927b8ac8828dd57f30e93e06e263bd57ac2a/step.sh /tmp/scholarchain-step.sh; exec bash /tmp/scholarchain-step.sh \"$@\"",
+                    "step",
+                    "spark",
+                    "9000",
+                    "s3://scholarchain-course-data-834519512655-us-east-2/artifacts/jobs/1232927b8ac8828dd57f30e93e06e263bd57ac2a/sparkAnalytics-assembly.jar",
+                    "scholarchain-course-data-834519512655-us-east-2",
+                    "2026-10-03",
+                    "",
+                    "--out",
+                    "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark",
+                    "--checkpoint-dir",
+                    "hdfs:///scholarchain/spark/checkpoints",
+                    "--code-version",
+                    "1232927b8ac8828dd57f30e93e06e263bd57ac2a",
+                    "--shuffle-partitions",
+                    "16"
+                ]
+            },
+            "ActionOnFailure": "TERMINATE_CLUSTER",
+            "Status": {
+                "State": "FAILED",
+                "FailureDetails": {
+                    "Reason": "Unknown Error.",
+                    "LogFile": "s3://scholarchain-course-data-834519512655-us-east-2/logs/emr/j-0518231NIANENLFGS7S/steps/s-00071463A9E279I4JLDO/"
+                },
+                "Timeline": {
+                    "CreationDateTime": "2026-11-16T01:12:25.303000-06:00",
+                    "StartDateTime": "2026-11-16T01:33:35.770000-06:00",
+                    "EndDateTime": "2026-11-16T01:33:41.893000-06:00"
+                }
+            }
+        },
+        {
+            "Id": "s-00071473BOLXO0QSX83Z",
+            "Name": "hadoop-pipeline",
+            "Config": {
+                "Jar": "command-runner.jar",
+                "Properties": {},
+                "Args": [
+                    "bash",
+                    "-c",
+                    "set -euo pipefail; aws --cli-connect-timeout 10 --cli-read-timeout 120 s3 cp --only-show-errors s3://scholarchain-course-data-834519512655-us-east-2/artifacts/jobs/1232927b8ac8828dd57f30e93e06e263bd57ac2a/step.sh /tmp/scholarchain-step.sh; exec bash /tmp/scholarchain-step.sh \"$@\"",
+                    "step",
+                    "hadoop",
+                    "5400",
+                    "s3://scholarchain-course-data-834519512655-us-east-2/artifacts/jobs/1232927b8ac8828dd57f30e93e06e263bd57ac2a/hadoop-assembly.jar",
+                    "--out",
+                    "s3a://scholarchain-course-data-834519512655-us-east-2/curated/hadoop",
+                    "--code-version",
+                    "1232927b8ac8828dd57f30e93e06e263bd57ac2a",
+                    "--dblp",
+                    "s3a://scholarchain-course-data-834519512655-us-east-2/raw/dblp/snapshot=2026-10-03/run=run-7a5abdee2b5848146b12f0eef8ef9d99/works.xml",
+                    "--dblp-dtd",
+                    "s3a://scholarchain-course-data-834519512655-us-east-2/raw/dblp/snapshot=2026-10-03/run=run-7a5abdee2b5848146b12f0eef8ef9d99/dblp.dtd",
+                    "--dblp-snapshot",
+                    "2026-10-03",
+                    "--openalex",
+                    "s3a://scholarchain-course-data-834519512655-us-east-2/raw/openalex/snapshot=2026-11-03/run=run-7a5abdee2b5848146b12f0eef8ef9d99/works.jsonl",
+                    "--openalex-snapshot",
+                    "2026-11-03",
+                    "--crossref",
+                    "s3a://scholarchain-course-data-834519512655-us-east-2/raw/crossref/snapshot=2026-11-03/run=run-7a5abdee2b5848146b12f0eef8ef9d99/works.jsonl",
+                    "--crossref-snapshot",
+                    "2026-11-03",
+                    "--orcid",
+                    "s3a://scholarchain-course-data-834519512655-us-east-2/raw/orcid/snapshot=2026-11-03/run=run-7a5abdee2b5848146b12f0eef8ef9d99/records.jsonl.gz",
+                    "--orcid-snapshot",
+                    "2026-11-03",
+                    "--reducers",
+                    "2"
+                ]
+            },
+            "ActionOnFailure": "TERMINATE_CLUSTER",
+            "Status": {
+                "State": "COMPLETED",
+                "FailureDetails": {},
+                "Timeline": {
+                    "CreationDateTime": "2026-11-16T01:12:25.303000-06:00",
+                    "StartDateTime": "2026-11-16T01:16:51.119000-06:00",
+                    "EndDateTime": "2026-11-16T01:33:35.262000-06:00"
+                }
+            }
+        },
+        {
+            "Id": "s-0007140O9BBAQX07HVI",
+            "Name": "classpath-probe",
+            "Config": {
+                "Jar": "command-runner.jar",
+                "Properties": {},
+                "Args": [
+                    "bash",
+                    "-c",
+                    "set -euo pipefail; aws --cli-connect-timeout 10 --cli-read-timeout 120 s3 cp --only-show-errors s3://scholarchain-course-data-834519512655-us-east-2/artifacts/jobs/1232927b8ac8828dd57f30e93e06e263bd57ac2a/step.sh /tmp/scholarchain-step.sh; exec bash /tmp/scholarchain-step.sh \"$@\"",
+                    "step",
+                    "classpath"
+                ]
+            },
+            "ActionOnFailure": "CONTINUE",
+            "Status": {
+                "State": "COMPLETED",
+                "FailureDetails": {},
+                "Timeline": {
+                    "CreationDateTime": "2026-11-16T01:12:25.303000-06:00",
+                    "StartDateTime": "2026-11-16T01:16:44.338000-06:00",
+                    "EndDateTime": "2026-11-16T01:16:50.609000-06:00"
+                }
+            }
+        }
+    ]
+}

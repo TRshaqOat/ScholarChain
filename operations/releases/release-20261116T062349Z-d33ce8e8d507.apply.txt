@@ -1,0 +1,156 @@
+[0m[1mmodule.build.aws_cloudwatch_log_group.codebuild: Creating...[0m[0m
+[0m[1mmodule.build.aws_iam_role.codebuild: Creating...[0m[0m
+[0m[1mmodule.observability.aws_cloudwatch_log_group.ecs["query-api"]: Creating...[0m[0m
+[0m[1mmodule.emr.aws_iam_role.instance: Creating...[0m[0m
+[0m[1mmodule.build.aws_ecr_repository.services: Creating...[0m[0m
+[0m[1mmodule.observability.aws_cloudwatch_log_group.ecs["worker"]: Creating...[0m[0m
+[0m[1mmodule.emr.aws_iam_role.service: Creating...[0m[0m
+[0m[1mmodule.observability.aws_cloudwatch_log_group.ecs["neptune-loader"]: Creating...[0m[0m
+[0m[1mmodule.network.aws_vpc.this: Creating...[0m[0m
+[0m[1mmodule.observability.aws_cloudwatch_log_group.ecs["graph-evidence-api"]: Creating...[0m[0m
+[0m[1mmodule.observability.aws_cloudwatch_log_group.ecs["worker"]: Creation complete after 0s [id=/scholarchain/scholarchain-course/ecs/worker][0m
+[0m[1mmodule.build.aws_cloudwatch_log_group.codebuild: Creation complete after 0s [id=/scholarchain/scholarchain-course/codebuild/services-image][0m
+[0m[1mmodule.observability.aws_cloudwatch_log_group.ecs["neptune-loader"]: Creation complete after 0s [id=/scholarchain/scholarchain-course/ecs/neptune-loader][0m
+[0m[1mmodule.observability.aws_cloudwatch_log_group.ecs["graph-evidence-api"]: Creation complete after 0s [id=/scholarchain/scholarchain-course/ecs/graph-evidence-api][0m
+[0m[1mmodule.data.aws_s3_bucket.data: Creating...[0m[0m
+[0m[1mmodule.observability.aws_cloudwatch_log_group.ecs["query-api"]: Creation complete after 0s [id=/scholarchain/scholarchain-course/ecs/query-api][0m
+[0m[1mmodule.build.aws_ecr_repository.services: Creation complete after 0s [id=scholarchain-course-services][0m
+[0m[1mmodule.build.aws_ecr_lifecycle_policy.services: Creating...[0m[0m
+[0m[1mmodule.emr.aws_iam_role.service: Creation complete after 0s [id=scholarchain-course-emr-service][0m
+[0m[1mmodule.emr.aws_iam_role.instance: Creation complete after 0s [id=scholarchain-course-emr-instance][0m
+[0m[1mmodule.emr.data.aws_iam_policy_document.service_pass_role: Reading...[0m[0m
+[0m[1mmodule.emr.aws_iam_role_policy_attachment.service_v2: Creating...[0m[0m
+[0m[1mmodule.emr.aws_iam_instance_profile.instance: Creating...[0m[0m
+[0m[1mmodule.emr.data.aws_iam_policy_document.service_pass_role: Read complete after 0s [id=1648478373][0m
+[0m[1mmodule.emr.aws_iam_role_policy.service_pass_role: Creating...[0m[0m
+[0m[1mmodule.build.aws_iam_role.codebuild: Creation complete after 0s [id=scholarchain-course-codebuild-services-image][0m
+[0m[1mmodule.build.aws_ecr_lifecycle_policy.services: Creation complete after 0s [id=scholarchain-course-services][0m
+[0m[1mmodule.emr.aws_iam_role_policy_attachment.service_v2: Creation complete after 1s [id=scholarchain-course-emr-service/arn:aws:iam::aws:policy/service-role/AmazonEMRServicePolicy_v2][0m
+[0m[1mmodule.emr.aws_iam_role_policy.service_pass_role: Creation complete after 1s [id=scholarchain-course-emr-service:pass-instance-role][0m
+[0m[1mmodule.data.aws_s3_bucket.data: Creation complete after 2s [id=scholarchain-course-data-834519512655-us-east-2][0m
+[0m[1mmodule.data.data.aws_iam_policy_document.tls_only: Reading...[0m[0m
+[0m[1mmodule.data.aws_s3_bucket_public_access_block.data: Creating...[0m[0m
+[0m[1mmodule.emr.data.aws_iam_policy_document.instance_s3: Reading...[0m[0m
+[0m[1mmodule.data.aws_s3_bucket_ownership_controls.data: Creating...[0m[0m
+[0m[1mmodule.build.data.aws_iam_policy_document.codebuild: Reading...[0m[0m
+[0m[1mmodule.data.aws_s3_bucket_server_side_encryption_configuration.data: Creating...[0m[0m
+[0m[1mmodule.data.aws_s3_bucket_versioning.data: Creating...[0m[0m
+[0m[1mmodule.data.data.aws_iam_policy_document.tls_only: Read complete after 0s [id=2599753479][0m
+[0m[1mmodule.build.data.aws_iam_policy_document.codebuild: Read complete after 0s [id=1895859041][0m
+[0m[1mmodule.emr.data.aws_iam_policy_document.instance_s3: Read complete after 0s [id=1038427236][0m
+[0m[1mmodule.build.aws_codebuild_project.services_image: Creating...[0m[0m
+[0m[1mmodule.emr.aws_iam_role_policy.instance_s3: Creating...[0m[0m
+[0m[1mmodule.build.aws_iam_role_policy.codebuild: Creating...[0m[0m
+[0m[1mmodule.data.aws_s3_bucket_public_access_block.data: Creation complete after 0s [id=scholarchain-course-data-834519512655-us-east-2][0m
+[0m[1mmodule.data.aws_s3_bucket_policy.data: Creating...[0m[0m
+[0m[1mmodule.emr.aws_iam_role_policy.instance_s3: Creation complete after 0s [id=scholarchain-course-emr-instance:data-bucket][0m
+[0m[1mmodule.build.aws_iam_role_policy.codebuild: Creation complete after 0s [id=scholarchain-course-codebuild-services-image:services-image][0m
+[0m[1mmodule.data.aws_s3_bucket_ownership_controls.data: Creation complete after 0s [id=scholarchain-course-data-834519512655-us-east-2][0m
+[0m[1mmodule.data.aws_s3_bucket_policy.data: Creation complete after 0s [id=scholarchain-course-data-834519512655-us-east-2][0m
+[0m[1mmodule.data.aws_s3_bucket_server_side_encryption_configuration.data: Creation complete after 0s [id=scholarchain-course-data-834519512655-us-east-2][0m
+[0m[1mmodule.data.aws_s3_bucket_versioning.data: Creation complete after 1s [id=scholarchain-course-data-834519512655-us-east-2][0m
+[0m[1mmodule.data.aws_s3_bucket_lifecycle_configuration.data: Creating...[0m[0m
+[0m[1mmodule.emr.aws_iam_instance_profile.instance: Creation complete after 6s [id=scholarchain-course-emr-instance][0m
+[0m[1mmodule.network.aws_vpc.this: Still creating... [00m10s elapsed][0m[0m
+[0m[1mmodule.build.aws_codebuild_project.services_image: Creation complete after 9s [id=arn:aws:codebuild:us-east-2:834519512655:project/scholarchain-course-services-image][0m
+[0m[1mmodule.network.aws_vpc.this: Creation complete after 12s [id=vpc-0fd8e31fa7b48c139][0m
+[0m[1mmodule.network.aws_internet_gateway.this: Creating...[0m[0m
+[0m[1mmodule.network.aws_subnet.private[0]: Creating...[0m[0m
+[0m[1mmodule.network.aws_subnet.public[1]: Creating...[0m[0m
+[0m[1mmodule.network.aws_route_table.private: Creating...[0m[0m
+[0m[1mmodule.network.aws_route_table.public: Creating...[0m[0m
+[0m[1mmodule.network.aws_subnet.private[1]: Creating...[0m[0m
+[0m[1mmodule.emr.aws_security_group.primary: Creating...[0m[0m
+[0m[1mmodule.network.aws_default_security_group.this: Creating...[0m[0m
+[0m[1mmodule.network.aws_subnet.public[0]: Creating...[0m[0m
+[0m[1mmodule.network.aws_internet_gateway.this: Creation complete after 1s [id=igw-040a287096deb8c67][0m
+[0m[1mmodule.emr.aws_security_group.core: Creating...[0m[0m
+[0m[1mmodule.network.aws_route_table.public: Creation complete after 1s [id=rtb-0028b1800699e4081][0m
+[0m[1mmodule.network.aws_route.public_internet: Creating...[0m[0m
+[0m[1mmodule.network.aws_route_table.private: Creation complete after 1s [id=rtb-0138ac54c060f3f07][0m
+[0m[1mmodule.network.aws_vpc_endpoint.s3: Creating...[0m[0m
+[0m[1mmodule.network.aws_subnet.private[0]: Creation complete after 1s [id=subnet-08e8a7e37da4af95f][0m
+[0m[1mmodule.network.aws_vpc_endpoint.dynamodb: Creating...[0m[0m
+[0m[1mmodule.network.aws_subnet.private[1]: Creation complete after 1s [id=subnet-0d62d88d3791db7bc][0m
+[0m[1mmodule.network.aws_route_table_association.private[0]: Creating...[0m[0m
+[0m[1mmodule.network.aws_route_table_association.private[0]: Creation complete after 0s [id=rtbassoc-049d9e593ab27cc17][0m
+[0m[1mmodule.network.aws_route_table_association.private[1]: Creating...[0m[0m
+[0m[1mmodule.data.aws_s3_bucket_lifecycle_configuration.data: Still creating... [00m10s elapsed][0m[0m
+[0m[1mmodule.network.aws_route.public_internet: Creation complete after 0s [id=r-rtb-0028b1800699e40811080289494][0m
+[0m[1mmodule.network.aws_route_table_association.private[1]: Creation complete after 1s [id=rtbassoc-04174e65a4af63c90][0m
+[0m[1mmodule.network.aws_default_security_group.this: Creation complete after 2s [id=sg-0b349594ad1ea9774][0m
+[0m[1mmodule.emr.aws_security_group.primary: Creation complete after 2s [id=sg-06850b56e702003b3][0m
+[0m[1mmodule.emr.aws_security_group.core: Creation complete after 2s [id=sg-045cdc6a597240486][0m
+[0m[1mmodule.emr.aws_vpc_security_group_egress_rule.emr_all["core"]: Creating...[0m[0m
+[0m[1mmodule.emr.aws_vpc_security_group_egress_rule.emr_all["primary"]: Creating...[0m[0m
+[0m[1mmodule.emr.aws_vpc_security_group_egress_rule.emr_all["core"]: Creation complete after 0s [id=sgr-06e4c31f1ea609093][0m
+[0m[1mmodule.emr.aws_vpc_security_group_egress_rule.emr_all["primary"]: Creation complete after 0s [id=sgr-050b04d48aee6d4c5][0m
+[0m[1mmodule.network.aws_vpc_endpoint.dynamodb: Creation complete after 6s [id=vpce-0b5684d029a8efdc1][0m
+[0m[1mmodule.network.aws_vpc_endpoint.s3: Creation complete after 6s [id=vpce-0881c52adddf58849][0m
+[0m[1mmodule.network.aws_subnet.public[1]: Still creating... [00m10s elapsed][0m[0m
+[0m[1mmodule.network.aws_subnet.public[0]: Still creating... [00m10s elapsed][0m[0m
+[0m[1mmodule.data.aws_s3_bucket_lifecycle_configuration.data: Still creating... [00m20s elapsed][0m[0m
+[0m[1mmodule.network.aws_subnet.public[1]: Creation complete after 12s [id=subnet-0e94ae0d8ed9a3c09][0m
+[0m[1mmodule.network.aws_subnet.public[0]: Creation complete after 15s [id=subnet-01ba5443d067a76f4][0m
+[0m[1mmodule.network.aws_route_table_association.public[1]: Creating...[0m[0m
+[0m[1mmodule.network.aws_route_table_association.public[0]: Creating...[0m[0m
+[0m[1mmodule.network.aws_route_table_association.public[1]: Creation complete after 0s [id=rtbassoc-018058d7ebb5f6e08][0m
+[0m[1mmodule.network.aws_route_table_association.public[0]: Creation complete after 0s [id=rtbassoc-0ce1bb2df39bf5948][0m
+[0m[1mmodule.data.aws_s3_bucket_lifecycle_configuration.data: Still creating... [00m30s elapsed][0m[0m
+[0m[1mmodule.data.aws_s3_bucket_lifecycle_configuration.data: Still creating... [00m40s elapsed][0m[0m
+[0m[1mmodule.data.aws_s3_bucket_lifecycle_configuration.data: Still creating... [00m50s elapsed][0m[0m
+[0m[1mmodule.data.aws_s3_bucket_lifecycle_configuration.data: Creation complete after 56s [id=scholarchain-course-data-834519512655-us-east-2][0m
+[0m[1m[32m
+Apply complete! Resources: 43 added, 0 changed, 0 destroyed.[0m
+[0m[1m[32m
+Outputs:
+
+[0maccount_id = "834519512655"
+codebuild_project_name = "scholarchain-course-services-image"
+codebuild_source_prefix = "artifacts/codebuild/source/"
+data_bucket_name = "scholarchain-course-data-834519512655-us-east-2"
+data_bucket_prefixes = {
+  "artifacts" = "artifacts/"
+  "curated" = "curated/"
+  "graph" = "graph/"
+  "logs" = "logs/"
+  "raw" = "raw/"
+  "reports" = "reports/"
+  "runs" = "runs/"
+  "semantic_context" = "semantic-context/"
+  "vectors" = "vectors/"
+}
+ecr_repository_name = "scholarchain-course-services"
+ecr_repository_url = "834519512655.dkr.ecr.us-east-2.amazonaws.com/scholarchain-course-services"
+emr = {
+  "artifacts_prefix" = "artifacts/jobs/"
+  "core_instance_count" = 2
+  "core_security_group_id" = "sg-045cdc6a597240486"
+  "instance_profile" = "scholarchain-course-emr-instance"
+  "instance_type" = "m6g.xlarge"
+  "log_uri" = "s3://scholarchain-course-data-834519512655-us-east-2/logs/emr/"
+  "primary_instance_count" = 1
+  "primary_security_group_id" = "sg-06850b56e702003b3"
+  "release_label" = "emr-spark-8.0.0"
+  "service_role" = "scholarchain-course-emr-service"
+  "subnet_id" = "subnet-01ba5443d067a76f4"
+}
+log_group_names = {
+  "codebuild" = "/scholarchain/scholarchain-course/codebuild/services-image"
+  "graph-evidence-api" = "/scholarchain/scholarchain-course/ecs/graph-evidence-api"
+  "neptune-loader" = "/scholarchain/scholarchain-course/ecs/neptune-loader"
+  "query-api" = "/scholarchain/scholarchain-course/ecs/query-api"
+  "worker" = "/scholarchain/scholarchain-course/ecs/worker"
+}
+name_prefix = "scholarchain-course"
+private_subnet_ids = [
+  "subnet-08e8a7e37da4af95f",
+  "subnet-0d62d88d3791db7bc",
+]
+public_subnet_ids = [
+  "subnet-01ba5443d067a76f4",
+  "subnet-0e94ae0d8ed9a3c09",
+]
+region = "us-east-2"
+runtime_enabled = false
+vpc_id = "vpc-0fd8e31fa7b48c139"

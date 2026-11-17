@@ -1,0 +1,14 @@
+17:23:29 chain 3 (ruling 18) at HEAD fa93806df7ca4b65e5de6d13779d865909de273b, shuffle partitions 40, order 50 25 100
+17:23:29 window 1 normalized instance hours so far: 72 (stop above 160)
+17:23:29 starting fraction 50
+==> STEP wait
+==> STEP collect
+==> WARN no manifest in curated/spark/snapshot=2026-10-03/run=run-690a179ffc1af8789a22c54f0841d03a
+==> WARN no manifest in curated/spark/snapshot=2026-10-03/run=run-877c5ec9b77776fef6f4120632c8a9ef
+==> STEP emr-security-groups
+==> OK no 0.0.0.0/0 or ::/0 ingress on the EMR groups
+==> PIPELINE record=/Users/achyutpatel/Developer/Cloud/ScholarChain/operations/pipeline-runs/20261116T232332Z-fraction50/run.json cluster=j-05229833T1R31VERH2IA state=TERMINATED_WITH_ERRORS reason=STEP_FAILURE instance-hours=24
+==> FAIL cluster ended TERMINATED_WITH_ERRORS/STEP_FAILURE; see /Users/achyutpatel/Developer/Cloud/ScholarChain/operations/pipeline-runs/20261116T232332Z-fraction50/steps-result.json and /Users/achyutpatel/Developer/Cloud/ScholarChain/operations/pipeline-runs/20261116T232332Z-fraction50/logs/ (exit 1)
+18:17:36 fraction 50 exit 1
+18:17:36 CHAIN STOPPED (reason above); nothing was rerun
+18:17:37 active clusters (expect none): 

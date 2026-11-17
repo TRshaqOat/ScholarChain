@@ -1,0 +1,6 @@
+fraction=100
+scratch/datasets/dblp/snapshot=2026-10-03/full/works.xml ea83a20b866084c41239c673b03bfc1be23787c4b2ad1d1bb9fd388dfbc60dab 64330403
+scratch/datasets/dblp/snapshot=2026-10-03/raw/dblp.dtd 2d864498f9eef9298662df11e3874171ff24cd4a21ab5974f1369c90acdb1ef6 13134
+scratch/datasets/openalex/full/works.jsonl a60d466906c30d4b2a685bafdb4f6329269b7de94a25f84bdb8db18fdfbf6424 571554739
+scratch/datasets/crossref/full/works.jsonl 1caa06f05c2475cdba7ef212076d57e29134dc832044ed33bc285bb5765d57b1 181216501
+scratch/datasets/orcid/full/records.jsonl.gz 75d3d64c4da67fd619743108180856a1be4247c976a7e605e4f929cb4f87bbba 237831658

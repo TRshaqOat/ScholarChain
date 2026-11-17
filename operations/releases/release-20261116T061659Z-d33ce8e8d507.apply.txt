@@ -1,0 +1,6 @@
+[31m╷[0m[0m
+[31m│[0m [0m[1m[31mError: [0m[0m[1mFailed to load "scratch/plans/20261116T060222Z-d33ce8e8d507/plan.tfplan" as a plan file[0m
+[31m│[0m [0m
+[31m│[0m [0m[0mError: stat scratch/plans/20261116T060222Z-d33ce8e8d507/plan.tfplan: no
+[31m│[0m [0msuch file or directory
+[31m╵[0m[0m

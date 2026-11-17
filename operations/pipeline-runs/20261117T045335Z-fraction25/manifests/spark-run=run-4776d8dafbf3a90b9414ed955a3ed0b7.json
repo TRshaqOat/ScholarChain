@@ -1,0 +1,791 @@
+{
+  "schemaVersion": "spark-run-manifest-v1",
+  "stage": "spark-temporal-summary-export",
+  "runId": "run-4776d8dafbf3a90b9414ed955a3ed0b7",
+  "attempt": 1,
+  "runDir": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-4776d8dafbf3a90b9414ed955a3ed0b7",
+  "snapshot": "2026-10-03",
+  "codeVersion": "deef29516bf395ac2b551beb93710b6a48a937a8",
+  "configVersion": "config-v1",
+  "input": {
+    "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-0b6abc63564bb74db1e92e3be111b70d",
+    "communityPathRunId": "run-0b6abc63564bb74db1e92e3be111b70d",
+    "researcherAnalyticsPath": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-963c0c2647f8a6fa52be14b66540254e",
+    "researcherAnalyticsRunId": "run-963c0c2647f8a6fa52be14b66540254e",
+    "canonicalGraphPath": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-3448279960349baa96780403b99e0a66",
+    "canonicalGraphRunId": "run-3448279960349baa96780403b99e0a66"
+  },
+  "lineage": {
+    "inputHadoopRunId": "run-aa940ec80cef96879f88d1f2407a0fc7",
+    "matchPolicyVersion": "er-v2"
+  },
+  "settings": {
+    "master": "yarn",
+    "shufflePartitions": 40,
+    "adaptiveExecution": "true",
+    "graphPolicy": "graph-v1",
+    "windows": [
+      {
+        "name": "all-years",
+        "startYear": 2000,
+        "endYear": 2026
+      },
+      {
+        "name": "2000-2014",
+        "startYear": 2000,
+        "endYear": 2014
+      },
+      {
+        "name": "2015-2026",
+        "startYear": 2015,
+        "endYear": 2026
+      }
+    ],
+    "comparisons": [
+      "2000-2014->2015-2026"
+    ],
+    "comparisonRule": "ordered pairs of non-overlapping windows, earlier first",
+    "inclusionLimitation": "Windows share one canonical identity and one graph definition, but their contents are not equally sampled: the DBLP subset (D-10, about 100k works) was selected as a bounded subset, so its coverage of venues and years, and the OpenAlex/Crossref/ORCID enrichment driven by it, may differ between periods; the windows have different lengths (15 vs 12 years) and the last year may be incomplete; communities are computed separately per window by a label propagation with a round cap, so community IDs never match across windows. Differences between windows mix real change with these coverage differences.",
+    "summaryTemplateVersion": "summary-template-v1",
+    "profileWindow": "all-years",
+    "summaryMinPublications": 2,
+    "summaryMinCommunitySize": 3,
+    "minFreeDiskGiB": 5,
+    "driverMaxHeapBytes": 2147483648,
+    "availableProcessors": 4
+  },
+  "fingerprints": [
+    "community-path-run=run-0b6abc63564bb74db1e92e3be111b70d",
+    "researcher-analytics-run=run-963c0c2647f8a6fa52be14b66540254e",
+    "canonical-graph-run=run-3448279960349baa96780403b99e0a66",
+    "input:community-path=s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-0b6abc63564bb74db1e92e3be111b70d:28844162",
+    "input:researcher-analytics=s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-963c0c2647f8a6fa52be14b66540254e:16778639",
+    "input:canonical-graph=s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-3448279960349baa96780403b99e0a66:121883919",
+    "config:graph-policy=graph-v1",
+    "config:windows=all-years:2000-2026,2000-2014:2000-2014,2015-2026:2015-2026",
+    "config:summary-min-publications=2",
+    "config:summary-min-community-size=3",
+    "config:summary-template=summary-template-v1"
+  ],
+  "startedAt": "2026-11-17T05:27:46.651512702Z",
+  "inputs": [
+    {
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-963c0c2647f8a6fa52be14b66540254e/analytics/researcher-metrics",
+      "exists": true,
+      "rows": 139465
+    },
+    {
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-963c0c2647f8a6fa52be14b66540254e/analytics/components",
+      "exists": true,
+      "rows": 15787
+    },
+    {
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-0b6abc63564bb74db1e92e3be111b70d/analytics/researcher-communities",
+      "exists": true,
+      "rows": 139465
+    },
+    {
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-0b6abc63564bb74db1e92e3be111b70d/analytics/communities",
+      "exists": true,
+      "rows": 31101
+    },
+    {
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-0b6abc63564bb74db1e92e3be111b70d/analytics/cross-community-edges",
+      "exists": true,
+      "rows": 106630
+    },
+    {
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-0b6abc63564bb74db1e92e3be111b70d/paths/path-evidence",
+      "exists": true,
+      "rows": 50
+    },
+    {
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-3448279960349baa96780403b99e0a66/canonical/researchers",
+      "exists": true,
+      "rows": 78232
+    },
+    {
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-3448279960349baa96780403b99e0a66/canonical/authored",
+      "exists": true,
+      "rows": 125841
+    },
+    {
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-3448279960349baa96780403b99e0a66/canonical/works",
+      "exists": true,
+      "rows": 28540
+    },
+    {
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-3448279960349baa96780403b99e0a66/canonical/venues",
+      "exists": true,
+      "rows": 229
+    },
+    {
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-3448279960349baa96780403b99e0a66/canonical/topics",
+      "exists": true,
+      "rows": 783
+    },
+    {
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-3448279960349baa96780403b99e0a66/canonical/work-topics",
+      "exists": true,
+      "rows": 26910
+    },
+    {
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-3448279960349baa96780403b99e0a66/canonical/researcher-institutions",
+      "exists": true,
+      "rows": 132337
+    },
+    {
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-3448279960349baa96780403b99e0a66/canonical/institutions",
+      "exists": true,
+      "rows": 25552
+    },
+    {
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-3448279960349baa96780403b99e0a66/graph/coauthor-edges",
+      "exists": true,
+      "rows": 423192
+    }
+  ],
+  "tables": [
+    {
+      "name": "temporal/window-summary",
+      "schemaVersion": "spark-temporal-window-summary-v1",
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-4776d8dafbf3a90b9414ed955a3ed0b7/temporal/window-summary",
+      "format": "parquet",
+      "partitionColumns": [],
+      "hashPartitionKey": null,
+      "writePartitions": 1,
+      "schema": "window STRING,windowStartYear INT,windowEndYear INT,publications BIGINT,researchers BIGINT,meanDistinctCoauthorCount DOUBLE,medianDistinctCoauthorCount DOUBLE,meanAverageCoauthorsPerPaper DOUBLE,meanMaximumCoauthorsOnOnePaper DOUBLE,maxMaximumCoauthorsOnOnePaper BIGINT,meanCoreness DOUBLE,maxCoreness INT,coauthorEdges BIGINT,sumJointPublicationCount BIGINT,components BIGINT,largestComponentSize BIGINT,singletonResearchers BIGINT,communities BIGINT,largestCommunitySize BIGINT,communitiesAtLeastMinSize BIGINT,meanParticipationCoefficient DOUBLE,medianParticipationCoefficient DOUBLE,researchersWithCrossCommunityEdge BIGINT,years INT,publicationsPerYear DOUBLE,largestComponentFraction DOUBLE,crossCommunityResearcherFraction DOUBLE,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING",
+      "rowCount": 3,
+      "intendedTargets": [
+        "dynamodb",
+        "s3"
+      ],
+      "fileCount": 1,
+      "totalBytes": 12191,
+      "minFileBytes": 12191,
+      "maxFileBytes": 12191
+    },
+    {
+      "name": "temporal/researcher-changes",
+      "schemaVersion": "spark-temporal-researcher-changes-v1",
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-4776d8dafbf3a90b9414ed955a3ed0b7/temporal/researcher-changes",
+      "format": "parquet",
+      "partitionColumns": [],
+      "hashPartitionKey": "researcherId",
+      "writePartitions": 8,
+      "schema": "fromWindow STRING,fromWindowStartYear INT,fromWindowEndYear INT,toWindow STRING,toWindowStartYear INT,toWindowEndYear INT,researcherId STRING,presence STRING,fromPublicationCount BIGINT,toPublicationCount BIGINT,fromDistinctCoauthorCount BIGINT,toDistinctCoauthorCount BIGINT,fromAverageCoauthorsPerPaper DOUBLE,toAverageCoauthorsPerPaper DOUBLE,fromMaximumCoauthorsOnOnePaper BIGINT,toMaximumCoauthorsOnOnePaper BIGINT,fromCoreness INT,toCoreness INT,fromComponentSize BIGINT,toComponentSize BIGINT,fromInLargestComponent BOOLEAN,toInLargestComponent BOOLEAN,fromCommunityId STRING,toCommunityId STRING,fromCommunitySize BIGINT,toCommunitySize BIGINT,fromCrossCommunityDegree BIGINT,toCrossCommunityDegree BIGINT,fromCommunitiesConnected BIGINT,toCommunitiesConnected BIGINT,fromParticipationCoefficient DOUBLE,toParticipationCoefficient DOUBLE,deltaDistinctCoauthorCount BIGINT,deltaAverageCoauthorsPerPaper DOUBLE,deltaMaximumCoauthorsOnOnePaper BIGINT,deltaCoreness INT,deltaCrossCommunityDegree BIGINT,deltaParticipationCoefficient DOUBLE,retainedCoauthors BIGINT,largestComponentTransition STRING,crossCommunityTransition STRING,communityRetention DOUBLE,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING",
+      "rowCount": 67279,
+      "intendedTargets": [
+        "dynamodb",
+        "s3"
+      ],
+      "fileCount": 8,
+      "totalBytes": 7323970,
+      "minFileBytes": 897535,
+      "maxFileBytes": 926847
+    },
+    {
+      "name": "temporal/community-transitions",
+      "schemaVersion": "spark-temporal-community-transitions-v1",
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-4776d8dafbf3a90b9414ed955a3ed0b7/temporal/community-transitions",
+      "format": "parquet",
+      "partitionColumns": [],
+      "hashPartitionKey": null,
+      "writePartitions": 1,
+      "schema": "fromWindow STRING,fromWindowStartYear INT,fromWindowEndYear INT,toWindow STRING,toWindowStartYear INT,toWindowEndYear INT,fromCommunityId STRING,toCommunityId STRING,sharedResearchers BIGINT,fromCommunitySize BIGINT,toCommunitySize BIGINT,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING",
+      "rowCount": 4076,
+      "intendedTargets": [
+        "s3"
+      ],
+      "fileCount": 1,
+      "totalBytes": 431251,
+      "minFileBytes": 431251,
+      "maxFileBytes": 431251
+    },
+    {
+      "name": "temporal/window-comparison",
+      "schemaVersion": "spark-temporal-window-comparison-v1",
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-4776d8dafbf3a90b9414ed955a3ed0b7/temporal/window-comparison",
+      "format": "parquet",
+      "partitionColumns": [],
+      "hashPartitionKey": null,
+      "writePartitions": 1,
+      "schema": "fromWindow STRING,fromWindowStartYear INT,fromWindowEndYear INT,toWindow STRING,toWindowStartYear INT,toWindowEndYear INT,researchersFrom BIGINT,researchersTo BIGINT,researchersInBoth BIGINT,researchersFromOnly BIGINT,researchersToOnly BIGINT,researchersRetainingACoauthor BIGINT,medianCommunityRetention DOUBLE,meanCommunityRetention DOUBLE,largestComponentInToIn BIGINT,largestComponentInToOut BIGINT,largestComponentOutToIn BIGINT,largestComponentOutToOut BIGINT,becameCrossCommunity BIGINT,stoppedCrossCommunity BIGINT,stayedCrossCommunity BIGINT,fromMeanDistinctCoauthorCount DOUBLE,toMeanDistinctCoauthorCount DOUBLE,fromMeanAverageCoauthorsPerPaper DOUBLE,toMeanAverageCoauthorsPerPaper DOUBLE,fromMeanMaximumCoauthorsOnOnePaper DOUBLE,toMeanMaximumCoauthorsOnOnePaper DOUBLE,fromMeanCoreness DOUBLE,toMeanCoreness DOUBLE,fromMeanCrossCommunityDegree DOUBLE,toMeanCrossCommunityDegree DOUBLE,fromMeanParticipationCoefficient DOUBLE,toMeanParticipationCoefficient DOUBLE,inclusionLimitation STRING,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING",
+      "rowCount": 1,
+      "intendedTargets": [
+        "dynamodb",
+        "s3"
+      ],
+      "fileCount": 1,
+      "totalBytes": 16988,
+      "minFileBytes": 16988,
+      "maxFileBytes": 16988
+    },
+    {
+      "name": "summaries/semantic-summaries",
+      "schemaVersion": "spark-summaries-semantic-summaries-v1",
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-4776d8dafbf3a90b9414ed955a3ed0b7/summaries/semantic-summaries",
+      "format": "parquet",
+      "partitionColumns": [
+        "documentType",
+        "window"
+      ],
+      "hashPartitionKey": "subjectId",
+      "writePartitions": 2,
+      "schema": "subjectId STRING,windowStartYear INT,windowEndYear INT,text STRING,textHash STRING,templateVersion STRING,facts STRING,supportingIds ARRAY<STRING>,summaryId STRING,vectorIndex STRING,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING,documentType STRING,window STRING",
+      "rowCount": 37960,
+      "intendedTargets": [
+        "s3vectors",
+        "s3"
+      ],
+      "fileCount": 16,
+      "totalBytes": 46068434,
+      "minFileBytes": 34534,
+      "maxFileBytes": 13515663
+    },
+    {
+      "name": "summary-export-violations",
+      "schemaVersion": "spark-summary-export-violations-v1",
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-4776d8dafbf3a90b9414ed955a3ed0b7/summary-export-violations",
+      "format": "parquet",
+      "partitionColumns": [],
+      "hashPartitionKey": null,
+      "writePartitions": 1,
+      "schema": "check STRING,subjectId STRING,relatedId STRING,detail STRING,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING",
+      "rowCount": 0,
+      "intendedTargets": [
+        "s3"
+      ],
+      "fileCount": 1,
+      "totalBytes": 1469,
+      "minFileBytes": 1469,
+      "maxFileBytes": 1469
+    }
+  ],
+  "loadManifestPath": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-4776d8dafbf3a90b9414ed955a3ed0b7/export/load-manifest.json",
+  "counts": {
+    "windowSummary": [
+      {
+        "window": "2000-2014",
+        "windowStartYear": 2000,
+        "windowEndYear": 2014,
+        "publications": 11486,
+        "researchers": 24268,
+        "meanDistinctCoauthorCount": 5.024806329322565,
+        "medianDistinctCoauthorCount": 3,
+        "meanAverageCoauthorsPerPaper": 3.6369424319565455,
+        "meanMaximumCoauthorsOnOnePaper": 4.023940992253173,
+        "maxMaximumCoauthorsOnOnePaper": 48,
+        "meanCoreness": 4.044503049283007,
+        "maxCoreness": 48,
+        "coauthorEdges": 60971,
+        "sumJointPublicationCount": 70051,
+        "components": 3349,
+        "largestComponentSize": 13386,
+        "singletonResearchers": 808,
+        "communities": 6056,
+        "largestCommunitySize": 140,
+        "communitiesAtLeastMinSize": 3659,
+        "meanParticipationCoefficient": 0.1936789086815818,
+        "medianParticipationCoefficient": 0,
+        "researchersWithCrossCommunityEdge": 9711,
+        "years": 15,
+        "publicationsPerYear": 765.7333333333333,
+        "largestComponentFraction": 0.5515905719465963,
+        "crossCommunityResearcherFraction": 0.4001565848030328,
+        "schemaVersion": "spark-temporal-window-summary-v1"
+      },
+      {
+        "window": "all-years",
+        "windowStartYear": 2000,
+        "windowEndYear": 2026,
+        "publications": 27841,
+        "researchers": 67279,
+        "meanDistinctCoauthorCount": 6.247447197491045,
+        "medianDistinctCoauthorCount": 4,
+        "meanAverageCoauthorsPerPaper": 4.4347836055585175,
+        "meanMaximumCoauthorsOnOnePaper": 4.872709166307466,
+        "maxMaximumCoauthorsOnOnePaper": 56,
+        "meanCoreness": 4.906092540019917,
+        "maxCoreness": 56,
+        "coauthorEdges": 210161,
+        "sumJointPublicationCount": 237886,
+        "components": 7200,
+        "largestComponentSize": 41930,
+        "singletonResearchers": 1342,
+        "communities": 14854,
+        "largestCommunitySize": 190,
+        "communitiesAtLeastMinSize": 9889,
+        "meanParticipationCoefficient": 0.23293981870350833,
+        "medianParticipationCoefficient": 0,
+        "researchersWithCrossCommunityEdge": 31453,
+        "years": 27,
+        "publicationsPerYear": 1031.148148148148,
+        "largestComponentFraction": 0.6232256722008354,
+        "crossCommunityResearcherFraction": 0.46750100328482885,
+        "schemaVersion": "spark-temporal-window-summary-v1"
+      },
+      {
+        "window": "2015-2026",
+        "windowStartYear": 2015,
+        "windowEndYear": 2026,
+        "publications": 16355,
+        "researchers": 47918,
+        "meanDistinctCoauthorCount": 6.346675570766727,
+        "medianDistinctCoauthorCount": 4,
+        "meanAverageCoauthorsPerPaper": 4.791316599985355,
+        "meanMaximumCoauthorsOnOnePaper": 5.169957009891899,
+        "maxMaximumCoauthorsOnOnePaper": 56,
+        "meanCoreness": 5.187048708209859,
+        "maxCoreness": 56,
+        "coauthorEdges": 152060,
+        "sumJointPublicationCount": 167835,
+        "components": 5238,
+        "largestComponentSize": 26521,
+        "singletonResearchers": 561,
+        "communities": 10191,
+        "largestCommunitySize": 144,
+        "communitiesAtLeastMinSize": 7417,
+        "meanParticipationCoefficient": 0.20695328846705532,
+        "medianParticipationCoefficient": 0,
+        "researchersWithCrossCommunityEdge": 20385,
+        "years": 12,
+        "publicationsPerYear": 1362.9166666666667,
+        "largestComponentFraction": 0.553466338327977,
+        "crossCommunityResearcherFraction": 0.425414249342627,
+        "schemaVersion": "spark-temporal-window-summary-v1"
+      }
+    ],
+    "windowComparison": [
+      {
+        "fromWindow": "2000-2014",
+        "fromWindowStartYear": 2000,
+        "fromWindowEndYear": 2014,
+        "toWindow": "2015-2026",
+        "toWindowStartYear": 2015,
+        "toWindowEndYear": 2026,
+        "researchersFrom": 24268,
+        "researchersTo": 47918,
+        "researchersInBoth": 4907,
+        "researchersFromOnly": 19361,
+        "researchersToOnly": 43011,
+        "researchersRetainingACoauthor": 2688,
+        "medianCommunityRetention": 0,
+        "meanCommunityRetention": 0.08227021380036424,
+        "largestComponentInToIn": 2889,
+        "largestComponentInToOut": 657,
+        "largestComponentOutToIn": 805,
+        "largestComponentOutToOut": 556,
+        "becameCrossCommunity": 1103,
+        "stoppedCrossCommunity": 754,
+        "stayedCrossCommunity": 2207,
+        "fromMeanDistinctCoauthorCount": 7.935194619930711,
+        "toMeanDistinctCoauthorCount": 11.501732219278582,
+        "fromMeanAverageCoauthorsPerPaper": 3.494254028898922,
+        "toMeanAverageCoauthorsPerPaper": 4.479855387251855,
+        "fromMeanMaximumCoauthorsOnOnePaper": 4.536172814346852,
+        "toMeanMaximumCoauthorsOnOnePaper": 6.011412268188303,
+        "fromMeanCoreness": 4.600774403912777,
+        "toMeanCoreness": 6.0929284695333195,
+        "fromMeanCrossCommunityDegree": 3.0546158549011615,
+        "toMeanCrossCommunityDegree": 5.0745873242306905,
+        "fromMeanParticipationCoefficient": 0.3251041867079972,
+        "toMeanParticipationCoefficient": 0.3866764236640408,
+        "provenance": "[provenance-v1,DERIVED,2000-2014->2015-2026,2026-10-03,run-4776d8dafbf3a90b9414ed955a3ed0b7,graph-v1,null]",
+        "schemaVersion": "spark-temporal-window-comparison-v1"
+      }
+    ],
+    "researcherChangesByPresence": [
+      {
+        "fromWindow": "2000-2014",
+        "toWindow": "2015-2026",
+        "presence": "BOTH",
+        "count": 4907
+      },
+      {
+        "fromWindow": "2000-2014",
+        "toWindow": "2015-2026",
+        "presence": "FROM_ONLY",
+        "count": 19361
+      },
+      {
+        "fromWindow": "2000-2014",
+        "toWindow": "2015-2026",
+        "presence": "TO_ONLY",
+        "count": 43011
+      }
+    ],
+    "largestComponentTransitions": [
+      {
+        "fromWindow": "2000-2014",
+        "toWindow": "2015-2026",
+        "largestComponentTransition": "ABSENT->IN",
+        "count": 22827
+      },
+      {
+        "fromWindow": "2000-2014",
+        "toWindow": "2015-2026",
+        "largestComponentTransition": "ABSENT->OUT",
+        "count": 20184
+      },
+      {
+        "fromWindow": "2000-2014",
+        "toWindow": "2015-2026",
+        "largestComponentTransition": "IN->ABSENT",
+        "count": 9840
+      },
+      {
+        "fromWindow": "2000-2014",
+        "toWindow": "2015-2026",
+        "largestComponentTransition": "IN->IN",
+        "count": 2889
+      },
+      {
+        "fromWindow": "2000-2014",
+        "toWindow": "2015-2026",
+        "largestComponentTransition": "IN->OUT",
+        "count": 657
+      },
+      {
+        "fromWindow": "2000-2014",
+        "toWindow": "2015-2026",
+        "largestComponentTransition": "OUT->ABSENT",
+        "count": 9521
+      },
+      {
+        "fromWindow": "2000-2014",
+        "toWindow": "2015-2026",
+        "largestComponentTransition": "OUT->IN",
+        "count": 805
+      },
+      {
+        "fromWindow": "2000-2014",
+        "toWindow": "2015-2026",
+        "largestComponentTransition": "OUT->OUT",
+        "count": 556
+      }
+    ],
+    "crossCommunityTransitions": [
+      {
+        "fromWindow": "2000-2014",
+        "toWindow": "2015-2026",
+        "crossCommunityTransition": "ABSENT->CROSS",
+        "count": 17075
+      },
+      {
+        "fromWindow": "2000-2014",
+        "toWindow": "2015-2026",
+        "crossCommunityTransition": "ABSENT->NO_CROSS",
+        "count": 25936
+      },
+      {
+        "fromWindow": "2000-2014",
+        "toWindow": "2015-2026",
+        "crossCommunityTransition": "CROSS->ABSENT",
+        "count": 6750
+      },
+      {
+        "fromWindow": "2000-2014",
+        "toWindow": "2015-2026",
+        "crossCommunityTransition": "CROSS->CROSS",
+        "count": 2207
+      },
+      {
+        "fromWindow": "2000-2014",
+        "toWindow": "2015-2026",
+        "crossCommunityTransition": "CROSS->NO_CROSS",
+        "count": 754
+      },
+      {
+        "fromWindow": "2000-2014",
+        "toWindow": "2015-2026",
+        "crossCommunityTransition": "NO_CROSS->ABSENT",
+        "count": 12611
+      },
+      {
+        "fromWindow": "2000-2014",
+        "toWindow": "2015-2026",
+        "crossCommunityTransition": "NO_CROSS->CROSS",
+        "count": 1103
+      },
+      {
+        "fromWindow": "2000-2014",
+        "toWindow": "2015-2026",
+        "crossCommunityTransition": "NO_CROSS->NO_CROSS",
+        "count": 843
+      }
+    ],
+    "changeDistributions": {
+      "2000-2014->2015-2026": {
+        "deltaDistinctCoauthorCount": {
+          "min": -86,
+          "median": 1,
+          "p90": 16,
+          "p99": 55.9399999999996,
+          "max": 152
+        },
+        "deltaAverageCoauthorsPerPaper": {
+          "min": -23,
+          "median": 0.5833333333333333,
+          "p90": 3.666666666666667,
+          "p99": 14.436428571428387,
+          "max": 54.333333333333336
+        },
+        "deltaMaximumCoauthorsOnOnePaper": {
+          "min": -46,
+          "median": 1,
+          "p90": 6,
+          "p99": 29,
+          "max": 54
+        },
+        "deltaCoreness": {
+          "min": -46,
+          "median": 1,
+          "p90": 6,
+          "p99": 29,
+          "max": 54
+        },
+        "deltaParticipationCoefficient": {
+          "min": -0.908284023668639,
+          "median": 0,
+          "p90": 0.5679012345679013,
+          "p99": 0.8174843929341279,
+          "max": 0.9210069444444444
+        },
+        "retainedCoauthors": {
+          "min": 0,
+          "median": 1,
+          "p90": 3,
+          "p99": 7,
+          "max": 23
+        },
+        "communityRetention": {
+          "min": 0,
+          "median": 0,
+          "p90": 0.2857142857142857,
+          "p99": 1,
+          "max": 1
+        }
+      }
+    },
+    "communityTransitionRows": 4076,
+    "summariesByTypeAndWindow": [
+      {
+        "documentType": "collaboration-community",
+        "window": "2000-2014",
+        "summaries": 3659,
+        "minTextLength": 352,
+        "maxTextLength": 736,
+        "meanTextLength": 523.0620388084176
+      },
+      {
+        "documentType": "collaboration-community",
+        "window": "2015-2026",
+        "summaries": 7417,
+        "minTextLength": 345,
+        "maxTextLength": 779,
+        "meanTextLength": 517.8193339625185
+      },
+      {
+        "documentType": "collaboration-community",
+        "window": "all-years",
+        "summaries": 9889,
+        "minTextLength": 345,
+        "maxTextLength": 736,
+        "meanTextLength": 524.3807260592578
+      },
+      {
+        "documentType": "collaboration-path",
+        "window": "all-years",
+        "summaries": 50,
+        "minTextLength": 126,
+        "maxTextLength": 1016,
+        "meanTextLength": 473.32
+      },
+      {
+        "documentType": "researcher-profile",
+        "window": "all-years",
+        "summaries": 15085,
+        "minTextLength": 729,
+        "maxTextLength": 1726,
+        "meanTextLength": 1165.7571760026517
+      },
+      {
+        "documentType": "topic-summary",
+        "window": "2000-2014",
+        "summaries": 398,
+        "minTextLength": 244,
+        "maxTextLength": 440,
+        "meanTextLength": 347.0929648241206
+      },
+      {
+        "documentType": "topic-summary",
+        "window": "2015-2026",
+        "summaries": 689,
+        "minTextLength": 235,
+        "maxTextLength": 463,
+        "meanTextLength": 355.19738751814225
+      },
+      {
+        "documentType": "topic-summary",
+        "window": "all-years",
+        "summaries": 773,
+        "minTextLength": 235,
+        "maxTextLength": 444,
+        "meanTextLength": 355.48512289780075
+      }
+    ],
+    "sampleSummaries": [
+      {
+        "documentType": "collaboration-community",
+        "window": "2000-2014",
+        "subjectId": "comm-0007a2212521a39023b6692c5453cf77",
+        "summaryId": "chunk-a9e8debdb3bd72383ae3fa653d0791be",
+        "text": "Collaboration community comm-0007a2212521a39023b6692c5453cf77, 2000-2014: 9 researchers with 21 coauthor edges inside (density 0.583) and 6 edges to 3 other communities; its members have 4 publications in the window. Most connected members: Alvin R. Lebeck (8 coauthors); Jun Pang 0001 (8 coauthors); Wan J. Fokkink (6 coauthors); David Tarjan (5 coauthors); John Tran (5 coauthors). Frequent topics: Cloud Computing and Resource Management (1 works); Energy Efficiency in Computing (1 works); Formal Methods in Verification (1 works). Frequent venues: ASPLOS (2 works); ACM SIGOPS Oper. Syst. Rev. (1 works); PODC (1 works)."
+      },
+      {
+        "documentType": "collaboration-path",
+        "window": "all-years",
+        "subjectId": "pair-079459fca8c86951b5eb7c54e8aa8825",
+        "summaryId": "chunk-544268c678733b1f993911507c17bd9d",
+        "text": "In 2000-2026, Oliver Pell and Jin Wang 0001 are in the same connected component, but no coauthor path of at most 6 hops joins them."
+      },
+      {
+        "documentType": "researcher-profile",
+        "window": "all-years",
+        "subjectId": "scr:canon-v1.er-v2:0001bd7be7fed056d102fd915be61382",
+        "summaryId": "chunk-66ba389ce8d34c3b37deec2c07fb565b",
+        "text": "Zhigang Hu 0001 (scr:canon-v1.er-v2:0001bd7be7fed056d102fd915be61382), 2000-2026: 2 publications in the DBLP subset, first in 2021 and last in 2023. Distinct coauthors (C_r) 6; total coauthor occurrences (T_r) 6; average coauthors per paper (A_r) 3.00; most coauthors on one paper (M_r) 3; weighted degree (W_r) 6. Coreness 3; connected component of 12 researchers. Community of 7 researchers; 0 coauthors in other communities; 1 communities connected; participation coefficient 0.000. Most frequent coauthors: Chuyao Ye (1 joint works); Dongbo Liu (1 joint works); Hao Zheng 0009 (1 joint works). Frequent topics: Cloud Computing and Resource Management (1 works); Privacy-Preserving Technologies in Data (1 works). Frequent venues: IPDPS (1 works); J. Supercomput. (1 works). Institutions on record (any year): Central South University; Central South University,School of Computer Science and Engineering,Changsha,China. Recent works: \"PFedSA: Personalized Federated Multi-Task Learning via Similarity Awareness.\" (2023); \"Improving the energy-efficiency of virtual machines by I/O compensation.\" (2021)."
+      },
+      {
+        "documentType": "topic-summary",
+        "window": "2000-2014",
+        "subjectId": "openalex:T10002",
+        "summaryId": "chunk-b25b07567bc3ae5cd014dbd47f949d71",
+        "text": "Topic Advanced Chemical Physics Studies (openalex:T10002; field Physics and Astronomy, subfield Atomic and Molecular Physics, and Optics), 2000-2014: 5 works by 23 researchers in the DBLP subset. Most active researchers: Adam Bertsch (1 works); Alessandro Curioni (1 works); Alistair P. Rendell (1 works). Frequent venues: SC (3 works); Future Gener. Comput. Syst. (1 works); IPDPS (1 works)."
+      }
+    ],
+    "exportTables": 30,
+    "exportRowCountMismatches": 0,
+    "loadManifest": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-4776d8dafbf3a90b9414ed955a3ed0b7/export/load-manifest.json",
+    "storeTableCounts": {
+      "neptune": 14,
+      "dynamodb": 13,
+      "s3vectors": 1,
+      "s3": 26
+    },
+    "integrityViolationsByCheck": []
+  },
+  "stepSeconds": {
+    "read inputs": 8.504015226999998,
+    "temporal comparison": 0.14883406999999998,
+    "write temporal/window-summary": 2.372250404,
+    "write temporal/researcher-changes": 3.644943812,
+    "write temporal/community-transitions": 1.799103069,
+    "write temporal/window-comparison": 1.43663674,
+    "summaries": 0.692266117,
+    "write summaries/semantic-summaries": 18.487621138,
+    "export": 13.887711268000002,
+    "write summary-export-violations": 1.406567708,
+    "report": 2.512892718
+  },
+  "stagesByStep": [
+    {
+      "step": "read inputs",
+      "stages": 60,
+      "tasks": 176,
+      "maxTasksInAStage": 10,
+      "shuffleReadBytes": 3650,
+      "shuffleWriteBytes": 3650,
+      "spillDiskBytes": 0,
+      "stageMs": 4062
+    },
+    {
+      "step": "write temporal/window-summary",
+      "stages": 24,
+      "tasks": 88,
+      "maxTasksInAStage": 10,
+      "shuffleReadBytes": 4497542,
+      "shuffleWriteBytes": 4497293,
+      "spillDiskBytes": 0,
+      "stageMs": 4743
+    },
+    {
+      "step": "write temporal/researcher-changes",
+      "stages": 60,
+      "tasks": 374,
+      "maxTasksInAStage": 10,
+      "shuffleReadBytes": 99485972,
+      "shuffleWriteBytes": 99485972,
+      "spillDiskBytes": 0,
+      "stageMs": 12134
+    },
+    {
+      "step": "write temporal/community-transitions",
+      "stages": 26,
+      "tasks": 133,
+      "maxTasksInAStage": 10,
+      "shuffleReadBytes": 18367462,
+      "shuffleWriteBytes": 18367462,
+      "spillDiskBytes": 0,
+      "stageMs": 2544
+    },
+    {
+      "step": "write temporal/window-comparison",
+      "stages": 6,
+      "tasks": 13,
+      "maxTasksInAStage": 8,
+      "shuffleReadBytes": 7057,
+      "shuffleWriteBytes": 7057,
+      "spillDiskBytes": 0,
+      "stageMs": 969
+    },
+    {
+      "step": "write summaries/semantic-summaries",
+      "stages": 112,
+      "tasks": 694,
+      "maxTasksInAStage": 20,
+      "shuffleReadBytes": 390729019,
+      "shuffleWriteBytes": 372960811,
+      "spillDiskBytes": 22214856,
+      "stageMs": 72290
+    },
+    {
+      "step": "export",
+      "stages": 97,
+      "tasks": 199,
+      "maxTasksInAStage": 10,
+      "shuffleReadBytes": 7829,
+      "shuffleWriteBytes": 7829,
+      "spillDiskBytes": 0,
+      "stageMs": 5737
+    },
+    {
+      "step": "write summary-export-violations",
+      "stages": 9,
+      "tasks": 45,
+      "maxTasksInAStage": 24,
+      "shuffleReadBytes": 50,
+      "shuffleWriteBytes": 50,
+      "spillDiskBytes": 0,
+      "stageMs": 1005
+    },
+    {
+      "step": "report",
+      "stages": 27,
+      "tasks": 71,
+      "maxTasksInAStage": 9,
+      "shuffleReadBytes": 119143,
+      "shuffleWriteBytes": 92161,
+      "spillDiskBytes": 0,
+      "stageMs": 1584
+    }
+  ],
+  "stageCount": 421,
+  "disk": {
+    "freeBeforeBytes": 9223372036854775807,
+    "freeAfterBytes": 9223372036854775807
+  },
+  "wallSeconds": 55.357233076,
+  "finishedAt": "2026-11-17T05:28:42.008747976Z"
+}

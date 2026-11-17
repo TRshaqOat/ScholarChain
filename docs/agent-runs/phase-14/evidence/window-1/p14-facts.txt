@@ -1,0 +1,835 @@
+=== git
+e73d151 phase-12 human: plan signed
+?? operations/
+phase-09
+phase-10
+phase-11
+phase-12
+README.md
+tool-versions.md
+=== scripts/README.md
+# ScholarChain operational scripts
+
+Owner: infra-engineer (authoring only). Spec Phases 12 and 13, D-10, D-13, and the Phase 12 human
+rulings 1 to 21 (`docs/agent-runs/phase-12/prompt.md`). The infra-engineer never runs a script against
+AWS. Who runs each script is set by `docs/agents.md` section 8 and is repeated below.
+
+## Conventions (every script)
+
+- `set -euo pipefail`, bash 3.2 compatible (macOS), no interactive prompts: every choice is a flag.
+- `--help` prints the full contract. `--dry-run` checks flags and local inputs, prints the steps, and
+  makes no AWS, Terraform, git, or sbt call.
+- Step markers: `==> STEP <name>`, `==> OK ...`, `==> FAIL ... (exit n)`, `==> WARN ...`, plus one
+  result line per script (`==> PLAN`, `==> RELEASE`, `==> PACKAGE`, `==> CLUSTER`, `==> PIPELINE`,
+  `==> SMOKE`, `==> ROLLBACK`, `==> STORES`, `==> EXPERIMENT`, `==> ARCHIVE`, `==> CLEANUP-PLAN`).
+- Exit codes: 0 success; 1 a gate or verification failed; 2 usage error or missing tool;
+  3 precondition (dirty tree, wrong account or Region, missing input or record); 4 approval mismatch
+  (plan checksum); 5 waiting for a documented human action; 6 cloud-operation timeout.
+- AWS: `--profile` (default `$AWS_PROFILE`) and `--region` (default and only allowed value
+  `us-east-2`, D-04). Every AWS-calling script prints `==> TARGET account=... region=... profile=...`
+  before acting, and checks that the Terraform state belongs to the same account.
+- Every AWS CLI call has `--cli-connect-timeout 10 --cli-read-timeout 120`, including those in
+  `emr/step.sh` and the step bootstrap that `run-bounded-pipeline.sh` submits. Reads and idempotent
+  writes (same key and bytes, same desired state) use SDK standard retries (5 attempts). Calls that are
+  not idempotent (create a cluster, start a build, run a task, register a task definition revision,
+  force a new ECS deployment) make exactly one attempt. Long waits poll with a deadline (exit 6).
+- No secret value is in source, flags, or output. The API key is read only by `smoke-test.sh`, into a
+  variable, and reaches curl on standard input.
+- Dirty tree: any change outside `operations/` and `experiments/results/` (the record trees the
+  scripts themselves write), untracked files included, stops `plan.sh`, `deploy.sh`, `package.sh`,
+  `run-bounded-pipeline.sh`, `load-stores.sh`, `run-experiment.sh`, and `cleanup.sh` (exit 3).
+- sbt always runs as `SPARK_LOCAL_IP=127.0.0.1 sbt -J-Xmx6g -batch ...`, and a script refuses to start
+  sbt while another sbt process is running.
+- Helpers live in `scripts/lib/common.sh`. `scripts/emr/step.sh` runs on the EMR primary node only.
+
+## Where records go
+
+| Record | Path | Committed? |
+|---|---|---|
+| Plan file, `plan.json`, `plan.txt` | `scratch/plans/<UTC stamp>-<commit 12>/` | no (`scratch/` is gitignored; `*.tfplan` too) |
+| Plan summary (secret-free) | `operations/plans/<UTC stamp>-<commit 12>.md` | evidence |
+| Package record | `operations/releases/package-<commit>.json` | evidence |
+| Release, smoke, rollback records | `operations/releases/{release,smoke,rollback}-*.json` | evidence |
+| Pipeline run records | `operations/pipeline-runs/<stamp>-fraction<p>/` | evidence |
+| Store-load records | `operations/pipeline-runs/store-load-<stamp>/` | evidence |
+| Experiment raw results | `experiments/results/<experimentId>/<stamp>/` (read-only after the run) | evidence |
+| Cleanup plans and records | `scratch/plans/cleanup-*/`, `operations/cleanup/cleanup-*/` | plans no, records evidence |
+
+`operations/**` belongs to the deploy-engineer and `experiments/**` to the experiment-engineer
+(`docs/agents.md`); the scripts write there when those agents or the human run them. No new
+`.gitignore` line is needed: plan files land under the ignored `scratch/`. Logs the scripts write
+under `operations/` and `experiments/results/` end in `.txt`, never `.log`, because `.gitignore`
+ignores `*.log`.
+
+## The flow
+
+```text
+Cloud window 1 (runtime_enabled = false)
+  human:            TF_VAR_alarm_email=... scripts/plan.sh --runtime-enabled false      -> sign the sha256
+  deploy-engineer:  scripts/deploy.sh --plan-file <plan> --approved-plan-sha256 <sha>
+  deploy-engineer:  scripts/package.sh                                                   -> package record
+  deploy-engineer:  scripts/run-bounded-pipeline.sh --fraction 100 --package-record <rec> (then 50, 25)
+Cloud window 2 (runtime_enabled = true; image_tag and the three runs committed in course.tfvars)
+  human:            scripts/plan.sh --runtime-enabled true                               -> sign the sha256
+  deploy-engineer:  scripts/deploy.sh --plan-file <plan> --approved-plan-sha256 <sha> --package-record <rec>
+                    -> exit 5 until the human sets the API key secret value; then the same command + --resume
+  human:            scripts/load-stores.sh --store-run <run> --vectors-run <run>
+  deploy-engineer:  scripts/smoke-test.sh
+  experiment-engineer: scripts/run-experiment.sh --manifest experiments/<m>.json
+  human or deploy-engineer: scripts/archive-evidence.sh --out-dir <dir> [--metrics-from/--metrics-to]
+  human:            scripts/cleanup.sh --stage runtime   (then --plan-file ... --confirm <sha>)
+After the evidence is archived: cleanup.sh --stage infra; after the instructor approves the archive: --stage final
+```
+
+## check.sh
+
+- **Purpose:** every non-cloud gate of a checkout (spec Phase 13 item 1).
+- **Command:** `scripts/check.sh` (only `--help` besides).
+- **Gates:** jq parses `.claude/settings.json` and `.mcp.json`; `.claude/hooks/validate-agent-files.sh`
+  (agent files and hook self-tests); `bash -n` on `.claude/hooks/*.sh`, `scripts/**/*.sh`, and
+  `datasets/scripts/*.sh`; `shellcheck -S error` when installed (otherwise reported SKIPPED);
+  `bash datasets/scripts/validate.sh` (dataset manifest, samples, checksums, and the dataset script
+  self-tests; run through `bash` because those files are not executable); `terraform fmt -check -recursive
+  infra/terraform`; `terraform init -backend=false -lockfile=readonly` and `terraform validate`;
+  `sbt check` (scalafmt check, Test/compile, every test, markTestRun). All gates run; exit 1 if any failed.
+- **Prerequisites:** jq, bash, python3 (the dataset-validation gate), terraform 1.16.6, sbt, a JDK;
+  the script stops with exit 2 when jq, python3, terraform, or sbt is missing.
+- **Environment:** none. Network: the first terraform init downloads the pinned provider; sbt resolves
+  pinned artifacts. No AWS credentials.
+- **Runs it:** anyone, including agents (ruling 5). **Approval points:** none.
+- **Evidence:** its output (step markers per gate). **Rollback:** not applicable.
+
+## package.sh
+
+- **Purpose:** job jars and the services image for one commit (spec Phase 13 item 2, ruling 3).
+- **Command:** `scripts/package.sh [--profile p] [--region us-east-2] [--record-dir operations/releases] [--build-timeout-minutes 30] [--dry-run]`
+- **Steps:** clean tree; `sbt packageJobs`, jar sha256 values, Hadoop `Main-Class` must be
+  `scholarchain.hadoop.Pipeline`; `SCHOLARCHAIN_IMAGE_TAG=<commit> sbt services/Docker/stage` (no
+  Docker), zip of the staged context with the Dockerfile at its root; write-once uploads to
+  `artifacts/jobs/<commit>/` (jars, `emr/step.sh`) and `artifacts/codebuild/source/<commit>.zip`; one
+  CodeBuild build with `IMAGE_TAG=<commit>` unless ECR already holds that tag (tags are immutable);
+  digest and scan-on-push status from ECR.
+- **Environment:** `AWS_PROFILE`. **Runs it:** the human or deploy-engineer after cloud window 1 is
+  applied. **Approval points:** none beyond the applied window 1 plan (ECR and CodeBuild come from it).
+- **Evidence:** `operations/releases/package-<commit>.json` (commit, jar keys and sha256 values, Docker
+  context sha256, repository, tag, digest, build ID, scan status).
+- **Rollback:** none needed: artifacts are additive and keyed by commit.
+
+## plan.sh
+
+- **Purpose:** the Terraform plan of the course environment; never applies (spec Phase 13 item 3).
+- **Command:** `TF_VAR_alarm_email=<address or empty> scripts/plan.sh --runtime-enabled true|false [--var-file infra/terraform/envs/course/course.tfvars] [--profile p] [--region us-east-2] [--out-dir scratch/plans] [--evidence-dir operations/plans] [--dry-run]`
+- **Steps:** terraform 1.16.6; clean tree; account and Region; `terraform init -input=false
+  -lockfile=readonly` (local backend); `terraform plan -input=false -var-file=... -var
+  runtime_enabled=... -var region=... -out=plan.tfplan`, printed in full and saved as `plan.txt`;
+  `terraform show -json` (mode 600); sha256; the plan's account must equal the profile's.
+- **Environment:** `AWS_PROFILE` (the human's `scholarchain-sdk`, which Terraform reads through its
+  `credential_process`), `TF_VAR_alarm_email` (required by the configuration; never printed by the
+  script, though the plan output shows it).
+- **Runs it:** the human architect at the plan gate. **Approval points:** the human reviews the plan
+  and signs its sha256; that checksum is the only approval `deploy.sh` accepts.
+- **Evidence:** in `scratch/plans/<stamp>-<sha12>/`: `plan.tfplan`, `plan.sha256`, `plan.txt`,
+  `plan.json`, `plan-meta.json` (commit, account, Region, runtime_enabled, var file and lock file
+  sha256, counts), `summary.md` (counts; stateful destroys or replacements first; IAM changes;
+  high-cost resources); `summary.md` is copied to `operations/plans/`.
+- **Rollback:** not applicable (nothing changes).
+
+## deploy.sh
+
+- **Purpose:** apply exactly one approved saved plan and verify the deployed revision (ruling 6).
+- **Command:** `scripts/deploy.sh --plan-file scratch/plans/<dir>/plan.tfplan --approved-plan-sha256 <sha> [--package-record operations/releases/package-<sha>.json] [--profile p] [--region us-east-2] [--release-dir operations/releases] [--stable-timeout-minutes 20] [--resume] [--dry-run]`
+- **Gates:** sha256 of the plan file must equal `--approved-plan-sha256` (else exit 4, nothing
+  applied); clean tree; HEAD, account, and Region equal the plan's (`plan-meta.json`); `terraform apply
+  <plan file>` (a saved plan needs no prompt; `-auto-approve` is never used; no other input is
+  accepted). With runtime_enabled: the API key secret must have a version (DescribeSecret; the value
+  is never read), else exit 5; `--resume` (no apply) forces a new deployment of all three services;
+  bounded wait until every service has one COMPLETED deployment and running = desired; every running
+  task's image digest equals the package record's, and its task definition names
+  `<repository>:<package tag>`; query-api and the worker log the same runtime run ID.
+- **Environment:** `AWS_PROFILE`. **Runs it:** deploy-engineer (`/deploy`). **Approval points:** the
+  human's signed plan checksum and approved environment (escalations 4 and 5); the human sets the API
+  key secret value between the window 2 apply and `--resume`.
+- **Evidence:** `operations/releases/release-<stamp>-<sha12>.json` (commit, plan sha256, account,
+  Region, image tag and digest, per-service task definition ARN and running digest, runtime run IDs),
+  `.apply.txt` (full apply output), `.outputs.json` (terraform outputs; no secret values).
+- **Rollback:** a failing ECS deployment is rolled back by the deployment circuit breaker; otherwise
+  `rollback.sh` to the previous release record. Terraform changes are not reverted automatically;
+  a revert is a new plan through `plan.sh`.
+
+## rollback.sh
+
+- **Purpose:** move the three services back to the image of a known-good release record, with no
+  Terraform apply.
+- **Command:** `scripts/rollback.sh --to-release operations/releases/release-<stamp>-<sha12>.json [--reason "<text>"] [--profile p] [--region us-east-2] [--stable-timeout-minutes 20] [--record-dir operations/releases] [--dry-run]`; `scripts/rollback.sh --list` (local records only).
+- **Steps:** the record must be a runtime release of this account and Region; ECR must hold its tag
+  with its digest; for query-api, graph-evidence-api, and the worker together: copy the current task
+  definition, change only the image, register a new revision (one attempt), update the service;
+  bounded stable wait; digest and runtime run ID checks.
+- **Environment:** `AWS_PROFILE`. **Runs it:** deploy-engineer for its own failing in-flight
+  deployment; the incident-responder for a live revision (`/rollback`). **Approval points:** the human
+  approves each AWS mutation at the permission prompt.
+- **Evidence:** `operations/releases/rollback-<stamp>.json` (previous and new task definitions, image,
+  reason, verified digests, run IDs).
+- **Rollback:** roll forward with `rollback.sh` to a newer release record, or plan and deploy.
+  Terraform state still names the newer image until `image_tag` in `course.tfvars` is changed and
+  applied; the next plan shows that drift.
+
+## smoke-test.sh
+
+- **Purpose:** prove the deployed runtime answers a real bounded collaboration query with evidence
+  (spec Phase 13 item 5).
+- **Command:** `scripts/smoke-test.sh [--profile p] [--region us-east-2] [--base-url http://<alb>] [--question "<text>"] [--record-dir operations/releases] [--dry-run]`
+- **Checks:** `/healthz` 200 ok; `/readyz` 200 ready; sync `POST /v1/query` (default: benchmark B07,
+  "Have Jack J. Dongarra and Yves Robert coauthored a paper?") with a fresh Idempotency-Key returns 200,
+  a `qry-` ID, and a claim with an evidence ID; `GET /v1/evidence/<id>` returns that evidence; the same
+  POST and key replay the same queryId and answerHash; a POST without `X-Api-Key` is 401 UNAUTHORIZED.
+  GETs are retried; POSTs are not.
+- **Environment:** `AWS_PROFILE`. **Runs it:** deploy-engineer after `deploy.sh`; the
+  incident-responder after a rollback. **Approval points:** none (read-only apart from one query,
+  bounded by the 8 Haiku calls per minute cap).
+- **Evidence:** `operations/releases/smoke-<stamp>.json` and the response bodies in
+  `operations/releases/smoke-<stamp>/` (no key; answers and evidence only).
+- **Rollback:** none; a failure sends the deploy-engineer to the rollback gate.
+
+## run-bounded-pipeline.sh
+
+- **Purpose:** one bounded Hadoop and Spark run on an ephemeral EMR cluster (spec Phase 13 item 6, D-13
+  size scaling).
+- **Command:** `scripts/run-bounded-pipeline.sh --fraction 25|50|100 --package-record operations/releases/package-<sha>.json [--reducers 2] [--shuffle-partitions 16] [--hadoop-timeout-minutes 90] [--spark-timeout-minutes 150] [--record-dir operations/pipeline-runs] [--profile p] [--region us-east-2] [--dry-run]`
+- **Steps:** clean tree, HEAD = the package commit, local jars and `emr/step.sh` hash to the record;
+  ruling 2 bounds re-checked from the `emr` output (emr-spark-8.0.0, 1 primary, 1 to 2 core, Graviton,
+  on-demand); write-once uploads of the five inputs to
+  `raw/<dataset>/snapshot=<d>/run=<input run>/` (input run = hash of the fraction and the file hashes)
+  and of the jars; one `create-cluster` (no retry, `--auto-terminate`, tag
+  `for-use-with-amazon-emr-managed-policies=true` that the v2 EMR service policy requires) with three
+  steps through `command-runner.jar` and `emr/step.sh`:
+  1. `classpath-probe` (CONTINUE): Java, Hadoop, Spark versions and the Typesafe Config, AWS SDK v2,
+     and Scala entries on the cluster classpath (the Phase 11 check);
+  2. `hadoop-pipeline` (TERMINATE_CLUSTER): `hadoop jar` with Main-Class `scholarchain.hadoop.Pipeline`,
+     which runs J01, J02, J03+J04, J05 p0..p2, J06, J10, J07+J08, J09 in the documented order with
+     `--out s3a://<bucket>/curated/hadoop --code-version <commit> --dblp ... --dblp-dtd ...
+     --dblp-snapshot 2026-10-03 --openalex ... --crossref ... --orcid ... (snapshot 2026-11-03)
+     --reducers <n>`, killed at its timeout;
+  3. `spark-pipeline` (TERMINATE_CLUSTER): finds the one new Hadoop run directory, then
+     `spark-submit --master yarn --class scholarchain.spark.PipelineJob` (jobs 1 to 11) with
+     `--input <that run> --out s3a://<bucket>/curated/spark --checkpoint-dir
+     hdfs:///scholarchain/spark/checkpoints --code-version <commit> --shuffle-partitions <n>`, killed at
+     its timeout.
+  Then a bounded wait for TERMINATED; collection of step timings, normalized instance hours, the new
+  run directories and their `_manifest.json`, and the step logs (bounded wait for EMR to push them);
+  then a read-only `ec2 describe-security-groups` of both EMR-managed groups. Terraform ignores their
+  rule drift, so this is the only check that EMR added no `0.0.0.0/0` or `::/0` ingress: any such rule
+  is printed as `==> WARN EMR GROUP OPEN TO THE INTERNET ...` and recorded; the script changes no rule.
+- **Inputs:** fraction 100 uses the full local subset (`scratch/datasets/dblp/snapshot=2026-10-03/full/works.xml`,
+  `raw/dblp.dtd`, `scratch/datasets/{openalex,crossref}/full/works.jsonl`,
+  `scratch/datasets/orcid/full/records.jsonl.gz`). Fractions 25 and 50 read
+  `scratch/datasets/fraction=<p>/{dblp/works.xml,openalex/works.jsonl,crossref/works.jsonl,orcid/records.jsonl.gz}`,
+  written by `datasets/scripts/make_fraction.sh` (rule fraction-v1, nested 25 within 50 within 100;
+  `datasets/schemas/fractions.md`); a missing file stops the script with exit 3. Every resolved input
+  path is printed with its size and sha256 (step `inputs`, also in `--dry-run`).
+- **Environment:** `AWS_PROFILE`. EMR jobs use the core configuration defaults (environment `local`
+  semantics for thresholds and windows); paths are arguments.
+- **Runs it:** deploy-engineer (`/run-pipeline`) or the human. **Approval points:** the applied window 1
+  plan and the bounds in it; anything beyond them is a human-gated scale change.
+- **Evidence:** `operations/pipeline-runs/<stamp>-fraction<p>/`: `run.json` (commit and code version,
+  fraction, snapshots, input keys with sha256 and bytes, input run, configuration, cluster ID, final
+  state and reason, step names, states and timestamps, normalized instance hours, output run
+  directories, `emrSecurityGroups` with any open ingress), `steps.json` as submitted, `cluster.json`,
+  `steps-result.json`, `security-groups.json`, `input-hashes.txt`, `manifests/`, `logs/`.
+- **Rollback:** nothing to roll back: outputs are new write-once run directories and the cluster
+  terminates itself. On timeout (exit 6) the cluster ID is printed; terminating a stuck cluster is a
+  human action.
+
+## load-stores.sh
+
+- **Purpose:** the cloud window 2 store loads, in order: S3, Neptune, DynamoDB, S3 Vectors.
+- **Command:** `scripts/load-stores.sh --store-run run-<32 hex> --vectors-run run-<32 hex> [--root scratch/stores/s3] [--vectors-root <root>] [--window-summary-run run-6fbad498beb0d8f570df67665fb97544] [--window-summary-root scratch/runtime/wo8/s3] [--dynamo-concurrency 8] [--neptune-timeout-minutes 60] [--record-dir operations/pipeline-runs] [--profile p] [--region us-east-2] [--dry-run]`
+- **Steps:** clean tree; account and Region; runtime outputs present; the laptop loaders get exactly the
+  tasks' `SCHOLARCHAIN_*` variables from the `runtime_environment` output.
+  1. `LoadS3Cli --manifest <m> --root <root> --live --profile <p> --region <r>` for the store-conversion
+     run, the embedding run (vectors backup and rendered text), and the window-summary load run.
+  2. Neptune through the in-VPC path: `aws ecs run-task` of `scholarchain-course-neptune-loader` with
+     the command `-main scholarchain.storage.cli.LoadNeptuneCli --live --stage-from-bucket --dir
+     /tmp/stores/s3/graph/neptune/snapshot=2026-10-03/run=<store-run> --out /tmp/stores` (task role, no
+     profile; the loader role ARN comes from `SCHOLARCHAIN_NEPTUNE_LOADER_ROLE_ARN`), the load ID from the
+     task log, then a `--live --status <loadId>` task every 2 minutes until `LOAD_COMPLETED` (bounded).
+  3. `LoadDynamoCli --dir <root>/curated/dynamodb/snapshot=2026-10-03/run=<store-run> --live --profile <p> --region <r> --concurrency <n>` (about 876k conditional puts).
+  4. `LoadVectorsCli --input <vectors-root>/vectors/backup/snapshot=2026-10-03/run=<vectors-run> --live --profile <p> --region <r>`.
+- **Environment:** `AWS_PROFILE` (LiveAws reads the named profile). **Runs it:** the human (the storage
+  live loaders are human-run, storage rulings 1 and 26). **Approval points:** the applied window 2 plan.
+- **Evidence:** `operations/pipeline-runs/store-load-<stamp>/`: one log per loader as `<step>.txt`
+  (each prints its counts), the Neptune task logs as `neptune-<start|status>-<task>.txt`, `run.json` (runs, Neptune load ID, per-step status and seconds).
+- **Rollback:** none automatic: every load is write-once and a rerun skips loaded data. Removing loaded
+  data is a human-gated destructive action; ending window 2 destroys the stores.
+
+## run-experiment.sh
+
+- **Purpose:** run one approved, committed experiment manifest (spec Phase 13 item 7). No manifest is
+  written in Phase 12.
+- **Command:** `scripts/run-experiment.sh --manifest experiments/<path>.json [--results-root experiments/results] [--profile p] [--region us-east-2] [--dry-run]`
+- **Manifest (`experiment-manifest-v1`, JSON):** `experimentId`, `description`, `command` (first element
+  a tracked executable under `experiments/` or `load-tests/`), `limits` (`maxMinutes` 1 to 240 is
+  enforced; every limit is recorded), `metrics` (CloudWatch namespace, metric, dimensions).
+- **Gates:** the manifest is tracked and identical to HEAD; clean tree; the command is tracked; account
+  and Region printed; the command is stopped at `maxMinutes` (TERM, then KILL after 30 s).
+- **Environment:** `AWS_PROFILE`; the command receives `SCHOLARCHAIN_EXPERIMENT_ID`,
+  `SCHOLARCHAIN_EXPERIMENT_DIR`, `AWS_PROFILE`, `AWS_REGION`.
+- **Runs it:** experiment-engineer (`/experiment`). **Approval points:** the human approves and commits
+  the manifest before the run.
+- **Evidence:** `experiments/results/<experimentId>/<stamp>/`: `raw/`, `stdout.txt`, `stderr.txt`,
+  `run-record.json` (commit, manifest and its sha256, limits, start and end, exit code, account,
+  Region, metric locations), made read-only.
+- **Rollback:** none; the experiment's command must stay inside the approved bounds.
+
+## archive-evidence.sh
+
+- **Purpose:** one versioned evidence directory (spec Phase 13 item 8).
+- **Command:** `scripts/archive-evidence.sh --out-dir <new dir> [--plans-dir scratch/plans] [--metrics-from <ISO UTC> --metrics-to <ISO UTC>] [--s3-prefix reports/evidence/<name>/] [--profile p] [--region us-east-2] [--dry-run]`
+- **Gathers:** sbt JUnit reports, plan checksums and summaries (never the plan file or JSON), the
+  `operations/` records (image digests, releases, smoke, rollbacks, pipeline and store-load runs with
+  their manifests), `experiments/results/`, optional CloudWatch GetMetricData exports (ECS CPU and
+  memory per service, ALB requests, target 5xx and p90 latency, queue and DLQ depth, Neptune CPU),
+  `index.json`, and `SHA256SUMS`. The directory must not exist; an S3 prefix must be empty.
+- **Environment:** `AWS_PROFILE` only for metrics or S3. **Runs it:** the human or deploy-engineer.
+  **Approval points:** none (it writes only the new directory and the empty prefix).
+- **Evidence:** the archive itself. **Rollback:** delete the new directory.
+
+## cleanup.sh (human only)
+
+- **Purpose:** the documented cleanup path (spec "Cleanup requirements", ruling 6). No agent runs it;
+  `guard-dangerous.sh` blocks direct agent invocations (not every indirect form; see the work order 3
+  report).
+- **Command, first invocation:** `TF_VAR_alarm_email=... scripts/cleanup.sh --stage runtime|infra|final [--evidence-archive <location>] [--var-file ...] [--out-dir scratch/plans] [--record-dir operations/cleanup] [--profile p] [--region us-east-2] [--dry-run]`.
+  It writes the inventory, a plan printed in full, every resource it destroys, every resource it keeps
+  with the reason, and the plan sha256. Nothing changes.
+- **Command, second invocation:** `scripts/cleanup.sh --plan-file scratch/plans/cleanup-<stamp>-<stage>/plan.tfplan --confirm <sha256>`.
+  It checks the checksum, HEAD, and account, applies the saved plan, takes the second inventory, and
+  writes `record.json` listing every retained resource and why.
+- **Stages and what is kept:**
+
+| Stage | Destroys | Keeps |
+|---|---|---|
+| `runtime` (end of window 2) | Neptune, DynamoDB tables, S3 Vectors bucket and indexes, SQS, the API key secret (7-day recovery window), ECS services and task definitions, ALB, runtime security groups and IAM roles, alarms, dashboard | network, data bucket, ECR, EMR roles and groups, CodeBuild, log groups, Terraform state |
+| `infra` (evidence archived) | network, EMR roles and groups, CodeBuild and its role, any runtime module left | data bucket (grading evidence), ECR repository and images, every log group, Terraform state |
+| `final` (needs `--evidence-archive`, the instructor-approved location) | everything in state | Terraform state; the data bucket and ECR repository survive unless already empty (`force_destroy` and `force_delete` are false; the script never empties them) |
+
+  Ephemeral EMR clusters are listed in the inventory, never terminated by the script. KMS: no
+  customer-managed key exists (ruling 1).
+- **Environment:** `AWS_PROFILE`, `TF_VAR_alarm_email`. **Approval points:** the `--confirm` checksum
+  is the documented human confirmation. **Evidence:** `operations/cleanup/cleanup-<stamp>-<stage>/`
+  (inventories before and after, `apply.txt`, retained list, record).
+- **Rollback:** a destroyed runtime is recreated by `plan.sh --runtime-enabled true` and `deploy.sh`,
+  then `load-stores.sh` from the write-once S3 files.
+
+## Dependencies (Phase 12 work orders 3 to 8, all complete)
+
+- **dataset-engineer (work order 7):** `datasets/scripts/make_fraction.sh` writes the 25 and 50 percent
+  subsets under `scratch/datasets/fraction=<p>/` (rule fraction-v1, `datasets/schemas/fractions.md`);
+  `run-bounded-pipeline.sh` reads that layout.
+- **storage-engineer (work order 5):** `LoadNeptuneCli --live` without `--profile`, with
+  `--stage-from-bucket`; `load-stores.sh` step 2 uses that form.
+- **service-engineer and domain-engineer (work orders 6 and 4):** `--profile` is optional in the
+  services launcher, and the core loader honours `SCHOLARCHAIN_LLM_REQUESTS_PER_MINUTE`; the ECS task
+  definitions use both.
+=== head deploy.sh
+#!/usr/bin/env bash
+# Applies one approved saved plan and verifies the deployed revision (spec Phase 13 item 4,
+# ruling 6). The approval is the plan's sha256, given explicitly; nothing else is applied.
+set -euo pipefail
+# shellcheck source=lib/common.sh
+. "$(dirname "$0")/lib/common.sh"
+
+usage() {
+  cat <<'EOF'
+Usage: scripts/deploy.sh --plan-file <dir>/plan.tfplan --approved-plan-sha256 <64 hex>
+                         [--package-record <operations/releases/package-<sha>.json>]
+                         [--profile <name>] [--region us-east-2] [--release-dir <dir>]
+                         [--stable-timeout-minutes 20] [--resume] [--dry-run]
+
+Gates, in order:
+  1. clean tree (outside operations/ and experiments/results/), HEAD = the plan's commit
+  2. sha256(plan file) = --approved-plan-sha256, else exit 4 and nothing is applied
+  3. the profile's account and Region = the plan's (plan-meta.json beside the plan file)
+  4. terraform apply <plan file> (a saved plan: no prompt, no -auto-approve, no other input);
+     skipped with --resume
+  5. runtime_enabled only:
+     - the API key secret must have a value (DescribeSecret, the value is never read); if not, exit 5:
+       the human sets it (infra/terraform/README.md), then the same command runs again with --resume
+     - --resume forces a new deployment of query-api, graph-evidence-api and worker (together)
+     - waits until every service is stable (one COMPLETED deployment, running = desired), bounded
+     - every running task's image digest = the package record's digest, and its task definition image
+       = <repository>:<package record tag>
+     - query-api and the worker print the same runtime run ID (SERVICES.md section 5)
+  6. writes the release record <release-dir>/release-<UTC stamp>-<commit 12>.json and the apply log
+     (.apply.txt, not .log, so that Git does not ignore it)
+
+Flags:
+  --plan-file              required; written by scripts/plan.sh
+  --approved-plan-sha256   required; the checksum the human signed at the plan gate
+  --package-record         required when the plan has runtime_enabled = true (scripts/package.sh)
+  --release-dir            default operations/releases
+  --stable-timeout-minutes default 20
+  --resume                 no apply: the plan was applied already (for example before the secret
+                           value existed); still requires the same plan file and checksum
+  --dry-run                validate flags and local files, print the steps, no AWS/Terraform/git call
+
+Environment: AWS_PROFILE (or --profile).
+Run by: deploy-engineer through the gated command, after the human approved the plan checksum
+(docs/agents.md section 8 and escalation 4/5).
+Rollback: a failed ECS deployment is rolled back by the ECS circuit breaker; otherwise
+scripts/rollback.sh --to-release <earlier release record>. Terraform changes are not rolled back
+automatically.
+Exit: 0 deployed and verified; 1 verification failed; 3 precondition; 4 checksum mismatch;
+5 waiting for the secret value; 6 timeout.
+EOF
+=== head package.sh
+#!/usr/bin/env bash
+# Builds the job jars and the services image for one commit (spec Phase 13 item 2, ruling 3).
+# No Docker on the laptop: sbt stages the Docker context, CodeBuild builds and pushes it.
+set -euo pipefail
+# shellcheck source=lib/common.sh
+. "$(dirname "$0")/lib/common.sh"
+
+usage() {
+  cat <<'EOF'
+Usage: scripts/package.sh [--profile <name>] [--region us-east-2] [--record-dir <dir>]
+                          [--build-timeout-minutes 30] [--dry-run]
+
+Steps:
+  1. clean tree; commit = git rev-parse HEAD (the image tag and the code version)
+  2. sbt packageJobs; sha256 of both assembly jars; the Hadoop jar's Main-Class must be
+     scholarchain.hadoop.Pipeline (the EMR step relies on it)
+  3. SCHOLARCHAIN_IMAGE_TAG=<commit> sbt services/Docker/stage (no Docker), then zip the staged
+     context (Dockerfile at the zip root) and take its sha256
+  4. upload, write-once by sha256: the jars to s3://<bucket>/artifacts/jobs/<commit>/ and the
+     context to s3://<bucket>/artifacts/codebuild/source/<commit>.zip
+  5. if ECR has no image tagged <commit>: start one CodeBuild build of that zip with IMAGE_TAG=<commit>
+     (no retry), wait for it (bounded); ECR tags are immutable, so an existing tag is reused
+  6. read the image digest and the scan-on-push status from ECR
+  7. write <record-dir>/package-<commit>.json: commit, jar sha256 values and S3 keys, context
+     sha256, image repository, tag, digest, build ID, scan status
+
+Flags:
+  --record-dir             default operations/releases
+  --build-timeout-minutes  default 30 (the CodeBuild project's own timeout is also 30)
+  --dry-run                validate flags, print the steps, no AWS/Terraform/git/sbt call
+
+Environment: AWS_PROFILE (or --profile). sbt runs with SPARK_LOCAL_IP=127.0.0.1 and -J-Xmx6g.
+Run by: the human or deploy-engineer, before deploy.sh (cloud window 1 must be applied: ECR,
+CodeBuild, and the bucket come from Terraform). Rollback: none needed; artifacts are additive and
+keyed by commit.
+Exit: 0 recorded; 1 build or verification failed; 3 precondition; 6 timeout.
+EOF
+}
+
+RECORD_DIR="$SC_ROOT/operations/releases"
+BUILD_MIN=30
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --profile) PROFILE="$(flag_val "$1" "${2-}")"; shift 2 ;;
+    --region) REGION="$(flag_val "$1" "${2-}")"; shift 2 ;;
+    --record-dir) RECORD_DIR="$(flag_val "$1" "${2-}")"; shift 2 ;;
+    --build-timeout-minutes) BUILD_MIN="$(flag_val "$1" "${2-}")"; shift 2 ;;
+    --dry-run) DRY_RUN=1; shift ;;
+    --help | -h) usage; exit 0 ;;
+    *) usage >&2; die "unknown argument: $1" 2 ;;
+=== head run-bounded-pipeline.sh
+#!/usr/bin/env bash
+# One bounded Hadoop + Spark pipeline run on an ephemeral EMR cluster (spec Phase 13 item 6,
+# ruling 2, D-13). The cluster is never a Terraform resource; it terminates itself after its steps.
+set -euo pipefail
+# shellcheck source=lib/common.sh
+. "$(dirname "$0")/lib/common.sh"
+
+usage() {
+  cat <<'EOF'
+Usage: scripts/run-bounded-pipeline.sh --fraction 25|50|100 --package-record <package-<sha>.json>
+           [--profile <name>] [--region us-east-2] [--reducers 2] [--shuffle-partitions 16]
+           [--hadoop-timeout-minutes 90] [--spark-timeout-minutes 150] [--record-dir <dir>] [--dry-run]
+
+Inputs (DBLP snapshot 2026-10-03; OpenAlex, Crossref, ORCID snapshot 2026-11-03):
+  --fraction 100  scratch/datasets/dblp/snapshot=2026-10-03/full/works.xml,
+                  scratch/datasets/{openalex,crossref}/full/works.jsonl,
+                  scratch/datasets/orcid/full/records.jsonl.gz
+  --fraction 25|50 scratch/datasets/fraction=<p>/{dblp/works.xml, openalex/works.jsonl,
+                  crossref/works.jsonl, orcid/records.jsonl.gz}, written by
+                  datasets/scripts/make_fraction.sh (rule fraction-v1; exit 3 if one is missing)
+  DTD             scratch/datasets/dblp/snapshot=2026-10-03/raw/dblp.dtd
+  Every resolved input path is printed with its size and sha256 (also in --dry-run).
+
+Steps:
+  1. clean tree; HEAD = the package record's commit; local jars and scripts/emr/step.sh hash to it
+  2. account and Region; terraform outputs (bucket, the emr object); ruling 2 bounds re-checked:
+     release emr-spark-8.0.0, 1 primary, 1 to 2 core, Graviton type, on-demand
+  3. write-once uploads (skipped when present with the same sha256): inputs to
+     raw/<dataset>/snapshot=<d>/run=<input run>/ (input run = hash of the fraction and file hashes),
+     jars and step.sh to artifacts/jobs/<commit>/
+  4. one create-cluster call (no retry), auto-terminate, three steps:
+     classpath-probe (CONTINUE), hadoop-pipeline J01..J10 (TERMINATE_CLUSTER),
+     spark-pipeline jobs 1..11 (TERMINATE_CLUSTER); each job step has a timeout on the node
+  5. wait for TERMINATED (bounded); collect step timings, instance hours, the new Hadoop and Spark
+     run directories and their _manifest.json, and the step logs (classpath evidence)
+  6. read-only describe-security-groups of both EMR-managed groups: any 0.0.0.0/0 or ::/0 ingress
+     (which Terraform cannot see, it ignores their rule drift) is warned about and recorded
+  7. write <record-dir>/<stamp>-fraction<p>/run.json plus the submitted steps, cluster description,
+     security groups, manifests, and logs
+
+Flags: --record-dir default operations/pipeline-runs; --dry-run validates flags and local inputs,
+prints the steps, makes no AWS/Terraform/git call.
+Environment: AWS_PROFILE (or --profile).
+Run by: deploy-engineer (/run-pipeline) or the human, after cloud window 1 is applied and
+scripts/package.sh recorded the jars. Rollback: nothing to roll back; outputs are new write-once
+run directories, and the cluster terminates itself (a hung step is killed by its timeout).
+Exit: 0 all steps completed and manifests found; 1 a step or check failed (cluster ID recorded);
+3 precondition; 6 timeout (the cluster ID is printed; the human may terminate it).
+EOF
+}
+=== commands
+---
+description: Deploy an approved ScholarChain commit and Terraform plan to an approved environment through the deploy-engineer
+argument-hint: <environment> <approved-commit-sha> <approved-plan-sha256> <approval-reference>
+---
+
+Deploy ScholarChain with these arguments: $ARGUMENTS
+
+Responsible agent: **deploy-engineer**. The orchestrator delegates. It does not run deployment steps inline.
+
+## Gates (all must hold before delegation; otherwise stop and report BLOCKED-ON human architect)
+
+1. All four arguments are present: environment, approved commit SHA, approved Terraform plan SHA-256 checksum, and the human approval reference (the human-gate record or written approval).
+2. The human architect has verified the plan checksum, the target account and Region, the cost bounds, and the absence of unexplained destroy or stateful replacement (`docs/agents.md`, Escalation 4 and 5).
+3. A **code-reviewer** `APPROVE` exists for the commit being deployed.
+4. The working tree is clean and `HEAD` equals the approved commit SHA.
+
+## Procedure
+
+1. Use the **deploy-engineer** agent with a work order containing the arguments above, the approval reference, and the rollback policy: in-flight rollback of this deployment only, through `scripts/rollback.sh`.
+2. The deploy-engineer verifies the preconditions, runs `scripts/deploy.sh` and `scripts/smoke-test.sh` exactly as documented (each confirmed through the permission prompt), verifies image digests and task revisions, and writes a new record under `operations/deployments/`.
+3. If any gate fails, the deploy-engineer collects evidence, rolls back only its own in-flight deployment, and returns. The orchestrator then routes diagnosis through `/incident` to the **incident-responder**.
+4. Script or Terraform defects are routed to the **infra-engineer**. Nobody edits scripts during a deployment.
+
+Never run `terraform apply` or `terraform destroy` directly, and never mutate cloud resources outside the approved scripts.
+
+Report: environment, commit SHA, plan checksum, image digests, task revisions, smoke-test results, alarms, rollback action (if any), and the record path.
+---
+---
+description: Run the bounded ScholarChain Hadoop and Spark data pipeline through the approved script via the deploy-engineer
+argument-hint: <environment> <approved-commit-sha> <pipeline-manifest-path> <approval-reference>
+---
+
+Run the bounded ScholarChain pipeline with these arguments: $ARGUMENTS
+
+Responsible agent: **deploy-engineer**. The orchestrator delegates. It does not submit EMR steps inline.
+
+## Gates (all must hold before delegation; otherwise stop and report BLOCKED-ON human architect)
+
+1. The environment is deployed from an approved plan, and the commit SHA matches an accepted phase with a clean working tree.
+2. The pipeline manifest is committed and names the dataset snapshot, subset rule, run ID policy, EMR capacity bounds, and output prefixes. A full-corpus run or capacity beyond the approved bounds needs explicit human approval (`docs/agents.md`, Escalation 6).
+3. Job jars come from `sbt packageJobs` at the approved commit, with recorded checksums.
+4. `scripts/run-bounded-pipeline.sh` exists and was authored by the **infra-engineer**. If it is missing, stop with BLOCKED-ON infra-engineer.
+
+## Procedure
+
+1. Use the **deploy-engineer** agent with a work order containing the arguments and the approval reference.
+2. It verifies the preconditions, runs `scripts/run-bounded-pipeline.sh` (confirmed through the permission prompt), and waits with bounded timeouts.
+3. It records run IDs, dataset snapshot, Hadoop counters, Spark output counts, output prefixes, duration, and estimated cost in a new record under `operations/pipeline-runs/`.
+4. Job failures are reported with evidence and routed by the orchestrator: parser and MapReduce defects to the **hadoop-engineer**, identity-resolution defects to the **entity-resolution-engineer**, graph and analytics defects to the **spark-engineer**, and load defects to the **storage-engineer**. Nobody terminates or resizes EMR clusters outside the script.
+
+Report: run IDs, snapshot, counters, rejects, output locations, duration, and the record path.
+=== agent
+---
+name: deploy-engineer
+description: Executes already-committed, approved ScholarChain operational scripts against a human-approved environment. It runs scripts/deploy.sh with an approved Terraform plan checksum, scripts/smoke-test.sh, scripts/run-bounded-pipeline.sh for bounded Hadoop and Spark pipeline runs on EMR, and scripts/rollback.sh only when its own in-flight deployment fails its smoke gate. Use for /deploy and /run-pipeline. Verifies clean tree, commit SHA, account, Region, image digests, task revisions, and service stabilization, and writes deployment execution reports, pipeline run records, and release records under operations/. Never authors or edits Terraform, scripts, or application source, and never performs destructive data repair.
+tools: Read, Grep, Glob, Write, Bash, mcp__aws-api__call_aws
+---
+
+# deploy-engineer
+
+You operate approved machinery and report reality. A deployment is done when the approved revision is serving, healthy, and passing smoke tests with evidence, not when a script exits 0. The orchestrator invokes you. You never invoke other agents.
+
+## Owned artifacts
+
+`operations/**` records only: `operations/deployments/`, `operations/pipeline-runs/`, and `operations/releases/`. You have Write but no Edit. Records are append-only: create a new file and never overwrite, edit, or delete an existing record.
+
+## Laws
+
+1. **Approved inputs only.** The work order must name the environment, the accepted commit SHA, the approved Terraform plan checksum (for deployments) or the approved pipeline manifest and bounds (for pipeline runs), and the human approval reference. If any is missing, return `BLOCKED-ON human architect`.
+2. **Verify, don't trust.** Before executing, confirm all of the following: `git status --porcelain` is empty, `HEAD` equals the approved SHA, the plan file's checksum equals the approved checksum, `aws sts get-caller-identity` and the configured Region match the approved account and Region, and the script files are unchanged at that commit.
+3. **Execute only approved scripts, exactly as documented.** That means `scripts/deploy.sh`, `scripts/smoke-test.sh`, `scripts/run-bounded-pipeline.sh`, and in-flight `scripts/rollback.sh`. Never run `terraform` mutations, raw `aws` mutations, `cleanup.sh`, or ad hoc commands in their place. A script defect goes to the infra-engineer. Never patch it.
+4. **Bounded waits.** Watch stabilization with bounded timeouts. Verify deployed image digests and task revisions against the commit.
+5. **Failure path.** On a failed gate, collect evidence first: stopped-task reasons, logs, alarms. If the work order's rollback policy covers this deployment, run `scripts/rollback.sh` for it and verify recovery with `scripts/smoke-test.sh`. Then report and route diagnosis to the incident-responder. Never perform destructive data repair.
+6. **No secrets in records.** Record IDs, ARNs, digests, checksums, and outputs. Never record credentials, tokens, or secret values.
+
+## Procedure
+
+1. Read the work order, `CLAUDE.md`, `docs/agents.md`, and the latest records in `operations/`.
+2. Verify the preconditions in law 2.
+3. Execute the approved script. The human confirms each execution through the permission prompt.
+4. Verify outcomes: health, readiness, digests, revisions, smoke results, alarms, or pipeline run IDs, counters, and output prefixes.
+5. Write a new record under `operations/`, then report.
+
+## Refusal boundary
+
+- Terraform, scripts, CI workflows → `infra-engineer`
+- Application source → the module owner in `docs/agents.md`
+- Rollback of an already-live revision, and incident diagnosis → `incident-responder`
+- Experiments → `experiment-engineer`
+- `terraform apply` outside the approved path, and `cleanup.sh` → human architect
+- `.claude/**` → `factory-engineer`
+
+Decline, name the owner, and return `BLOCKED-ON`.
+
+## Report contract
+
+```text
+STATUS: COMPLETE | BLOCKED-ON | FAILED
+OWNER: deploy-engineer
+WORK ORDER:
+FILES CREATED: (new records under operations/)
+FILES MODIFIED: (always none)
+APPROVAL REFERENCE:
+PRECONDITIONS: (clean tree, SHA, plan checksum, account, Region, each with observed evidence)
+SCRIPTS EXECUTED: (exact command lines and exit codes)
+DEPLOYED STATE: (image digests, task revisions, service health, readiness, alarms)
+PIPELINE RUN: (run IDs, dataset snapshot, counters, output prefixes, duration) when applicable
+SMOKE RESULTS:
+ROLLBACK ACTION: (none, or exact action and recovery evidence)
+COMMANDS RUN:
+TEST RESULTS:
+VALIDATION RESULTS:
+ASSUMPTIONS:
+RISKS:
+MANUAL ACTION REQUIRED:
+BLOCKED-ON OWNER:
+BLOCKED-ON EVIDENCE:
+NEXT GATE: human acceptance of the deployment or run record
+```
+=== hooks
+format-scala.sh
+guard-dangerous.sh
+guard-paths.sh
+validate-agent-files.sh
+verify-tests-ran.sh
+.claude/hooks/guard-dangerous.sh:10:#   mcp__aws-api__*:   the serialized tool_input (for example the call_aws cli_command), with the
+.claude/hooks/guard-dangerous.sh:12:#   mcp__terraform__*: blocks the command-execution tools (Execute*); other tools pass.
+.claude/hooks/guard-dangerous.sh:19:#   - Terraform apply, destroy, -auto-approve, destroy plans, TF_CLI_ARGS, and state mutation, in
+.claude/hooks/guard-dangerous.sh:23:#   - Destructive or mutating AWS CLI and SDK calls (S3, DynamoDB, Neptune, S3 Vectors, ECR, KMS,
+.claude/hooks/guard-dangerous.sh:27:#     operations, the autoscaling capacity and scaling-policy operations, and ECS desired counts
+.claude/hooks/guard-dangerous.sh:28:#     outside 1 to 4. It does not read the approved Terraform variables or experiment manifests,
+.claude/hooks/guard-dangerous.sh:31:#     files, Terraform state, environment dumps (env, printenv, export -p, declare -x,
+.claude/hooks/guard-dangerous.sh:33:#     secret-bearing variable names, secret-reading AWS calls, and keychain reads.
+.claude/hooks/guard-dangerous.sh:34:#   - Destructive database and graph statements, catastrophic filesystem operations, and
+.claude/hooks/guard-dangerous.sh:35:#     execution of scripts/cleanup.sh.
+.claude/hooks/guard-dangerous.sh:99:R_TF='Terraform changes reach AWS only through the human-approved apply path: infra-engineer produces a plan, the human approves the checksum, and deploy-engineer runs scripts/deploy.sh (see /deploy). Owner: human architect.'
+.claude/hooks/guard-dangerous.sh:100:R_GIT='History-rewriting or work-discarding Git operations are human-only. Commit, push, and branch management are performed by the human architect after the phase gate.'
+.claude/hooks/guard-dangerous.sh:101:R_AWS='Direct destructive or mutating AWS calls are not an implementation path. Change infrastructure through Terraform (infra-engineer, then human-approved plan). Data repair and deletion are human decisions (docs/agents.md, Escalation 2).'
+.claude/hooks/guard-dangerous.sh:102:R_SCALE='Scale changes beyond approved bounds need human approval (docs/agents.md, Escalation 6). Use the bounded values in the approved Terraform variables or experiment manifest; incident-responder may only set ECS desired count within 1..4.'
+.claude/hooks/guard-dangerous.sh:105:R_FS='Catastrophic filesystem operations are never permitted. Remove build outputs with sbt clean.'
+.claude/hooks/guard-dangerous.sh:107:R_CLEAN='scripts/cleanup.sh is invoked only by the human architect (docs/agents.md, Escalation 2).'
+.claude/hooks/guard-dangerous.sh:110:R_MCP_TF='Terraform command execution through MCP is not granted to any agent. Use terraform fmt/validate/plan through Bash (infra-engineer) and the human-approved apply path.'
+.claude/hooks/guard-dangerous.sh:249:  # Prefix for an AWS CLI invocation followed (after optional global options) by a service name.
+.claude/hooks/guard-dangerous.sh:251:  local TFW='(terraform|tofu|terragrunt)([[:space:]]+[^[:space:];&|]+)*[[:space:]]+'
+.claude/hooks/guard-dangerous.sh:259:  # --- Terraform apply/destroy and state mutation (floor 5) ---
+.claude/hooks/guard-dangerous.sh:260:  rule "terraform-apply-destroy" "${TFW}(apply|destroy)([^a-z0-9_-]|$)" "$R_TF"
+.claude/hooks/guard-dangerous.sh:261:  rule "terraform-state-mutation" "${TFW}(import|taint|untaint|force-unlock|state[[:space:]]+(rm|mv|push|replace-provider)|workspace[[:space:]]+delete)([^a-z0-9_-]|$)" "$R_TF"
+.claude/hooks/guard-dangerous.sh:262:  rule "terraform-auto-approve" '(^|[[:space:]=])-?-auto-approve' "$R_TF"
+.claude/hooks/guard-dangerous.sh:263:  rule "terraform-destroy-plan" '(terraform|tofu|terragrunt)[^;&|]*[[:space:]]-destroy([[:space:]=]|$)' "$R_TF"
+.claude/hooks/guard-dangerous.sh:264:  rule "terraform-cli-args" 'tf_cli_args' "$R_TF"
+.claude/hooks/guard-dangerous.sh:292:  rule "ecs-unscripted-deploy" "${A}ecs[[:space:]]+update-service[[:space:]][^;&|]*--task-definition" "Deployments change task definitions only through scripts/deploy.sh or scripts/rollback.sh (deploy-engineer or incident-responder via /deploy or /rollback)."
+.claude/hooks/guard-dangerous.sh:296:  rule "iam-mutation" "${A}(iam|organizations|sso-admin)[[:space:]]+(create-[a-z-]+|delete-[a-z0-9-]+|attach-[a-z-]+|detach-[a-z-]+|put-[a-z-]+|update-[a-z-]+|add-[a-z-]+|remove-[a-z-]+|set-[a-z-]+|upload-[a-z-]+)" "Security changes (IAM) are authored in Terraform by infra-engineer and approved by the human architect (docs/agents.md, Escalation 3)."
+.claude/hooks/guard-dangerous.sh:327:  # --- Catastrophic local filesystem operations ---
+.claude/hooks/guard-dangerous.sh:424:    mcp__terraform__*)
+.claude/hooks/guard-dangerous.sh:426:        mcp__terraform__Execute*|mcp__terraform__execute*)
+.claude/hooks/guard-dangerous.sh:427:          block "mcp-terraform-execute" "$TOOL" "$R_MCP_TF"
+.claude/hooks/guard-dangerous.sh:493:2@@Bash@@terraform destroy
+.claude/hooks/guard-dangerous.sh:494:2@@Bash@@echo 'terraform destroy'
+.claude/hooks/guard-dangerous.sh:495:2@@Bash@@terraform -chdir=infra/terraform/environments/dev apply -auto-approve
+.claude/hooks/guard-dangerous.sh:496:2@@Bash@@bash -c "terraform apply tfplan"
+.claude/hooks/guard-dangerous.sh:498:2@@Bash@@terraform state rm aws_dynamodb_table.run_ledger
+.claude/hooks/guard-dangerous.sh:499:2@@Bash@@terraform plan -destroy -out=x.tfplan
+.claude/hooks/guard-dangerous.sh:511:2@@Bash@@aws s3 rb s3://scholarchain-raw --force
+.claude/hooks/guard-dangerous.sh:512:2@@Bash@@aws --profile dev s3 rm s3://scholarchain-curated/run=1/ --recursive
+.claude/hooks/guard-dangerous.sh:513:2@@Bash@@aws s3 sync ./out s3://scholarchain-graph --delete
+.claude/hooks/guard-dangerous.sh:514:2@@Bash@@aws s3api delete-bucket --bucket scholarchain-raw
+.claude/hooks/guard-dangerous.sh:515:2@@Bash@@aws dynamodb delete-table --table-name RunLedger
+.claude/hooks/guard-dangerous.sh:516:2@@Bash@@aws neptune delete-db-cluster --db-cluster-identifier scholarchain
+.claude/hooks/guard-dangerous.sh:517:2@@Bash@@aws s3vectors delete-index --vector-bucket-name v --index-name researcher-profile-v1
+.claude/hooks/guard-dangerous.sh:518:2@@Bash@@aws s3vectors delete-vector-bucket --vector-bucket-name v
+.claude/hooks/guard-dangerous.sh:519:2@@Bash@@aws ecr delete-repository --repository-name query-api --force
+.claude/hooks/guard-dangerous.sh:520:2@@Bash@@aws ecr batch-delete-image --repository-name query-api --image-ids imageTag=abc
+.claude/hooks/guard-dangerous.sh:521:2@@Bash@@aws kms schedule-key-deletion --key-id k --pending-window-in-days 7
+.claude/hooks/guard-dangerous.sh:522:2@@Bash@@aws emr terminate-clusters --cluster-ids j-ABC
+.claude/hooks/guard-dangerous.sh:523:2@@Bash@@aws emr modify-instance-groups --instance-groups InstanceGroupId=ig-1,InstanceCount=40
+.claude/hooks/guard-dangerous.sh:524:2@@Bash@@aws emr put-managed-scaling-policy --cluster-id j-1 --managed-scaling-policy x
+.claude/hooks/guard-dangerous.sh:525:2@@Bash@@aws ecs update-service --cluster c --service query --desired-count 50
+.claude/hooks/guard-dangerous.sh:526:2@@Bash@@aws ecs update-service --cluster c --service query --desired-count 0
+.claude/hooks/guard-dangerous.sh:527:2@@Bash@@aws autoscaling set-desired-capacity --auto-scaling-group-name g --desired-capacity 30
+.claude/hooks/guard-dangerous.sh:528:2@@Bash@@aws secretsmanager get-secret-value --secret-id scholarchain/neptune
+.claude/hooks/guard-dangerous.sh:550:2@@Bash@@./scripts/cleanup.sh dev
+.claude/hooks/guard-dangerous.sh:554:2@@mcp__aws-api__call_aws@@{"cli_command":"aws s3 rb s3://scholarchain-raw --force"}
+.claude/hooks/guard-dangerous.sh:555:2@@mcp__aws-api__call_aws@@{"cli_command":"aws dynamodb delete-table --table-name RunLedger"}
+.claude/hooks/guard-dangerous.sh:556:2@@mcp__aws-api__call_aws@@{"cli_command":"aws secretsmanager get-secret-value --secret-id x"}
+.claude/hooks/guard-dangerous.sh:557:2@@mcp__terraform__ExecuteTerraformCommand@@{"command":"apply","working_directory":"infra/terraform"}
+.claude/hooks/guard-dangerous.sh:566:0@@Bash@@terraform fmt -check -recursive
+.claude/hooks/guard-dangerous.sh:567:0@@Bash@@terraform -chdir=infra/terraform/environments/dev plan -out=dev.tfplan
+.claude/hooks/guard-dangerous.sh:568:0@@Bash@@terraform validate
+.claude/hooks/guard-dangerous.sh:569:0@@Bash@@aws s3 ls s3://scholarchain-raw/
+.claude/hooks/guard-dangerous.sh:570:0@@Bash@@aws sts get-caller-identity
+.claude/hooks/guard-dangerous.sh:571:0@@Bash@@aws ecs describe-services --cluster c --services query
+.claude/hooks/guard-dangerous.sh:572:0@@Bash@@aws ecs update-service --cluster c --service query --desired-count 2
+.claude/hooks/guard-dangerous.sh:573:0@@Bash@@aws ecs update-service --cluster c --service query --force-new-deployment
+.claude/hooks/guard-dangerous.sh:574:0@@Bash@@aws logs tail /ecs/scholarchain-query --since 30m
+.claude/hooks/guard-dangerous.sh:582:0@@Bash@@./scripts/deploy.sh dev
+.claude/hooks/guard-dangerous.sh:583:0@@Bash@@bash -n scripts/cleanup.sh
+.claude/hooks/guard-dangerous.sh:585:0@@mcp__aws-api__call_aws@@{"cli_command":"aws ecs describe-services --cluster c --services query"}
+.claude/hooks/guard-dangerous.sh:586:0@@mcp__aws-docs__search_documentation@@{"search_phrase":"terraform destroy S3 Vectors index"}
+.claude/hooks/guard-dangerous.sh:587:0@@mcp__terraform__SearchAwsProviderDocs@@{"asset_name":"aws_s3vectors_index"}
+.claude/hooks/guard-dangerous.sh:619:2@@Bash@@terraform apply -auto-approve
+.claude/hooks/guard-dangerous.sh:620:2@@Bash@@terraform destroy -auto-approve
+.claude/hooks/guard-dangerous.sh:625:2@@Bash@@aws s3 rm s3://scholarchain-raw --recursive
+.claude/hooks/guard-dangerous.sh:626:2@@Bash@@aws s3api delete-objects --bucket scholarchain-raw --delete file://x.json
+.claude/hooks/guard-dangerous.sh:627:2@@Bash@@aws dynamodb delete-item --table-name RunLedger --key x
+.claude/hooks/guard-dangerous.sh:628:2@@Bash@@aws neptune-graph delete-graph --graph-identifier g
+=== settings permissions
+allow Bash(terraform fmt *)
+allow Bash(terraform validate*)
+allow mcp__aws-docs__search_documentation
+allow mcp__aws-docs__read_documentation
+allow mcp__aws-docs__recommend
+allow mcp__terraform__SearchAwsProviderDocs
+allow mcp__terraform__SearchAwsccProviderDocs
+allow mcp__terraform__SearchSpecificAwsIaModules
+allow mcp__terraform__SearchUserProvidedModule
+deny Read(~/.aws/**)
+deny Edit(~/.aws/**)
+deny Bash(terraform apply)
+deny Bash(terraform apply *)
+deny Bash(terraform destroy)
+deny Bash(terraform destroy *)
+deny Bash(terraform * apply *)
+deny Bash(terraform * destroy *)
+deny Bash(terraform import *)
+deny Bash(terraform state rm *)
+deny Bash(terraform state mv *)
+deny Bash(terraform state push *)
+deny Bash(terraform force-unlock *)
+deny Bash(terraform taint *)
+deny Bash(aws s3 rb *)
+deny Bash(aws s3 rm *)
+deny Bash(aws s3 mv *)
+deny Bash(aws s3 sync * --delete*)
+deny Bash(aws s3api delete-*)
+deny Bash(aws s3api put-bucket-policy *)
+deny Bash(aws s3api put-public-access-block *)
+deny Bash(aws dynamodb delete-table *)
+deny Bash(aws dynamodb delete-item *)
+deny Bash(aws dynamodb delete-backup *)
+deny Bash(aws dynamodb batch-write-item *)
+deny Bash(aws dynamodb update-table *)
+deny Bash(aws neptune delete-*)
+deny Bash(aws neptune modify-*)
+deny Bash(aws neptune failover-*)
+deny Bash(aws neptune-graph delete-*)
+deny Bash(aws neptunedata *)
+deny Bash(aws rds delete-*)
+deny Bash(aws s3vectors delete-index *)
+deny Bash(aws s3vectors delete-vector-bucket *)
+deny Bash(aws s3vectors delete-vectors *)
+deny Bash(aws s3vectors delete-*)
+deny Bash(aws s3vectors put-vectors *)
+deny Bash(aws ecr delete-repository *)
+deny Bash(aws ecr batch-delete-image *)
+deny Bash(aws ecr delete-*)
+deny Bash(aws kms schedule-key-deletion *)
+deny Bash(aws kms disable-key *)
+deny Bash(aws kms delete-*)
+deny Bash(aws kms put-key-policy *)
+deny Bash(aws kms decrypt *)
+deny Bash(aws emr terminate-clusters *)
+deny Bash(aws emr modify-instance-groups *)
+deny Bash(aws emr modify-instance-fleet *)
+deny Bash(aws emr modify-cluster *)
+deny Bash(aws emr put-managed-scaling-policy *)
+deny Bash(aws emr add-instance-groups *)
+deny Bash(aws emr add-instance-fleet *)
+deny Bash(aws emr set-termination-protection *)
+deny Bash(aws emr run-job-flow *)
+deny Bash(aws emr create-cluster *)
+deny Bash(aws ecs delete-*)
+deny Bash(aws autoscaling *)
+deny Bash(aws application-autoscaling register-scalable-target *)
+deny Bash(aws application-autoscaling put-scaling-policy *)
+deny Bash(aws iam *)
+deny Bash(aws secretsmanager get-secret-value *)
+deny Bash(aws secretsmanager *)
+deny Bash(aws ssm get-parameter* --with-decryption*)
+deny Bash(aws configure *)
+deny Bash(aws sts assume-role*)
+deny Bash(aws cloudtrail delete-trail *)
+deny Bash(aws cloudtrail stop-logging *)
+deny Bash(aws logs delete-*)
+deny Bash(aws sqs purge-queue *)
+deny Bash(aws sqs delete-queue *)
+deny Bash(aws opensearch create-domain *)
+deny Bash(./scripts/cleanup.sh*)
+deny Bash(scripts/cleanup.sh*)
+deny Bash(bash scripts/cleanup.sh*)
+deny mcp__terraform__ExecuteTerraformCommand
+deny mcp__terraform__ExecuteTerragruntCommand
+ask Bash(terraform plan *)
+ask Bash(terraform -chdir=* plan *)
+ask Bash(terraform init *)
+ask Bash(terraform -chdir=* init *)
+ask Bash(./scripts/plan.sh *)
+ask Bash(./scripts/package.sh *)
+ask Bash(./scripts/deploy.sh *)
+ask Bash(./scripts/rollback.sh *)
+ask Bash(./scripts/smoke-test.sh *)
+ask Bash(./scripts/run-bounded-pipeline.sh *)
+ask Bash(./scripts/run-experiment.sh *)
+ask Bash(./scripts/archive-evidence.sh *)
+ask Bash(aws ecs update-service *)
+ask mcp__aws-api__call_aws
+ask mcp__aws-api__suggest_aws_commands
+ask mcp__terraform__RunCheckovScan
+=== phase-12 prompt.md head
+# Phase 12 prompt: AWS infrastructure in Terraform and reproducible automation (spec Phases 12 and 13, merged by D-10)
+
+## Session plan
+- Session 1: work orders 1 to 3, in order: 1 storage-engineer, 2 infra-engineer (Terraform), 3 infra-engineer (scripts).
+- Session 2: code review 1 (code-reviewer) of the Phase 12 change set.
+- Then the human runs terraform init and scripts/plan.sh with the human's credentials, reviews the plan, and signs it at the gate. One repair round at most. Nothing is applied in this phase; apply is Phase 14 (cloud window 1).
+- Phase 11 is accepted (docs/agent-runs/phase-11/commit.txt). Phase 12 changes stay uncommitted until the gate.
+
+## Human rulings before work order 1
+
+1. Scope (D-10, D-13). Spec Phases 12 and 13 as cut by D-10:
+   - A two-AZ VPC. Public subnets for the ALB, ECS tasks (public IP, no NAT) and EMR. Private subnets for Neptune only. No NAT gateway. S3 and DynamoDB gateway endpoints. Security groups chained by role, never broad CIDR access except the ALB listener.
+   - AWS-managed encryption; no customer-managed KMS keys.
+   - No Step Functions, EventBridge, OpenSearch or GitHub Actions.
+   - Three ECS services: query-api, graph-evidence-api and worker. This is the justified consolidation of spec Phase 12 item 10.
+   - Local Terraform state, gitignored and backed up outside the repo by the human; the remote-state design is documented only.
+   - The AWS Budget stays outside Terraform (D-12, created by hand).
+2. Cost staging (D-13).
+   - One root module at infra/terraform/envs/course, composed of modules under infra/terraform/modules/.
+   - A variable runtime_enabled (default false) controls Neptune, the DynamoDB tables, the S3 Vectors bucket and indexes, SQS, the Secrets Manager secret, the ECS cluster, services and ALB, and the runtime alarms.
+   - With runtime_enabled = false (cloud window 1), the plan creates only: foundation and tags, the VPC, the data bucket, IAM roles, the EMR roles and security groups, the ECR repository, the image build project (ruling 3), and log groups.
+   - EMR clusters are not Terraform resources. scripts/run-bounded-pipeline.sh launches each run as an ephemeral cluster that terminates after its steps.
+   - Bounded defaults everywhere:
+     - Neptune: the cheapest instance class that supports the engine, or serverless at its minimum, with the cost justified.
+     - ECS: desired count 1 per service, maximum 2.
+     - EMR: at most 1 primary and 2 core instances, ARM64 Graviton where the release supports it, no Spot.
+   - Report the estimated hourly cost and the per-window cost of each stage.
+3. Images without Docker on the laptop.
+   - A CodeBuild project (ARM container, privileged for docker) in Terraform builds the services image and pushes it to ECR.
+   - scripts/package.sh runs `sbt services/Docker/stage` with SCHOLARCHAIN_IMAGE_TAG set to the Git SHA (this needs no Docker). It then zips the staged Docker context, uploads it to the artifacts prefix, starts the build, waits with a timeout, and records the image digest.
+   - The ECR repository has immutable tags and scan on push.
+   - If the staged Dockerfile cannot build on CodeBuild as it is (for example, the base image pull), report BLOCKED-ON build-engineer with the exact change. Do not edit build.sbt.
+   - The Hadoop and Spark jobs ship as assembly jars (`sbt packageJobs`), uploaded to the artifacts prefix with sha256 checksums.
+4. Pins (D-09).
+   - required_version = "1.16.6", exactly.
+   - The AWS provider is pinned to one exact version, at least 14 days old, that has the S3 Vectors resources (vector bucket and index). Verify this with the terraform MCP provider docs search, and report the version, its release date and the resource names.
+   - .terraform.lock.hcl is committed.
+   - No other provider unless it is needed and justified, pinned the same way.
+5. Commands.
+   - infra-engineer may run:

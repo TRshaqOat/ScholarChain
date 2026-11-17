@@ -1,0 +1,2114 @@
+{
+  "schemaVersion": "spark-run-manifest-v1",
+  "stage": "spark-researcher-analytics",
+  "runId": "run-74fca376cff13a54cae22a329e0b1d8e",
+  "attempt": 1,
+  "runDir": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-74fca376cff13a54cae22a329e0b1d8e",
+  "snapshot": "2026-10-03",
+  "codeVersion": "deef29516bf395ac2b551beb93710b6a48a937a8",
+  "configVersion": "config-v1",
+  "input": {
+    "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-93644bb3fc3de4f8cbc4019d7a08aca7",
+    "canonicalGraphRunId": "run-93644bb3fc3de4f8cbc4019d7a08aca7"
+  },
+  "lineage": {
+    "inputHadoopRunId": "run-a307c9fe6f218ae7a6dd87c7189256e8",
+    "matchPolicyVersion": "er-v2"
+  },
+  "settings": {
+    "master": "yarn",
+    "shufflePartitions": 40,
+    "adaptiveExecution": "true",
+    "checkpointDir": "hdfs:/scholarchain/spark/checkpoints/run-74fca376cff13a54cae22a329e0b1d8e",
+    "checkpointEvery": "round",
+    "graphPolicy": "graph-v1",
+    "windows": [
+      {
+        "name": "all-years",
+        "startYear": 2000,
+        "endYear": 2026
+      },
+      {
+        "name": "2000-2014",
+        "startYear": 2000,
+        "endYear": 2014
+      },
+      {
+        "name": "2015-2026",
+        "startYear": 2015,
+        "endYear": 2026
+      }
+    ],
+    "componentsAlgorithm": "min-label-propagation",
+    "ccMaxIterations": 60,
+    "kcoreAlgorithm": "iterative-peeling",
+    "kcoreMaxRoundsPerLevel": 100,
+    "minFreeDiskGiB": 5,
+    "driverMaxHeapBytes": 2147483648,
+    "availableProcessors": 4
+  },
+  "fingerprints": [
+    "canonical-graph-run=run-93644bb3fc3de4f8cbc4019d7a08aca7",
+    "input:canonical-graph=s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-93644bb3fc3de4f8cbc4019d7a08aca7:235100369",
+    "config:graph-policy=graph-v1",
+    "config:windows=all-years:2000-2026,2000-2014:2000-2014,2015-2026:2015-2026",
+    "config:cc-max-iterations=60",
+    "config:kcore-max-iterations=100"
+  ],
+  "startedAt": "2026-11-17T01:45:37.491077816Z",
+  "inputs": [
+    {
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-93644bb3fc3de4f8cbc4019d7a08aca7/canonical/researchers",
+      "exists": true,
+      "rows": 142206
+    },
+    {
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-93644bb3fc3de4f8cbc4019d7a08aca7/canonical/authored",
+      "exists": true,
+      "rows": 259234
+    },
+    {
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-93644bb3fc3de4f8cbc4019d7a08aca7/canonical/works",
+      "exists": true,
+      "rows": 56734
+    },
+    {
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-93644bb3fc3de4f8cbc4019d7a08aca7/graph/coauthor-edges",
+      "exists": true,
+      "rows": 793287
+    }
+  ],
+  "tables": [
+    {
+      "name": "analytics/components",
+      "schemaVersion": "spark-analytics-components-v1",
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-74fca376cff13a54cae22a329e0b1d8e/analytics/components",
+      "format": "parquet",
+      "partitionColumns": [
+        "window"
+      ],
+      "hashPartitionKey": null,
+      "writePartitions": 1,
+      "schema": "windowStartYear INT,windowEndYear INT,componentId STRING,componentRoot STRING,componentSize BIGINT,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING,window STRING",
+      "rowCount": 23283,
+      "intendedTargets": [
+        "s3",
+        "dynamodb"
+      ],
+      "fileCount": 3,
+      "totalBytes": 2352981,
+      "minFileBytes": 501822,
+      "maxFileBytes": 1080132
+    },
+    {
+      "name": "analytics/researcher-metrics",
+      "schemaVersion": "spark-analytics-researcher-metrics-v1",
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-74fca376cff13a54cae22a329e0b1d8e/analytics/researcher-metrics",
+      "format": "parquet",
+      "partitionColumns": [
+        "window"
+      ],
+      "hashPartitionKey": "researcherId",
+      "writePartitions": 8,
+      "schema": "researcherId STRING,windowStartYear INT,windowEndYear INT,publicationCount BIGINT,distinctCoauthorCount BIGINT,totalCoauthorOccurrences BIGINT,averageCoauthorsPerPaper DOUBLE,maximumCoauthorsOnOnePaper BIGINT,maximumTeamWorkIds ARRAY<STRING>,weightedDegree DOUBLE,componentId STRING,componentSize BIGINT,coreness INT,graphDegree BIGINT,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING,window STRING",
+      "rowCount": 237183,
+      "intendedTargets": [
+        "neptune",
+        "dynamodb",
+        "s3"
+      ],
+      "fileCount": 24,
+      "totalBytes": 23886553,
+      "minFileBytes": 516821,
+      "maxFileBytes": 1437398
+    },
+    {
+      "name": "analytics/integrity-violations",
+      "schemaVersion": "spark-analytics-integrity-violations-v1",
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-74fca376cff13a54cae22a329e0b1d8e/analytics/integrity-violations",
+      "format": "parquet",
+      "partitionColumns": [],
+      "hashPartitionKey": null,
+      "writePartitions": 1,
+      "schema": "check STRING,subjectId STRING,relatedId STRING,detail STRING,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING",
+      "rowCount": 14,
+      "intendedTargets": [
+        "s3"
+      ],
+      "fileCount": 1,
+      "totalBytes": 6530,
+      "minFileBytes": 6530,
+      "maxFileBytes": 6530
+    }
+  ],
+  "counts": {
+    "perWindow": [
+      {
+        "window": "2000-2014",
+        "windowStartYear": 2000,
+        "windowEndYear": 2014,
+        "publications": 22878,
+        "researchers": 40645,
+        "coauthorEdges": 113305,
+        "components": 4943,
+        "largestComponentSize": 25970,
+        "singletonResearchers": 1560,
+        "researchersInComponents": 40645,
+        "largestComponentFraction": 0.6389469799483332
+      },
+      {
+        "window": "all-years",
+        "windowStartYear": 2000,
+        "windowEndYear": 2026,
+        "publications": 55306,
+        "researchers": 114222,
+        "coauthorEdges": 393191,
+        "components": 10720,
+        "largestComponentSize": 78425,
+        "singletonResearchers": 2486,
+        "researchersInComponents": 114222,
+        "largestComponentFraction": 0.6866015303531718
+      },
+      {
+        "window": "2015-2026",
+        "windowStartYear": 2015,
+        "windowEndYear": 2026,
+        "publications": 32428,
+        "researchers": 82316,
+        "coauthorEdges": 286791,
+        "components": 7620,
+        "largestComponentSize": 52295,
+        "singletonResearchers": 976,
+        "researchersInComponents": 82316,
+        "largestComponentFraction": 0.6352956897808445
+      }
+    ],
+    "metricDistributions": {
+      "all-years": {
+        "publicationCount": {
+          "min": 1,
+          "median": 1,
+          "p90": 3,
+          "p99": 16,
+          "max": 172
+        },
+        "distinctCoauthorCount": {
+          "min": 0,
+          "median": 4,
+          "p90": 13,
+          "p99": 53,
+          "max": 397
+        },
+        "totalCoauthorOccurrences": {
+          "min": 0,
+          "median": 4,
+          "p90": 16,
+          "p99": 74,
+          "max": 723
+        },
+        "averageCoauthorsPerPaper": {
+          "min": 0,
+          "median": 4,
+          "p90": 7.5,
+          "p99": 22.333333333333332,
+          "max": 94
+        },
+        "maximumCoauthorsOnOnePaper": {
+          "min": 0,
+          "median": 4,
+          "p90": 9,
+          "p99": 28,
+          "max": 94
+        },
+        "weightedDegree": {
+          "min": 0,
+          "median": 4,
+          "p90": 16,
+          "p99": 74,
+          "max": 723
+        },
+        "coreness": {
+          "min": 0,
+          "median": 4,
+          "p90": 9,
+          "p99": 28,
+          "max": 94
+        },
+        "componentSize": {
+          "min": 1,
+          "median": 78425,
+          "p90": 78425,
+          "p99": 78425,
+          "max": 78425
+        }
+      },
+      "2000-2014": {
+        "publicationCount": {
+          "min": 1,
+          "median": 1,
+          "p90": 3,
+          "p99": 15,
+          "max": 109
+        },
+        "distinctCoauthorCount": {
+          "min": 0,
+          "median": 4,
+          "p90": 11,
+          "p99": 40,
+          "max": 160
+        },
+        "totalCoauthorOccurrences": {
+          "min": 0,
+          "median": 4,
+          "p90": 14,
+          "p99": 56,
+          "max": 367
+        },
+        "averageCoauthorsPerPaper": {
+          "min": 0,
+          "median": 3,
+          "p90": 6,
+          "p99": 18,
+          "max": 48
+        },
+        "maximumCoauthorsOnOnePaper": {
+          "min": 0,
+          "median": 3,
+          "p90": 7,
+          "p99": 23,
+          "max": 48
+        },
+        "weightedDegree": {
+          "min": 0,
+          "median": 4,
+          "p90": 14,
+          "p99": 56,
+          "max": 367
+        },
+        "coreness": {
+          "min": 0,
+          "median": 3,
+          "p90": 7,
+          "p99": 23,
+          "max": 48
+        },
+        "componentSize": {
+          "min": 1,
+          "median": 25970,
+          "p90": 25970,
+          "p99": 25970,
+          "max": 25970
+        }
+      },
+      "2015-2026": {
+        "publicationCount": {
+          "min": 1,
+          "median": 1,
+          "p90": 3,
+          "p99": 11,
+          "max": 91
+        },
+        "distinctCoauthorCount": {
+          "min": 0,
+          "median": 4,
+          "p90": 13,
+          "p99": 51,
+          "max": 322
+        },
+        "totalCoauthorOccurrences": {
+          "min": 0,
+          "median": 5,
+          "p90": 16,
+          "p99": 65,
+          "max": 575
+        },
+        "averageCoauthorsPerPaper": {
+          "min": 0,
+          "median": 4,
+          "p90": 8,
+          "p99": 24,
+          "max": 94
+        },
+        "maximumCoauthorsOnOnePaper": {
+          "min": 0,
+          "median": 4,
+          "p90": 9,
+          "p99": 30,
+          "max": 94
+        },
+        "weightedDegree": {
+          "min": 0,
+          "median": 5,
+          "p90": 16,
+          "p99": 65,
+          "max": 575
+        },
+        "coreness": {
+          "min": 0,
+          "median": 4,
+          "p90": 9,
+          "p99": 30,
+          "max": 94
+        },
+        "componentSize": {
+          "min": 1,
+          "median": 52295,
+          "p90": 52295,
+          "p99": 52295,
+          "max": 52295
+        }
+      }
+    },
+    "componentSizeHistogram": [
+      {
+        "window": "2000-2014",
+        "size": "1",
+        "components": 1560
+      },
+      {
+        "window": "2000-2014",
+        "size": "2",
+        "components": 1194
+      },
+      {
+        "window": "2000-2014",
+        "size": "3-5",
+        "components": 1675
+      },
+      {
+        "window": "2000-2014",
+        "size": "6-10",
+        "components": 411
+      },
+      {
+        "window": "2000-2014",
+        "size": "11-100",
+        "components": 102
+      },
+      {
+        "window": "2000-2014",
+        "size": "1001+",
+        "components": 1
+      },
+      {
+        "window": "2015-2026",
+        "size": "1",
+        "components": 976
+      },
+      {
+        "window": "2015-2026",
+        "size": "2",
+        "components": 1722
+      },
+      {
+        "window": "2015-2026",
+        "size": "3-5",
+        "components": 3484
+      },
+      {
+        "window": "2015-2026",
+        "size": "6-10",
+        "components": 1157
+      },
+      {
+        "window": "2015-2026",
+        "size": "11-100",
+        "components": 280
+      },
+      {
+        "window": "2015-2026",
+        "size": "1001+",
+        "components": 1
+      },
+      {
+        "window": "all-years",
+        "size": "1",
+        "components": 2486
+      },
+      {
+        "window": "all-years",
+        "size": "2",
+        "components": 2526
+      },
+      {
+        "window": "all-years",
+        "size": "3-5",
+        "components": 4209
+      },
+      {
+        "window": "all-years",
+        "size": "6-10",
+        "components": 1243
+      },
+      {
+        "window": "all-years",
+        "size": "11-100",
+        "components": 255
+      },
+      {
+        "window": "all-years",
+        "size": "1001+",
+        "components": 1
+      }
+    ],
+    "largestComponents": [
+      {
+        "window": "2000-2014",
+        "rank": 1,
+        "componentId": "comp-17adf04a37a14ff82a457b9ba5f6e8f6",
+        "componentRoot": "scr:canon-v1.er-v2:00011dd902158b6782a7470ce9b0e597",
+        "componentSize": 25970
+      },
+      {
+        "window": "2000-2014",
+        "rank": 2,
+        "componentId": "comp-42da948e1efeedefb23204869051484e",
+        "componentRoot": "scr:canon-v1.er-v2:01776c8b9894535aa86aabb7e95fd94f",
+        "componentSize": 42
+      },
+      {
+        "window": "2000-2014",
+        "rank": 3,
+        "componentId": "comp-ced693a093c5b10935b77697b602ca2a",
+        "componentRoot": "scr:canon-v1.er-v2:0294dc2c8fefd1a1a645dac68e6b1b30",
+        "componentSize": 40
+      },
+      {
+        "window": "2015-2026",
+        "rank": 1,
+        "componentId": "comp-37e136575ebe7a6e2384f9055fb42b5f",
+        "componentRoot": "scr:canon-v1.er-v2:00006adc854f31ec307df5a0e5104bb1",
+        "componentSize": 52295
+      },
+      {
+        "window": "2015-2026",
+        "rank": 2,
+        "componentId": "comp-ea6bfe776f7a91b4c2137df8e709267b",
+        "componentRoot": "scr:canon-v1.er-v2:03333ba75fbf78e1760d272d08a661c2",
+        "componentSize": 68
+      },
+      {
+        "window": "2015-2026",
+        "rank": 3,
+        "componentId": "comp-24ff24580d5b66bdd933b9078fa4f455",
+        "componentRoot": "scr:canon-v1.er-v2:038f309ebd6b04c058b4fa52e87b1dd6",
+        "componentSize": 63
+      },
+      {
+        "window": "all-years",
+        "rank": 1,
+        "componentId": "comp-8c974145a7cd1b88cd5f169cd8ee1b48",
+        "componentRoot": "scr:canon-v1.er-v2:00006adc854f31ec307df5a0e5104bb1",
+        "componentSize": 78425
+      },
+      {
+        "window": "all-years",
+        "rank": 2,
+        "componentId": "comp-7c88028bd2b01f190a91d3ae47842c9f",
+        "componentRoot": "scr:canon-v1.er-v2:03333ba75fbf78e1760d272d08a661c2",
+        "componentSize": 68
+      },
+      {
+        "window": "all-years",
+        "rank": 3,
+        "componentId": "comp-e167c9fd87b98beb91744131ba2ca3ae",
+        "componentRoot": "scr:canon-v1.er-v2:031cbb285e9b6cab15e12baef8345f5c",
+        "componentSize": 51
+      }
+    ],
+    "corenessHistogram": [
+      {
+        "window": "2000-2014",
+        "coreness": 0,
+        "count": 1560
+      },
+      {
+        "window": "2000-2014",
+        "coreness": 1,
+        "count": 4548
+      },
+      {
+        "window": "2000-2014",
+        "coreness": 2,
+        "count": 7552
+      },
+      {
+        "window": "2000-2014",
+        "coreness": 3,
+        "count": 8215
+      },
+      {
+        "window": "2000-2014",
+        "coreness": 4,
+        "count": 6258
+      },
+      {
+        "window": "2000-2014",
+        "coreness": 5,
+        "count": 4214
+      },
+      {
+        "window": "2000-2014",
+        "coreness": 6,
+        "count": 2762
+      },
+      {
+        "window": "2000-2014",
+        "coreness": 7,
+        "count": 1478
+      },
+      {
+        "window": "2000-2014",
+        "coreness": 8,
+        "count": 1112
+      },
+      {
+        "window": "2000-2014",
+        "coreness": 9,
+        "count": 639
+      },
+      {
+        "window": "2000-2014",
+        "coreness": 10,
+        "count": 502
+      },
+      {
+        "window": "2000-2014",
+        "coreness": 11,
+        "count": 279
+      },
+      {
+        "window": "2000-2014",
+        "coreness": 12,
+        "count": 239
+      },
+      {
+        "window": "2000-2014",
+        "coreness": 13,
+        "count": 231
+      },
+      {
+        "window": "2000-2014",
+        "coreness": 14,
+        "count": 125
+      },
+      {
+        "window": "2000-2014",
+        "coreness": 15,
+        "count": 47
+      },
+      {
+        "window": "2000-2014",
+        "coreness": 16,
+        "count": 91
+      },
+      {
+        "window": "2000-2014",
+        "coreness": 17,
+        "count": 139
+      },
+      {
+        "window": "2000-2014",
+        "coreness": 18,
+        "count": 73
+      },
+      {
+        "window": "2000-2014",
+        "coreness": 19,
+        "count": 73
+      },
+      {
+        "window": "2000-2014",
+        "coreness": 20,
+        "count": 35
+      },
+      {
+        "window": "2000-2014",
+        "coreness": 21,
+        "count": 9
+      },
+      {
+        "window": "2000-2014",
+        "coreness": 22,
+        "count": 45
+      },
+      {
+        "window": "2000-2014",
+        "coreness": 23,
+        "count": 67
+      },
+      {
+        "window": "2000-2014",
+        "coreness": 24,
+        "count": 50
+      },
+      {
+        "window": "2000-2014",
+        "coreness": 25,
+        "count": 26
+      },
+      {
+        "window": "2000-2014",
+        "coreness": 27,
+        "count": 28
+      },
+      {
+        "window": "2000-2014",
+        "coreness": 30,
+        "count": 31
+      },
+      {
+        "window": "2000-2014",
+        "coreness": 37,
+        "count": 38
+      },
+      {
+        "window": "2000-2014",
+        "coreness": 40,
+        "count": 40
+      },
+      {
+        "window": "2000-2014",
+        "coreness": 44,
+        "count": 90
+      },
+      {
+        "window": "2000-2014",
+        "coreness": 48,
+        "count": 49
+      },
+      {
+        "window": "2015-2026",
+        "coreness": 0,
+        "count": 976
+      },
+      {
+        "window": "2015-2026",
+        "coreness": 1,
+        "count": 5431
+      },
+      {
+        "window": "2015-2026",
+        "coreness": 2,
+        "count": 10642
+      },
+      {
+        "window": "2015-2026",
+        "coreness": 3,
+        "count": 13734
+      },
+      {
+        "window": "2015-2026",
+        "coreness": 4,
+        "count": 14066
+      },
+      {
+        "window": "2015-2026",
+        "coreness": 5,
+        "count": 12149
+      },
+      {
+        "window": "2015-2026",
+        "coreness": 6,
+        "count": 7893
+      },
+      {
+        "window": "2015-2026",
+        "coreness": 7,
+        "count": 4949
+      },
+      {
+        "window": "2015-2026",
+        "coreness": 8,
+        "count": 3134
+      },
+      {
+        "window": "2015-2026",
+        "coreness": 9,
+        "count": 2122
+      },
+      {
+        "window": "2015-2026",
+        "coreness": 10,
+        "count": 1351
+      },
+      {
+        "window": "2015-2026",
+        "coreness": 11,
+        "count": 1180
+      },
+      {
+        "window": "2015-2026",
+        "coreness": 12,
+        "count": 694
+      },
+      {
+        "window": "2015-2026",
+        "coreness": 13,
+        "count": 543
+      },
+      {
+        "window": "2015-2026",
+        "coreness": 14,
+        "count": 476
+      },
+      {
+        "window": "2015-2026",
+        "coreness": 15,
+        "count": 342
+      },
+      {
+        "window": "2015-2026",
+        "coreness": 16,
+        "count": 245
+      },
+      {
+        "window": "2015-2026",
+        "coreness": 17,
+        "count": 180
+      },
+      {
+        "window": "2015-2026",
+        "coreness": 18,
+        "count": 208
+      },
+      {
+        "window": "2015-2026",
+        "coreness": 19,
+        "count": 257
+      },
+      {
+        "window": "2015-2026",
+        "coreness": 20,
+        "count": 128
+      },
+      {
+        "window": "2015-2026",
+        "coreness": 21,
+        "count": 100
+      },
+      {
+        "window": "2015-2026",
+        "coreness": 22,
+        "count": 136
+      },
+      {
+        "window": "2015-2026",
+        "coreness": 23,
+        "count": 169
+      },
+      {
+        "window": "2015-2026",
+        "coreness": 24,
+        "count": 121
+      },
+      {
+        "window": "2015-2026",
+        "coreness": 25,
+        "count": 10
+      },
+      {
+        "window": "2015-2026",
+        "coreness": 26,
+        "count": 77
+      },
+      {
+        "window": "2015-2026",
+        "coreness": 27,
+        "count": 56
+      },
+      {
+        "window": "2015-2026",
+        "coreness": 28,
+        "count": 63
+      },
+      {
+        "window": "2015-2026",
+        "coreness": 30,
+        "count": 92
+      },
+      {
+        "window": "2015-2026",
+        "coreness": 31,
+        "count": 128
+      },
+      {
+        "window": "2015-2026",
+        "coreness": 32,
+        "count": 66
+      },
+      {
+        "window": "2015-2026",
+        "coreness": 33,
+        "count": 48
+      },
+      {
+        "window": "2015-2026",
+        "coreness": 35,
+        "count": 25
+      },
+      {
+        "window": "2015-2026",
+        "coreness": 36,
+        "count": 37
+      },
+      {
+        "window": "2015-2026",
+        "coreness": 38,
+        "count": 37
+      },
+      {
+        "window": "2015-2026",
+        "coreness": 42,
+        "count": 43
+      },
+      {
+        "window": "2015-2026",
+        "coreness": 45,
+        "count": 46
+      },
+      {
+        "window": "2015-2026",
+        "coreness": 48,
+        "count": 49
+      },
+      {
+        "window": "2015-2026",
+        "coreness": 51,
+        "count": 104
+      },
+      {
+        "window": "2015-2026",
+        "coreness": 56,
+        "count": 114
+      },
+      {
+        "window": "2015-2026",
+        "coreness": 94,
+        "count": 95
+      },
+      {
+        "window": "all-years",
+        "coreness": 0,
+        "count": 2486
+      },
+      {
+        "window": "all-years",
+        "coreness": 1,
+        "count": 9162
+      },
+      {
+        "window": "all-years",
+        "coreness": 2,
+        "count": 16549
+      },
+      {
+        "window": "all-years",
+        "coreness": 3,
+        "count": 19887
+      },
+      {
+        "window": "all-years",
+        "coreness": 4,
+        "count": 18513
+      },
+      {
+        "window": "all-years",
+        "coreness": 5,
+        "count": 15140
+      },
+      {
+        "window": "all-years",
+        "coreness": 6,
+        "count": 9806
+      },
+      {
+        "window": "all-years",
+        "coreness": 7,
+        "count": 6180
+      },
+      {
+        "window": "all-years",
+        "coreness": 8,
+        "count": 4322
+      },
+      {
+        "window": "all-years",
+        "coreness": 9,
+        "count": 2695
+      },
+      {
+        "window": "all-years",
+        "coreness": 10,
+        "count": 1828
+      },
+      {
+        "window": "all-years",
+        "coreness": 11,
+        "count": 1460
+      },
+      {
+        "window": "all-years",
+        "coreness": 12,
+        "count": 918
+      },
+      {
+        "window": "all-years",
+        "coreness": 13,
+        "count": 775
+      },
+      {
+        "window": "all-years",
+        "coreness": 14,
+        "count": 607
+      },
+      {
+        "window": "all-years",
+        "coreness": 15,
+        "count": 401
+      },
+      {
+        "window": "all-years",
+        "coreness": 16,
+        "count": 302
+      },
+      {
+        "window": "all-years",
+        "coreness": 17,
+        "count": 322
+      },
+      {
+        "window": "all-years",
+        "coreness": 18,
+        "count": 306
+      },
+      {
+        "window": "all-years",
+        "coreness": 19,
+        "count": 339
+      },
+      {
+        "window": "all-years",
+        "coreness": 20,
+        "count": 162
+      },
+      {
+        "window": "all-years",
+        "coreness": 21,
+        "count": 112
+      },
+      {
+        "window": "all-years",
+        "coreness": 22,
+        "count": 179
+      },
+      {
+        "window": "all-years",
+        "coreness": 23,
+        "count": 237
+      },
+      {
+        "window": "all-years",
+        "coreness": 24,
+        "count": 169
+      },
+      {
+        "window": "all-years",
+        "coreness": 25,
+        "count": 36
+      },
+      {
+        "window": "all-years",
+        "coreness": 26,
+        "count": 77
+      },
+      {
+        "window": "all-years",
+        "coreness": 27,
+        "count": 81
+      },
+      {
+        "window": "all-years",
+        "coreness": 28,
+        "count": 63
+      },
+      {
+        "window": "all-years",
+        "coreness": 30,
+        "count": 123
+      },
+      {
+        "window": "all-years",
+        "coreness": 31,
+        "count": 128
+      },
+      {
+        "window": "all-years",
+        "coreness": 32,
+        "count": 66
+      },
+      {
+        "window": "all-years",
+        "coreness": 33,
+        "count": 48
+      },
+      {
+        "window": "all-years",
+        "coreness": 35,
+        "count": 25
+      },
+      {
+        "window": "all-years",
+        "coreness": 36,
+        "count": 37
+      },
+      {
+        "window": "all-years",
+        "coreness": 37,
+        "count": 17
+      },
+      {
+        "window": "all-years",
+        "coreness": 38,
+        "count": 35
+      },
+      {
+        "window": "all-years",
+        "coreness": 40,
+        "count": 39
+      },
+      {
+        "window": "all-years",
+        "coreness": 42,
+        "count": 43
+      },
+      {
+        "window": "all-years",
+        "coreness": 44,
+        "count": 90
+      },
+      {
+        "window": "all-years",
+        "coreness": 45,
+        "count": 46
+      },
+      {
+        "window": "all-years",
+        "coreness": 48,
+        "count": 98
+      },
+      {
+        "window": "all-years",
+        "coreness": 51,
+        "count": 104
+      },
+      {
+        "window": "all-years",
+        "coreness": 56,
+        "count": 114
+      },
+      {
+        "window": "all-years",
+        "coreness": 94,
+        "count": 95
+      }
+    ],
+    "highestCorenessResearchers": [
+      {
+        "window": "2000-2014",
+        "rank": 1,
+        "researcherId": "scr:canon-v1.er-v2:594a6ce349b2f070c6bec83b987cd810",
+        "displayName": "Cees de Laat",
+        "coreness": 48,
+        "distinctCoauthorCount": 121
+      },
+      {
+        "window": "2000-2014",
+        "rank": 2,
+        "researcherId": "scr:canon-v1.er-v2:51d05fb1e907f469664cf60eb2a6d04c",
+        "displayName": "Luc Renambot",
+        "coreness": 48,
+        "distinctCoauthorCount": 107
+      },
+      {
+        "window": "2000-2014",
+        "rank": 3,
+        "researcherId": "scr:canon-v1.er-v2:23f6a6a0a139188298c0cffa50060088",
+        "displayName": "Dick H. J. Epema",
+        "coreness": 48,
+        "distinctCoauthorCount": 89
+      },
+      {
+        "window": "2015-2026",
+        "rank": 1,
+        "researcherId": "scr:canon-v1.er-v2:340816ca979f700d2a07be4c4452488f",
+        "displayName": "Rosa M. Badia",
+        "coreness": 94,
+        "distinctCoauthorCount": 216
+      },
+      {
+        "window": "2015-2026",
+        "rank": 2,
+        "researcherId": "scr:canon-v1.er-v2:cd028255880bd4275b7fd07ebf75ced4",
+        "displayName": "Jean-Pierre Vilotte",
+        "coreness": 94,
+        "distinctCoauthorCount": 131
+      },
+      {
+        "window": "2015-2026",
+        "rank": 3,
+        "researcherId": "scr:canon-v1.er-v2:6c79a324ffbc05be80834bb4d0fb9e23",
+        "displayName": "Piero Lanucara",
+        "coreness": 94,
+        "distinctCoauthorCount": 127
+      },
+      {
+        "window": "all-years",
+        "rank": 1,
+        "researcherId": "scr:canon-v1.er-v2:340816ca979f700d2a07be4c4452488f",
+        "displayName": "Rosa M. Badia",
+        "coreness": 94,
+        "distinctCoauthorCount": 304
+      },
+      {
+        "window": "all-years",
+        "rank": 2,
+        "researcherId": "scr:canon-v1.er-v2:9c0752b11c16275017a549ce531ad50c",
+        "displayName": "Joseph Schuchart",
+        "coreness": 94,
+        "distinctCoauthorCount": 134
+      },
+      {
+        "window": "all-years",
+        "rank": 3,
+        "researcherId": "scr:canon-v1.er-v2:cd028255880bd4275b7fd07ebf75ced4",
+        "displayName": "Jean-Pierre Vilotte",
+        "coreness": 94,
+        "distinctCoauthorCount": 131
+      }
+    ],
+    "componentsIterations": 22,
+    "componentsLabelsChangedPerRound": [
+      183548,
+      135698,
+      129009,
+      129155,
+      120010,
+      101434,
+      74760,
+      36533,
+      13566,
+      6286,
+      13183,
+      43044,
+      45320,
+      19902,
+      6492,
+      1854,
+      512,
+      172,
+      52,
+      25,
+      2,
+      0
+    ],
+    "kcoreRounds": 195,
+    "kcoreLevels": 45,
+    "kcoreRoundLog": [
+      [
+        0,
+        5022
+      ],
+      [
+        1,
+        18635
+      ],
+      [
+        1,
+        504
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        2,
+        32827
+      ],
+      [
+        2,
+        1818
+      ],
+      [
+        2,
+        91
+      ],
+      [
+        2,
+        7
+      ],
+      [
+        3,
+        38384
+      ],
+      [
+        3,
+        3108
+      ],
+      [
+        3,
+        289
+      ],
+      [
+        3,
+        40
+      ],
+      [
+        3,
+        13
+      ],
+      [
+        3,
+        2
+      ],
+      [
+        4,
+        34349
+      ],
+      [
+        4,
+        3784
+      ],
+      [
+        4,
+        548
+      ],
+      [
+        4,
+        121
+      ],
+      [
+        4,
+        24
+      ],
+      [
+        4,
+        10
+      ],
+      [
+        4,
+        1
+      ],
+      [
+        5,
+        26509
+      ],
+      [
+        5,
+        3965
+      ],
+      [
+        5,
+        714
+      ],
+      [
+        5,
+        184
+      ],
+      [
+        5,
+        78
+      ],
+      [
+        5,
+        30
+      ],
+      [
+        5,
+        15
+      ],
+      [
+        5,
+        5
+      ],
+      [
+        5,
+        2
+      ],
+      [
+        5,
+        1
+      ],
+      [
+        6,
+        16506
+      ],
+      [
+        6,
+        2847
+      ],
+      [
+        6,
+        664
+      ],
+      [
+        6,
+        213
+      ],
+      [
+        6,
+        87
+      ],
+      [
+        6,
+        40
+      ],
+      [
+        6,
+        23
+      ],
+      [
+        6,
+        18
+      ],
+      [
+        6,
+        23
+      ],
+      [
+        6,
+        17
+      ],
+      [
+        6,
+        9
+      ],
+      [
+        6,
+        9
+      ],
+      [
+        6,
+        4
+      ],
+      [
+        6,
+        1
+      ],
+      [
+        7,
+        9662
+      ],
+      [
+        7,
+        2134
+      ],
+      [
+        7,
+        508
+      ],
+      [
+        7,
+        176
+      ],
+      [
+        7,
+        64
+      ],
+      [
+        7,
+        28
+      ],
+      [
+        7,
+        15
+      ],
+      [
+        7,
+        8
+      ],
+      [
+        7,
+        7
+      ],
+      [
+        7,
+        4
+      ],
+      [
+        7,
+        1
+      ],
+      [
+        8,
+        6555
+      ],
+      [
+        8,
+        1426
+      ],
+      [
+        8,
+        316
+      ],
+      [
+        8,
+        108
+      ],
+      [
+        8,
+        60
+      ],
+      [
+        8,
+        41
+      ],
+      [
+        8,
+        27
+      ],
+      [
+        8,
+        12
+      ],
+      [
+        8,
+        9
+      ],
+      [
+        8,
+        7
+      ],
+      [
+        8,
+        4
+      ],
+      [
+        8,
+        1
+      ],
+      [
+        8,
+        2
+      ],
+      [
+        9,
+        4225
+      ],
+      [
+        9,
+        876
+      ],
+      [
+        9,
+        217
+      ],
+      [
+        9,
+        84
+      ],
+      [
+        9,
+        25
+      ],
+      [
+        9,
+        9
+      ],
+      [
+        9,
+        7
+      ],
+      [
+        9,
+        9
+      ],
+      [
+        9,
+        3
+      ],
+      [
+        9,
+        1
+      ],
+      [
+        10,
+        2791
+      ],
+      [
+        10,
+        643
+      ],
+      [
+        10,
+        137
+      ],
+      [
+        10,
+        56
+      ],
+      [
+        10,
+        28
+      ],
+      [
+        10,
+        16
+      ],
+      [
+        10,
+        6
+      ],
+      [
+        10,
+        4
+      ],
+      [
+        11,
+        2182
+      ],
+      [
+        11,
+        538
+      ],
+      [
+        11,
+        118
+      ],
+      [
+        11,
+        45
+      ],
+      [
+        11,
+        24
+      ],
+      [
+        11,
+        9
+      ],
+      [
+        11,
+        3
+      ],
+      [
+        12,
+        1375
+      ],
+      [
+        12,
+        335
+      ],
+      [
+        12,
+        81
+      ],
+      [
+        12,
+        34
+      ],
+      [
+        12,
+        19
+      ],
+      [
+        12,
+        5
+      ],
+      [
+        12,
+        2
+      ],
+      [
+        13,
+        1193
+      ],
+      [
+        13,
+        303
+      ],
+      [
+        13,
+        44
+      ],
+      [
+        13,
+        8
+      ],
+      [
+        13,
+        1
+      ],
+      [
+        14,
+        969
+      ],
+      [
+        14,
+        201
+      ],
+      [
+        14,
+        19
+      ],
+      [
+        14,
+        9
+      ],
+      [
+        14,
+        5
+      ],
+      [
+        14,
+        3
+      ],
+      [
+        14,
+        2
+      ],
+      [
+        15,
+        592
+      ],
+      [
+        15,
+        134
+      ],
+      [
+        15,
+        41
+      ],
+      [
+        15,
+        15
+      ],
+      [
+        15,
+        4
+      ],
+      [
+        15,
+        2
+      ],
+      [
+        15,
+        2
+      ],
+      [
+        16,
+        502
+      ],
+      [
+        16,
+        122
+      ],
+      [
+        16,
+        11
+      ],
+      [
+        16,
+        1
+      ],
+      [
+        16,
+        1
+      ],
+      [
+        16,
+        1
+      ],
+      [
+        17,
+        499
+      ],
+      [
+        17,
+        124
+      ],
+      [
+        17,
+        13
+      ],
+      [
+        17,
+        4
+      ],
+      [
+        17,
+        1
+      ],
+      [
+        18,
+        483
+      ],
+      [
+        18,
+        83
+      ],
+      [
+        18,
+        12
+      ],
+      [
+        18,
+        5
+      ],
+      [
+        18,
+        4
+      ],
+      [
+        19,
+        539
+      ],
+      [
+        19,
+        114
+      ],
+      [
+        19,
+        11
+      ],
+      [
+        19,
+        3
+      ],
+      [
+        19,
+        1
+      ],
+      [
+        19,
+        1
+      ],
+      [
+        20,
+        265
+      ],
+      [
+        20,
+        58
+      ],
+      [
+        20,
+        2
+      ],
+      [
+        21,
+        161
+      ],
+      [
+        21,
+        57
+      ],
+      [
+        21,
+        3
+      ],
+      [
+        22,
+        298
+      ],
+      [
+        22,
+        62
+      ],
+      [
+        23,
+        346
+      ],
+      [
+        23,
+        125
+      ],
+      [
+        23,
+        2
+      ],
+      [
+        24,
+        304
+      ],
+      [
+        24,
+        35
+      ],
+      [
+        24,
+        1
+      ],
+      [
+        25,
+        50
+      ],
+      [
+        25,
+        22
+      ],
+      [
+        26,
+        135
+      ],
+      [
+        26,
+        19
+      ],
+      [
+        27,
+        133
+      ],
+      [
+        27,
+        31
+      ],
+      [
+        27,
+        1
+      ],
+      [
+        28,
+        123
+      ],
+      [
+        28,
+        3
+      ],
+      [
+        30,
+        240
+      ],
+      [
+        30,
+        6
+      ],
+      [
+        31,
+        209
+      ],
+      [
+        31,
+        47
+      ],
+      [
+        32,
+        131
+      ],
+      [
+        32,
+        1
+      ],
+      [
+        33,
+        78
+      ],
+      [
+        33,
+        18
+      ],
+      [
+        35,
+        36
+      ],
+      [
+        35,
+        13
+      ],
+      [
+        35,
+        1
+      ],
+      [
+        36,
+        74
+      ],
+      [
+        37,
+        55
+      ],
+      [
+        38,
+        57
+      ],
+      [
+        38,
+        15
+      ],
+      [
+        40,
+        74
+      ],
+      [
+        40,
+        5
+      ],
+      [
+        42,
+        76
+      ],
+      [
+        42,
+        10
+      ],
+      [
+        44,
+        175
+      ],
+      [
+        44,
+        5
+      ],
+      [
+        45,
+        90
+      ],
+      [
+        45,
+        2
+      ],
+      [
+        48,
+        191
+      ],
+      [
+        48,
+        5
+      ],
+      [
+        51,
+        178
+      ],
+      [
+        51,
+        30
+      ],
+      [
+        56,
+        226
+      ],
+      [
+        56,
+        2
+      ],
+      [
+        94,
+        190
+      ]
+    ],
+    "integrityViolationsByCheck": [
+      {
+        "check": "CORENESS_BELOW_MAX_TEAM",
+        "count": 6
+      },
+      {
+        "check": "WEIGHTED_DEGREE_NE_TOTAL_OCCURRENCES",
+        "count": 8
+      }
+    ],
+    "mergedDblpWorkChecks": {
+      "mergedDblpWorks": 3,
+      "byCheck": [
+        {
+          "check": "CORENESS_BELOW_MAX_TEAM",
+          "violations": 6,
+          "onMergedDblpWork": 6
+        },
+        {
+          "check": "WEIGHTED_DEGREE_NE_TOTAL_OCCURRENCES",
+          "violations": 8,
+          "onMergedDblpWork": 8
+        }
+      ]
+    }
+  },
+  "stepSeconds": {
+    "read inputs": 2.609384924,
+    "researcher statistics": 0.111274198,
+    "connected components": 80.50410291,
+    "write analytics/components": 1.807756082,
+    "k-core": 452.152702239,
+    "write analytics/researcher-metrics": 3.260928273,
+    "write analytics/integrity-violations": 2.973809526,
+    "report": 4.595426257
+  },
+  "stagesByStep": [
+    {
+      "step": "read inputs",
+      "stages": 16,
+      "tasks": 74,
+      "maxTasksInAStage": 9,
+      "shuffleReadBytes": 1650,
+      "shuffleWriteBytes": 1650,
+      "spillDiskBytes": 0,
+      "stageMs": 1373
+    },
+    {
+      "step": "connected components",
+      "stages": 213,
+      "tasks": 1864,
+      "maxTasksInAStage": 19,
+      "shuffleReadBytes": 3488895861,
+      "shuffleWriteBytes": 3571160856,
+      "spillDiskBytes": 0,
+      "stageMs": 91450
+    },
+    {
+      "step": "write analytics/components",
+      "stages": 8,
+      "tasks": 31,
+      "maxTasksInAStage": 8,
+      "shuffleReadBytes": 4443039,
+      "shuffleWriteBytes": 4443039,
+      "spillDiskBytes": 0,
+      "stageMs": 1426
+    },
+    {
+      "step": "k-core",
+      "stages": 2458,
+      "tasks": 15661,
+      "maxTasksInAStage": 19,
+      "shuffleReadBytes": 9826581775,
+      "shuffleWriteBytes": 9826581775,
+      "spillDiskBytes": 0,
+      "stageMs": 541287
+    },
+    {
+      "step": "write analytics/researcher-metrics",
+      "stages": 9,
+      "tasks": 57,
+      "maxTasksInAStage": 10,
+      "shuffleReadBytes": 73775391,
+      "shuffleWriteBytes": 73775391,
+      "spillDiskBytes": 0,
+      "stageMs": 3011
+    },
+    {
+      "step": "write analytics/integrity-violations",
+      "stages": 8,
+      "tasks": 80,
+      "maxTasksInAStage": 40,
+      "shuffleReadBytes": 5194,
+      "shuffleWriteBytes": 5194,
+      "spillDiskBytes": 0,
+      "stageMs": 2003
+    },
+    {
+      "step": "report",
+      "stages": 48,
+      "tasks": 155,
+      "maxTasksInAStage": 10,
+      "shuffleReadBytes": 4552136,
+      "shuffleWriteBytes": 4521920,
+      "spillDiskBytes": 0,
+      "stageMs": 4632
+    }
+  ],
+  "stageCount": 2760,
+  "disk": {
+    "freeBeforeBytes": 9223372036854775807,
+    "freeAfterBytes": 9223372036854775807
+  },
+  "wallSeconds": 548.260045438,
+  "finishedAt": "2026-11-17T01:54:45.751126454Z"
+}

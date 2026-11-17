@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "hadoop-run-manifest-v3",
+  "runId": "run-cd026bbd239f6ebd6963f0c99e5bac1a",
+  "stage": "hadoop-pipeline",
+  "codeVersion": "fa93806df7ca4b65e5de6d13779d865909de273b",
+  "configVersion": "config-v1",
+  "attempt": 2,
+  "inputSnapshots": [
+    "crossref=2026-11-03",
+    "dblp=2026-10-03",
+    "openalex=2026-11-03",
+    "orcid=2026-11-03"
+  ],
+  "inputFingerprints": [
+    "input:dblp=s3a://scholarchain-course-data-834519512655-us-east-2/raw/dblp/snapshot=2026-10-03/run=run-94e3a7a3e03c0e963754e95b2ff5b615/works.xml:32251328",
+    "input:dblp-dtd=s3a://scholarchain-course-data-834519512655-us-east-2/raw/dblp/snapshot=2026-10-03/run=run-94e3a7a3e03c0e963754e95b2ff5b615/dblp.dtd:13134",
+    "input:openalex=s3a://scholarchain-course-data-834519512655-us-east-2/raw/openalex/snapshot=2026-11-03/run=run-94e3a7a3e03c0e963754e95b2ff5b615/works.jsonl:287027525",
+    "input:crossref=s3a://scholarchain-course-data-834519512655-us-east-2/raw/crossref/snapshot=2026-11-03/run=run-94e3a7a3e03c0e963754e95b2ff5b615/works.jsonl:90973343",
+    "input:orcid=s3a://scholarchain-course-data-834519512655-us-east-2/raw/orcid/snapshot=2026-11-03/run=run-94e3a7a3e03c0e963754e95b2ff5b615/records.jsonl.gz:210179820"
+  ],
+  "inputs": {
+    "openalex": [
+      "s3a://scholarchain-course-data-834519512655-us-east-2/raw/openalex/snapshot=2026-11-03/run=run-94e3a7a3e03c0e963754e95b2ff5b615/works.jsonl"
+    ],
+    "crossref": [
+      "s3a://scholarchain-course-data-834519512655-us-east-2/raw/crossref/snapshot=2026-11-03/run=run-94e3a7a3e03c0e963754e95b2ff5b615/works.jsonl"
+    ],
+    "dblp-dtd": [
+      "s3a://scholarchain-course-data-834519512655-us-east-2/raw/dblp/snapshot=2026-10-03/run=run-94e3a7a3e03c0e963754e95b2ff5b615/dblp.dtd"
+    ],
+    "dblp": [
+      "s3a://scholarchain-course-data-834519512655-us-east-2/raw/dblp/snapshot=2026-10-03/run=run-94e3a7a3e03c0e963754e95b2ff5b615/works.xml"
+    ],
+    "orcid": [
+      "s3a://scholarchain-course-data-834519512655-us-east-2/raw/orcid/snapshot=2026-11-03/run=run-94e3a7a3e03c0e963754e95b2ff5b615/records.jsonl.gz"
+    ]
+  },
+  "reducers": 2,
+  "oversizeTeamThreshold": 100,
+  "graphPolicyVersion": "graph-v1",
+  "maxBlockSize": 150,
+  "maxConflictGroupSize": 100,
+  "entityResolutionRules": "norm-v1.block-v1.feat-v1",
+  "matchPolicyVersion": "er-v2",
+  "thresholds": {
+    "accept-threshold": 0.93,
+    "reject-threshold": 0.35,
+    "llm-band-min": 0.65,
+    "llm-band-max": 0.93
+  },
+  "startedAt": "2026-11-16T23:28:13.534181467Z"
+}

@@ -1,0 +1,241 @@
+{
+    "SecurityGroups": [
+        {
+            "GroupId": "sg-06850b56e702003b3",
+            "IpPermissionsEgress": [
+                {
+                    "IpProtocol": "-1",
+                    "UserIdGroupPairs": [],
+                    "IpRanges": [
+                        {
+                            "Description": "Outbound to AWS endpoints",
+                            "CidrIp": "0.0.0.0/0"
+                        }
+                    ],
+                    "Ipv6Ranges": [],
+                    "PrefixListIds": []
+                }
+            ],
+            "Tags": [
+                {
+                    "Key": "Expiration",
+                    "Value": "2026-12-15"
+                },
+                {
+                    "Key": "Owner",
+                    "Value": "scholarchain-human-architect"
+                },
+                {
+                    "Key": "for-use-with-amazon-emr-managed-policies",
+                    "Value": "true"
+                },
+                {
+                    "Key": "ManagedBy",
+                    "Value": "terraform"
+                },
+                {
+                    "Key": "Project",
+                    "Value": "ScholarChain"
+                },
+                {
+                    "Key": "Name",
+                    "Value": "scholarchain-course-emr-primary"
+                },
+                {
+                    "Key": "Environment",
+                    "Value": "course"
+                },
+                {
+                    "Key": "Course",
+                    "Value": "CS441"
+                }
+            ],
+            "VpcId": "vpc-0fd8e31fa7b48c139",
+            "SecurityGroupArn": "arn:aws:ec2:us-east-2:834519512655:security-group/sg-06850b56e702003b3",
+            "OwnerId": "834519512655",
+            "GroupName": "scholarchain-course-emr-primary",
+            "Description": "EMR-managed group for the primary node",
+            "IpPermissions": [
+                {
+                    "IpProtocol": "tcp",
+                    "FromPort": 0,
+                    "ToPort": 65535,
+                    "UserIdGroupPairs": [
+                        {
+                            "UserId": "834519512655",
+                            "GroupId": "sg-06850b56e702003b3"
+                        },
+                        {
+                            "UserId": "834519512655",
+                            "GroupId": "sg-045cdc6a597240486"
+                        }
+                    ],
+                    "IpRanges": [],
+                    "Ipv6Ranges": [],
+                    "PrefixListIds": []
+                },
+                {
+                    "IpProtocol": "tcp",
+                    "FromPort": 8443,
+                    "ToPort": 8443,
+                    "UserIdGroupPairs": [],
+                    "IpRanges": [],
+                    "Ipv6Ranges": [],
+                    "PrefixListIds": [
+                        {
+                            "PrefixListId": "pl-eca74285"
+                        }
+                    ]
+                },
+                {
+                    "IpProtocol": "udp",
+                    "FromPort": 0,
+                    "ToPort": 65535,
+                    "UserIdGroupPairs": [
+                        {
+                            "UserId": "834519512655",
+                            "GroupId": "sg-045cdc6a597240486"
+                        },
+                        {
+                            "UserId": "834519512655",
+                            "GroupId": "sg-06850b56e702003b3"
+                        }
+                    ],
+                    "IpRanges": [],
+                    "Ipv6Ranges": [],
+                    "PrefixListIds": []
+                },
+                {
+                    "IpProtocol": "icmp",
+                    "FromPort": -1,
+                    "ToPort": -1,
+                    "UserIdGroupPairs": [
+                        {
+                            "UserId": "834519512655",
+                            "GroupId": "sg-045cdc6a597240486"
+                        },
+                        {
+                            "UserId": "834519512655",
+                            "GroupId": "sg-06850b56e702003b3"
+                        }
+                    ],
+                    "IpRanges": [],
+                    "Ipv6Ranges": [],
+                    "PrefixListIds": []
+                }
+            ]
+        },
+        {
+            "GroupId": "sg-045cdc6a597240486",
+            "IpPermissionsEgress": [
+                {
+                    "IpProtocol": "-1",
+                    "UserIdGroupPairs": [],
+                    "IpRanges": [
+                        {
+                            "Description": "Outbound to AWS endpoints",
+                            "CidrIp": "0.0.0.0/0"
+                        }
+                    ],
+                    "Ipv6Ranges": [],
+                    "PrefixListIds": []
+                }
+            ],
+            "Tags": [
+                {
+                    "Key": "Project",
+                    "Value": "ScholarChain"
+                },
+                {
+                    "Key": "for-use-with-amazon-emr-managed-policies",
+                    "Value": "true"
+                },
+                {
+                    "Key": "Course",
+                    "Value": "CS441"
+                },
+                {
+                    "Key": "Environment",
+                    "Value": "course"
+                },
+                {
+                    "Key": "Owner",
+                    "Value": "scholarchain-human-architect"
+                },
+                {
+                    "Key": "Expiration",
+                    "Value": "2026-12-15"
+                },
+                {
+                    "Key": "ManagedBy",
+                    "Value": "terraform"
+                },
+                {
+                    "Key": "Name",
+                    "Value": "scholarchain-course-emr-core"
+                }
+            ],
+            "VpcId": "vpc-0fd8e31fa7b48c139",
+            "SecurityGroupArn": "arn:aws:ec2:us-east-2:834519512655:security-group/sg-045cdc6a597240486",
+            "OwnerId": "834519512655",
+            "GroupName": "scholarchain-course-emr-core",
+            "Description": "EMR-managed group for core nodes",
+            "IpPermissions": [
+                {
+                    "IpProtocol": "tcp",
+                    "FromPort": 0,
+                    "ToPort": 65535,
+                    "UserIdGroupPairs": [
+                        {
+                            "UserId": "834519512655",
+                            "GroupId": "sg-06850b56e702003b3"
+                        },
+                        {
+                            "UserId": "834519512655",
+                            "GroupId": "sg-045cdc6a597240486"
+                        }
+                    ],
+                    "IpRanges": [],
+                    "Ipv6Ranges": [],
+                    "PrefixListIds": []
+                },
+                {
+                    "IpProtocol": "udp",
+                    "FromPort": 0,
+                    "ToPort": 65535,
+                    "UserIdGroupPairs": [
+                        {
+                            "UserId": "834519512655",
+                            "GroupId": "sg-045cdc6a597240486"
+                        },
+                        {
+                            "UserId": "834519512655",
+                            "GroupId": "sg-06850b56e702003b3"
+                        }
+                    ],
+                    "IpRanges": [],
+                    "Ipv6Ranges": [],
+                    "PrefixListIds": []
+                },
+                {
+                    "IpProtocol": "icmp",
+                    "FromPort": -1,
+                    "ToPort": -1,
+                    "UserIdGroupPairs": [
+                        {
+                            "UserId": "834519512655",
+                            "GroupId": "sg-045cdc6a597240486"
+                        },
+                        {
+                            "UserId": "834519512655",
+                            "GroupId": "sg-06850b56e702003b3"
+                        }
+                    ],
+                    "IpRanges": [],
+                    "Ipv6Ranges": [],
+                    "PrefixListIds": []
+                }
+            ]
+        }
+    ]
+}

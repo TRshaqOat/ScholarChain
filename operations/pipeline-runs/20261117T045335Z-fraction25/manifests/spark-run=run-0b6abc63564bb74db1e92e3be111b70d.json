@@ -1,0 +1,1302 @@
+{
+  "schemaVersion": "spark-run-manifest-v1",
+  "stage": "spark-community-path",
+  "runId": "run-0b6abc63564bb74db1e92e3be111b70d",
+  "attempt": 1,
+  "runDir": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-0b6abc63564bb74db1e92e3be111b70d",
+  "snapshot": "2026-10-03",
+  "codeVersion": "deef29516bf395ac2b551beb93710b6a48a937a8",
+  "configVersion": "config-v1",
+  "input": {
+    "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-963c0c2647f8a6fa52be14b66540254e",
+    "researcherAnalyticsRunId": "run-963c0c2647f8a6fa52be14b66540254e",
+    "canonicalGraphPath": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-3448279960349baa96780403b99e0a66",
+    "canonicalGraphRunId": "run-3448279960349baa96780403b99e0a66",
+    "pairsFile": null
+  },
+  "lineage": {
+    "inputHadoopRunId": "run-aa940ec80cef96879f88d1f2407a0fc7",
+    "matchPolicyVersion": "er-v2"
+  },
+  "settings": {
+    "master": "yarn",
+    "shufflePartitions": 40,
+    "adaptiveExecution": "true",
+    "checkpointDir": "hdfs:/scholarchain/spark/checkpoints/run-0b6abc63564bb74db1e92e3be111b70d",
+    "checkpointEvery": "round",
+    "graphPolicy": "graph-v1",
+    "windows": [
+      {
+        "name": "all-years",
+        "startYear": 2000,
+        "endYear": 2026
+      },
+      {
+        "name": "2000-2014",
+        "startYear": 2000,
+        "endYear": 2014
+      },
+      {
+        "name": "2015-2026",
+        "startYear": 2015,
+        "endYear": 2026
+      }
+    ],
+    "communityAlgorithm": "label-propagation (synchronous, self vote, smallest-label tie-break)",
+    "communityMaxIterations": 10,
+    "bridgeMeasures": [
+      "crossCommunityDegree",
+      "communitiesConnected",
+      "participationCoefficient"
+    ],
+    "pathAlgorithm": "bounded multi-source BFS, smallest-parent tie-break",
+    "pathMaxDepth": 6,
+    "pathPairs": {
+      "source": "seeded sample",
+      "pairs": 50,
+      "window": "all-years",
+      "from": "the window's largest component",
+      "method": "rank members by H(seed, 'path-pair', window, id); pair ranks 1-2, 3-4, ..."
+    },
+    "pathLengthEstimate": {
+      "sourcesPerWindow": 20,
+      "from": "each window's largest component",
+      "method": "rank members by H(seed, 'bfs-source', window, id); exact BFS from each",
+      "maxRounds": 60
+    },
+    "sampleSeed": 20261003,
+    "minFreeDiskGiB": 5,
+    "driverMaxHeapBytes": 2147483648,
+    "availableProcessors": 4
+  },
+  "fingerprints": [
+    "researcher-analytics-run=run-963c0c2647f8a6fa52be14b66540254e",
+    "canonical-graph-run=run-3448279960349baa96780403b99e0a66",
+    "input:researcher-analytics=s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-963c0c2647f8a6fa52be14b66540254e:16778639",
+    "input:canonical-graph=s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-3448279960349baa96780403b99e0a66:121883919",
+    "config:graph-policy=graph-v1",
+    "config:windows=all-years:2000-2026,2000-2014:2000-2014,2015-2026:2015-2026",
+    "config:community-max-iterations=10",
+    "config:path-max-depth=6",
+    "config:path-sample-sources=20",
+    "config:sample-seed=20261003",
+    "config:cc-max-iterations=60",
+    "pairs=sample:50"
+  ],
+  "startedAt": "2026-11-17T05:24:34.055528076Z",
+  "inputs": [
+    {
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-963c0c2647f8a6fa52be14b66540254e/analytics/researcher-metrics",
+      "exists": true,
+      "rows": 139465
+    },
+    {
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-963c0c2647f8a6fa52be14b66540254e/analytics/components",
+      "exists": true,
+      "rows": 15787
+    },
+    {
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-3448279960349baa96780403b99e0a66/graph/coauthor-edges",
+      "exists": true,
+      "rows": 423192
+    },
+    {
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-3448279960349baa96780403b99e0a66/canonical/researchers",
+      "exists": true,
+      "rows": 78232
+    }
+  ],
+  "tables": [
+    {
+      "name": "paths/path-evidence",
+      "schemaVersion": "spark-paths-path-evidence-v1",
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-0b6abc63564bb74db1e92e3be111b70d/paths/path-evidence",
+      "format": "parquet",
+      "partitionColumns": [
+        "window"
+      ],
+      "hashPartitionKey": null,
+      "writePartitions": 1,
+      "schema": "pairId STRING,windowStartYear INT,windowEndYear INT,sourceResearcherId STRING,targetResearcherId STRING,status STRING,pathLength INT,maxDepth INT,componentId STRING,researcherIds ARRAY<STRING>,hops ARRAY<STRUCT<hop: INT, fromResearcherId: STRING, toResearcherId: STRING, edgeId: STRING, jointPublicationCount: BIGINT, firstCollaborationYear: INT, lastCollaborationYear: INT, supportingWorkIds: ARRAY<STRING>>>,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING,window STRING",
+      "rowCount": 50,
+      "intendedTargets": [
+        "neptune",
+        "dynamodb",
+        "s3"
+      ],
+      "fileCount": 1,
+      "totalBytes": 40612,
+      "minFileBytes": 40612,
+      "maxFileBytes": 40612
+    },
+    {
+      "name": "paths/path-length-estimate",
+      "schemaVersion": "spark-paths-path-length-estimate-v1",
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-0b6abc63564bb74db1e92e3be111b70d/paths/path-length-estimate",
+      "format": "parquet",
+      "partitionColumns": [],
+      "hashPartitionKey": null,
+      "writePartitions": 1,
+      "schema": "window STRING,windowStartYear INT,windowEndYear INT,largestComponentId STRING,largestComponentSize BIGINT,requestedSources INT,sampledSources INT,sampleSeed BIGINT,sourceResearcherIds ARRAY<STRING>,reachablePairs BIGINT,meanDistance DOUBLE,meanDistanceStdError DOUBLE,medianDistance INT,effectiveDiameter90 INT,maxObservedDistance INT,distanceHistogram ARRAY<STRUCT<distance: INT, pairs: BIGINT>>,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING",
+      "rowCount": 3,
+      "intendedTargets": [
+        "dynamodb",
+        "s3"
+      ],
+      "fileCount": 1,
+      "totalBytes": 12014,
+      "minFileBytes": 12014,
+      "maxFileBytes": 12014
+    },
+    {
+      "name": "analytics/communities",
+      "schemaVersion": "spark-analytics-communities-v1",
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-0b6abc63564bb74db1e92e3be111b70d/analytics/communities",
+      "format": "parquet",
+      "partitionColumns": [
+        "window"
+      ],
+      "hashPartitionKey": null,
+      "writePartitions": 1,
+      "schema": "windowStartYear INT,windowEndYear INT,communityId STRING,communityLabel STRING,communitySize BIGINT,internalEdges BIGINT,crossCommunityEdges BIGINT,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING,window STRING",
+      "rowCount": 31101,
+      "intendedTargets": [
+        "neptune",
+        "dynamodb",
+        "s3"
+      ],
+      "fileCount": 3,
+      "totalBytes": 3171322,
+      "minFileBytes": 619533,
+      "maxFileBytes": 1512023
+    },
+    {
+      "name": "analytics/cross-community-edges",
+      "schemaVersion": "spark-analytics-cross-community-edges-v1",
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-0b6abc63564bb74db1e92e3be111b70d/analytics/cross-community-edges",
+      "format": "parquet",
+      "partitionColumns": [
+        "window"
+      ],
+      "hashPartitionKey": null,
+      "writePartitions": 1,
+      "schema": "windowStartYear INT,windowEndYear INT,edgeId STRING,researcherA STRING,researcherB STRING,communityA STRING,communityB STRING,jointPublicationCount BIGINT,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING,window STRING",
+      "rowCount": 106630,
+      "intendedTargets": [
+        "neptune",
+        "s3"
+      ],
+      "fileCount": 3,
+      "totalBytes": 11792380,
+      "minFileBytes": 1598084,
+      "maxFileBytes": 6447674
+    },
+    {
+      "name": "analytics/researcher-communities",
+      "schemaVersion": "spark-analytics-researcher-communities-v1",
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-0b6abc63564bb74db1e92e3be111b70d/analytics/researcher-communities",
+      "format": "parquet",
+      "partitionColumns": [
+        "window"
+      ],
+      "hashPartitionKey": "researcherId",
+      "writePartitions": 8,
+      "schema": "windowStartYear INT,windowEndYear INT,researcherId STRING,communityId STRING,communitySize BIGINT,graphDegree BIGINT,crossCommunityDegree BIGINT,communitiesConnected BIGINT,participationCoefficient DOUBLE,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING,window STRING",
+      "rowCount": 139465,
+      "intendedTargets": [
+        "neptune",
+        "dynamodb",
+        "s3"
+      ],
+      "fileCount": 24,
+      "totalBytes": 13559277,
+      "minFileBytes": 296487,
+      "maxFileBytes": 824189
+    },
+    {
+      "name": "analytics/community-path-violations",
+      "schemaVersion": "spark-analytics-community-path-violations-v1",
+      "path": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-0b6abc63564bb74db1e92e3be111b70d/analytics/community-path-violations",
+      "format": "parquet",
+      "partitionColumns": [],
+      "hashPartitionKey": null,
+      "writePartitions": 1,
+      "schema": "check STRING,subjectId STRING,relatedId STRING,detail STRING,provenance STRUCT<schemaVersion: STRING, sourceDataset: STRING, sourceRecordId: STRING, snapshot: STRING, runId: STRING, policyVersion: STRING, modelVersion: STRING>,schemaVersion STRING",
+      "rowCount": 0,
+      "intendedTargets": [
+        "s3"
+      ],
+      "fileCount": 1,
+      "totalBytes": 1469,
+      "minFileBytes": 1469,
+      "maxFileBytes": 1469
+    }
+  ],
+  "selectedPairsFile": "s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-0b6abc63564bb74db1e92e3be111b70d/paths/selected-pairs.csv",
+  "counts": {
+    "pathStatusCounts": [
+      {
+        "window": "all-years",
+        "status": "BEYOND_DEPTH",
+        "count": 26
+      },
+      {
+        "window": "all-years",
+        "status": "FOUND",
+        "count": 24
+      }
+    ],
+    "pathLengthHistogram": [
+      {
+        "window": "all-years",
+        "pathLength": 4,
+        "count": 1
+      },
+      {
+        "window": "all-years",
+        "pathLength": 5,
+        "count": 9
+      },
+      {
+        "window": "all-years",
+        "pathLength": 6,
+        "count": 14
+      }
+    ],
+    "pathBfsNodesReachedPerRound": [
+      319,
+      2522,
+      18098,
+      97902,
+      273591,
+      342531
+    ],
+    "pathLengthEstimate": [
+      {
+        "window": "2000-2014",
+        "windowStartYear": 2000,
+        "windowEndYear": 2014,
+        "largestComponentId": "comp-17adf04a37a14ff82a457b9ba5f6e8f6",
+        "largestComponentSize": 13386,
+        "requestedSources": 20,
+        "sampledSources": 20,
+        "sampleSeed": 20261003,
+        "reachablePairs": 267700,
+        "meanDistance": 7.6878968995143815,
+        "meanDistanceStdError": 0.2813200414628932,
+        "medianDistance": 8,
+        "effectiveDiameter90": 10,
+        "maxObservedDistance": 18,
+        "distanceHistogram": [
+          "[1,132]",
+          "[2,562]",
+          "[3,2195]",
+          "[4,8035]",
+          "[5,22470]",
+          "[6,43142]",
+          "[7,55592]",
+          "[8,50476]",
+          "[9,36930]",
+          "[10,24278]",
+          "[11,13736]",
+          "[12,6316]",
+          "[13,2448]",
+          "[14,944]",
+          "[15,321]",
+          "[16,81]",
+          "[17,30]",
+          "[18,12]"
+        ],
+        "schemaVersion": "spark-paths-path-length-estimate-v1"
+      },
+      {
+        "window": "all-years",
+        "windowStartYear": 2000,
+        "windowEndYear": 2026,
+        "largestComponentId": "comp-cfd225585b602a39baa08ba62545ccb5",
+        "largestComponentSize": 41930,
+        "requestedSources": 20,
+        "sampledSources": 20,
+        "sampleSeed": 20261003,
+        "reachablePairs": 838580,
+        "meanDistance": 6.993359011662572,
+        "meanDistanceStdError": 0.1958889277387762,
+        "medianDistance": 7,
+        "effectiveDiameter90": 9,
+        "maxObservedDistance": 16,
+        "distanceHistogram": [
+          "[1,105]",
+          "[2,677]",
+          "[3,5067]",
+          "[4,30046]",
+          "[5,100927]",
+          "[6,189839]",
+          "[7,215566]",
+          "[8,163026]",
+          "[9,84896]",
+          "[10,32453]",
+          "[11,11170]",
+          "[12,3549]",
+          "[13,934]",
+          "[14,269]",
+          "[15,48]",
+          "[16,8]"
+        ],
+        "schemaVersion": "spark-paths-path-length-estimate-v1"
+      },
+      {
+        "window": "2015-2026",
+        "windowStartYear": 2015,
+        "windowEndYear": 2026,
+        "largestComponentId": "comp-8dc50e0d8887b22c862d1ed6223d7b64",
+        "largestComponentSize": 26521,
+        "requestedSources": 20,
+        "sampledSources": 20,
+        "sampleSeed": 20261003,
+        "reachablePairs": 530400,
+        "meanDistance": 7.355345022624435,
+        "meanDistanceStdError": 0.2641307227745808,
+        "medianDistance": 7,
+        "effectiveDiameter90": 10,
+        "maxObservedDistance": 19,
+        "distanceHistogram": [
+          "[1,170]",
+          "[2,821]",
+          "[3,5034]",
+          "[4,21203]",
+          "[5,57134]",
+          "[6,100414]",
+          "[7,117080]",
+          "[8,93717]",
+          "[9,62956]",
+          "[10,38233]",
+          "[11,19394]",
+          "[12,8830]",
+          "[13,3332]",
+          "[14,1225]",
+          "[15,514]",
+          "[16,196]",
+          "[17,101]",
+          "[18,32]",
+          "[19,14]"
+        ],
+        "schemaVersion": "spark-paths-path-length-estimate-v1"
+      }
+    ],
+    "estimateBfsNodesReachedPerRound": [
+      407,
+      2060,
+      12296,
+      59284,
+      180531,
+      333395,
+      388238,
+      307219,
+      184782,
+      94964,
+      44300,
+      18695,
+      6714,
+      2438,
+      883,
+      285,
+      131,
+      44,
+      14,
+      0
+    ],
+    "communityIterations": 10,
+    "communityConverged": {
+      "all-years": false,
+      "2000-2014": false,
+      "2015-2026": false
+    },
+    "communityLabelsChangedPerRound": {
+      "all-years": [
+        51861,
+        7709,
+        1700,
+        732,
+        319,
+        166,
+        82,
+        49,
+        28,
+        25
+      ],
+      "2000-2014": [
+        17824,
+        2889,
+        569,
+        258,
+        118,
+        54,
+        30,
+        14,
+        10,
+        15
+      ],
+      "2015-2026": [
+        37676,
+        4291,
+        958,
+        414,
+        206,
+        103,
+        56,
+        30,
+        19,
+        19
+      ]
+    },
+    "communitiesPerWindow": [
+      {
+        "window": "2000-2014",
+        "communities": 6056,
+        "researchers": 24268,
+        "largestCommunitySize": 140,
+        "singletonCommunities": 856,
+        "internalEdges": 46872,
+        "crossCommunityEdges": 14099,
+        "largestCommunityFraction": 0.005768913795945278
+      },
+      {
+        "window": "2015-2026",
+        "communities": 10191,
+        "researchers": 47918,
+        "largestCommunitySize": 144,
+        "singletonCommunities": 620,
+        "internalEdges": 116874,
+        "crossCommunityEdges": 35186,
+        "largestCommunityFraction": 0.0030051337701907425
+      },
+      {
+        "window": "all-years",
+        "communities": 14854,
+        "researchers": 67279,
+        "largestCommunitySize": 190,
+        "singletonCommunities": 1450,
+        "internalEdges": 152816,
+        "crossCommunityEdges": 57345,
+        "largestCommunityFraction": 0.002824060999717594
+      }
+    ],
+    "communitySizeHistogram": [
+      {
+        "window": "2000-2014",
+        "size": "1",
+        "communities": 856
+      },
+      {
+        "window": "2000-2014",
+        "size": "2",
+        "communities": 1541
+      },
+      {
+        "window": "2000-2014",
+        "size": "3-5",
+        "communities": 2583
+      },
+      {
+        "window": "2000-2014",
+        "size": "6-10",
+        "communities": 796
+      },
+      {
+        "window": "2000-2014",
+        "size": "11-100",
+        "communities": 279
+      },
+      {
+        "window": "2000-2014",
+        "size": "101-1000",
+        "communities": 1
+      },
+      {
+        "window": "2015-2026",
+        "size": "1",
+        "communities": 620
+      },
+      {
+        "window": "2015-2026",
+        "size": "2",
+        "communities": 2154
+      },
+      {
+        "window": "2015-2026",
+        "size": "3-5",
+        "communities": 4967
+      },
+      {
+        "window": "2015-2026",
+        "size": "6-10",
+        "communities": 1863
+      },
+      {
+        "window": "2015-2026",
+        "size": "11-100",
+        "communities": 584
+      },
+      {
+        "window": "2015-2026",
+        "size": "101-1000",
+        "communities": 3
+      },
+      {
+        "window": "all-years",
+        "size": "1",
+        "communities": 1450
+      },
+      {
+        "window": "all-years",
+        "size": "2",
+        "communities": 3515
+      },
+      {
+        "window": "all-years",
+        "size": "3-5",
+        "communities": 6624
+      },
+      {
+        "window": "all-years",
+        "size": "6-10",
+        "communities": 2412
+      },
+      {
+        "window": "all-years",
+        "size": "11-100",
+        "communities": 847
+      },
+      {
+        "window": "all-years",
+        "size": "101-1000",
+        "communities": 6
+      }
+    ],
+    "largestCommunities": [
+      {
+        "window": "2000-2014",
+        "rank": 1,
+        "communityId": "comm-74ee343ae2a42689346d000a10251e5c",
+        "communityLabel": "scr:canon-v1.er-v2:00f615ffa94b8dba56017d0503b19b1d",
+        "communitySize": 140,
+        "internalEdges": 1466,
+        "crossCommunityEdges": 297
+      },
+      {
+        "window": "2000-2014",
+        "rank": 2,
+        "communityId": "comm-92e9b45f8b42513fbb5c46ce22303ad6",
+        "communityLabel": "scr:canon-v1.er-v2:01169d5670513f4789c3c627bfeae12e",
+        "communitySize": 76,
+        "internalEdges": 303,
+        "crossCommunityEdges": 231
+      },
+      {
+        "window": "2000-2014",
+        "rank": 3,
+        "communityId": "comm-1c463e2d509d13cef12e22e1e2222f5c",
+        "communityLabel": "scr:canon-v1.er-v2:04b42d9b1de88b828419d2c368d5f943",
+        "communitySize": 64,
+        "internalEdges": 181,
+        "crossCommunityEdges": 200
+      },
+      {
+        "window": "2000-2014",
+        "rank": 4,
+        "communityId": "comm-d46dfd5d7ff93c17c71c432c281e423a",
+        "communityLabel": "scr:canon-v1.er-v2:055b1b567f66fc780e9d49153cfb6b75",
+        "communitySize": 53,
+        "internalEdges": 99,
+        "crossCommunityEdges": 59
+      },
+      {
+        "window": "2000-2014",
+        "rank": 5,
+        "communityId": "comm-d443a063ae0cca02a95d9891b1291e05",
+        "communityLabel": "scr:canon-v1.er-v2:0481c29e738630cb3c04b5fe65a81e3a",
+        "communitySize": 49,
+        "internalEdges": 899,
+        "crossCommunityEdges": 166
+      },
+      {
+        "window": "2015-2026",
+        "rank": 1,
+        "communityId": "comm-348cca14073508ffa18a0e7b6366c026",
+        "communityLabel": "scr:canon-v1.er-v2:0060a9bf38a45e7ab926c4ba6cd97d36",
+        "communitySize": 144,
+        "internalEdges": 770,
+        "crossCommunityEdges": 814
+      },
+      {
+        "window": "2015-2026",
+        "rank": 2,
+        "communityId": "comm-65bfade96a0d8cbfaae0cc2e34dd3319",
+        "communityLabel": "scr:canon-v1.er-v2:04d3496379eec160cd322b7f8f7a1bc5",
+        "communitySize": 112,
+        "internalEdges": 1827,
+        "crossCommunityEdges": 719
+      },
+      {
+        "window": "2015-2026",
+        "rank": 3,
+        "communityId": "comm-147caff7d3a5d7d55697a16351622bfe",
+        "communityLabel": "scr:canon-v1.er-v2:045857aadffaf02828a66f6659bd50fb",
+        "communitySize": 107,
+        "internalEdges": 646,
+        "crossCommunityEdges": 530
+      },
+      {
+        "window": "2015-2026",
+        "rank": 4,
+        "communityId": "comm-5f5bef2ec2c398a455580429bafbd704",
+        "communityLabel": "scr:canon-v1.er-v2:055b1b567f66fc780e9d49153cfb6b75",
+        "communitySize": 94,
+        "internalEdges": 234,
+        "crossCommunityEdges": 163
+      },
+      {
+        "window": "2015-2026",
+        "rank": 5,
+        "communityId": "comm-b2142943760171c451a195bbf5edf570",
+        "communityLabel": "scr:canon-v1.er-v2:05ef7e4327861d47d1d4c31012b02601",
+        "communitySize": 76,
+        "internalEdges": 779,
+        "crossCommunityEdges": 669
+      },
+      {
+        "window": "all-years",
+        "rank": 1,
+        "communityId": "comm-e8c7425e766444fcc7bdab0bbf5c15ee",
+        "communityLabel": "scr:canon-v1.er-v2:0060a9bf38a45e7ab926c4ba6cd97d36",
+        "communitySize": 190,
+        "internalEdges": 928,
+        "crossCommunityEdges": 1094
+      },
+      {
+        "window": "all-years",
+        "rank": 2,
+        "communityId": "comm-65d5144f0edca1abf378847f6e1021d0",
+        "communityLabel": "scr:canon-v1.er-v2:00f615ffa94b8dba56017d0503b19b1d",
+        "communitySize": 162,
+        "internalEdges": 1433,
+        "crossCommunityEdges": 445
+      },
+      {
+        "window": "all-years",
+        "rank": 3,
+        "communityId": "comm-609ee32a5cfb7507b4e87c076a2961e0",
+        "communityLabel": "scr:canon-v1.er-v2:055b1b567f66fc780e9d49153cfb6b75",
+        "communitySize": 147,
+        "internalEdges": 321,
+        "crossCommunityEdges": 247
+      },
+      {
+        "window": "all-years",
+        "rank": 4,
+        "communityId": "comm-5bd6e3352fdbb37a863f21154cbc5813",
+        "communityLabel": "scr:canon-v1.er-v2:04d3496379eec160cd322b7f8f7a1bc5",
+        "communitySize": 136,
+        "internalEdges": 1961,
+        "crossCommunityEdges": 1188
+      },
+      {
+        "window": "all-years",
+        "rank": 5,
+        "communityId": "comm-85f02b1d6d9509c510b00985c17cc382",
+        "communityLabel": "scr:canon-v1.er-v2:01169d5670513f4789c3c627bfeae12e",
+        "communitySize": 134,
+        "internalEdges": 483,
+        "crossCommunityEdges": 742
+      }
+    ],
+    "crossCommunityEdgeRows": 106630,
+    "bridgeDistributions": {
+      "all-years": {
+        "crossCommunityDegree": {
+          "min": 0,
+          "median": 0,
+          "p90": 4,
+          "p99": 22,
+          "max": 213
+        },
+        "communitiesConnected": {
+          "min": 0,
+          "median": 1,
+          "p90": 4,
+          "p99": 11,
+          "max": 68
+        },
+        "participationCoefficient": {
+          "min": 0,
+          "median": 0,
+          "p90": 0.6666666666666667,
+          "p99": 0.8459347080968707,
+          "max": 0.9723186728395061
+        },
+        "communitySize": {
+          "min": 1,
+          "median": 6,
+          "p90": 22,
+          "p99": 134,
+          "max": 190
+        }
+      },
+      "2000-2014": {
+        "crossCommunityDegree": {
+          "min": 0,
+          "median": 0,
+          "p90": 3,
+          "p99": 14,
+          "max": 71
+        },
+        "communitiesConnected": {
+          "min": 0,
+          "median": 1,
+          "p90": 3,
+          "p99": 8,
+          "max": 34
+        },
+        "participationCoefficient": {
+          "min": 0,
+          "median": 0,
+          "p90": 0.6111111111111112,
+          "p99": 0.8074879755823885,
+          "max": 0.9479111111111111
+        },
+        "communitySize": {
+          "min": 1,
+          "median": 5,
+          "p90": 17,
+          "p99": 64,
+          "max": 140
+        }
+      },
+      "2015-2026": {
+        "crossCommunityDegree": {
+          "min": 0,
+          "median": 0,
+          "p90": 4,
+          "p99": 18,
+          "max": 165
+        },
+        "communitiesConnected": {
+          "min": 0,
+          "median": 1,
+          "p90": 3,
+          "p99": 9,
+          "max": 49
+        },
+        "participationCoefficient": {
+          "min": 0,
+          "median": 0,
+          "p90": 0.625,
+          "p99": 0.8165680473372781,
+          "max": 0.9617195990822365
+        },
+        "communitySize": {
+          "min": 1,
+          "median": 6,
+          "p90": 19,
+          "p99": 76,
+          "max": 144
+        }
+      }
+    },
+    "researchersWithCrossCommunityEdge": [
+      {
+        "window": "2000-2014",
+        "researchers": 24268,
+        "withCrossCommunityEdge": 9711
+      },
+      {
+        "window": "2015-2026",
+        "researchers": 47918,
+        "withCrossCommunityEdge": 20385
+      },
+      {
+        "window": "all-years",
+        "researchers": 67279,
+        "withCrossCommunityEdge": 31453
+      }
+    ],
+    "topParticipationCoefficient": [
+      {
+        "window": "2000-2014",
+        "rank": 1,
+        "researcherId": "scr:canon-v1.er-v2:74d3fbf9ba2da1ef8f8497572f905840",
+        "displayName": "Jesús Labarta",
+        "communityId": "comm-b334e5d64d4ccebe0b8d669096ea2558",
+        "graphDegree": 75,
+        "crossCommunityDegree": 68,
+        "communitiesConnected": 31,
+        "participationCoefficient": 0.9479111111111111
+      },
+      {
+        "window": "2000-2014",
+        "rank": 2,
+        "researcherId": "scr:canon-v1.er-v2:bc276448a4a61325b42bf59640af773b",
+        "displayName": "Jiannong Cao 0001",
+        "communityId": "comm-9d6b9d92bfee432adb734f6b7c197acc",
+        "graphDegree": 62,
+        "crossCommunityDegree": 56,
+        "communitiesConnected": 25,
+        "participationCoefficient": 0.945369406867846
+      },
+      {
+        "window": "2000-2014",
+        "rank": 3,
+        "researcherId": "scr:canon-v1.er-v2:da313f0e2000da8c4a71b4f8646b8f72",
+        "displayName": "Hai Jin 0001",
+        "communityId": "comm-37fbb85ed58ca3afaaf94aff4c9d5026",
+        "graphDegree": 83,
+        "crossCommunityDegree": 71,
+        "communitiesConnected": 32,
+        "participationCoefficient": 0.9400493540426768
+      },
+      {
+        "window": "2000-2014",
+        "rank": 4,
+        "researcherId": "scr:canon-v1.er-v2:a1fcbac893cbe8789599dcc6283b90c9",
+        "displayName": "Laurence T. Yang",
+        "communityId": "comm-d1dce1e0c785d6049f72748872d0bf22",
+        "graphDegree": 65,
+        "crossCommunityDegree": 55,
+        "communitiesConnected": 29,
+        "participationCoefficient": 0.9396449704142011
+      },
+      {
+        "window": "2000-2014",
+        "rank": 5,
+        "researcherId": "scr:canon-v1.er-v2:6c49695bdbaeb1d006a110a0dc2d9567",
+        "displayName": "Eduard Ayguadé",
+        "communityId": "comm-0d55de624308ebb91f49d8a2b56a34c3",
+        "graphDegree": 56,
+        "crossCommunityDegree": 47,
+        "communitiesConnected": 27,
+        "participationCoefficient": 0.9323979591836735
+      },
+      {
+        "window": "2015-2026",
+        "rank": 1,
+        "researcherId": "scr:canon-v1.er-v2:fcc66243f865d5c615230571ddf7ac2b",
+        "displayName": "Kim-Kwang Raymond Choo",
+        "communityId": "comm-72294e9474072e176d8238aa7ecbb735",
+        "graphDegree": 91,
+        "crossCommunityDegree": 80,
+        "communitiesConnected": 49,
+        "participationCoefficient": 0.9617195990822365
+      },
+      {
+        "window": "2015-2026",
+        "rank": 2,
+        "researcherId": "scr:canon-v1.er-v2:a1fcbac893cbe8789599dcc6283b90c9",
+        "displayName": "Laurence T. Yang",
+        "communityId": "comm-0fbb9a6fdbdd206e3277a2f017a1c373",
+        "graphDegree": 90,
+        "crossCommunityDegree": 80,
+        "communitiesConnected": 41,
+        "participationCoefficient": 0.9538271604938272
+      },
+      {
+        "window": "2015-2026",
+        "rank": 3,
+        "researcherId": "scr:canon-v1.er-v2:da313f0e2000da8c4a71b4f8646b8f72",
+        "displayName": "Hai Jin 0001",
+        "communityId": "comm-b65e9ce1302460cbeecb232d93b6826c",
+        "graphDegree": 190,
+        "crossCommunityDegree": 165,
+        "communitiesConnected": 46,
+        "participationCoefficient": 0.9504155124653739
+      },
+      {
+        "window": "2015-2026",
+        "rank": 4,
+        "researcherId": "scr:canon-v1.er-v2:f6c737701266d7829a43291c3d961ca4",
+        "displayName": "Cheng-Zhong Xu 0001",
+        "communityId": "comm-2935718446f8fa92735e93f019aff4f7",
+        "graphDegree": 77,
+        "crossCommunityDegree": 70,
+        "communitiesConnected": 31,
+        "participationCoefficient": 0.9488952605835723
+      },
+      {
+        "window": "2015-2026",
+        "rank": 5,
+        "researcherId": "scr:canon-v1.er-v2:eae41878dfd700efa903e6790398bf21",
+        "displayName": "Yang Xiang 0001",
+        "communityId": "comm-da83551fac841242cb6dbb6fd56c35fc",
+        "graphDegree": 87,
+        "crossCommunityDegree": 77,
+        "communitiesConnected": 37,
+        "participationCoefficient": 0.9480776852952834
+      },
+      {
+        "window": "all-years",
+        "rank": 1,
+        "researcherId": "scr:canon-v1.er-v2:a1fcbac893cbe8789599dcc6283b90c9",
+        "displayName": "Laurence T. Yang",
+        "communityId": "comm-cf5516cc38606e6dde64027d8d1fa750",
+        "graphDegree": 144,
+        "crossCommunityDegree": 135,
+        "communitiesConnected": 68,
+        "participationCoefficient": 0.9723186728395061
+      },
+      {
+        "window": "all-years",
+        "rank": 2,
+        "researcherId": "scr:canon-v1.er-v2:bc276448a4a61325b42bf59640af773b",
+        "displayName": "Jiannong Cao 0001",
+        "communityId": "comm-eda991b5b0718918f761340a6ece4260",
+        "graphDegree": 119,
+        "crossCommunityDegree": 110,
+        "communitiesConnected": 49,
+        "participationCoefficient": 0.9634912788644869
+      },
+      {
+        "window": "all-years",
+        "rank": 3,
+        "researcherId": "scr:canon-v1.er-v2:fcc66243f865d5c615230571ddf7ac2b",
+        "displayName": "Kim-Kwang Raymond Choo",
+        "communityId": "comm-22a975ffa81cf8a5392f5064bcf69e14",
+        "graphDegree": 91,
+        "crossCommunityDegree": 80,
+        "communitiesConnected": 49,
+        "participationCoefficient": 0.9583383649317715
+      },
+      {
+        "window": "all-years",
+        "rank": 4,
+        "researcherId": "scr:canon-v1.er-v2:74d3fbf9ba2da1ef8f8497572f905840",
+        "displayName": "Jesús Labarta",
+        "communityId": "comm-6af7a307685d53c67582bbc3fc45e207",
+        "graphDegree": 105,
+        "crossCommunityDegree": 94,
+        "communitiesConnected": 44,
+        "participationCoefficient": 0.9565532879818595
+      },
+      {
+        "window": "all-years",
+        "rank": 5,
+        "researcherId": "scr:canon-v1.er-v2:73aab55228cc25aff4c089bee7d4228f",
+        "displayName": "Jie Wu 0001",
+        "communityId": "comm-461ba65128cd01d20240b9e47b1ad016",
+        "graphDegree": 132,
+        "crossCommunityDegree": 114,
+        "communitiesConnected": 52,
+        "participationCoefficient": 0.9553489439853076
+      }
+    ],
+    "topCrossCommunityDegree": [
+      {
+        "window": "2000-2014",
+        "rank": 1,
+        "researcherId": "scr:canon-v1.er-v2:da313f0e2000da8c4a71b4f8646b8f72",
+        "displayName": "Hai Jin 0001",
+        "communityId": "comm-37fbb85ed58ca3afaaf94aff4c9d5026",
+        "graphDegree": 83,
+        "crossCommunityDegree": 71,
+        "communitiesConnected": 32,
+        "participationCoefficient": 0.9400493540426768
+      },
+      {
+        "window": "2000-2014",
+        "rank": 2,
+        "researcherId": "scr:canon-v1.er-v2:74d3fbf9ba2da1ef8f8497572f905840",
+        "displayName": "Jesús Labarta",
+        "communityId": "comm-b334e5d64d4ccebe0b8d669096ea2558",
+        "graphDegree": 75,
+        "crossCommunityDegree": 68,
+        "communitiesConnected": 31,
+        "participationCoefficient": 0.9479111111111111
+      },
+      {
+        "window": "2000-2014",
+        "rank": 3,
+        "researcherId": "scr:canon-v1.er-v2:92cac261a574585992998305abd570a7",
+        "displayName": "Karsten Schwan",
+        "communityId": "comm-3432a6d6f7d004c304d70c8cb4009bdb",
+        "graphDegree": 86,
+        "crossCommunityDegree": 66,
+        "communitiesConnected": 20,
+        "participationCoefficient": 0.8737155219037318
+      },
+      {
+        "window": "2000-2014",
+        "rank": 4,
+        "researcherId": "scr:canon-v1.er-v2:9bcf84f5bd05a12c84947a2b2a958855",
+        "displayName": "Dhabaleswar K. Panda 0001",
+        "communityId": "comm-532f4ceac72f98a70e6149465e1b0fd8",
+        "graphDegree": 83,
+        "crossCommunityDegree": 65,
+        "communitiesConnected": 20,
+        "participationCoefficient": 0.8851792713020757
+      },
+      {
+        "window": "2000-2014",
+        "rank": 5,
+        "researcherId": "scr:canon-v1.er-v2:de09537bda0d6661377a60ddba5067c8",
+        "displayName": "P. Sadayappan",
+        "communityId": "comm-ad717c90a37862cdad255e195411ea79",
+        "graphDegree": 76,
+        "crossCommunityDegree": 61,
+        "communitiesConnected": 23,
+        "participationCoefficient": 0.9196675900277008
+      },
+      {
+        "window": "2015-2026",
+        "rank": 1,
+        "researcherId": "scr:canon-v1.er-v2:da313f0e2000da8c4a71b4f8646b8f72",
+        "displayName": "Hai Jin 0001",
+        "communityId": "comm-b65e9ce1302460cbeecb232d93b6826c",
+        "graphDegree": 190,
+        "crossCommunityDegree": 165,
+        "communitiesConnected": 46,
+        "participationCoefficient": 0.9504155124653739
+      },
+      {
+        "window": "2015-2026",
+        "rank": 2,
+        "researcherId": "scr:canon-v1.er-v2:d442047be29e18253b683bc87ccc08e9",
+        "displayName": "Torsten Hoefler",
+        "communityId": "comm-a4f5923699a042fe7f5b9787d6e9a540",
+        "graphDegree": 146,
+        "crossCommunityDegree": 116,
+        "communitiesConnected": 35,
+        "participationCoefficient": 0.9096453368361794
+      },
+      {
+        "window": "2015-2026",
+        "rank": 3,
+        "researcherId": "scr:canon-v1.er-v2:36c8bc996a672e189b6d9ff2e672896e",
+        "displayName": "Albert Y. Zomaya",
+        "communityId": "comm-ea139ee9f670f538b2608378915e440b",
+        "graphDegree": 130,
+        "crossCommunityDegree": 114,
+        "communitiesConnected": 42,
+        "participationCoefficient": 0.9454437869822485
+      },
+      {
+        "window": "2015-2026",
+        "rank": 4,
+        "researcherId": "scr:canon-v1.er-v2:c3babf3c54fe6d4d38a7a06e163e3d32",
+        "displayName": "Guangming Tan",
+        "communityId": "comm-482f9a30fe17300896fc0fdce0591809",
+        "graphDegree": 128,
+        "crossCommunityDegree": 103,
+        "communitiesConnected": 19,
+        "participationCoefficient": 0.8800048828125
+      },
+      {
+        "window": "2015-2026",
+        "rank": 5,
+        "researcherId": "scr:canon-v1.er-v2:61d1edc875036ad2e69e325436523e17",
+        "displayName": "Dingwen Tao",
+        "communityId": "comm-348cca14073508ffa18a0e7b6366c026",
+        "graphDegree": 152,
+        "crossCommunityDegree": 95,
+        "communitiesConnected": 23,
+        "participationCoefficient": 0.8054016620498615
+      },
+      {
+        "window": "all-years",
+        "rank": 1,
+        "researcherId": "scr:canon-v1.er-v2:da313f0e2000da8c4a71b4f8646b8f72",
+        "displayName": "Hai Jin 0001",
+        "communityId": "comm-dfd729aa733e61ebb69d78667035c749",
+        "graphDegree": 254,
+        "crossCommunityDegree": 213,
+        "communitiesConnected": 68,
+        "participationCoefficient": 0.9515469030938062
+      },
+      {
+        "window": "all-years",
+        "rank": 2,
+        "researcherId": "scr:canon-v1.er-v2:d8e22e2745a6c09bcf33f1754be2a1ed",
+        "displayName": "Venkatram Vishwanath",
+        "communityId": "comm-5bd6e3352fdbb37a863f21154cbc5813",
+        "graphDegree": 194,
+        "crossCommunityDegree": 138,
+        "communitiesConnected": 23,
+        "participationCoefficient": 0.8280369858645977
+      },
+      {
+        "window": "all-years",
+        "rank": 3,
+        "researcherId": "scr:canon-v1.er-v2:a1fcbac893cbe8789599dcc6283b90c9",
+        "displayName": "Laurence T. Yang",
+        "communityId": "comm-cf5516cc38606e6dde64027d8d1fa750",
+        "graphDegree": 144,
+        "crossCommunityDegree": 135,
+        "communitiesConnected": 68,
+        "participationCoefficient": 0.9723186728395061
+      },
+      {
+        "window": "all-years",
+        "rank": 4,
+        "researcherId": "scr:canon-v1.er-v2:36c8bc996a672e189b6d9ff2e672896e",
+        "displayName": "Albert Y. Zomaya",
+        "communityId": "comm-85f02b1d6d9509c510b00985c17cc382",
+        "graphDegree": 175,
+        "crossCommunityDegree": 135,
+        "communitiesConnected": 54,
+        "participationCoefficient": 0.9235591836734693
+      },
+      {
+        "window": "all-years",
+        "rank": 5,
+        "researcherId": "scr:canon-v1.er-v2:915af87cc930d7e65b96f6309705325b",
+        "displayName": "Martin Schulz 0001",
+        "communityId": "comm-f796219fc1bdb848e0c1545fd464c6a4",
+        "graphDegree": 155,
+        "crossCommunityDegree": 132,
+        "communitiesConnected": 54,
+        "participationCoefficient": 0.9517585848074922
+      }
+    ],
+    "integrityViolationsByCheck": []
+  },
+  "stepSeconds": {
+    "read inputs": 2.6735049859999998,
+    "select pairs": 0.455579034,
+    "bounded paths": 23.086467216,
+    "write paths/path-evidence": 5.510061703,
+    "path-length estimate": 110.115587462,
+    "write paths/path-length-estimate": 3.136692945,
+    "label propagation": 28.768521422,
+    "write analytics/communities": 3.365251421,
+    "write analytics/cross-community-edges": 2.89874177,
+    "write analytics/researcher-communities": 4.342582722,
+    "write analytics/community-path-violations": 1.697475287,
+    "report": 3.962037417
+  },
+  "stagesByStep": [
+    {
+      "step": "read inputs",
+      "stages": 18,
+      "tasks": 99,
+      "maxTasksInAStage": 20,
+      "shuffleReadBytes": 59294983,
+      "shuffleWriteBytes": 59294983,
+      "spillDiskBytes": 0,
+      "stageMs": 2711
+    },
+    {
+      "step": "select pairs",
+      "stages": 6,
+      "tasks": 17,
+      "maxTasksInAStage": 10,
+      "shuffleReadBytes": 63920,
+      "shuffleWriteBytes": 35832,
+      "spillDiskBytes": 0,
+      "stageMs": 283
+    },
+    {
+      "step": "bounded paths",
+      "stages": 110,
+      "tasks": 786,
+      "maxTasksInAStage": 35,
+      "shuffleReadBytes": 1538322092,
+      "shuffleWriteBytes": 976889860,
+      "spillDiskBytes": 0,
+      "stageMs": 26774
+    },
+    {
+      "step": "write paths/path-evidence",
+      "stages": 22,
+      "tasks": 397,
+      "maxTasksInAStage": 35,
+      "shuffleReadBytes": 63878475,
+      "shuffleWriteBytes": 63878475,
+      "spillDiskBytes": 0,
+      "stageMs": 5052
+    },
+    {
+      "step": "path-length estimate",
+      "stages": 180,
+      "tasks": 4170,
+      "maxTasksInAStage": 176,
+      "shuffleReadBytes": 2783011416,
+      "shuffleWriteBytes": 2789057486,
+      "spillDiskBytes": 0,
+      "stageMs": 132924
+    },
+    {
+      "step": "write paths/path-length-estimate",
+      "stages": 13,
+      "tasks": 367,
+      "maxTasksInAStage": 176,
+      "shuffleReadBytes": 800857,
+      "shuffleWriteBytes": 800857,
+      "spillDiskBytes": 0,
+      "stageMs": 5953
+    },
+    {
+      "step": "label propagation",
+      "stages": 90,
+      "tasks": 852,
+      "maxTasksInAStage": 20,
+      "shuffleReadBytes": 1619714248,
+      "shuffleWriteBytes": 1619714248,
+      "spillDiskBytes": 0,
+      "stageMs": 31727
+    },
+    {
+      "step": "write analytics/communities",
+      "stages": 17,
+      "tasks": 120,
+      "maxTasksInAStage": 10,
+      "shuffleReadBytes": 148144993,
+      "shuffleWriteBytes": 148144993,
+      "spillDiskBytes": 0,
+      "stageMs": 5665
+    },
+    {
+      "step": "write analytics/cross-community-edges",
+      "stages": 10,
+      "tasks": 56,
+      "maxTasksInAStage": 10,
+      "shuffleReadBytes": 132565462,
+      "shuffleWriteBytes": 132565462,
+      "spillDiskBytes": 0,
+      "stageMs": 2731
+    },
+    {
+      "step": "write analytics/researcher-communities",
+      "stages": 17,
+      "tasks": 124,
+      "maxTasksInAStage": 20,
+      "shuffleReadBytes": 329274679,
+      "shuffleWriteBytes": 217111107,
+      "spillDiskBytes": 0,
+      "stageMs": 3834
+    },
+    {
+      "step": "write analytics/community-path-violations",
+      "stages": 7,
+      "tasks": 45,
+      "maxTasksInAStage": 21,
+      "shuffleReadBytes": 11092559,
+      "shuffleWriteBytes": 11092559,
+      "spillDiskBytes": 0,
+      "stageMs": 1123
+    },
+    {
+      "step": "report",
+      "stages": 40,
+      "tasks": 113,
+      "maxTasksInAStage": 10,
+      "shuffleReadBytes": 131485,
+      "shuffleWriteBytes": 126131,
+      "spillDiskBytes": 0,
+      "stageMs": 2575
+    }
+  ],
+  "stageCount": 530,
+  "disk": {
+    "freeBeforeBytes": 9223372036854775807,
+    "freeAfterBytes": 9223372036854775807
+  },
+  "wallSeconds": 192.024669536,
+  "finishedAt": "2026-11-17T05:27:46.080200295Z"
+}

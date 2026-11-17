@@ -1,0 +1,39 @@
+22:53:33 chain 5 (ruling 21) at HEAD deef29516bf395ac2b551beb93710b6a48a937a8, shuffle partitions 40, order 25 then 100
+22:53:33 window 1 normalized instance hours so far: 120 (stop above 160)
+22:53:33 starting fraction 25
+==> STEP submit
+==> CLUSTER id=j-03327281MRPKUSN1LE0M
+==> STEP wait
+==> STEP collect
+==> STEP emr-security-groups
+==> OK no 0.0.0.0/0 or ::/0 ingress on the EMR groups
+==> PIPELINE record=/Users/achyutpatel/Developer/Cloud/ScholarChain/operations/pipeline-runs/20261117T045335Z-fraction25/run.json cluster=j-03327281MRPKUSN1LE0M state=TERMINATED reason=ALL_STEPS_COMPLETED instance-hours=24
+==> OK pipeline run recorded
+23:30:40 fraction 25 exit 0
+23:30:40 checking operations/pipeline-runs/20261117T045335Z-fraction25
+23:30:40 GATE OK f25: j-03327281MRPKUSN1LE0M NIH=24 driver=run-9ba997a435161d92fdf3b34bc635f263
+23:30:40 window 1 normalized instance hours so far: 144 (stop above 160)
+23:30:40 starting fraction 100
+==> STEP wait
+==> STEP collect
+==> WARN no manifest in curated/spark/snapshot=2026-10-03/run=run-03c6bf84360cfba6ef8be631753da595
+==> WARN no manifest in curated/spark/snapshot=2026-10-03/run=run-91f0cf6a1e2ff14b3a3b155a15a748ce
+==> STEP emr-security-groups
+==> OK no 0.0.0.0/0 or ::/0 ingress on the EMR groups
+==> PIPELINE record=/Users/achyutpatel/Developer/Cloud/ScholarChain/operations/pipeline-runs/20261117T053043Z-fraction100/run.json cluster=j-045032852E7NSUSLWWY state=TERMINATED_WITH_ERRORS reason=STEP_FAILURE instance-hours=48
+==> FAIL cluster ended TERMINATED_WITH_ERRORS/STEP_FAILURE; see /Users/achyutpatel/Developer/Cloud/ScholarChain/operations/pipeline-runs/20261117T053043Z-fraction100/steps-result.json and /Users/achyutpatel/Developer/Cloud/ScholarChain/operations/pipeline-runs/20261117T053043Z-fraction100/logs/ (exit 1)
+01:12:22 fraction 100 exit 1
+01:12:22 100% ended non-zero (accepted in advance by ruling 21; read below)
+01:12:22 100% record operations/pipeline-runs/20261117T053043Z-fraction100
+{"commit":"deef29516bf395ac2b551beb93710b6a48a937a8","shuffle":40,"clusterId":"j-045032852E7NSUSLWWY","finalState":"TERMINATED_WITH_ERRORS","stateChangeReason":"STEP_FAILURE","normalizedInstanceHours":48,"steps":[{"name":"spark-pipeline","state":"FAILED","start":"2026-11-17T00:33:34.395000-06:00","end":"2026-11-17T01:09:54.633000-06:00"},{"name":"hadoop-pipeline","state":"COMPLETED","start":"2026-11-16T23:40:13.615000-06:00","end":"2026-11-17T00:33:33.886000-06:00"},{"name":"classpath-probe","state":"COMPLETED","start":"2026-11-16T23:40:00.827000-06:00","end":"2026-11-16T23:40:13.103000-06:00"}],"hadoop":1,"spark":5,"openIngress":[]}
+==> HADOOP-RUN s3://scholarchain-course-data-834519512655-us-east-2/curated/hadoop/snapshot=2026-10-03/run=run-503520c5975c7bd5c73bf45b14f17749
+runId=run-503520c5975c7bd5c73bf45b14f17749 attempt=1 runDir=s3a://scholarchain-course-data-834519512655-us-east-2/curated/hadoop/snapshot=2026-10-03/run=run-503520c5975c7bd5c73bf45b14f17749
+j01-dblp-extract scholarchain/ACCEPTED=110867
+26/11/17 07:09:51 ERROR FileFormatWriter: Aborting job c4d789e7-1d3a-4269-9cc6-df17e7eec2ef.
+org.apache.spark.SparkException: Job aborted due to stage failure: 
+Exception in thread "main" org.apache.spark.SparkException: Job aborted due to stage failure: 
+scholarchain.spark.PipelineJob$.run(PipelineJob.scala:91)
+scholarchain.spark.TemporalSummaryExportJob$.run(TemporalSummaryExportJob.scala:442)
+01:12:22 AccessDenied/403 hits: 0
+01:12:22 CHAIN 5 DONE
+01:12:22 active clusters (expect none): 

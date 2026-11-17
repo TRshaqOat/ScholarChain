@@ -1,0 +1,94 @@
+{
+  "schemaVersion": "pipeline-run-record-v1",
+  "commit": "deef29516bf395ac2b551beb93710b6a48a937a8",
+  "codeVersion": "deef29516bf395ac2b551beb93710b6a48a937a8",
+  "fraction": 100,
+  "snapshots": {
+    "dblp": "2026-10-03",
+    "openalex": "2026-11-03",
+    "crossref": "2026-11-03",
+    "orcid": "2026-11-03"
+  },
+  "inputRun": "run-6c55442727498c0d26bfec74de7f82ed",
+  "inputs": [
+    {
+      "path": "scratch/datasets/dblp/snapshot=2026-10-03/full/works.xml",
+      "sha256": "ea83a20b866084c41239c673b03bfc1be23787c4b2ad1d1bb9fd388dfbc60dab",
+      "bytes": 64330403
+    },
+    {
+      "path": "scratch/datasets/dblp/snapshot=2026-10-03/raw/dblp.dtd",
+      "sha256": "2d864498f9eef9298662df11e3874171ff24cd4a21ab5974f1369c90acdb1ef6",
+      "bytes": 13134
+    },
+    {
+      "path": "scratch/datasets/openalex/full/works.jsonl",
+      "sha256": "a60d466906c30d4b2a685bafdb4f6329269b7de94a25f84bdb8db18fdfbf6424",
+      "bytes": 571554739
+    },
+    {
+      "path": "scratch/datasets/crossref/full/works.jsonl",
+      "sha256": "1caa06f05c2475cdba7ef212076d57e29134dc832044ed33bc285bb5765d57b1",
+      "bytes": 181216501
+    },
+    {
+      "path": "scratch/datasets/orcid/full/records.jsonl.gz",
+      "sha256": "75d3d64c4da67fd619743108180856a1be4247c976a7e605e4f929cb4f87bbba",
+      "bytes": 237831658
+    }
+  ],
+  "account": "834519512655",
+  "region": "us-east-2",
+  "configuration": {
+    "releaseLabel": "emr-spark-8.0.0",
+    "instanceType": "m6g.xlarge",
+    "primary": 1,
+    "core": 2,
+    "market": "ON_DEMAND",
+    "reducers": 2,
+    "shufflePartitions": 40
+  },
+  "clusterId": "j-045032852E7NSUSLWWY",
+  "finalState": "TERMINATED_WITH_ERRORS",
+  "stateChangeReason": "STEP_FAILURE",
+  "normalizedInstanceHours": 48,
+  "steps": [
+    {
+      "name": "spark-pipeline",
+      "state": "FAILED",
+      "start": "2026-11-17T00:33:34.395000-06:00",
+      "end": "2026-11-17T01:09:54.633000-06:00"
+    },
+    {
+      "name": "hadoop-pipeline",
+      "state": "COMPLETED",
+      "start": "2026-11-16T23:40:13.615000-06:00",
+      "end": "2026-11-17T00:33:33.886000-06:00"
+    },
+    {
+      "name": "classpath-probe",
+      "state": "COMPLETED",
+      "start": "2026-11-16T23:40:00.827000-06:00",
+      "end": "2026-11-16T23:40:13.103000-06:00"
+    }
+  ],
+  "outputs": {
+    "hadoopRuns": [
+      "s3://scholarchain-course-data-834519512655-us-east-2/curated/hadoop/snapshot=2026-10-03/run=run-503520c5975c7bd5c73bf45b14f17749"
+    ],
+    "sparkRuns": [
+      "s3://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-03c6bf84360cfba6ef8be631753da595",
+      "s3://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-1e05e273ccc202abd18efcd8c22f3e4c",
+      "s3://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-91f0cf6a1e2ff14b3a3b155a15a748ce",
+      "s3://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-a98922702efa678f41511caf685d7d7a",
+      "s3://scholarchain-course-data-834519512655-us-east-2/curated/spark/snapshot=2026-10-03/run=run-d6bcaa181c9e40d825170642401e69ca"
+    ]
+  },
+  "emrSecurityGroups": {
+    "checked": true,
+    "openIngress": [],
+    "file": "security-groups.json"
+  },
+  "logs": "logs/",
+  "manifests": "manifests/"
+}
