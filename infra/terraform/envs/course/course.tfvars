@@ -39,12 +39,12 @@ secret_recovery_window_days = 7
 
 # Served runtime inputs (cloud window 2). image_tag is the 40-hex Git SHA that scripts/package.sh
 # built; the run IDs name the uploaded store-conversion and embedding runs. Leave null in window 1.
-# image_tag           = "<40-hex git sha>"
-# runtime_graph_run   = "run-<32 hex>"
-# runtime_items_run   = "run-<32 hex>"
-# runtime_vectors_run = "run-<32 hex>"
-runtime_snapshot   = "2026-10-03"
-window_summary_run = "run-6fbad498beb0d8f570df67665fb97544"
+image_tag           = "deef29516bf395ac2b551beb93710b6a48a937a8"
+runtime_graph_run   = "run-1d6a86491812ff94887270c1ab885e69"
+runtime_items_run   = "run-1d6a86491812ff94887270c1ab885e69"
+runtime_vectors_run = "run-b28edbd40f932f0342c05d5b6f57b46c"
+runtime_snapshot    = "2026-10-03"
+window_summary_run  = "run-6fbad498beb0d8f570df67665fb97544"
 
 embedding_model_id         = "amazon.titan-embed-text-v2:0"
 haiku_inference_profile_id = "us.anthropic.claude-haiku-4-5-20251001-v1:0"
