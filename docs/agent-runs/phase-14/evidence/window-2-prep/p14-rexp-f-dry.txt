@@ -1,0 +1,8 @@
+==> STEP dry-run
+    no AWS, Terraform, or git call was made; steps that would run:
+    - manifest experiments/manifests/exp-f-failure-recovery-v1.json tracked and unchanged from HEAD; clean tree; experiments/harness/exp-f-failure-recovery.sh tracked
+    - aws sts get-caller-identity; print account and Region
+    - run experiments/harness/exp-f-failure-recovery.sh --dlq-wait-minutes 22 --job-wait-minutes 5 for at most 30 min
+    - write /Users/achyutpatel/Developer/Cloud/ScholarChain/experiments/results/exp-f-failure-recovery-v1/<stamp>/run-record.json; make the directory read-only
+==> OK dry-run
+exit 0

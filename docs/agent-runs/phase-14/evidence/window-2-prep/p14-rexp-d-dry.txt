@@ -1,0 +1,8 @@
+==> STEP dry-run
+    no AWS, Terraform, or git call was made; steps that would run:
+    - manifest experiments/manifests/exp-d-query-load-v1.json tracked and unchanged from HEAD; clean tree; load-tests/exp-d-query-load.py tracked
+    - aws sts get-caller-identity; print account and Region
+    - run load-tests/exp-d-query-load.py --levels 1,2,4,8 --level-seconds 180 --pause-seconds 30 --post-observe-seconds 120 --abort-error-rate 0.05 --abort-window-seconds 10 --abort-min-requests 20 --abort-consecutive 10 for at most 25 min
+    - write /Users/achyutpatel/Developer/Cloud/ScholarChain/experiments/results/exp-d-query-load-v1/<stamp>/run-record.json; make the directory read-only
+==> OK dry-run
+exit 0
