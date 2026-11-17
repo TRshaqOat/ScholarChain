@@ -1,0 +1,5 @@
+$ /bin/bash --version | head -1
+GNU bash, version 3.2.57(1)-release (arm64-apple-darwin26)
+exit=0
+$ /bin/bash -n experiments/harness/exp-f-failure-recovery.sh
+exit=0

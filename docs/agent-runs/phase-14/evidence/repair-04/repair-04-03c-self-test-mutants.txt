@@ -1,0 +1,9 @@
+$ python3 -B -I -c <mutation check, __file__ set: each abort-rule comparison weakened in memory; self_test must fail> load-tests/exp-d-query-load.py
+Traceback (most recent call last):
+  File "<string>", line 15, in <module>
+    g["self_test"]()
+    ~~~~~~~~~~~~~~^^
+  File "mutant", line 182, in self_test
+TypeError: 'NoneType' object is not subscriptable
+mutant killed: bad / float(n) >= rate
+exit=1

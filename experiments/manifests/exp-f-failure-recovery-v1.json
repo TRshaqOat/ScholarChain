@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "experiment-manifest-v1",
+  "experimentId": "exp-f-failure-recovery-v1",
+  "description": "Experiment F, failure and recovery (phase 14 work order 5, cloud window 2). One poison message (a body that is not a job-message-v1 object) is sent to the job queue; the worker logs it as poison-message and never deletes it (modules/services Worker.scala), so it is received 3 times, 300 s apart, and the redrive policy (maxReceiveCount 3) moves it to scholarchain-course-jobs-dlq. Alongside, one async POST /v1/query (benchmark B07) with an Idempotency-Key is replayed twice (while queued and after it finished): the same jobId with Idempotent-Replay true, exactly one job-queued and one job-finished event. Non-destructive: no task stop, no deletion, no scale change. Run by the human (ruling 29) after a PASS smoke-test.sh and never at the same time as another Haiku run.",
+  "command": [
+    "experiments/harness/exp-f-failure-recovery.sh",
+    "--dlq-wait-minutes", "22",
+    "--job-wait-minutes", "5"
+  ],
+  "limits": {
+    "maxMinutes": 30,
+    "plannedMinutes": 19,
+    "poisonMessages": 1,
+    "asyncQuestions": 1,
+    "postRequests": 3,
+    "haikuCallsExpected": 2,
+    "haikuCallsMax": 4,
+    "haikuCallsPerMinuteCap": 4,
+    "dlqWaitMinutes": 22,
+    "jobWaitMinutes": 5,
+    "queueMaxReceiveCount": 3,
+    "queueVisibilityTimeoutSeconds": 300,
+    "failureInjection": "one SQS send-message of a malformed body to the job queue; nothing else is mutated",
+    "attemptsPerWindow": 1,
+    "exitCodes": "0 all checks passed; 1 a check failed; 2 usage or xtrace on; 3 precondition; 4 send-message failed or timed out (the message may be queued)",
+    "region": "us-east-2",
+    "budgetUsd": 0.1
+  },
+  "context": {
+    "region": "us-east-2",
+    "datasetSnapshot": "2026-10-03",
+    "servicesImagePackageRecord": "operations/releases/package-deef29516bf395ac2b551beb93710b6a48a937a8.json",
+    "servicesImageDigest": "sha256:5c751b1e1341fd9dd86101cdc8fffc9b8b9c91284b83ec1757758218588047ea",
+    "runtimeGraphRun": "run-1d6a86491812ff94887270c1ab885e69",
+    "runtimeItemsRun": "run-1d6a86491812ff94887270c1ab885e69",
+    "runtimeVectorsRun": "run-b28edbd40f932f0342c05d5b6f57b46c",
+    "windowSummaryRun": "run-6fbad498beb0d8f570df67665fb97544",
+    "question": "B07: Have Jack J. Dongarra and Yves Robert coauthored a paper?",
+    "inputs": "terraform output (alb_dns_name, api_key_secret_arn, job_queue_url, job_dlq_url, log_group_names, runtime_enabled, account_id); Secrets Manager API key (memory only)",
+    "rawOutputs": "inputs.json, dlq-before.txt, poison-sent.json, query-request.json, submit-<1|2|3>.json(.headers), job-polls.txt, job-final.json, result.json, queue-depths.txt, worker-poison-events.json, worker-job-finished-events.json, query-api-job-queued-events.json, summary.json",
+    "humanCleanup": "One attempt per window; a rerun first needs the human to remove the DLQ message (the harness requires an empty DLQ, and removing the message is a human-only action). The poison message stays in the DLQ (14-day retention) and the alarm scholarchain-course-jobs-dlq-not-empty goes to ALARM (no SNS topic, ruling 27). Leave both until cleanup.sh --stage runtime destroys the queues; removing the message earlier is a human-only action. The job record (TTL 168 h), the idempotency record (TTL 24 h) and the audit and answer objects go with the runtime cleanup."
+  },
+  "metrics": [
+    {"namespace": "AWS/SQS", "metricName": "ApproximateNumberOfMessagesVisible", "dimensions": {"QueueName": "scholarchain-course-jobs-dlq"}},
+    {"namespace": "AWS/SQS", "metricName": "NumberOfMessagesSent", "dimensions": {"QueueName": "scholarchain-course-jobs"}},
+    {"namespace": "AWS/SQS", "metricName": "NumberOfMessagesReceived", "dimensions": {"QueueName": "scholarchain-course-jobs"}},
+    {"namespace": "AWS/SQS", "metricName": "NumberOfMessagesDeleted", "dimensions": {"QueueName": "scholarchain-course-jobs"}},
+    {"namespace": "AWS/SQS", "metricName": "ApproximateNumberOfMessagesNotVisible", "dimensions": {"QueueName": "scholarchain-course-jobs"}},
+    {"namespace": "AWS/ECS", "metricName": "CPUUtilization", "dimensions": {"ClusterName": "scholarchain-course-runtime", "ServiceName": "worker"}},
+    {"namespace": "AWS/ECS", "metricName": "CPUUtilization", "dimensions": {"ClusterName": "scholarchain-course-runtime", "ServiceName": "query-api"}}
+  ]
+}

@@ -1,0 +1,2 @@
+$ python3 -B -c 'import ast,sys; ast.parse(open(sys.argv[1]).read())' load-tests/exp-d-query-load.py
+exit=0

@@ -1,0 +1,21 @@
+$ python3 -B load-tests/exp-d-query-load.py --levels 1,2,4,8 --level-seconds 180 --pause-seconds 30 --post-observe-seconds 120 --abort-error-rate 0.05 --abort-window-seconds 10 --abort-min-requests 20 --abort-consecutive 10 --dry-run
+usage: exp-d-query-load.py [-h] [--levels LEVELS]
+                           [--level-seconds LEVEL_SECONDS]
+                           [--pause-seconds PAUSE_SECONDS]
+                           [--post-observe-seconds POST_OBSERVE_SECONDS]
+                           [--abort-error-rate ABORT_ERROR_RATE]
+                           [--abort-window-seconds ABORT_WINDOW_SECONDS]
+                           [--abort-min-requests ABORT_MIN_REQUESTS]
+                           [--abort-consecutive ABORT_CONSECUTIVE] [--dry-run]
+                           [--self-test]
+exp-d-query-load.py: error: unrecognized arguments: --levels 1,2,4,8 --level-seconds 180 --pause-seconds 30 --post-observe-seconds 120 --abort-error-rate 0.05 --abort-window-seconds 10 --abort-min-requests 20 --abort-consecutive 10
+exit=2
+$ python3 -B load-tests/exp-d-query-load.py --levels 1,2,4,8 --abort-error-rate 0.5 --dry-run   (negative: looser than the reviewed rule)
+==> FAIL abort rule bounds: rate 0 to 0.05, window 5 to 10 s, 1 to 20 requests, 1 to 10 consecutive (exit 2)
+exit=2
+$ python3 -B load-tests/exp-d-query-load.py --abort-window-seconds 30 --dry-run   (negative)
+==> FAIL abort rule bounds: rate 0 to 0.05, window 5 to 10 s, 1 to 20 requests, 1 to 10 consecutive (exit 2)
+exit=2
+$ python3 -B load-tests/exp-d-query-load.py --abort-consecutive 11 --dry-run   (negative)
+==> FAIL abort rule bounds: rate 0 to 0.05, window 5 to 10 s, 1 to 20 requests, 1 to 10 consecutive (exit 2)
+exit=2

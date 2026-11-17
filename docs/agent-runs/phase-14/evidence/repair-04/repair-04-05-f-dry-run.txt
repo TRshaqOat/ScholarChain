@@ -1,0 +1,121 @@
+$ ./experiments/harness/exp-f-failure-recovery.sh --dlq-wait-minutes 22 --job-wait-minutes 5 --dry-run
+Usage: experiments/harness/exp-f-failure-recovery.sh [--dlq-wait-minutes 22] [--job-wait-minutes 5] [--dry-run]
+
+Steps (each prints ==> STEP; raw files go only under $SCHOLARCHAIN_EXPERIMENT_DIR):
+  preconditions  terraform output (local state); runtime_enabled true; the job DLQ is empty
+  poison         ONE aws sqs send-message to the job queue with a body that is not a
+                 job-message-v1 object (Worker.scala: logged as poison-message, never deleted,
+                 so it is received 3 times, 300 s apart, and SQS redrives it to the DLQ)
+  submit         POST /v1/query {"execution":"async"} with Idempotency-Key exp-f-<stamp> = 202
+  replay         the same POST and key = 202, Idempotent-Replay: true, the same jobId, state
+                 QUEUED or RUNNING
+  job            GET /v1/jobs/<jobId> every 10 s until SUCCEEDED or FAILED (--job-wait-minutes)
+  result         GET /v1/jobs/<jobId>/result; the same POST and key again = 202, the same jobId,
+                 state SUCCEEDED or FAILED
+  dlq            get-queue-attributes of both queues every 30 s until the DLQ holds 1 message
+                 (--dlq-wait-minutes after the send; a failed poll is recorded and polling goes on)
+  logs           worker poison-message and job-finished events, query-api job-queued events
+                 (from 300 s before the start, for clock skew; a failed query is a FAIL check)
+  verdict        summary.json; exit 0 when every check passed, 1 otherwise
+
+Haiku calls: the one async question (planner and synthesis, 2; at most 4 with one retry each).
+The API key is read from Secrets Manager into a variable and reaches curl on standard input only.
+The harness refuses to run with xtrace on (bash -x or an exported SHELLOPTS).
+One attempt per window: the DLQ must be empty at the start, and the poison message stays in it,
+so a rerun first needs the human to remove the DLQ message (a human-only action).
+Cleanup (human): the poison message stays in the DLQ (14-day retention) and the DLQ alarm stays in
+ALARM until cleanup.sh --stage runtime destroys the queue; the job, idempotency and audit records
+expire by TTL or go with the runtime stores.
+Exit: 0 all checks passed; 1 a check failed; 2 usage or xtrace on; 3 precondition (including an
+AWS read that fails before the poison is sent); 4 send-message failed or timed out (the message
+may be queued: check both queues before any rerun).
+==> FAIL unknown argument: --dlq-wait-minutes 22 --job-wait-minutes 5 (exit 2)
+exit=2
+$ /bin/bash experiments/harness/exp-f-failure-recovery.sh --dlq-wait-minutes 22 --job-wait-minutes 5 --dry-run
+Usage: experiments/harness/exp-f-failure-recovery.sh [--dlq-wait-minutes 22] [--job-wait-minutes 5] [--dry-run]
+
+Steps (each prints ==> STEP; raw files go only under $SCHOLARCHAIN_EXPERIMENT_DIR):
+  preconditions  terraform output (local state); runtime_enabled true; the job DLQ is empty
+  poison         ONE aws sqs send-message to the job queue with a body that is not a
+                 job-message-v1 object (Worker.scala: logged as poison-message, never deleted,
+                 so it is received 3 times, 300 s apart, and SQS redrives it to the DLQ)
+  submit         POST /v1/query {"execution":"async"} with Idempotency-Key exp-f-<stamp> = 202
+  replay         the same POST and key = 202, Idempotent-Replay: true, the same jobId, state
+                 QUEUED or RUNNING
+  job            GET /v1/jobs/<jobId> every 10 s until SUCCEEDED or FAILED (--job-wait-minutes)
+  result         GET /v1/jobs/<jobId>/result; the same POST and key again = 202, the same jobId,
+                 state SUCCEEDED or FAILED
+  dlq            get-queue-attributes of both queues every 30 s until the DLQ holds 1 message
+                 (--dlq-wait-minutes after the send; a failed poll is recorded and polling goes on)
+  logs           worker poison-message and job-finished events, query-api job-queued events
+                 (from 300 s before the start, for clock skew; a failed query is a FAIL check)
+  verdict        summary.json; exit 0 when every check passed, 1 otherwise
+
+Haiku calls: the one async question (planner and synthesis, 2; at most 4 with one retry each).
+The API key is read from Secrets Manager into a variable and reaches curl on standard input only.
+The harness refuses to run with xtrace on (bash -x or an exported SHELLOPTS).
+One attempt per window: the DLQ must be empty at the start, and the poison message stays in it,
+so a rerun first needs the human to remove the DLQ message (a human-only action).
+Cleanup (human): the poison message stays in the DLQ (14-day retention) and the DLQ alarm stays in
+ALARM until cleanup.sh --stage runtime destroys the queue; the job, idempotency and audit records
+expire by TTL or go with the runtime stores.
+Exit: 0 all checks passed; 1 a check failed; 2 usage or xtrace on; 3 precondition (including an
+AWS read that fails before the poison is sent); 4 send-message failed or timed out (the message
+may be queued: check both queues before any rerun).
+==> FAIL unknown argument: --dlq-wait-minutes 22 --job-wait-minutes 5 (exit 2)
+exit=2
+$ /bin/bash -x experiments/harness/exp-f-failure-recovery.sh --dlq-wait-minutes 22 --job-wait-minutes 5 --dry-run   (negative: xtrace refused)
++ set -euo pipefail
+++ dirname experiments/harness/exp-f-failure-recovery.sh
++ . experiments/harness/../../scripts/lib/common.sh
+++ set -euo pipefail
+++++ dirname experiments/harness/../../scripts/lib/common.sh
++++ cd experiments/harness/../../scripts/lib/../..
++++ pwd
+++ SC_ROOT=/Users/achyutpatel/Developer/Cloud/ScholarChain
+++ SC_TF_DIR=/Users/achyutpatel/Developer/Cloud/ScholarChain/infra/terraform/envs/course
+++ SC_TF_VERSION=1.16.6
+++ SC_DEFAULT_REGION=us-east-2
+++ SC_SNAPSHOT=2026-10-03
+++ DRY_RUN=0
+++ PROFILE=
+++ REGION=us-east-2
+++ SC_SERVICES='query-api graph-evidence-api worker'
++ case $- in
++ die 'xtrace is on; refusing to handle the API key (no bash -x, no exported SHELLOPTS)' 2
++ printf '==> FAIL %s (exit %s)\n' 'xtrace is on; refusing to handle the API key (no bash -x, no exported SHELLOPTS)' 2
+==> FAIL xtrace is on; refusing to handle the API key (no bash -x, no exported SHELLOPTS) (exit 2)
++ exit 2
+exit=2
+$ /bin/bash experiments/harness/exp-f-failure-recovery.sh --help
+Usage: experiments/harness/exp-f-failure-recovery.sh [--dlq-wait-minutes 22] [--job-wait-minutes 5] [--dry-run]
+
+Steps (each prints ==> STEP; raw files go only under $SCHOLARCHAIN_EXPERIMENT_DIR):
+  preconditions  terraform output (local state); runtime_enabled true; the job DLQ is empty
+  poison         ONE aws sqs send-message to the job queue with a body that is not a
+                 job-message-v1 object (Worker.scala: logged as poison-message, never deleted,
+                 so it is received 3 times, 300 s apart, and SQS redrives it to the DLQ)
+  submit         POST /v1/query {"execution":"async"} with Idempotency-Key exp-f-<stamp> = 202
+  replay         the same POST and key = 202, Idempotent-Replay: true, the same jobId, state
+                 QUEUED or RUNNING
+  job            GET /v1/jobs/<jobId> every 10 s until SUCCEEDED or FAILED (--job-wait-minutes)
+  result         GET /v1/jobs/<jobId>/result; the same POST and key again = 202, the same jobId,
+                 state SUCCEEDED or FAILED
+  dlq            get-queue-attributes of both queues every 30 s until the DLQ holds 1 message
+                 (--dlq-wait-minutes after the send; a failed poll is recorded and polling goes on)
+  logs           worker poison-message and job-finished events, query-api job-queued events
+                 (from 300 s before the start, for clock skew; a failed query is a FAIL check)
+  verdict        summary.json; exit 0 when every check passed, 1 otherwise
+
+Haiku calls: the one async question (planner and synthesis, 2; at most 4 with one retry each).
+The API key is read from Secrets Manager into a variable and reaches curl on standard input only.
+The harness refuses to run with xtrace on (bash -x or an exported SHELLOPTS).
+One attempt per window: the DLQ must be empty at the start, and the poison message stays in it,
+so a rerun first needs the human to remove the DLQ message (a human-only action).
+Cleanup (human): the poison message stays in the DLQ (14-day retention) and the DLQ alarm stays in
+ALARM until cleanup.sh --stage runtime destroys the queue; the job, idempotency and audit records
+expire by TTL or go with the runtime stores.
+Exit: 0 all checks passed; 1 a check failed; 2 usage or xtrace on; 3 precondition (including an
+AWS read that fails before the poison is sent); 4 send-message failed or timed out (the message
+may be queued: check both queues before any rerun).
+exit=0

@@ -1,0 +1,727 @@
+--- /private/tmp/claude-501/-Users-achyutpatel-Developer-Cloud-ScholarChain/c8c6cf11-81dc-4511-8825-585fe63fab9a/scratchpad/pre-repair-04/experiments/manifests/exp-d-query-load-v1.json	2026-11-17 12:25:10
++++ experiments/manifests/exp-d-query-load-v1.json	2026-11-17 13:17:43
+@@ -8,7 +8,10 @@
+     "--level-seconds", "180",
+     "--pause-seconds", "30",
+     "--post-observe-seconds", "120",
+-    "--abort-error-rate", "0.5"
++    "--abort-error-rate", "0.05",
++    "--abort-window-seconds", "10",
++    "--abort-min-requests", "20",
++    "--abort-consecutive", "10"
+   ],
+   "limits": {
+     "maxMinutes": 25,
+@@ -20,7 +23,13 @@
+     "postObserveSeconds": 120,
+     "maxRequestsPerLevel": 20000,
+     "requestTimeoutSeconds": 10,
+-    "abortErrorRate": 0.5,
++    "abortErrorRate": 0.05,
++    "abortWindowSeconds": 10,
++    "abortMinRequestsPerKind": 20,
++    "abortConsecutive5xxOrTimeouts": 10,
++    "abortScope": "per request kind (evidence, node, neighbors): a sliding window within each level (a stop event checked by every worker before each request) and the whole level before the next one starts; trips when a kind has at least abortMinRequestsPerKind requests and a non-2xx rate above abortErrorRate, or abortConsecutive5xxOrTimeouts consecutive 5xx or transport errors (code review 4 finding 1)",
++    "preflight": "one GET of each request path before concurrency 1; any non-2xx stops the run (exit 3)",
++    "exitCodes": "0 every level ran; 1 abort rule; 2 usage; 3 precondition or non-2xx preflight; 4 unexpected error",
+     "haikuCalls": 0,
+     "bedrockCalls": 0,
+     "httpMethods": ["GET"],
+@@ -40,7 +49,7 @@
+     "runtimeVectorsRun": "run-b28edbd40f932f0342c05d5b6f57b46c",
+     "windowSummaryRun": "run-6fbad498beb0d8f570df67665fb97544",
+     "inputs": "terraform output (alb_dns_name, api_key_secret_arn, ecs_cluster_name, account_id, runtime_enabled, alb_arn_suffix); Secrets Manager API key (memory only); latest PASS operations/releases/smoke-*.json",
+-    "rawOutputs": "inputs.json, requests-c<n>.csv, ecs-<before|after>-c<n>.json, ecs-post-observe.json, summary.json",
++    "rawOutputs": "inputs.json, preflight.json, requests-c<n>.csv, ecs-<before|after>-c<n>.json, ecs-post-observe.json, summary.json (per level: elapsedSeconds, throughput from it, and per-kind counts and percentiles; abortedAt and abortWindowCounts)",
+     "metricsNote": "LoadBalancer is the value of terraform output alb_arn_suffix (app/scholarchain-course-api/<id>), known only after apply; the harness records it in raw/inputs.json. Container Insights is disabled, so task counts come from describe-services, not CloudWatch."
+   },
+   "metrics": [
+--- /private/tmp/claude-501/-Users-achyutpatel-Developer-Cloud-ScholarChain/c8c6cf11-81dc-4511-8825-585fe63fab9a/scratchpad/pre-repair-04/load-tests/exp-d-query-load.py	2026-11-17 12:23:34
++++ load-tests/exp-d-query-load.py	2026-11-17 13:17:33
+@@ -20,11 +20,27 @@
+ (aws ecs describe-services, read-only) before and after each level and once more after
+ --post-observe-seconds. Raw results go only under $SCHOLARCHAIN_EXPERIMENT_DIR.
+ 
+-Exit: 0 every level ran; 1 a level was aborted (error rate above --abort-error-rate); 2 usage;
+-3 precondition (missing input, runtime disabled, no PASS smoke record, account mismatch).
++Preflight: one GET of each path, sequential, before the first level; any non-2xx stops the run
++(exit 3), so later errors can be attributed to load.
++
++Abort rule, per request kind (evidence, node, neighbors): a monitor keeps a sliding window of
++--abort-window-seconds per kind, updated at every completed request. It sets a stop event, which
++every worker checks before each request, when a kind has at least --abort-min-requests requests in
++the window and a non-2xx rate above --abort-error-rate, or --abort-consecutive consecutive 5xx or
++transport errors (timeout, reset, refused). A worker already waiting on a response stops within
++the 10 s request timeout. The same per-kind rule is applied to each whole level before the next
++one starts. Flag bounds: rate at most 0.05, window 5 to 10 s, at most 20 requests, at most 10
++consecutive (the reviewed rule; a longer window would dilute a burst, a shorter one would rarely
++reach the request minimum).
++
++Exit: 0 every level ran; 1 the abort rule stopped the run (in a level or between levels);
++2 usage; 3 precondition (missing input or terraform output, runtime disabled, no PASS smoke
++record, account mismatch, a non-2xx preflight GET); 4 unexpected error (only its type is printed;
++once the preflight has started, summary.json is still written with it).
+ """
+ 
+ import argparse
++import collections
+ import csv
+ import glob
+ import http.client
+@@ -51,6 +67,12 @@
+ MAX_LEVEL_SECONDS = 300
+ MAX_REQUESTS_PER_LEVEL = 20000
+ REQUEST_TIMEOUT_S = 10
++# Abort-rule bounds: the flags cannot loosen the reviewed rule (code review 4 finding 1).
++MAX_ABORT_ERROR_RATE = 0.05
++MIN_ABORT_WINDOW_SECONDS = 5
++MAX_ABORT_WINDOW_SECONDS = 10
++MAX_ABORT_MIN_REQUESTS = 20
++MAX_ABORT_CONSECUTIVE = 10
+ 
+ 
+ def utc_now():
+@@ -69,11 +91,120 @@
+     return sorted_ms[max(1, math.ceil(p / 100.0 * len(sorted_ms))) - 1]
+ 
+ 
++def hard_failure(status):
++    """A 5xx response or a transport error (status 0: timeout, reset, refused)."""
++    return status == 0 or status >= 500
++
++
++def rule_reason(kind, n, bad, run, rate, min_requests, consecutive, scope):
++    """The shared abort predicate for one request kind: a reason, or None."""
++    if n >= min_requests and bad / float(n) > rate:
++        return "%s: %d of %d non-2xx in %s, rate above %g" % (kind, bad, n, scope, rate)
++    if run >= consecutive:
++        return "%s: %d consecutive 5xx or transport errors" % (kind, run)
++    return None
++
++
++class AbortMonitor:
++    """Sliding window per request kind (code review 4 finding 1). The caller holds the level lock."""
++
++    def __init__(self, rate, window_s, min_requests, consecutive):
++        self.rate, self.window_s = rate, window_s
++        self.min_requests, self.consecutive = min_requests, consecutive
++        self.win, self.bad, self.run = {}, {}, {}
++        self.tripped = None
++
++    def counts(self):
++        return {k: {"windowRequests": len(q), "windowNon2xx": self.bad[k],
++                    "consecutive5xxOrTransport": self.run[k]} for k, q in sorted(self.win.items())}
++
++    def record(self, kind, status, now):
++        """Adds one completed request (now: time.monotonic()); True once the rule has tripped."""
++        q = self.win.setdefault(kind, collections.deque())
++        ok = 200 <= status < 300
++        q.append((now, ok))
++        self.bad[kind] = self.bad.get(kind, 0) + (0 if ok else 1)
++        while q[0][0] <= now - self.window_s:
++            if not q.popleft()[1]:
++                self.bad[kind] -= 1
++        self.run[kind] = self.run.get(kind, 0) + 1 if hard_failure(status) else 0
++        if self.tripped is None:
++            reason = rule_reason(kind, len(q), self.bad[kind], self.run[kind], self.rate,
++                                 self.min_requests, self.consecutive, "a %g s window" % self.window_s)
++            if reason:
++                self.tripped = {"at": utc_now(), "reason": reason, "windowCounts": self.counts()}
++        return self.tripped is not None
++
++
++def stats(rows):
++    """Counts, status counts, longest 5xx/transport run and percentiles of request rows."""
++    lat = sorted(float(r[6]) for r in rows)
++    ok = sorted(float(r[6]) for r in rows if 200 <= r[5] < 300)
++    by_status, run, max_run = {}, 0, 0
++    for r in rows:
++        by_status[str(r[5])] = by_status.get(str(r[5]), 0) + 1
++        run = run + 1 if hard_failure(r[5]) else 0
++        max_run = max(max_run, run)
++    errors = len(rows) - len(ok)
++    return {"requests": len(rows), "errors": errors,
++            "errorRate": round(errors / float(len(rows)), 4) if rows else None,
++            "statusCounts": by_status, "maxConsecutive5xxOrTransport": max_run,
++            "latencyMsAll": {"p50": percentile(lat, 50), "p95": percentile(lat, 95), "p99": percentile(lat, 99)},
++            "latencyMs2xx": {"p50": percentile(ok, 50), "p95": percentile(ok, 95), "p99": percentile(ok, 99)}}
++
++
++def level_trip(by_kind, rate, min_requests, consecutive):
++    """The same per-kind rule over a whole level, applied before the next level starts."""
++    for kind, k in sorted(by_kind.items()):
++        reason = rule_reason(kind, k["requests"], k["errors"], k["maxConsecutive5xxOrTransport"],
++                             rate, min_requests, consecutive, "the whole level")
++        if reason:
++            return {"at": utc_now(), "reason": reason, "windowCounts": {
++                kk: {"levelRequests": v["requests"], "levelNon2xx": v["errors"],
++                     "maxConsecutive5xxOrTransport": v["maxConsecutive5xxOrTransport"]}
++                for kk, v in sorted(by_kind.items())}}
++    return None
++
++
+ def self_test():
+     xs = list(range(1, 101))
+     assert percentile(xs, 50) == 50 and percentile(xs, 95) == 95 and percentile(xs, 99) == 99
+     assert percentile([7], 99) == 7 and percentile([], 50) is None
+     assert percentile([1, 2, 3, 4], 50) == 2
++
++    # Abort rule (finding 1) with the manifest values: trips above each threshold, not at or below.
++    def feed(statuses, kind="node", step=0.01, m=None):
++        m = m or AbortMonitor(0.05, 10, 20, 10)
++        for i, s in enumerate(statuses):
++            m.record(kind, s, 1000.0 + i * step)
++        return m
++    assert feed([200] * 19 + [503]).tripped is None             # 1/20 = 0.05, not above
++    assert "non-2xx" in feed([200] * 18 + [503] * 2).tripped["reason"]  # 2/20 = 0.10
++    assert "non-2xx" in feed([200] * 17 + [404] * 3).tripped["reason"]  # 4xx counts as non-2xx
++    assert feed([503] * 2 + [200] * 16).tripped is None          # 18 requests, below the minimum
++    assert feed([200] * 95 + [503] * 5).tripped is None          # 5/100 = 0.05, not above
++    w = feed([503, 503])
++    for i in range(20):  # 11 s later: the two errors have left the 10 s window (22 in all would trip)
++        w.record("node", 200, 1011.0 + i * 0.01)
++    assert w.tripped is None and w.counts()["node"]["windowNon2xx"] == 0
++    assert feed([503] * 9).tripped is None                      # 9 consecutive, below 10
++    assert "consecutive" in feed([503] * 10).tripped["reason"]
++    assert "consecutive" in feed([0, 504] * 5).tripped["reason"]  # transport errors count
++    assert feed([503] * 9 + [404] + [503] * 9).tripped is None   # a non-5xx resets the run
++    m = AbortMonitor(0.05, 10, 20, 10)
++    for i in range(100):
++        m.record("evidence", 200, 1000.0 + i * 0.001)
++    assert feed([200] * 18 + [503] * 2, m=m).tripped["reason"].startswith("node:")  # per kind
++    assert m.tripped["windowCounts"]["node"] == {"windowRequests": 20, "windowNon2xx": 2,
++                                                 "consecutive5xxOrTransport": 2}
++
++    def rows(kind, statuses):
++        return [[1, 0, "", kind, "/", s, "1.0", ""] for s in statuses]
++    ev = {"evidence": stats(rows("evidence", [200] * 100))}
++    assert level_trip(dict(ev, node=stats(rows("node", [200] * 95 + [503] * 5))), 0.05, 20, 10) is None
++    assert level_trip(dict(ev, node=stats(rows("node", [200] * 94 + [503] * 6))), 0.05, 20, 10)
++    assert level_trip(dict(ev, node=stats(rows("node", [503] * 9))), 0.05, 20, 10) is None
++    assert level_trip(dict(ev, node=stats(rows("node", [0] * 10))), 0.05, 20, 10)
+     print("==> OK self-test")
+ 
+ 
+@@ -129,96 +260,175 @@
+ 
+ 
+ def ecs_counts(cluster, label, out_dir):
+-    raw = aws("ecs", "describe-services", "--cluster", cluster, "--services", SERVICE, "--query",
+-              "services[0].{desired:desiredCount,running:runningCount,pending:pendingCount,"
+-              "events:events[0:5].[createdAt,message]}", "--output", "json")
+-    rec = {"label": label, "at": utc_now(), "service": SERVICE, "describe": json.loads(raw)}
++    """Task counts. Called only after load has started, so a failure is recorded, never fatal."""
++    r = subprocess.run(["aws", "ecs", "describe-services", "--cluster", cluster, "--services", SERVICE,
++                        "--query", "services[0].{desired:desiredCount,running:runningCount,"
++                        "pending:pendingCount,events:events[0:5].[createdAt,message]}",
++                        "--output", "json"] + AWS_TIMEOUTS, capture_output=True, text=True)
++    d, err = None, None
++    if r.returncode != 0:
++        err = "aws exit %d" % r.returncode
++        print("    ecs %s: describe-services failed: %s" % (label, r.stderr.strip()[:300]), file=sys.stderr)
++    else:
++        try:
++            d = json.loads(r.stdout)
++        except ValueError:
++            err = "unparsable describe-services output"
++        if err is None and not isinstance(d, dict):
++            err = "service %s not found" % SERVICE
++    rec = {"label": label, "at": utc_now(), "service": SERVICE, "describe": d, "error": err}
+     with open(os.path.join(out_dir, "ecs-%s.json" % label), "w") as f:
+         json.dump(rec, f, indent=2)
+-    d = rec["describe"]
+-    print("    ecs %-22s desired=%s running=%s pending=%s" % (label, d["desired"], d["running"], d["pending"]))
+-    return {k: d[k] for k in ("desired", "running", "pending")}
++    if err:
++        print("    ecs %-22s error=%s" % (label, err))
++        return {"error": err}
++    print("    ecs %-22s desired=%s running=%s pending=%s" % (label, d.get("desired"), d.get("running"), d.get("pending")))
++    return {k: d.get(k) for k in ("desired", "running", "pending")}
+ 
+ 
+-def worker(host, port, key, paths, offset, deadline, cap, level, wid, rows, lock):
++def timed_get(conn, host, port, path, headers):
++    """One GET on a keep-alive connection: (connection or None, status (0 on a transport error),
++    error type, latency ms). Errors are kept as their type only, never with headers."""
++    t0 = time.perf_counter()
++    status, err = 0, ""
++    try:
++        if conn is None:
++            conn = http.client.HTTPConnection(host, port, timeout=REQUEST_TIMEOUT_S)
++        conn.request("GET", path, headers=headers)
++        resp = conn.getresponse()
++        resp.read()
++        status = resp.status
++        if (resp.getheader("Connection") or "").lower() == "close":
++            conn.close()
++            conn = None
++    except Exception as e:
++        err = type(e).__name__
++        if conn is not None:
++            conn.close()
++        conn = None
++    return conn, status, err, (time.perf_counter() - t0) * 1000.0
++
++
++def worker(host, port, key, paths, offset, deadline, level, wid, rows, lock, stop, mon):
+     headers = {"X-Api-Key": key, "X-Request-Id": "exp-d-c%d-w%d" % (level, wid)}
+     conn = None
+     i = offset
+-    while time.monotonic() < deadline:
++    while not stop.is_set() and time.monotonic() < deadline:
+         with lock:
+-            if len(rows) >= cap:
+-                return
++            if len(rows) >= MAX_REQUESTS_PER_LEVEL:
++                break
+         kind, path = paths[i % len(paths)]
+         i += 1
+         start = utc_now()
+-        t0 = time.perf_counter()
+-        status, err = 0, ""
+-        try:
+-            if conn is None:
+-                conn = http.client.HTTPConnection(host, port, timeout=REQUEST_TIMEOUT_S)
+-            conn.request("GET", path, headers=headers)
+-            resp = conn.getresponse()
+-            resp.read()
+-            status = resp.status
+-            if (resp.getheader("Connection") or "").lower() == "close":
+-                conn.close()
+-                conn = None
+-        except Exception as e:  # recorded as its type only, never with headers
+-            err = type(e).__name__
+-            if conn is not None:
+-                conn.close()
+-            conn = None
+-        ms = (time.perf_counter() - t0) * 1000.0
++        conn, status, err, ms = timed_get(conn, host, port, path, headers)
+         with lock:
+             rows.append([level, wid, start, kind, path, status, "%.1f" % ms, err])
++            if mon.record(kind, status, time.monotonic()):
++                stop.set()
+     if conn is not None:
+         conn.close()
+ 
+ 
+-def run_level(base, key, paths, level, seconds, out_dir):
++def preflight(base, key, paths, out_dir):
++    """One sequential GET of each path before the first level; returns the non-2xx count."""
+     u = urllib.parse.urlsplit(base)
+-    rows, lock = [], threading.Lock()
+-    deadline = time.monotonic() + seconds
++    headers = {"X-Api-Key": key, "X-Request-Id": "exp-d-preflight"}
++    conn, out = None, []
++    for kind, path in paths:
++        start = utc_now()
++        conn, status, err, ms = timed_get(conn, u.hostname, u.port or 80, path, headers)
++        out.append({"startUtc": start, "kind": kind, "path": path, "status": status,
++                    "latencyMs": round(ms, 1), "error": err})
++    if conn is not None:
++        conn.close()
++    with open(os.path.join(out_dir, "preflight.json"), "w") as f:
++        json.dump(out, f, indent=2)
++    bad = sum(1 for p in out if not 200 <= p["status"] < 300)
++    print("    preflight requests=%d non2xx=%d" % (len(out), bad))
++    return bad
++
++
++def run_level(base, key, paths, level, seconds, out_dir, mon):
++    u = urllib.parse.urlsplit(base)
++    rows, lock, stop = [], threading.Lock(), threading.Event()
+     started = utc_now()
++    t_start = time.monotonic()
++    deadline = t_start + seconds
+     ts = [threading.Thread(target=worker, args=(u.hostname, u.port or 80, key, paths,
+                                                 w * (len(paths) // level or 1), deadline,
+-                                                MAX_REQUESTS_PER_LEVEL, level, w, rows, lock))
++                                                level, w, rows, lock, stop, mon))
+           for w in range(level)]
+     for t in ts:
+         t.start()
+     for t in ts:
+         t.join()
++    elapsed = time.monotonic() - t_start
+     ended = utc_now()
+     with open(os.path.join(out_dir, "requests-c%d.csv" % level), "w", newline="") as f:
+         w = csv.writer(f)
+         w.writerow(["concurrency", "worker", "startUtc", "kind", "path", "status", "latencyMs", "error"])
+         w.writerows(rows)
+-    lat = sorted(float(r[6]) for r in rows)
+-    ok = sorted(float(r[6]) for r in rows if 200 <= r[5] < 300)
+-    errors = sum(1 for r in rows if not 200 <= r[5] < 300)
+-    by_status = {}
+-    for r in rows:
+-        by_status[str(r[5])] = by_status.get(str(r[5]), 0) + 1
+     s = {"concurrency": level, "startedAt": started, "endedAt": ended, "seconds": seconds,
+-         "requests": len(rows), "throughputPerSecond": round(len(rows) / float(seconds), 2),
+-         "errors": errors, "errorRate": round(errors / float(len(rows)), 4) if rows else None,
+-         "statusCounts": by_status,
+-         "latencyMsAll": {"p50": percentile(lat, 50), "p95": percentile(lat, 95), "p99": percentile(lat, 99)},
+-         "latencyMs2xx": {"p50": percentile(ok, 50), "p95": percentile(ok, 95), "p99": percentile(ok, 99)},
+-         "requestCapReached": len(rows) >= MAX_REQUESTS_PER_LEVEL}
+-    print("    level c=%d requests=%d rps=%s errors=%d p50=%s p95=%s p99=%s" % (
+-        level, s["requests"], s["throughputPerSecond"], errors, s["latencyMsAll"]["p50"],
++         "elapsedSeconds": round(elapsed, 3),
++         "throughputPerSecond": round(len(rows) / elapsed, 2) if elapsed > 0 else None,
++         "requestCapReached": len(rows) >= MAX_REQUESTS_PER_LEVEL,
++         "stoppedByAbortRule": mon.tripped is not None}
++    s.update(stats(rows))
++    s["byKind"] = {k: stats([r for r in rows if r[3] == k]) for k in sorted({r[3] for r in rows})}
++    print("    level c=%d requests=%d elapsed=%.1fs rps=%s errors=%d p50=%s p95=%s p99=%s" % (
++        level, s["requests"], elapsed, s["throughputPerSecond"], s["errors"], s["latencyMsAll"]["p50"],
+         s["latencyMsAll"]["p95"], s["latencyMsAll"]["p99"]))
++    for k, v in s["byKind"].items():
++        print("      %-9s requests=%d errors=%d p50=%s p95=%s p99=%s" % (
++            k, v["requests"], v["errors"], v["latencyMsAll"]["p50"], v["latencyMsAll"]["p95"],
++            v["latencyMsAll"]["p99"]))
+     return s
+ 
+ 
++def run_load(base, key, paths, levels, a, cluster, out_dir, summary):
++    """Preflight, the levels and the post-observation. Fills summary; returns the exit code."""
++    bad = preflight(base, key, paths, out_dir)
++    summary["preflight"] = {"requests": len(paths), "non2xx": bad, "raw": "preflight.json"}
++    if bad:
++        summary["aborted"] = "preflight: %d of %d paths returned non-2xx" % (bad, len(paths))
++        summary["abortedAt"] = {"utc": utc_now(), "phase": "preflight", "concurrency": None}
++        print("==> FAIL %s (exit 3)" % summary["aborted"], file=sys.stderr)
++        return 3
++    for n, c in enumerate(levels):
++        if n:
++            time.sleep(a.pause_seconds)
++        before = ecs_counts(cluster, "before-c%d" % c, out_dir)
++        mon = AbortMonitor(a.abort_error_rate, a.abort_window_seconds, a.abort_min_requests,
++                           a.abort_consecutive)
++        s = run_level(base, key, paths, c, a.level_seconds, out_dir, mon)
++        s["ecsBefore"], s["ecsAfter"] = before, ecs_counts(cluster, "after-c%d" % c, out_dir)
++        summary["levels"].append(s)
++        trip, phase = mon.tripped, "level"
++        if trip is None:
++            trip, phase = level_trip(s["byKind"], a.abort_error_rate, a.abort_min_requests,
++                                     a.abort_consecutive), "between-levels"
++        if trip is None and not s["requests"]:
++            trip = {"at": utc_now(), "reason": "no request completed", "windowCounts": None}
++        if trip:
++            summary["aborted"] = "c=%d %s: %s" % (c, phase, trip["reason"])
++            summary["abortedAt"] = {"utc": trip["at"], "phase": phase, "concurrency": c}
++            summary["abortWindowCounts"] = trip["windowCounts"]
++            return 1
++    time.sleep(a.post_observe_seconds)
++    summary["ecsPostObserve"] = ecs_counts(cluster, "post-observe", out_dir)
++    return 0
++
++
+ def main():
+     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+     ap.add_argument("--levels", default="1,2,4,8")
+     ap.add_argument("--level-seconds", type=int, default=180)
+     ap.add_argument("--pause-seconds", type=int, default=30)
+     ap.add_argument("--post-observe-seconds", type=int, default=120)
+-    ap.add_argument("--abort-error-rate", type=float, default=0.5)
++    ap.add_argument("--abort-error-rate", type=float, default=MAX_ABORT_ERROR_RATE)
++    ap.add_argument("--abort-window-seconds", type=float, default=MAX_ABORT_WINDOW_SECONDS)
++    ap.add_argument("--abort-min-requests", type=int, default=MAX_ABORT_MIN_REQUESTS)
++    ap.add_argument("--abort-consecutive", type=int, default=MAX_ABORT_CONSECUTIVE)
+     ap.add_argument("--dry-run", action="store_true")
+     ap.add_argument("--self-test", action="store_true")
+     a = ap.parse_args()
+@@ -232,11 +442,21 @@
+     if not (1 <= len(levels) <= MAX_LEVELS and all(1 <= c <= MAX_LEVEL for c in levels)):
+         die("--levels: 1 to %d levels, each 1 to %d" % (MAX_LEVELS, MAX_LEVEL), 2)
+     if not (10 <= a.level_seconds <= MAX_LEVEL_SECONDS and 0 <= a.pause_seconds <= 120
+-            and 0 <= a.post_observe_seconds <= 300 and 0 < a.abort_error_rate <= 1):
+-        die("a duration or the abort rate is out of bounds (see --help)", 2)
++            and 0 <= a.post_observe_seconds <= 300):
++        die("a duration is out of bounds (see --help)", 2)
++    if not (0 < a.abort_error_rate <= MAX_ABORT_ERROR_RATE
++            and MIN_ABORT_WINDOW_SECONDS <= a.abort_window_seconds <= MAX_ABORT_WINDOW_SECONDS
++            and 1 <= a.abort_min_requests <= MAX_ABORT_MIN_REQUESTS and 1 <= a.abort_consecutive <= MAX_ABORT_CONSECUTIVE):
++        die("abort rule bounds: rate 0 to %g, window %d to %d s, 1 to %d requests, 1 to %d consecutive"
++            % (MAX_ABORT_ERROR_RATE, MIN_ABORT_WINDOW_SECONDS, MAX_ABORT_WINDOW_SECONDS,
++               MAX_ABORT_MIN_REQUESTS, MAX_ABORT_CONSECUTIVE), 2)
+     planned_s = len(levels) * a.level_seconds + (len(levels) - 1) * a.pause_seconds + a.post_observe_seconds
++    abort_rule = {"scope": "per request kind (evidence, node, neighbors); sliding window within a level, "
++                           "whole level between levels; preflight GET of each path before the first level",
++                  "errorRateAbove": a.abort_error_rate, "windowSeconds": a.abort_window_seconds,
++                  "minRequestsPerKind": a.abort_min_requests, "consecutive5xxOrTransport": a.abort_consecutive}
+     bounds = {"levels": levels, "levelSeconds": a.level_seconds, "pauseSeconds": a.pause_seconds,
+-              "postObserveSeconds": a.post_observe_seconds, "abortErrorRate": a.abort_error_rate,
++              "postObserveSeconds": a.post_observe_seconds, "abortRule": abort_rule,
+               "maxRequestsPerLevel": MAX_REQUESTS_PER_LEVEL, "requestTimeoutSeconds": REQUEST_TIMEOUT_S,
+               "plannedSeconds": planned_s, "haikuCalls": 0, "service": SERVICE, "serviceMaxTasks": 2}
+ 
+@@ -251,6 +471,7 @@
+         print("    planned requests (round-robin per worker, GET, X-Api-Key header):")
+         for kind, path in request_list(ev, nodes):
+             print("      %-9s GET http://<alb_dns_name>%s" % (kind, path))
++        print("    preflight: one GET of each path above, sequential; any non-2xx stops the run (exit 3)")
+         for c in levels:
+             print("    level c=%d: ecs describe-services %s; %d s closed loop; ecs describe-services" % (c, SERVICE, a.level_seconds))
+         print("    then %d s idle and a final ecs describe-services; write summary.json" % a.post_observe_seconds)
+@@ -264,44 +485,52 @@
+     if not smoke:
+         die("no PASS smoke record with evidence and researcher IDs under operations/releases", 3)
+     tf = json.loads(run_cmd(["terraform", "-chdir=" + TF_DIR, "output", "-json"]))
+-    if not tf.get("runtime_enabled", {}).get("value"):
++
++    def tfo(name):
++        v = (tf.get(name) or {}).get("value")
++        if v is None:
++            die("terraform output missing: %s" % name, 3)
++        return v
++    if tfo("runtime_enabled") is not True:
+         die("runtime_enabled is false", 3)
+     acct = aws("sts", "get-caller-identity", "--query", "Account", "--output", "text").strip()
+-    if acct != tf["account_id"]["value"]:
++    if acct != tfo("account_id"):
+         die("profile account %s differs from the state account" % acct, 3)
+-    base = "http://" + tf["alb_dns_name"]["value"]
+-    cluster = tf["ecs_cluster_name"]["value"]
++    base = "http://" + tfo("alb_dns_name")
++    cluster = tfo("ecs_cluster_name")
++    secret_arn = tfo("api_key_secret_arn")
+     paths = request_list(smoke[1], smoke[2])
+     with open(os.path.join(out_dir, "inputs.json"), "w") as f:
+         json.dump({"baseUrl": base, "account": acct, "region": os.environ.get("AWS_REGION"),
+-                   "cluster": cluster, "albArnSuffix": tf.get("alb_arn_suffix", {}).get("value"),
++                   "cluster": cluster, "albArnSuffix": (tf.get("alb_arn_suffix") or {}).get("value"),
+                    "smokeRecord": os.path.relpath(smoke[0], ROOT), "evidenceIds": smoke[1],
+                    "researcherIds": smoke[2], "requests": paths, "bounds": bounds,
+                    "startedAt": utc_now()}, f, indent=2)
+-    key = read_api_key(tf["api_key_secret_arn"]["value"])
++    key = read_api_key(secret_arn)
+     print("==> OK API key read (not printed)")
+ 
+-    summary = {"schemaVersion": "exp-d-summary-v1", "levels": [], "aborted": None}
+-    for n, c in enumerate(levels):
+-        if n:
+-            time.sleep(a.pause_seconds)
+-        before = ecs_counts(cluster, "before-c%d" % c, out_dir)
+-        s = run_level(base, key, paths, c, a.level_seconds, out_dir)
+-        s["ecsBefore"], s["ecsAfter"] = before, ecs_counts(cluster, "after-c%d" % c, out_dir)
+-        summary["levels"].append(s)
+-        if s["errorRate"] is None or (s["requests"] >= 20 and s["errorRate"] > a.abort_error_rate):
+-            summary["aborted"] = "level c=%d error rate %s above %s" % (c, s["errorRate"], a.abort_error_rate)
+-            break
+-    del key
+-    if summary["aborted"] is None:
+-        time.sleep(a.post_observe_seconds)
+-        summary["ecsPostObserve"] = ecs_counts(cluster, "post-observe", out_dir)
+-    summary["endedAt"] = utc_now()
+-    with open(os.path.join(out_dir, "summary.json"), "w") as f:
+-        json.dump(summary, f, indent=2)
+-    print("==> EXP-D levels=%d aborted=%s" % (len(summary["levels"]), summary["aborted"]))
+-    return 1 if summary["aborted"] else 0
++    summary = {"schemaVersion": "exp-d-summary-v1", "startedAt": utc_now(), "abortRule": abort_rule,
++               "preflight": None, "levels": [], "aborted": None, "abortedAt": None,
++               "abortWindowCounts": None, "error": None}
++    try:
++        code = run_load(base, key, paths, levels, a, cluster, out_dir, summary)
++    except Exception as e:  # type only: a message could quote a request
++        summary["error"] = type(e).__name__
++        print("==> FAIL unexpected %s during the load (exit 4)" % summary["error"], file=sys.stderr)
++        code = 4
++    finally:
++        key = None
++        summary["endedAt"] = utc_now()
++        with open(os.path.join(out_dir, "summary.json"), "w") as f:
++            json.dump(summary, f, indent=2)
++    print("==> EXP-D levels=%d aborted=%s error=%s exit=%d" % (
++        len(summary["levels"]), summary["aborted"], summary["error"], code))
++    return code
+ 
+ 
+ if __name__ == "__main__":
+-    sys.exit(main())
++    try:
++        sys.exit(main())
++    except Exception as e:  # type only: a message could quote an input (finding 4)
++        print("==> FAIL unexpected %s (exit 4)" % type(e).__name__, file=sys.stderr)
++        sys.exit(4)
+--- /private/tmp/claude-501/-Users-achyutpatel-Developer-Cloud-ScholarChain/c8c6cf11-81dc-4511-8825-585fe63fab9a/scratchpad/pre-repair-04/experiments/manifests/exp-f-failure-recovery-v1.json	2026-11-17 12:25:11
++++ experiments/manifests/exp-f-failure-recovery-v1.json	2026-11-17 13:18:32
+@@ -21,6 +21,8 @@
+     "queueMaxReceiveCount": 3,
+     "queueVisibilityTimeoutSeconds": 300,
+     "failureInjection": "one SQS send-message of a malformed body to the job queue; nothing else is mutated",
++    "attemptsPerWindow": 1,
++    "exitCodes": "0 all checks passed; 1 a check failed; 2 usage or xtrace on; 3 precondition; 4 send-message failed or timed out (the message may be queued)",
+     "region": "us-east-2",
+     "budgetUsd": 0.1
+   },
+@@ -36,7 +38,7 @@
+     "question": "B07: Have Jack J. Dongarra and Yves Robert coauthored a paper?",
+     "inputs": "terraform output (alb_dns_name, api_key_secret_arn, job_queue_url, job_dlq_url, log_group_names, runtime_enabled, account_id); Secrets Manager API key (memory only)",
+     "rawOutputs": "inputs.json, dlq-before.txt, poison-sent.json, query-request.json, submit-<1|2|3>.json(.headers), job-polls.txt, job-final.json, result.json, queue-depths.txt, worker-poison-events.json, worker-job-finished-events.json, query-api-job-queued-events.json, summary.json",
+-    "humanCleanup": "The poison message stays in the DLQ (14-day retention) and the alarm scholarchain-course-jobs-dlq-not-empty goes to ALARM (no SNS topic, ruling 27). Leave both until cleanup.sh --stage runtime destroys the queues; removing the message earlier is a human-only action. The job record (TTL 168 h), the idempotency record (TTL 24 h) and the audit and answer objects go with the runtime cleanup."
++    "humanCleanup": "One attempt per window; a rerun first needs the human to remove the DLQ message (the harness requires an empty DLQ, and removing the message is a human-only action). The poison message stays in the DLQ (14-day retention) and the alarm scholarchain-course-jobs-dlq-not-empty goes to ALARM (no SNS topic, ruling 27). Leave both until cleanup.sh --stage runtime destroys the queues; removing the message earlier is a human-only action. The job record (TTL 168 h), the idempotency record (TTL 24 h) and the audit and answer objects go with the runtime cleanup."
+   },
+   "metrics": [
+     {"namespace": "AWS/SQS", "metricName": "ApproximateNumberOfMessagesVisible", "dimensions": {"QueueName": "scholarchain-course-jobs-dlq"}},
+--- /private/tmp/claude-501/-Users-achyutpatel-Developer-Cloud-ScholarChain/c8c6cf11-81dc-4511-8825-585fe63fab9a/scratchpad/pre-repair-04/experiments/harness/exp-f-failure-recovery.sh	2026-11-17 12:24:27
++++ experiments/harness/exp-f-failure-recovery.sh	2026-11-17 13:19:24
+@@ -5,6 +5,8 @@
+ set -euo pipefail
+ # shellcheck source=../../scripts/lib/common.sh
+ . "$(dirname "$0")/../../scripts/lib/common.sh"
++# An inherited xtrace (bash -x, or SHELLOPTS exported) would trace the API key (code review 4 finding 8).
++case $- in *x*) die "xtrace is on; refusing to handle the API key (no bash -x, no exported SHELLOPTS)" 2 ;; esac
+ 
+ # Benchmark B07, the smoke-test.sh default question (one bounded researcher query).
+ QUESTION="Have Jack J. Dongarra and Yves Robert coauthored a paper?"
+@@ -19,20 +21,28 @@
+                  job-message-v1 object (Worker.scala: logged as poison-message, never deleted,
+                  so it is received 3 times, 300 s apart, and SQS redrives it to the DLQ)
+   submit         POST /v1/query {"execution":"async"} with Idempotency-Key exp-f-<stamp> = 202
+-  replay         the same POST and key = 202, Idempotent-Replay: true, the same jobId
++  replay         the same POST and key = 202, Idempotent-Replay: true, the same jobId, state
++                 QUEUED or RUNNING
+   job            GET /v1/jobs/<jobId> every 10 s until SUCCEEDED or FAILED (--job-wait-minutes)
+-  result         GET /v1/jobs/<jobId>/result; the same POST and key again = 202 with the final state
++  result         GET /v1/jobs/<jobId>/result; the same POST and key again = 202, the same jobId,
++                 state SUCCEEDED or FAILED
+   dlq            get-queue-attributes of both queues every 30 s until the DLQ holds 1 message
+-                 (--dlq-wait-minutes after the send)
++                 (--dlq-wait-minutes after the send; a failed poll is recorded and polling goes on)
+   logs           worker poison-message and job-finished events, query-api job-queued events
++                 (from 300 s before the start, for clock skew; a failed query is a FAIL check)
+   verdict        summary.json; exit 0 when every check passed, 1 otherwise
+ 
+ Haiku calls: the one async question (planner and synthesis, 2; at most 4 with one retry each).
+ The API key is read from Secrets Manager into a variable and reaches curl on standard input only.
++The harness refuses to run with xtrace on (bash -x or an exported SHELLOPTS).
++One attempt per window: the DLQ must be empty at the start, and the poison message stays in it,
++so a rerun first needs the human to remove the DLQ message (a human-only action).
+ Cleanup (human): the poison message stays in the DLQ (14-day retention) and the DLQ alarm stays in
+ ALARM until cleanup.sh --stage runtime destroys the queue; the job, idempotency and audit records
+ expire by TTL or go with the runtime stores.
+-Exit: 0 all checks passed; 1 a check failed; 2 usage; 3 precondition.
++Exit: 0 all checks passed; 1 a check failed; 2 usage or xtrace on; 3 precondition (including an
++AWS read that fails before the poison is sent); 4 send-message failed or timed out (the message
++may be queued: check both queues before any rerun).
+ EOF
+ }
+ 
+@@ -55,11 +65,11 @@
+ 
+ dry_run_exit \
+   "terraform output alb_dns_name, api_key_secret_arn, job_queue_url, job_dlq_url, log_group_names; aws sts get-caller-identity" \
+-  "precondition: DLQ ApproximateNumberOfMessages + NotVisible = 0" \
++  "precondition: DLQ ApproximateNumberOfMessages + NotVisible = 0 (one attempt per window; a rerun first needs the human to remove the DLQ message)" \
+   "aws sqs send-message --queue-url <job_queue_url> --message-body '{\"schemaVersion\":\"exp-f-poison-v1\",\"note\":\"experiment F poison <stamp>\"}' (one attempt)" \
+   "POST http://<alb>/v1/query {\"question\":\"$QUESTION\",\"execution\":\"async\"} Idempotency-Key exp-f-<stamp> -> 202 jobId" \
+-  "POST the same body and key -> 202, Idempotent-Replay: true, same jobId" \
+-  "GET /v1/jobs/<jobId> every 10 s for at most $JOB_WAIT_MIN min; GET /v1/jobs/<jobId>/result; POST the same body and key once more" \
++  "POST the same body and key -> 202, Idempotent-Replay: true, same jobId, state QUEUED or RUNNING" \
++  "GET /v1/jobs/<jobId> every 10 s for at most $JOB_WAIT_MIN min; GET /v1/jobs/<jobId>/result; POST the same body and key once more -> 202, same jobId, state SUCCEEDED or FAILED" \
+   "get-queue-attributes (job queue and DLQ) every 30 s for at most $DLQ_WAIT_MIN min after the send" \
+   "aws logs filter-log-events: worker poison-message and job-finished, query-api job-queued" \
+   "write \$SCHOLARCHAIN_EXPERIMENT_DIR/summary.json; Haiku calls 2 (at most 4)"
+@@ -77,7 +87,8 @@
+ WORKER_LOG="$(tfo '.log_group_names.value.worker')"
+ QAPI_LOG="$(tfo '.log_group_names.value["query-api"]')"
+ STAMP="$(utc_stamp)"
+-START_MS=$(($(date +%s) * 1000))
++# 300 s margin for laptop clock skew; the events are selected by messageId and jobId (finding 6).
++START_MS=$((($(date +%s) - 300) * 1000))
+ IDEM="exp-f-$STAMP"
+ jq -n --arg base "$BASE" --arg q "$QUEUE" --arg d "$DLQ" --arg w "$WORKER_LOG" --arg a "$QAPI_LOG" \
+   --arg acct "$ACCOUNT" --arg region "$REGION" --arg idem "$IDEM" --arg at "$(utc_now)" \
+@@ -99,13 +110,15 @@
+ }
+ 
+ step "preconditions"
+-DLQ0="$(queue_depth "$DLQ")"
++DLQ0="$(queue_depth "$DLQ")" || die "get-queue-attributes failed for the DLQ" 3
+ printf '%s %s\n' "$(utc_now)" "$DLQ0" >"$OUT/dlq-before.txt"
+-[ "$(printf '%s' "$DLQ0" | awk '{print $1 + $2}')" = 0 ] || die "the DLQ is not empty ($DLQ0); the evidence would be ambiguous" 3
++[ "$(printf '%s' "$DLQ0" | awk '{print $1 + $2}')" = 0 ] ||
++  die "the DLQ is not empty ($DLQ0); the evidence would be ambiguous. F runs once per window: a rerun first needs the human to remove the DLQ message" 3
+ ok "DLQ empty"
+ 
+ step "api-key"
+-API_KEY="$(aws_retry secretsmanager get-secret-value --secret-id "$SECRET" --query SecretString --output text)"
++API_KEY="$(aws_retry secretsmanager get-secret-value --secret-id "$SECRET" --query SecretString --output text)" ||
++  die "the API key secret could not be read" 3
+ [ -n "$API_KEY" ] && [ "$API_KEY" != None ] || die "the API key secret has no value" 3
+ KEY_ESC="${API_KEY//\\/\\\\}"
+ KEY_ESC="${KEY_ESC//\"/\\\"}"
+@@ -127,7 +140,10 @@
+ POISON_BODY="$(jq -cn --arg s "$STAMP" '{schemaVersion: "exp-f-poison-v1", note: ("experiment F poison " + $s)}')"
+ SENT_AT="$(utc_now)"
+ SENT_S=$SECONDS
+-MSG_ID="$(aws_once sqs send-message --queue-url "$QUEUE" --message-body "$POISON_BODY" --query MessageId --output text)"
++if ! MSG_ID="$(aws_once sqs send-message --queue-url "$QUEUE" --message-body "$POISON_BODY" --query MessageId --output text)"; then
++  jq -n --arg at "$SENT_AT" --arg body "$POISON_BODY" '{messageId: null, sentAt: $at, body: $body, sendFailed: true}' >"$OUT/poison-sent.json"
++  die "send-message failed or timed out; the message may be queued: check both queues before any rerun" 4
++fi
+ jq -n --arg id "$MSG_ID" --arg at "$SENT_AT" --arg body "$POISON_BODY" '{messageId: $id, sentAt: $at, body: $body}' >"$OUT/poison-sent.json"
+ ok "poison message $MSG_ID sent at $SENT_AT"
+ 
+@@ -140,9 +156,11 @@
+ step "replay"
+ CODE2="$(req POST /v1/query "$OUT/submit-2.json" "$OUT/query-request.json")"
+ JOB2="$(jq -r '.jobId // empty' "$OUT/submit-2.json" 2>/dev/null || true)"
+-if [ "$CODE2" = 202 ] && [ -n "$JOB" ] && [ "$JOB2" = "$JOB" ] && replayed "$OUT/submit-2.json"; then
+-  check replay-while-queued PASS "202 same jobId, Idempotent-Replay true"
+-else check replay-while-queued FAIL "http $CODE2 jobId '$JOB2'"; fi
++STATE2="$(jq -r '.state // empty' "$OUT/submit-2.json" 2>/dev/null || true)"
++case "$STATE2" in QUEUED | RUNNING) LIVE2=1 ;; *) LIVE2=0 ;; esac
++if [ "$CODE2" = 202 ] && [ -n "$JOB" ] && [ "$JOB2" = "$JOB" ] && [ "$LIVE2" = 1 ] && replayed "$OUT/submit-2.json"; then
++  check replay-while-queued PASS "202 same jobId, Idempotent-Replay true, state $STATE2"
++else check replay-while-queued FAIL "http $CODE2 jobId '$JOB2' state '${STATE2:-none}'"; fi
+ 
+ step "job"
+ STATE=""
+@@ -155,7 +173,7 @@
+     case "$STATE" in SUCCEEDED | FAILED) break ;; esac
+     sleep 10
+   done
+-  cp "$OUT/job-poll.json" "$OUT/job-final.json"
++  if [ -f "$OUT/job-poll.json" ]; then cp "$OUT/job-poll.json" "$OUT/job-final.json"; fi
+ fi
+ if [ "$STATE" = SUCCEEDED ]; then check job PASS "SUCCEEDED"; else check job FAIL "state '${STATE:-none}'"; fi
+ 
+@@ -165,17 +183,19 @@
+   if [ "$CODE" = 200 ]; then check result PASS "200 $(jq -r .queryId "$OUT/result.json")"; else check result FAIL "http $CODE"; fi
+ fi
+ CODE3="$(req POST /v1/query "$OUT/submit-3.json" "$OUT/query-request.json")"
+-if [ "$CODE3" = 202 ] && [ "$(jq -r '.jobId // empty' "$OUT/submit-3.json" 2>/dev/null)" = "$JOB" ] &&
+-  replayed "$OUT/submit-3.json"; then
+-  check replay-after-final PASS "202 same jobId, state $(jq -r .state "$OUT/submit-3.json")"
+-else check replay-after-final FAIL "http $CODE3"; fi
++JOB3="$(jq -r '.jobId // empty' "$OUT/submit-3.json" 2>/dev/null || true)"
++STATE3="$(jq -r '.state // empty' "$OUT/submit-3.json" 2>/dev/null || true)"
++case "$STATE3" in SUCCEEDED | FAILED) FINAL3=1 ;; *) FINAL3=0 ;; esac
++if [ "$CODE3" = 202 ] && [ -n "$JOB" ] && [ "$JOB3" = "$JOB" ] && [ "$FINAL3" = 1 ] && replayed "$OUT/submit-3.json"; then
++  check replay-after-final PASS "202 same jobId, Idempotent-Replay true, state $STATE3"
++else check replay-after-final FAIL "http $CODE3 jobId '$JOB3' state '${STATE3:-none}'"; fi
+ 
+ step "dlq"
+ DLQ_AT=""
+ END_S=$((SENT_S + DLQ_WAIT_MIN * 60))
+ while [ "$SECONDS" -lt "$END_S" ]; do
+-  Q="$(queue_depth "$QUEUE")"
+-  D="$(queue_depth "$DLQ")"
++  Q="$(queue_depth "$QUEUE")" || Q=error
++  D="$(queue_depth "$DLQ")" || D=error
+   printf '%s jobs %s dlq %s\n' "$(utc_now)" "$Q" "$D" >>"$OUT/queue-depths.txt"
+   if [ "$(printf '%s' "$D" | awk '{print $1 + $2}')" -ge 1 ]; then
+     DLQ_AT="$(utc_now)"
+@@ -186,9 +206,12 @@
+ if [ -n "$DLQ_AT" ]; then check dlq PASS "DLQ holds the message at $DLQ_AT (sent $SENT_AT)"; else check dlq FAIL "DLQ still empty after $DLQ_WAIT_MIN min"; fi
+ 
+ step "logs"
+-logs() { # group pattern out
+-  aws_retry logs filter-log-events --log-group-name "$1" --start-time "$START_MS" \
+-    --filter-pattern "$2" --query 'events[].message' --output json >"$3"
++logs() { # group pattern out; a failed query leaves [] and a FAIL check (finding 5)
++  if ! aws_retry logs filter-log-events --log-group-name "$1" --start-time "$START_MS" \
++    --filter-pattern "$2" --query 'events[].message' --output json >"$3"; then
++    printf '[]\n' >"$3"
++    check "logs-$(basename "$3" .json)" FAIL "filter-log-events failed for $1 $2"
++  fi
+ }
+ logs "$WORKER_LOG" '"poison-message"' "$OUT/worker-poison-events.json"
+ logs "$WORKER_LOG" '"job-finished"' "$OUT/worker-job-finished-events.json"

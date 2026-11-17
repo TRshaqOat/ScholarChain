@@ -1,0 +1,21 @@
+$ jq -e '.schemaVersion == "experiment-manifest-v1"
+  and (.experimentId | type == "string" and test("^[a-z0-9][a-z0-9-]{2,63}$"))
+  and (.command | type == "array" and length >= 1 and all(type == "string"))
+  and (.limits.maxMinutes | type == "number" and . >= 1 and . <= 240)
+  and ((.metrics // []) | type == "array")' experiments/manifests/exp-d-query-load-v1.json
+true
+exit=0
+$ jq -e '.schemaVersion == "experiment-manifest-v1"
+  and (.experimentId | type == "string" and test("^[a-z0-9][a-z0-9-]{2,63}$"))
+  and (.command | type == "array" and length >= 1 and all(type == "string"))
+  and (.limits.maxMinutes | type == "number" and . >= 1 and . <= 240)
+  and ((.metrics // []) | type == "array")' experiments/manifests/exp-f-failure-recovery-v1.json
+true
+exit=0
+$ sed -n 64,68p scripts/run-experiment.sh   (source of the expression above)
+jq -e '.schemaVersion == "experiment-manifest-v1"
+  and (.experimentId | type == "string" and test("^[a-z0-9][a-z0-9-]{2,63}$"))
+  and (.command | type == "array" and length >= 1 and all(type == "string"))
+  and (.limits.maxMinutes | type == "number" and . >= 1 and . <= 240)
+  and ((.metrics // []) | type == "array")' "$SC_ROOT/$REL" >/dev/null ||
+exit=0

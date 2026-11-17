@@ -1,0 +1,8 @@
+$ ls -l <the four files>
+-rwxr-xr-x@ 1 achyutpatel  staff  14238 Nov 17 13:19 experiments/harness/exp-f-failure-recovery.sh
+-rw-r--r--@ 1 achyutpatel  staff   5057 Nov 17 13:17 experiments/manifests/exp-d-query-load-v1.json
+-rw-r--r--@ 1 achyutpatel  staff   4391 Nov 17 13:18 experiments/manifests/exp-f-failure-recovery-v1.json
+-rwxr-xr-x@ 1 achyutpatel  staff  26880 Nov 17 13:17 load-tests/exp-d-query-load.py
+exit=0
+$ find . -name __pycache__ -not -path "./target/*" (none expected under load-tests/)
+exit=0

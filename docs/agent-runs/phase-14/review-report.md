@@ -631,3 +631,252 @@ BLOCKED-ON OWNER: none
 BLOCKED-ON EVIDENCE: none
 
 NEXT GATE: route findings 1-9 to the experiment-engineer and finding 10 to the infra-engineer (optional, by ruling). Then re-review the repaired files. A human gate comes before commit and before the window 2 runs.
+
+## Code review 5 (repair-04)
+
+STATUS: COMPLETE
+OWNER: code-reviewer
+WORK ORDER: Phase 14, work order 7, Part B. This is code review 5 of repair-04 (prompt.md lines 282-289), under rulings 26 and 28-34 and the checks of work order 6 (lines 262-277). Ponytail is off. I only read files.
+VERDICT: APPROVE
+
+**Why APPROVE:**
+- All nine findings from code review 4 are fixed. Finding 1 (major) is fixed as specified. Finding 8's placement differs from the stated fix, and the reason given is adequate.
+- I found no new critical or major defect.
+- The two new findings below are both minor. **Neither has to block window 2.** By ruling 33 there is no further repair round, so the human can accept them as residual risks.
+- Severity scale: "blocker" in the work order is CRITICAL here.
+
+SCOPE REVIEWED:
+- The change set /private/tmp/claude-501/-Users-achyutpatel-Developer-Cloud-ScholarChain/c8c6cf11-81dc-4511-8825-585fe63fab9a/scratchpad/repair-04-changeset.diff. It is `diff -u` of the pre-repair snapshots against the tree at HEAD 496fe76. All four files are untracked, so I read each repaired file in full:
+  - /Users/achyutpatel/Developer/Cloud/ScholarChain/load-tests/exp-d-query-load.py (536 lines)
+  - /Users/achyutpatel/Developer/Cloud/ScholarChain/experiments/harness/exp-f-failure-recovery.sh (235 lines)
+  - /Users/achyutpatel/Developer/Cloud/ScholarChain/experiments/manifests/exp-d-query-load-v1.json
+  - /Users/achyutpatel/Developer/Cloud/ScholarChain/experiments/manifests/exp-f-failure-recovery-v1.json
+- Context files:
+  - prompt.md lines 200-290
+  - review-report.md lines 380-634 (code review 4)
+  - docs/agent-runs/phase-14/repair-04.md
+  - scripts/run-experiment.sh
+  - scripts/lib/common.sh
+  - Services.scala lines 120-254 (query, enqueue, replay)
+  - Models.scala lines 126-136 (AsyncQueryResponse)
+  - The Resilience.scala and Http.scala OVERLOADED, CIRCUIT_OPEN and RateLimiter sites
+  - .gitignore
+- Logs: scratch/phase-14-logs/repair-04-04, -04b, -05, -06, -07b, -03d and -09 (the orchestrator's replay).
+
+## Code review 4 findings 1-9
+
+**1. MAJOR, D's abort did not limit load: FIXED.**
+- **Does the stop event limit load?** Yes.
+  - `run_level` creates one `threading.Event` per level (py:353).
+  - Every worker checks it before each request (py:316, `while not stop.is_set() and time.monotonic() < deadline`).
+  - The worker sets it under the level lock as soon as `mon.record` reports a trip (py:324-327).
+  - After a trip, each worker sends at most one more request: it may already have passed the stop check before the event was set. Requests already in flight finish. So at c=8, at most 8 more requests complete after a trip.
+  - `run_load` returns 1 right after that level (py:412-416), so no later level runs and the post-observation is skipped.
+- **Is the per-kind 10 s window rule correct?** Yes.
+  - `AbortMonitor.record` (py:121-136) keeps one deque per kind. The monotonic time is read inside the lock, so each deque is in time order.
+  - It evicts entries with `t <= now - window_s` and keeps the non-2xx count in step.
+  - `rule_reason` (py:99-105) trips on `n >= 20 and bad/n > 0.05`, or on `run >= 10`.
+  - `hard_failure` (py:94-96) counts status 0 (any transport error) and any status of 500 or more. 4xx counts toward the non-2xx rate and breaks a consecutive run.
+  - This matches the ruling. It is slightly stricter, because "transport" covers resets and refused connections as well as timeouts.
+  - The monitor runs on every completed request instead of in a separate polling thread. That is equivalent, deterministic, and explained in repair-04.md.
+- **Is the same rule applied between levels, including after the last one?** Yes.
+  - `level_trip` (py:156-166) applies the same `rule_reason` to each kind's whole-level `stats`, including `maxConsecutive5xxOrTransport` taken in completion order.
+  - `run_load` checks it after every level, including c=8, before any pause or post-observation (py:406-416).
+- **Does the preflight exit 3 on any non-2xx?** Yes.
+  - py:332-348 and :390-396 send one sequential GET of each path.
+  - Status 0 or any status outside 200-299 returns 3.
+  - It writes preflight.json and sets `aborted` and `abortedAt` (phase "preflight").
+- **Are `abortedAt` and the window counts in summary.json?** Yes.
+  - summary.json has `abortedAt` {utc, phase, concurrency}, `abortWindowCounts` and `abortRule` (py:406-416, 512-514).
+  - Each level has `stoppedByAbortRule`.
+  - For a preflight abort, `abortWindowCounts` stays null. The evidence is in preflight.json, which is acceptable.
+- **Are the manifest abort fields updated?** Yes.
+  - The command now passes 0.05, 10, 20 and 10.
+  - `limits` has `abortErrorRate` 0.05, `abortWindowSeconds`, `abortMinRequestsPerKind`, `abortConsecutive5xxOrTimeouts`, `abortScope`, `preflight` and `exitCodes` (json:11-14, 26-32).
+- **Do the self-tests trip above each threshold and not below?** Yes. py:181-207 covers:
+  - rate: 1/20 and 5/100 do not trip; 2/20, 3/20 (404s) and 6/100 at level scope do;
+  - minimum: 18 requests do not trip;
+  - window eviction;
+  - consecutive: 9 do not trip and 10 do, both in the window and at level scope; mixed 0 and 504; a 404 resets the run;
+  - per-kind isolation;
+  - the window counts recorded at the trip.
+  - Log 03d shows that all 5 mutations are killed.
+
+**2. MINOR, throughput: FIXED.** `t_start` is taken before the threads start and `elapsed` after `join()` (py:355, :365). `elapsedSeconds` and throughput come from that elapsed time (py:372-373).
+
+**3. MINOR, mixed percentiles: FIXED.** Each level has `byKind` with counts, status counts, maximum run, and p50/p95/p99 for all requests and for 2xx only (py:377, 381-384).
+
+**4. MINOR, D exit codes: FIXED.**
+- `tfo` uses `.get` and calls `die(..., 3)` (py:489-493).
+- `ecs_counts` records an error instead of dying, including the `null` service case (py:262-286).
+- The load runs inside try/except/finally, so summary.json is always written once the load starts, and an unexpected error exits 4 (py:515-525).
+- `__main__` prints only the exception type and exits 4 (py:531-536).
+- `die`'s SystemExit is not caught by `except Exception`, so codes 2 and 3 keep their meaning.
+- Codes 0 to 4 are documented and distinct (py:36-39, json:32).
+
+**5. MINOR, F `set -e` exits: FIXED.**
+- The DLQ precondition read and the secret read now `|| die ... 3` (sh:113, 120-121).
+- A failed send writes poison-sent.json with `sendFailed: true` and then exits 4 (sh:143-146). Writing the file goes beyond the stated fix, and that is an improvement.
+- The `cp` is guarded (sh:176).
+- In the DLQ loop, `Q=error` and `D=error` (sh:197-198). awk reads `error` as 0, so polling continues.
+- `logs()` writes `[]` and records a FAIL check on failure (sh:209-215). `check` runs in the main shell, so the CHECKS update persists.
+- I traced every other unguarded command. None can produce 4 or collide with another documented code in a realistic case.
+
+**6. MINOR, clock skew: FIXED.** `START_MS` is set 300 s early (sh:91). This is the same arithmetic form common.sh:216 already uses under bash 3.2.
+
+**7. MINOR, replay states: FIXED.**
+- The first replay requires QUEUED or RUNNING (sh:159-163). The third request requires SUCCEEDED or FAILED and a non-empty `$JOB` (sh:186-191). Both details carry the state.
+- I checked that this is meaningful. `replay()` re-reads the current job record (Services.scala:238-239, `AsyncQueryResponse.of(j)` with `state: JobState`, Models.scala:126-136). So the third request does report the final state, not the stored first one.
+
+**8. MINOR, xtrace: FIXED, at a different place than stated, and the explanation is adequate.**
+- The `case $- in *x*)` check sits at sh:9, directly after common.sh is sourced, because `die` is defined there. Under `-x`, the only lines traced before the refusal are common.sh's non-secret constants (log 05).
+- The refusal comes long before the key is read (sh:120).
+- Observed: the orchestrator's replay shows `/bin/bash -x ... --dry-run` ending with `+ exit 2`.
+- The exported-SHELLOPTS form was not tested (see evidence gaps).
+
+**9. MINOR, one attempt per window: FIXED.** "One attempt per window" is stated in `humanCleanup` and in `limits.attemptsPerWindow: 1` (json:24, 41). It is also stated in the usage text (sh:38-39), the dry-run plan (sh:68) and the non-empty-DLQ die message (sh:115-116). The window 2 run notes are in repair-04.md under MANUAL ACTION REQUIRED, item 3.
+
+## New-defect checks (work order 6)
+
+**Secrets: pass.**
+- D:
+  - The key stays in the header dict and the thread arguments only.
+  - Every new exception path records or prints the type name only: `timed_get` (py:304-308), the load's except (py:517-520) and `__main__` (py:534-535).
+  - preflight.json, `byKind`, `abortRule` and the summary hold no headers.
+  - `ecs_counts` prints describe-services stderr, which never holds the key.
+  - An uncaught exception in a worker thread would print a traceback without local variables.
+- F:
+  - The new branches print fixed messages only.
+  - The xtrace check refuses before the key is read.
+
+**AWS calls: pass.**
+- F has exactly one `aws_once sqs send-message` (sh:143). Everything else is read-only: `get-queue-attributes`, `filter-log-events`, `get-secret-value` and `sts`.
+- F makes no delete, purge, visibility change, redrive or task stop.
+- D sends `GET` only (`timed_get` hardcodes `"GET"`, py:297, and the preflight uses it too). Its AWS calls are sts, one secret read, and `ecs describe-services` 9 times.
+- The preflight adds 14 GETs at most.
+
+**Bounds and ruling 34's wait budget: pass.**
+- D: about 15.5 min planned plus the preflight (about 16 min normally), against maxMinutes 25. That leaves a margin of more than 5 min.
+- F:
+  - The DLQ deadline is 22 min after the send.
+  - Before the send, about 0.5 min.
+  - The last loop pass can overrun by about 0.5 min.
+  - The logs step takes seconds.
+  - The total is about 23.5 min against 30, a margin of more than 6 min.
+  - The job and replay steps (at most about 10.5 min) fall inside the 22 min.
+
+**Exit codes: pass.** Both harnesses use 0, 1, 2, 3 and 4, documented in the usage text and docstring and in each manifest's `exitCodes`. Exit 4 has a meaning local to each harness. run-experiment.sh records any non-zero code and exits 1.
+
+**`--dry-run`: pass.**
+- D reads only local smoke files (log 04b, exit 0).
+- F runs only `command -v` before `dry_run_exit`. Observed: the orchestrator's replay exits 0 under /bin/bash 3.2.57.
+
+**Portability: pass.**
+- F uses bash 3.2 constructs only: `if ! VAR="$(...)"`, `|| VAR=error`, `case $-`, `$(( ( $(...) - 300) * 1000))`. It uses BSD `basename`, `awk` and `tr`. Observed: `/bin/bash -n` exits 0 under 3.2.57.
+- D imports the standard library only. `collections.deque` was added, and it still needs Python 3.7 or later.
+
+**Thread safety and hang risk in D: pass.**
+- One lock guards `rows` and the monitor. `Event.set` is called under that lock, and no thread waits on the event while holding it, so there is no deadlock.
+- `break` inside `with lock` releases the lock correctly.
+- `join()` is bounded by the deadline plus one request.
+- The deque is never empty when it is evicted, because the entry just appended has time `now`, which is greater than `now - window`.
+
+**run-experiment.sh compatibility: pass.**
+- `command[0]` is unchanged, and argparse accepts the new flags (log 04b).
+- The literal jq expression from lines 64-68 prints `true` for both manifests (log 07b, which also shows the source lines).
+- The modes are kept: 755 for the harnesses, 644 for the manifests (orchestrator `ls -l`).
+
+**Scope: pass.** The diff touches only the four files. What the experiments measure changes only as the findings required: the preflight, the abort rule, `byKind`, `elapsedSeconds`, and F's state conditions and log start time.
+
+## FINDINGS (ranked; both MINOR, neither blocks window 2)
+
+**1. MINOR: the abort-window bound allows a looser rule, so the report's claim that "the manifest cannot loosen the reviewed rule" is false.**
+- Where: load-tests/exp-d-query-load.py:72 (`MIN_ABORT_WINDOW_SECONDS = 5`) and :448, together with repair-04.md line 75.
+- Failure input: a manifest edited to `--abort-window-seconds 5` passes validation.
+  - The in-window rate rule needs at least 20 requests of one kind inside the window. Halving the window doubles the request rate a kind needs, from 2 to 4 per second, before the rate rule can fire within a level.
+  - So partial failures of `node` and `neighbors` at c=1 and c=2 run a full level and are caught only between levels.
+  - The docstring itself says this: "a shorter one would rarely reach the request minimum" (py:33-34).
+- Impact: none for the committed manifest, which pins 10 s. run-experiment.sh requires a committed manifest that matches HEAD, so a change would be visible in review. The defect is a bound that does not hold as documented.
+- Fix: set `MIN_ABORT_WINDOW_SECONDS = MAX_ABORT_WINDOW_SECONDS = 10`, so the window is fixed. Alternatively, require `abort_min_requests <= 2 * abort_window_seconds`. Either way, correct the claim in the report.
+- Owner: experiment-engineer. The human may accept this as a residual risk.
+
+**2. MINOR: "a worker already waiting on a response stops within the 10 s request timeout" is not a guaranteed bound.**
+- Where: load-tests/exp-d-query-load.py:30-31 (docstring) and :296 (`HTTPConnection(..., timeout=REQUEST_TIMEOUT_S)`).
+- Failure input: Python's `timeout` applies to each socket operation, not to the whole request.
+  - `socket.create_connection` tries each address the ALB's DNS returns (at least 2) with 10 s each.
+  - A response whose headers and body arrive in separate reads can take up to 10 s per read.
+  - DNS resolution has no timeout.
+- Impact: small. The tail after a trip, or after the level deadline, can run past 10 s, perhaps 20 to 30 s in a black-hole case, with at most one request per worker. The ruling 34 margin still holds.
+- Fix: reword the docstring to "within about one request timeout per socket operation". Alternatively, record a per-request deadline and leave it unenforced, or accept the wording as it is.
+- Owner: experiment-engineer. This can be a residual risk.
+
+OWNERSHIP CHECK:
+
+| Changed path | Owner | Author matches |
+|---|---|---|
+| experiments/manifests/exp-d-query-load-v1.json | experiment-engineer | yes |
+| load-tests/exp-d-query-load.py | experiment-engineer | yes |
+| experiments/manifests/exp-f-failure-recovery-v1.json | experiment-engineer | yes |
+| experiments/harness/exp-f-failure-recovery.sh | experiment-engineer | yes |
+| docs/agent-runs/phase-14/repair-04.md | orchestrator assembly | permitted: a repair-NN.md file in an open phase folder; phase-14 has no commit.txt |
+| scratch/phase-14-logs/repair-04-*.txt | engineer and orchestrator | authorized by work order 7 (prompt.md:289); scratch/ is ignored by git (.gitignore:27); no finding |
+
+- Glob shows that experiments/harness, experiments/manifests and load-tests hold exactly the four files.
+- No production, Terraform, prompt, threshold, label or `experiments/benchmark/` file is touched.
+
+FLOOR AND FENCE CHECK: no hook, permission rule, `check`, `markTestRun` or reviewer fence is touched. Nothing is weakened or widened.
+
+EVIDENCE GAPS:
+1. The worker loop, the stop event, the preflight, the `ecs_counts` error paths and all of F's AWS error branches were never exercised. Running them needs an HTTP server or AWS, and the work order forbids network calls. I verified the stop-event wiring by reading the code only. A self-test that drives `run_level` through a stubbed `timed_get`, with no network, would have covered it.
+2. The exported-SHELLOPTS form of finding 8 was not tested. The guard blocked that command (repair-04.md item 5), and the engineer correctly did not reshape it to get past the guard.
+3. The orchestrator's replay does not repeat D's `--dry-run` with the manifest flags or the literal jq check. Those results rest on the engineer's logs 04b and 07b, which I read: exit 0 and `true`.
+4. The orchestrator's observation of `git status` lists exactly the four files. The session's git snapshot also shows `?? docs/agent-runs/phase-14/repair-04.md`, so that observation was apparently taken before repair-04.md was written. This is not a defect.
+5. Carried over from code review 4:
+   - run-experiment.sh `--dry-run` has not been replayed with the executable bits set. It is pending the commit.
+   - D's smoke-record parser has still never parsed a real query.json.
+6. Small line-number drifts in repair-04.md. For example, level_trip is at 156-166, not 156-169, and the self-test at 175-207, not 175-204. These are immaterial.
+
+FILES CREATED: none
+FILES MODIFIED: none
+COMMANDS RUN: none (no Bash tool). I used Read, Grep and Glob only.
+
+TEST RESULTS (as supplied, quoted from scratch/phase-14-logs/repair-04-09-orchestrator-replay.txt):
+- "GNU bash, version 3.2.57(1)-release (arm64-apple-darwin26) / exit=0"
+- "$ /bin/bash -n experiments/harness/exp-f-failure-recovery.sh / exit=0"
+- "$ python3 -B load-tests/exp-d-query-load.py --self-test / ==> OK self-test / exit=0"
+- "$ /bin/bash -x experiments/harness/exp-f-failure-recovery.sh --dry-run 2>&1 | tail -1 / + exit 2"
+- Engineer's log 03d: "mutant killed" for all 5 mutants, "==> OK self-test", "exit=0".
+
+VALIDATION RESULTS (as supplied):
+- F `--dlq-wait-minutes 22 --job-wait-minutes 5 --dry-run` under /bin/bash: "==> OK dry-run", exit=0 (orchestrator replay).
+- D `--dry-run` with the manifest flags: "==> OK dry-run", exit=0 (log 04b, engineer).
+- D with loosened flags (`--abort-error-rate 0.5`, `--abort-window-seconds 30`, `--abort-consecutive 11`): exit=2 each (log 04).
+- The literal jq expression from run-experiment.sh:64-68: `true`, exit=0 for both manifests (log 07b, engineer).
+
+ASSUMPTIONS:
+- upickle writes `JobState` as its case name. Code review 4 found the same for the other enum fields.
+- ALB DNS returns more than one address (multi-AZ). This matters for minor finding 2 only.
+- bash imports an exported SHELLOPTS at startup and sets `$-` from it. This is documented bash behavior and was not tested here.
+
+RISKS:
+1. At 0.05, D may abort at c=8 on a short burst of 503 OVERLOADED responses (Http.scala:96, 221-222) or of transport errors on reused keep-alive connections. Each counts as a hard failure, and nothing is retried. This is the intended trade-off, and `abortedAt` and `abortWindowCounts` record it. A D run that aborts early yields data for fewer levels.
+2. Below about 2 requests per second for a kind (for example node and neighbors at c=1 with a slow Neptune), the in-window rate rule cannot fire. A partial failure then runs a full level and is caught between levels. A total failure is still caught by the consecutive rule or by the preflight.
+3. A trip after the last level exits 1 and skips the idle post-observation, as the work order requires. The scale-in observation after c=8 is then lost.
+4. Unchanged from code review 4:
+   - Finding 10 (run-experiment.sh signals only the command's PID) stays residual by ruling 34.
+   - The xtrace gap in smoke-test.sh (infra-engineer) remains.
+   - D sends the API key over plain HTTP at volume.
+   - `ApproximateReceiveCount` is approximate.
+
+MANUAL ACTION REQUIRED:
+1. Human decision on minor findings 1 and 2: accept them as residual risks (ruling 33) or route them. Neither blocks window 2.
+2. After the commit, replay `./scripts/run-experiment.sh --manifest <each> --profile scholarchain-sdk --dry-run` and record the output.
+3. Window 2 notes:
+   - F runs once per window. An F exit 4 means checking both queues before anything else.
+   - A D exit 3 after "preflight" means a path was not 2xx before any load ran.
+   - Never run either harness under `bash -x` or with SHELLOPTS exported (ruling 34).
+
+BLOCKED-ON OWNER: none
+BLOCKED-ON EVIDENCE: none
+
+NEXT GATE: the human gate on this APPROVE (ruling 33: no further repair round; minors 1 and 2 to residual risks or routed by ruling). Then the human commits the four files, replays the run-experiment.sh `--dry-run`, and runs window 2 after load-stores.sh and a PASS smoke-test.sh.

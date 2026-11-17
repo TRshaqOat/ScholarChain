@@ -1,0 +1,8 @@
+$ python3 -B -I -c <mutation check: each threshold comparison weakened; self_test must fail> load-tests/exp-d-query-load.py
+Traceback (most recent call last):
+  File "<string>", line 13, in <module>
+    exec(compile(src.replace(old, new), "mutant", "exec"), g)
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "mutant", line 57, in <module>
+NameError: name '__file__' is not defined. Did you mean: '__name__'?
+exit=1

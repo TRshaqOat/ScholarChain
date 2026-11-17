@@ -1,0 +1,8 @@
+$ python3 -B -I -c <mutation check, __file__ set, any exception from self_test counts as killed: each abort-rule comparison weakened in memory> load-tests/exp-d-query-load.py
+mutant killed (AssertionError): bad / float(n) >= rate
+mutant killed (TypeError): n > min_requests and
+mutant killed (TypeError): if run > consecutive:
+mutant killed (AssertionError): while False:
+mutant killed (TypeError): return status >= 500
+==> OK self-test
+exit=0
