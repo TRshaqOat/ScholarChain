@@ -1,0 +1,9 @@
+#!/bin/bash
+{ echo "  aws argv:"; printf '    [%s]\n' "$@"; } >&2
+if [ "$3 $4 $5" = "--cli-read-timeout 120 s3" ] && [ "$6" = ls ]; then
+  case "$7" in
+    */_manifest.json) echo "2026-11-16 07:30:00        512 _manifest.json" ;;
+    *) for r in $STUB_RUNS; do echo "                           PRE $r/"; done ;;
+  esac
+fi
+exit 0

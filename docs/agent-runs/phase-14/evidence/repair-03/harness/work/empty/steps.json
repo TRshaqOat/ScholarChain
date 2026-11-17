@@ -1,0 +1,80 @@
+[
+  {
+    "Type": "CUSTOM_JAR",
+    "Name": "classpath-probe",
+    "ActionOnFailure": "CONTINUE",
+    "Jar": "command-runner.jar",
+    "Args": [
+      "bash",
+      "-c",
+      "set -euo pipefail; exec /bin/bash /Users/achyutpatel/Developer/Cloud/ScholarChain/scripts/emr/step.sh \"$@\"",
+      "step",
+      "classpath"
+    ]
+  },
+  {
+    "Type": "CUSTOM_JAR",
+    "Name": "hadoop-pipeline",
+    "ActionOnFailure": "TERMINATE_CLUSTER",
+    "Jar": "command-runner.jar",
+    "Args": [
+      "bash",
+      "-c",
+      "set -euo pipefail; exec /bin/bash /Users/achyutpatel/Developer/Cloud/ScholarChain/scripts/emr/step.sh \"$@\"",
+      "step",
+      "hadoop",
+      "5400",
+      "s3://scholarchain-course-data-000000000000-us-east-2/artifacts/jobs/0123456789abcdef0123456789abcdef01234567/hadoop-assembly.jar",
+      "--out",
+      "s3a://scholarchain-course-data-000000000000-us-east-2/curated/hadoop",
+      "--code-version",
+      "0123456789abcdef0123456789abcdef01234567",
+      "--dblp",
+      "s3a://scholarchain-course-data-000000000000-us-east-2/raw/dblp/works.xml",
+      "--dblp-dtd",
+      "s3a://scholarchain-course-data-000000000000-us-east-2/raw/dblp/dblp.dtd",
+      "--dblp-snapshot",
+      "2026-10-03",
+      "--openalex",
+      "s3a://scholarchain-course-data-000000000000-us-east-2/raw/openalex/works.jsonl",
+      "--openalex-snapshot",
+      "2026-11-03",
+      "--crossref",
+      "s3a://scholarchain-course-data-000000000000-us-east-2/raw/crossref/works.jsonl",
+      "--crossref-snapshot",
+      "2026-11-03",
+      "--orcid",
+      "s3a://scholarchain-course-data-000000000000-us-east-2/raw/orcid/records.jsonl.gz",
+      "--orcid-snapshot",
+      "2026-11-03",
+      "--reducers",
+      "2"
+    ]
+  },
+  {
+    "Type": "CUSTOM_JAR",
+    "Name": "spark-pipeline",
+    "ActionOnFailure": "TERMINATE_CLUSTER",
+    "Jar": "command-runner.jar",
+    "Args": [
+      "bash",
+      "-c",
+      "set -euo pipefail; exec /bin/bash /Users/achyutpatel/Developer/Cloud/ScholarChain/scripts/emr/step.sh \"$@\"",
+      "step",
+      "spark",
+      "9000",
+      "s3://scholarchain-course-data-000000000000-us-east-2/artifacts/jobs/0123456789abcdef0123456789abcdef01234567/sparkAnalytics-assembly.jar",
+      "scholarchain-course-data-000000000000-us-east-2",
+      "2026-10-03",
+      "none",
+      "--out",
+      "s3a://scholarchain-course-data-000000000000-us-east-2/curated/spark",
+      "--checkpoint-dir",
+      "hdfs:///scholarchain/spark/checkpoints",
+      "--code-version",
+      "0123456789abcdef0123456789abcdef01234567",
+      "--shuffle-partitions",
+      "40"
+    ]
+  }
+]

@@ -190,3 +190,11 @@ Checks: `bash -n` on both scripts; if the step.sh positional-argument harness fr
 ### Code review 3: code-reviewer
 
 Review the repair-03 change set (the orchestrator supplies git status and git diff of the three files, written to its scratchpad) against work order 4 and rulings 18 and 19. Check: the --conf sits inside the existing exec and keeps argument order and quoting; the classpath scan cannot fail the step or run unbounded; nothing else changed behaviour; README text matches the code; run-bounded-pipeline.sh stays bash 3.2 compatible. Verdict APPROVE or REQUEST_CHANGES with numbered findings (major or minor).
+
+20. Repair-03 accepted; chain 4 (Nov 16).
+   - Code review 3 APPROVE (no critical or major findings). Minor findings 1 (a timed-out or mis-scoped jar scan reads the same as "key absent"), 2 (README describes the scan under spark-pipeline, not classpath-probe or the step.sh header) and 3 (the sort-merge claim is unverified on EMR) are Phase 17 notes for infra-engineer; no repair-04 (ruling 19). Finding 3 is settled by the 50% rerun and the classpath-probe output, quoted in the results ruling with finding 1 in mind.
+   - Process deviation: infra-engineer ran read-only git status --porcelain and git diff --stat, against work order 4 and Phase 7 ruling 17. Disclosed, nothing changed; recorded, no action. Evidence gaps (no captured jar-scan log; real GNU timeout not run; harness overall exit code not logged, as in repair-02) are residual.
+   - Evidence: the change set and the harness are in evidence/repair-03/.
+   - Chain 4 (/tmp/p14-chain4.sh, copied to evidence at Step W1): package.sh at this commit, then 50, 25, 100 with --shuffle-partitions 40. Gate as ruling 18: commit = HEAD; shuffle 40; TERMINATED with ALL_STEPS_COMPLETED; three steps COMPLETED; one Hadoop and five Spark runs; the driver run among them; Spark read the record's Hadoop run; J01 ACCEPTED 55598 / 27993 / 110867; openIngress empty; no AccessDenied or 403. The chain also logs the classpath-probe hybrid hash join lines. Stop rules of rulings 7, 8, 18 and 19 unchanged; if 50% fails again, human escalation (no further repair in window 1).
+   - Factory-metrics rows at Step W1: infra-engineer work order 4 (repair-03) COMPLETE; code-reviewer code review 3 APPROVE.
+   - Approved by Achyut Patel.

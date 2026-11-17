@@ -1,0 +1,4 @@
+#!/bin/bash
+echo "  timeout seconds: [$1]"
+shift
+exec "$@"

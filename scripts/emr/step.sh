@@ -51,6 +51,13 @@ case "$mode" in
     hadoop classpath --glob | tr ':' '\n' | grep -iE 'typesafe|/config-[0-9]|awssdk|bundle-2|scala' | sort -u
     echo "== /usr/lib/spark/jars (config, awssdk, scala)"
     ls /usr/lib/spark/jars | grep -iE 'typesafe|^config-|awssdk|bundle|scala' | sort
+    echo "== hybrid hash join settings in the Spark jars"
+    if command -v unzip >/dev/null 2>&1; then
+      found="$(timeout 120 bash -c 'for j in /usr/lib/spark/jars/spark-*.jar; do unzip -p "$j" 2>/dev/null | grep -a -o "spark\.sql\.join\.hybridHashJoin[A-Za-z.]*"; done' | sort -u)"
+      echo "${found:-none found}"
+    else
+      echo "unzip not available"
+    fi
     exit 0
     ;;
   hadoop)
@@ -75,7 +82,10 @@ case "$mode" in
     aws_t s3 ls "$base$run/_manifest.json" >/dev/null || { echo "no _manifest.json in $base$run" >&2; exit 1; }
     echo "==> HADOOP-RUN ${base}${run}"
     fetch "$jar" /tmp/scholarchain-spark.jar
+    # On emr-spark-8.0.0 EMR plans these joins as HybridHashJoin, which failed with
+    # UNABLE_TO_ACQUIRE_MEMORY in job 10 at 50% (P14-D7); off gives the sort-merge join Apache Spark plans locally.
     exec timeout "$timeout_s" spark-submit --master yarn --deploy-mode client \
+      --conf spark.sql.join.hybridHashJoin.enabled=false \
       --class scholarchain.spark.PipelineJob /tmp/scholarchain-spark.jar \
       --input "s3a://$bucket/curated/hadoop/snapshot=$snapshot/$run" "$@"
     ;;

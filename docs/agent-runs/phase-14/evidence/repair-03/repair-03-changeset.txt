@@ -1,0 +1,210 @@
+== git status --porcelain --untracked-files=all
+ M scripts/README.md
+ M scripts/emr/step.sh
+ M scripts/run-bounded-pipeline.sh
+?? docs/agent-runs/phase-14/repair-03.md
+?? operations/deployments/window-1-20261116T061720Z.md
+?? operations/deployments/window-1-20261116T062456Z.md
+?? operations/pipeline-runs/20261116T063500Z-fraction25/hadoop-runs-before.txt
+?? operations/pipeline-runs/20261116T063500Z-fraction25/input-hashes.txt
+?? operations/pipeline-runs/20261116T063500Z-fraction25/instance-groups.json
+?? operations/pipeline-runs/20261116T063500Z-fraction25/spark-runs-before.txt
+?? operations/pipeline-runs/20261116T063500Z-fraction25/steps.json
+?? operations/pipeline-runs/20261116T071214Z-fraction25/cluster-id.txt
+?? operations/pipeline-runs/20261116T071214Z-fraction25/cluster.json
+?? operations/pipeline-runs/20261116T071214Z-fraction25/hadoop-runs-after.txt
+?? operations/pipeline-runs/20261116T071214Z-fraction25/hadoop-runs-before.txt
+?? operations/pipeline-runs/20261116T071214Z-fraction25/input-hashes.txt
+?? operations/pipeline-runs/20261116T071214Z-fraction25/instance-groups.json
+?? operations/pipeline-runs/20261116T071214Z-fraction25/logs/s-0007140O9BBAQX07HVI/controller.gz
+?? operations/pipeline-runs/20261116T071214Z-fraction25/logs/s-0007140O9BBAQX07HVI/stderr.gz
+?? operations/pipeline-runs/20261116T071214Z-fraction25/logs/s-0007140O9BBAQX07HVI/stdout.gz
+?? operations/pipeline-runs/20261116T071214Z-fraction25/logs/s-00071463A9E279I4JLDO/controller.gz
+?? operations/pipeline-runs/20261116T071214Z-fraction25/logs/s-00071463A9E279I4JLDO/stderr.gz
+?? operations/pipeline-runs/20261116T071214Z-fraction25/logs/s-00071463A9E279I4JLDO/stdout.gz
+?? operations/pipeline-runs/20261116T071214Z-fraction25/logs/s-00071473BOLXO0QSX83Z/controller.gz
+?? operations/pipeline-runs/20261116T071214Z-fraction25/logs/s-00071473BOLXO0QSX83Z/stderr.gz
+?? operations/pipeline-runs/20261116T071214Z-fraction25/logs/s-00071473BOLXO0QSX83Z/stdout.gz
+?? operations/pipeline-runs/20261116T071214Z-fraction25/logs/s-00071473BOLXO0QSX83Z/syslog.gz
+?? operations/pipeline-runs/20261116T071214Z-fraction25/manifests/hadoop-run=run-620fccae97a621ed9437af85f2a590c4.json
+?? operations/pipeline-runs/20261116T071214Z-fraction25/run.json
+?? operations/pipeline-runs/20261116T071214Z-fraction25/security-groups.json
+?? operations/pipeline-runs/20261116T071214Z-fraction25/spark-runs-after.txt
+?? operations/pipeline-runs/20261116T071214Z-fraction25/spark-runs-before.txt
+?? operations/pipeline-runs/20261116T071214Z-fraction25/steps-result.json
+?? operations/pipeline-runs/20261116T071214Z-fraction25/steps.json
+?? operations/pipeline-runs/20261116T080634Z-fraction25/cluster-id.txt
+?? operations/pipeline-runs/20261116T080634Z-fraction25/cluster.json
+?? operations/pipeline-runs/20261116T080634Z-fraction25/hadoop-runs-after.txt
+?? operations/pipeline-runs/20261116T080634Z-fraction25/hadoop-runs-before.txt
+?? operations/pipeline-runs/20261116T080634Z-fraction25/input-hashes.txt
+?? operations/pipeline-runs/20261116T080634Z-fraction25/instance-groups.json
+?? operations/pipeline-runs/20261116T080634Z-fraction25/logs/s-03025923SHOE1PCE65W2/controller.gz
+?? operations/pipeline-runs/20261116T080634Z-fraction25/logs/s-03025923SHOE1PCE65W2/stderr.gz
+?? operations/pipeline-runs/20261116T080634Z-fraction25/logs/s-03025923SHOE1PCE65W2/stdout.gz
+?? operations/pipeline-runs/20261116T080634Z-fraction25/logs/s-03025923SHOE1PCE65W2/syslog.gz
+?? operations/pipeline-runs/20261116T080634Z-fraction25/logs/s-03025931RDOZ7WIOWEVP/controller.gz
+?? operations/pipeline-runs/20261116T080634Z-fraction25/logs/s-03025931RDOZ7WIOWEVP/stderr.gz
+?? operations/pipeline-runs/20261116T080634Z-fraction25/logs/s-03025931RDOZ7WIOWEVP/stdout.gz
+?? operations/pipeline-runs/20261116T080634Z-fraction25/logs/s-03025992J6OOWUU1W2G/controller.gz
+?? operations/pipeline-runs/20261116T080634Z-fraction25/logs/s-03025992J6OOWUU1W2G/stderr.gz
+?? operations/pipeline-runs/20261116T080634Z-fraction25/logs/s-03025992J6OOWUU1W2G/stdout.gz
+?? operations/pipeline-runs/20261116T080634Z-fraction25/manifests/hadoop-run=run-0b051c05dfc9b385b76b08818f0425c7.json
+?? operations/pipeline-runs/20261116T080634Z-fraction25/manifests/spark-run=run-04f6cfa764ce7b39208d2cb84713f841.json
+?? operations/pipeline-runs/20261116T080634Z-fraction25/manifests/spark-run=run-09582fb1ce6e59e613f1adc1c688811a.json
+?? operations/pipeline-runs/20261116T080634Z-fraction25/manifests/spark-run=run-0b5cdafae10b5017a8e20526b8b60173.json
+?? operations/pipeline-runs/20261116T080634Z-fraction25/manifests/spark-run=run-968b42b2d6d645401569eceeb903c43e.json
+?? operations/pipeline-runs/20261116T080634Z-fraction25/manifests/spark-run=run-eaa0031b91c9055d9bbae0e0cdf85704.json
+?? operations/pipeline-runs/20261116T080634Z-fraction25/run.json
+?? operations/pipeline-runs/20261116T080634Z-fraction25/security-groups.json
+?? operations/pipeline-runs/20261116T080634Z-fraction25/spark-runs-after.txt
+?? operations/pipeline-runs/20261116T080634Z-fraction25/spark-runs-before.txt
+?? operations/pipeline-runs/20261116T080634Z-fraction25/steps-result.json
+?? operations/pipeline-runs/20261116T080634Z-fraction25/steps.json
+?? operations/pipeline-runs/20261116T212028Z-fraction50/cluster-id.txt
+?? operations/pipeline-runs/20261116T212028Z-fraction50/cluster.json
+?? operations/pipeline-runs/20261116T212028Z-fraction50/hadoop-runs-after.txt
+?? operations/pipeline-runs/20261116T212028Z-fraction50/hadoop-runs-before.txt
+?? operations/pipeline-runs/20261116T212028Z-fraction50/input-hashes.txt
+?? operations/pipeline-runs/20261116T212028Z-fraction50/instance-groups.json
+?? operations/pipeline-runs/20261116T212028Z-fraction50/logs/s-00078803TB6LJOOYZC58/controller.gz
+?? operations/pipeline-runs/20261116T212028Z-fraction50/logs/s-00078803TB6LJOOYZC58/stderr.gz
+?? operations/pipeline-runs/20261116T212028Z-fraction50/logs/s-00078803TB6LJOOYZC58/stdout.gz
+?? operations/pipeline-runs/20261116T212028Z-fraction50/logs/s-00078863SBLE0FG4KN93/controller.gz
+?? operations/pipeline-runs/20261116T212028Z-fraction50/logs/s-00078863SBLE0FG4KN93/stderr.gz
+?? operations/pipeline-runs/20261116T212028Z-fraction50/logs/s-00078863SBLE0FG4KN93/stdout.gz
+?? operations/pipeline-runs/20261116T212028Z-fraction50/logs/s-0007887YETQZ5PXA0WU/controller.gz
+?? operations/pipeline-runs/20261116T212028Z-fraction50/logs/s-0007887YETQZ5PXA0WU/stderr.gz
+?? operations/pipeline-runs/20261116T212028Z-fraction50/logs/s-0007887YETQZ5PXA0WU/stdout.gz
+?? operations/pipeline-runs/20261116T212028Z-fraction50/logs/s-0007887YETQZ5PXA0WU/syslog.gz
+?? operations/pipeline-runs/20261116T212028Z-fraction50/manifests/hadoop-run=run-06f96f2488d29eddc55405db35b47d84.json
+?? operations/pipeline-runs/20261116T212028Z-fraction50/manifests/spark-run=run-20b32a78cf3dd0225c71f6d5b3085eb0.json
+?? operations/pipeline-runs/20261116T212028Z-fraction50/manifests/spark-run=run-6073da216a37e66998e4c9bf138621c4.json
+?? operations/pipeline-runs/20261116T212028Z-fraction50/manifests/spark-run=run-ede5358add54fa4dab26f0e0bc4048ce.json
+?? operations/pipeline-runs/20261116T212028Z-fraction50/run.json
+?? operations/pipeline-runs/20261116T212028Z-fraction50/security-groups.json
+?? operations/pipeline-runs/20261116T212028Z-fraction50/spark-runs-after.txt
+?? operations/pipeline-runs/20261116T212028Z-fraction50/spark-runs-before.txt
+?? operations/pipeline-runs/20261116T212028Z-fraction50/steps-result.json
+?? operations/pipeline-runs/20261116T212028Z-fraction50/steps.json
+?? operations/pipeline-runs/20261116T232332Z-fraction50/cluster-id.txt
+?? operations/pipeline-runs/20261116T232332Z-fraction50/cluster.json
+?? operations/pipeline-runs/20261116T232332Z-fraction50/hadoop-runs-after.txt
+?? operations/pipeline-runs/20261116T232332Z-fraction50/hadoop-runs-before.txt
+?? operations/pipeline-runs/20261116T232332Z-fraction50/input-hashes.txt
+?? operations/pipeline-runs/20261116T232332Z-fraction50/instance-groups.json
+?? operations/pipeline-runs/20261116T232332Z-fraction50/logs/s-04825763G7UXH6TF42MY/controller.gz
+?? operations/pipeline-runs/20261116T232332Z-fraction50/logs/s-04825763G7UXH6TF42MY/stderr.gz
+?? operations/pipeline-runs/20261116T232332Z-fraction50/logs/s-04825763G7UXH6TF42MY/stdout.gz
+?? operations/pipeline-runs/20261116T232332Z-fraction50/logs/s-04825763G7UXH6TF42MY/syslog.gz
+?? operations/pipeline-runs/20261116T232332Z-fraction50/logs/s-0482577164MB2SWPFZ0P/controller.gz
+?? operations/pipeline-runs/20261116T232332Z-fraction50/logs/s-0482577164MB2SWPFZ0P/stderr.gz
+?? operations/pipeline-runs/20261116T232332Z-fraction50/logs/s-0482577164MB2SWPFZ0P/stdout.gz
+?? operations/pipeline-runs/20261116T232332Z-fraction50/logs/s-04825839SLG0NEJXQZ1/controller.gz
+?? operations/pipeline-runs/20261116T232332Z-fraction50/logs/s-04825839SLG0NEJXQZ1/stderr.gz
+?? operations/pipeline-runs/20261116T232332Z-fraction50/logs/s-04825839SLG0NEJXQZ1/stdout.gz
+?? operations/pipeline-runs/20261116T232332Z-fraction50/manifests/hadoop-run=run-cd026bbd239f6ebd6963f0c99e5bac1a.json
+?? operations/pipeline-runs/20261116T232332Z-fraction50/manifests/spark-run=run-43f402fb02b5619de402614bd6701fcf.json
+?? operations/pipeline-runs/20261116T232332Z-fraction50/manifests/spark-run=run-7e87243530d09bafbb74d1cbc1ed7a03.json
+?? operations/pipeline-runs/20261116T232332Z-fraction50/manifests/spark-run=run-b17d7f47d16f8cf50c4149bd3a882119.json
+?? operations/pipeline-runs/20261116T232332Z-fraction50/run.json
+?? operations/pipeline-runs/20261116T232332Z-fraction50/security-groups.json
+?? operations/pipeline-runs/20261116T232332Z-fraction50/spark-runs-after.txt
+?? operations/pipeline-runs/20261116T232332Z-fraction50/spark-runs-before.txt
+?? operations/pipeline-runs/20261116T232332Z-fraction50/steps-result.json
+?? operations/pipeline-runs/20261116T232332Z-fraction50/steps.json
+?? operations/plans/20261116T053901Z-3e0983e6a0c7.md
+?? operations/plans/20261116T060222Z-d33ce8e8d507-APPROVED.txt
+?? operations/plans/20261116T060222Z-d33ce8e8d507.md
+?? operations/releases/package-1232927b8ac8828dd57f30e93e06e263bd57ac2a.json
+?? operations/releases/package-d33ce8e8d507145cd46fb39bf319e985bc9a428a.json
+?? operations/releases/package-fa93806df7ca4b65e5de6d13779d865909de273b.json
+?? operations/releases/release-20261116T061659Z-d33ce8e8d507.apply.txt
+?? operations/releases/release-20261116T062349Z-d33ce8e8d507.apply.txt
+?? operations/releases/release-20261116T062349Z-d33ce8e8d507.json
+?? operations/releases/release-20261116T062349Z-d33ce8e8d507.outputs.json
+?? operations/rulings/phase-14-ruling-11.txt
+?? operations/rulings/phase-14-ruling-16.txt
+?? operations/rulings/phase-14-ruling-17.txt
+?? operations/rulings/phase-14-ruling-18.txt
+
+== git diff -- scripts/emr/step.sh scripts/run-bounded-pipeline.sh scripts/README.md
+diff --git a/scripts/README.md b/scripts/README.md
+index 13a55d8..7b3322b 100644
+--- a/scripts/README.md
++++ b/scripts/README.md
+@@ -190,7 +190,7 @@ After the evidence is archived: cleanup.sh --stage infra; after the instructor a
+ 
+ - **Purpose:** one bounded Hadoop and Spark run on an ephemeral EMR cluster (spec Phase 13 item 6, D-13
+   size scaling).
+-- **Command:** `scripts/run-bounded-pipeline.sh --fraction 25|50|100 --package-record operations/releases/package-<sha>.json [--reducers 2] [--shuffle-partitions 16] [--hadoop-timeout-minutes 90] [--spark-timeout-minutes 150] [--record-dir operations/pipeline-runs] [--profile p] [--region us-east-2] [--dry-run]`
++- **Command:** `scripts/run-bounded-pipeline.sh --fraction 25|50|100 --package-record operations/releases/package-<sha>.json [--reducers 2] [--shuffle-partitions 40] [--hadoop-timeout-minutes 90] [--spark-timeout-minutes 150] [--record-dir operations/pipeline-runs] [--profile p] [--region us-east-2] [--dry-run]`
+ - **Steps:** clean tree, HEAD = the package commit, local jars and `emr/step.sh` hash to the record;
+   ruling 2 bounds re-checked from the `emr` output (emr-spark-8.0.0, 1 primary, 1 to 2 core, Graviton,
+   on-demand); write-once uploads of the five inputs to
+@@ -210,7 +210,13 @@ After the evidence is archived: cleanup.sh --stage infra; after the instructor a
+      `spark-submit --master yarn --class scholarchain.spark.PipelineJob` (jobs 1 to 11) with
+      `--input <that run> --out s3a://<bucket>/curated/spark --checkpoint-dir
+      hdfs:///scholarchain/spark/checkpoints --code-version <commit> --shuffle-partitions <n>`, killed at
+-     its timeout.
++     its timeout. `step.sh` adds `--conf spark.sql.join.hybridHashJoin.enabled=false`: on
++     emr-spark-8.0.0 EMR plans these joins as HybridHashJoin, which failed with
++     `UNABLE_TO_ACQUIRE_MEMORY` in job 10 at 50% (P14-D7, ruling 19); off gives the sort-merge join
++     Apache Spark plans locally. The `classpath` step prints the `spark.sql.join.hybridHashJoin*`
++     settings found in the cluster's Spark jars.
++  Shuffle partitions default to 40, the PipelineJob default in `modules/spark/JOBS.md` (P14-D6,
++  ruling 18); bounds 2 to 200.
+   Then a bounded wait for TERMINATED; collection of step timings, normalized instance hours, the new
+   run directories and their `_manifest.json`, and the step logs (bounded wait for EMR to push them);
+   then a read-only `ec2 describe-security-groups` of both EMR-managed groups. Terraform ignores their
+diff --git a/scripts/emr/step.sh b/scripts/emr/step.sh
+index 8f7654b..89edea3 100755
+--- a/scripts/emr/step.sh
++++ b/scripts/emr/step.sh
+@@ -51,6 +51,13 @@ case "$mode" in
+     hadoop classpath --glob | tr ':' '\n' | grep -iE 'typesafe|/config-[0-9]|awssdk|bundle-2|scala' | sort -u
+     echo "== /usr/lib/spark/jars (config, awssdk, scala)"
+     ls /usr/lib/spark/jars | grep -iE 'typesafe|^config-|awssdk|bundle|scala' | sort
++    echo "== hybrid hash join settings in the Spark jars"
++    if command -v unzip >/dev/null 2>&1; then
++      found="$(timeout 120 bash -c 'for j in /usr/lib/spark/jars/spark-*.jar; do unzip -p "$j" 2>/dev/null | grep -a -o "spark\.sql\.join\.hybridHashJoin[A-Za-z.]*"; done' | sort -u)"
++      echo "${found:-none found}"
++    else
++      echo "unzip not available"
++    fi
+     exit 0
+     ;;
+   hadoop)
+@@ -75,7 +82,10 @@ case "$mode" in
+     aws_t s3 ls "$base$run/_manifest.json" >/dev/null || { echo "no _manifest.json in $base$run" >&2; exit 1; }
+     echo "==> HADOOP-RUN ${base}${run}"
+     fetch "$jar" /tmp/scholarchain-spark.jar
++    # On emr-spark-8.0.0 EMR plans these joins as HybridHashJoin, which failed with
++    # UNABLE_TO_ACQUIRE_MEMORY in job 10 at 50% (P14-D7); off gives the sort-merge join Apache Spark plans locally.
+     exec timeout "$timeout_s" spark-submit --master yarn --deploy-mode client \
++      --conf spark.sql.join.hybridHashJoin.enabled=false \
+       --class scholarchain.spark.PipelineJob /tmp/scholarchain-spark.jar \
+       --input "s3a://$bucket/curated/hadoop/snapshot=$snapshot/$run" "$@"
+     ;;
+diff --git a/scripts/run-bounded-pipeline.sh b/scripts/run-bounded-pipeline.sh
+index b022cab..d5622d2 100755
+--- a/scripts/run-bounded-pipeline.sh
++++ b/scripts/run-bounded-pipeline.sh
+@@ -8,7 +8,7 @@ set -euo pipefail
+ usage() {
+   cat <<'EOF'
+ Usage: scripts/run-bounded-pipeline.sh --fraction 25|50|100 --package-record <package-<sha>.json>
+-           [--profile <name>] [--region us-east-2] [--reducers 2] [--shuffle-partitions 16]
++           [--profile <name>] [--region us-east-2] [--reducers 2] [--shuffle-partitions 40]
+            [--hadoop-timeout-minutes 90] [--spark-timeout-minutes 150] [--record-dir <dir>] [--dry-run]
+ 
+ Inputs (DBLP snapshot 2026-10-03; OpenAlex, Crossref, ORCID snapshot 2026-11-03):
+@@ -53,7 +53,7 @@ EOF
+ FRACTION=""
+ PACKAGE_RECORD=""
+ REDUCERS=2
+-SHUFFLE=16
++SHUFFLE=40 # ruling 18 (P14-D6): the PipelineJob default in modules/spark/JOBS.md
+ HADOOP_MIN=90
+ SPARK_MIN=150
+ RECORD_DIR="$SC_ROOT/operations/pipeline-runs"

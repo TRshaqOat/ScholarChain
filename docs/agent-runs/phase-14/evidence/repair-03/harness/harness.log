@@ -1,0 +1,343 @@
+stubs first on PATH: aws hadoop spark-submit timeout -> /private/tmp/claude-501/-Users-achyutpatel-Developer-Cloud-ScholarChain/20b5480c-4391-4627-b47c-b3b347ca6457/scratchpad/h/stubs
+EARLIER lines from run-bounded-pipeline.sh:
+  EARLIER="$(paste -sd, "$REC/hadoop-runs-before.txt")"
+  [ -n "$EARLIER" ] || EARLIER=none
+
+=== case 1: empty earlier list (hadoop-runs-before.txt empty) ===
+spark Args as submitted (steps.json, index 2):
+  ["spark","9000","s3://scholarchain-course-data-000000000000-us-east-2/artifacts/jobs/0123456789abcdef0123456789abcdef01234567/sparkAnalytics-assembly.jar","scholarchain-course-data-000000000000-us-east-2","2026-10-03","none","--out","s3a://scholarchain-course-data-000000000000-us-east-2/curated/spark","--checkpoint-dir","hdfs:///scholarchain/spark/checkpoints","--code-version","0123456789abcdef0123456789abcdef01234567","--shuffle-partitions","40"]
+--- spark mode (bucket lists only the new run run=run-620fccae97a621ed9437af85f2a590c4)
+  Args after dropping empty strings, from "step" on:
+    [step]
+    [spark]
+    [9000]
+    [s3://scholarchain-course-data-000000000000-us-east-2/artifacts/jobs/0123456789abcdef0123456789abcdef01234567/sparkAnalytics-assembly.jar]
+    [scholarchain-course-data-000000000000-us-east-2]
+    [2026-10-03]
+    [none]
+    [--out]
+    [s3a://scholarchain-course-data-000000000000-us-east-2/curated/spark]
+    [--checkpoint-dir]
+    [hdfs:///scholarchain/spark/checkpoints]
+    [--code-version]
+    [0123456789abcdef0123456789abcdef01234567]
+    [--shuffle-partitions]
+    [40]
+  aws argv:
+    [--cli-connect-timeout]
+    [10]
+    [--cli-read-timeout]
+    [120]
+    [s3]
+    [ls]
+    [s3://scholarchain-course-data-000000000000-us-east-2/curated/hadoop/snapshot=2026-10-03/]
+  aws argv:
+    [--cli-connect-timeout]
+    [10]
+    [--cli-read-timeout]
+    [120]
+    [s3]
+    [ls]
+    [s3://scholarchain-course-data-000000000000-us-east-2/curated/hadoop/snapshot=2026-10-03/run=run-620fccae97a621ed9437af85f2a590c4/_manifest.json]
+==> HADOOP-RUN s3://scholarchain-course-data-000000000000-us-east-2/curated/hadoop/snapshot=2026-10-03/run=run-620fccae97a621ed9437af85f2a590c4
+  aws argv:
+    [--cli-connect-timeout]
+    [10]
+    [--cli-read-timeout]
+    [120]
+    [s3]
+    [cp]
+    [--only-show-errors]
+    [s3://scholarchain-course-data-000000000000-us-east-2/artifacts/jobs/0123456789abcdef0123456789abcdef01234567/sparkAnalytics-assembly.jar]
+    [/tmp/scholarchain-spark.jar]
+  timeout seconds: [9000]
+  spark-submit argv:
+    [--master]
+    [yarn]
+    [--deploy-mode]
+    [client]
+    [--conf]
+    [spark.sql.join.hybridHashJoin.enabled=false]
+    [--class]
+    [scholarchain.spark.PipelineJob]
+    [/tmp/scholarchain-spark.jar]
+    [--input]
+    [s3a://scholarchain-course-data-000000000000-us-east-2/curated/hadoop/snapshot=2026-10-03/run=run-620fccae97a621ed9437af85f2a590c4]
+    [--out]
+    [s3a://scholarchain-course-data-000000000000-us-east-2/curated/spark]
+    [--checkpoint-dir]
+    [hdfs:///scholarchain/spark/checkpoints]
+    [--code-version]
+    [0123456789abcdef0123456789abcdef01234567]
+    [--shuffle-partitions]
+    [40]
+  step.sh exit=0
+--- hadoop mode
+  Args after dropping empty strings, from "step" on:
+    [step]
+    [hadoop]
+    [5400]
+    [s3://scholarchain-course-data-000000000000-us-east-2/artifacts/jobs/0123456789abcdef0123456789abcdef01234567/hadoop-assembly.jar]
+    [--out]
+    [s3a://scholarchain-course-data-000000000000-us-east-2/curated/hadoop]
+    [--code-version]
+    [0123456789abcdef0123456789abcdef01234567]
+    [--dblp]
+    [s3a://scholarchain-course-data-000000000000-us-east-2/raw/dblp/works.xml]
+    [--dblp-dtd]
+    [s3a://scholarchain-course-data-000000000000-us-east-2/raw/dblp/dblp.dtd]
+    [--dblp-snapshot]
+    [2026-10-03]
+    [--openalex]
+    [s3a://scholarchain-course-data-000000000000-us-east-2/raw/openalex/works.jsonl]
+    [--openalex-snapshot]
+    [2026-11-03]
+    [--crossref]
+    [s3a://scholarchain-course-data-000000000000-us-east-2/raw/crossref/works.jsonl]
+    [--crossref-snapshot]
+    [2026-11-03]
+    [--orcid]
+    [s3a://scholarchain-course-data-000000000000-us-east-2/raw/orcid/records.jsonl.gz]
+    [--orcid-snapshot]
+    [2026-11-03]
+    [--reducers]
+    [2]
+  aws argv:
+    [--cli-connect-timeout]
+    [10]
+    [--cli-read-timeout]
+    [120]
+    [s3]
+    [cp]
+    [--only-show-errors]
+    [s3://scholarchain-course-data-000000000000-us-east-2/artifacts/jobs/0123456789abcdef0123456789abcdef01234567/hadoop-assembly.jar]
+    [/tmp/scholarchain-hadoop.jar]
+  timeout seconds: [5400]
+  hadoop argv:
+    [jar]
+    [/tmp/scholarchain-hadoop.jar]
+    [--out]
+    [s3a://scholarchain-course-data-000000000000-us-east-2/curated/hadoop]
+    [--code-version]
+    [0123456789abcdef0123456789abcdef01234567]
+    [--dblp]
+    [s3a://scholarchain-course-data-000000000000-us-east-2/raw/dblp/works.xml]
+    [--dblp-dtd]
+    [s3a://scholarchain-course-data-000000000000-us-east-2/raw/dblp/dblp.dtd]
+    [--dblp-snapshot]
+    [2026-10-03]
+    [--openalex]
+    [s3a://scholarchain-course-data-000000000000-us-east-2/raw/openalex/works.jsonl]
+    [--openalex-snapshot]
+    [2026-11-03]
+    [--crossref]
+    [s3a://scholarchain-course-data-000000000000-us-east-2/raw/crossref/works.jsonl]
+    [--crossref-snapshot]
+    [2026-11-03]
+    [--orcid]
+    [s3a://scholarchain-course-data-000000000000-us-east-2/raw/orcid/records.jsonl.gz]
+    [--orcid-snapshot]
+    [2026-11-03]
+    [--reducers]
+    [2]
+  step.sh exit=0
+
+=== case 2: non-empty earlier list (one earlier run run=run-11111111111111111111111111111111) ===
+spark Args as submitted (steps.json, index 2):
+  ["spark","9000","s3://scholarchain-course-data-000000000000-us-east-2/artifacts/jobs/0123456789abcdef0123456789abcdef01234567/sparkAnalytics-assembly.jar","scholarchain-course-data-000000000000-us-east-2","2026-10-03","run=run-11111111111111111111111111111111","--out","s3a://scholarchain-course-data-000000000000-us-east-2/curated/spark","--checkpoint-dir","hdfs:///scholarchain/spark/checkpoints","--code-version","0123456789abcdef0123456789abcdef01234567","--shuffle-partitions","40"]
+--- spark mode (bucket lists run=run-11111111111111111111111111111111 and the new run run=run-620fccae97a621ed9437af85f2a590c4)
+  Args after dropping empty strings, from "step" on:
+    [step]
+    [spark]
+    [9000]
+    [s3://scholarchain-course-data-000000000000-us-east-2/artifacts/jobs/0123456789abcdef0123456789abcdef01234567/sparkAnalytics-assembly.jar]
+    [scholarchain-course-data-000000000000-us-east-2]
+    [2026-10-03]
+    [run=run-11111111111111111111111111111111]
+    [--out]
+    [s3a://scholarchain-course-data-000000000000-us-east-2/curated/spark]
+    [--checkpoint-dir]
+    [hdfs:///scholarchain/spark/checkpoints]
+    [--code-version]
+    [0123456789abcdef0123456789abcdef01234567]
+    [--shuffle-partitions]
+    [40]
+  aws argv:
+    [--cli-connect-timeout]
+    [10]
+    [--cli-read-timeout]
+    [120]
+    [s3]
+    [ls]
+    [s3://scholarchain-course-data-000000000000-us-east-2/curated/hadoop/snapshot=2026-10-03/]
+  aws argv:
+    [--cli-connect-timeout]
+    [10]
+    [--cli-read-timeout]
+    [120]
+    [s3]
+    [ls]
+    [s3://scholarchain-course-data-000000000000-us-east-2/curated/hadoop/snapshot=2026-10-03/run=run-620fccae97a621ed9437af85f2a590c4/_manifest.json]
+==> HADOOP-RUN s3://scholarchain-course-data-000000000000-us-east-2/curated/hadoop/snapshot=2026-10-03/run=run-620fccae97a621ed9437af85f2a590c4
+  aws argv:
+    [--cli-connect-timeout]
+    [10]
+    [--cli-read-timeout]
+    [120]
+    [s3]
+    [cp]
+    [--only-show-errors]
+    [s3://scholarchain-course-data-000000000000-us-east-2/artifacts/jobs/0123456789abcdef0123456789abcdef01234567/sparkAnalytics-assembly.jar]
+    [/tmp/scholarchain-spark.jar]
+  timeout seconds: [9000]
+  spark-submit argv:
+    [--master]
+    [yarn]
+    [--deploy-mode]
+    [client]
+    [--conf]
+    [spark.sql.join.hybridHashJoin.enabled=false]
+    [--class]
+    [scholarchain.spark.PipelineJob]
+    [/tmp/scholarchain-spark.jar]
+    [--input]
+    [s3a://scholarchain-course-data-000000000000-us-east-2/curated/hadoop/snapshot=2026-10-03/run=run-620fccae97a621ed9437af85f2a590c4]
+    [--out]
+    [s3a://scholarchain-course-data-000000000000-us-east-2/curated/spark]
+    [--checkpoint-dir]
+    [hdfs:///scholarchain/spark/checkpoints]
+    [--code-version]
+    [0123456789abcdef0123456789abcdef01234567]
+    [--shuffle-partitions]
+    [40]
+  step.sh exit=0
+--- hadoop mode
+  Args after dropping empty strings, from "step" on:
+    [step]
+    [hadoop]
+    [5400]
+    [s3://scholarchain-course-data-000000000000-us-east-2/artifacts/jobs/0123456789abcdef0123456789abcdef01234567/hadoop-assembly.jar]
+    [--out]
+    [s3a://scholarchain-course-data-000000000000-us-east-2/curated/hadoop]
+    [--code-version]
+    [0123456789abcdef0123456789abcdef01234567]
+    [--dblp]
+    [s3a://scholarchain-course-data-000000000000-us-east-2/raw/dblp/works.xml]
+    [--dblp-dtd]
+    [s3a://scholarchain-course-data-000000000000-us-east-2/raw/dblp/dblp.dtd]
+    [--dblp-snapshot]
+    [2026-10-03]
+    [--openalex]
+    [s3a://scholarchain-course-data-000000000000-us-east-2/raw/openalex/works.jsonl]
+    [--openalex-snapshot]
+    [2026-11-03]
+    [--crossref]
+    [s3a://scholarchain-course-data-000000000000-us-east-2/raw/crossref/works.jsonl]
+    [--crossref-snapshot]
+    [2026-11-03]
+    [--orcid]
+    [s3a://scholarchain-course-data-000000000000-us-east-2/raw/orcid/records.jsonl.gz]
+    [--orcid-snapshot]
+    [2026-11-03]
+    [--reducers]
+    [2]
+  aws argv:
+    [--cli-connect-timeout]
+    [10]
+    [--cli-read-timeout]
+    [120]
+    [s3]
+    [cp]
+    [--only-show-errors]
+    [s3://scholarchain-course-data-000000000000-us-east-2/artifacts/jobs/0123456789abcdef0123456789abcdef01234567/hadoop-assembly.jar]
+    [/tmp/scholarchain-hadoop.jar]
+  timeout seconds: [5400]
+  hadoop argv:
+    [jar]
+    [/tmp/scholarchain-hadoop.jar]
+    [--out]
+    [s3a://scholarchain-course-data-000000000000-us-east-2/curated/hadoop]
+    [--code-version]
+    [0123456789abcdef0123456789abcdef01234567]
+    [--dblp]
+    [s3a://scholarchain-course-data-000000000000-us-east-2/raw/dblp/works.xml]
+    [--dblp-dtd]
+    [s3a://scholarchain-course-data-000000000000-us-east-2/raw/dblp/dblp.dtd]
+    [--dblp-snapshot]
+    [2026-10-03]
+    [--openalex]
+    [s3a://scholarchain-course-data-000000000000-us-east-2/raw/openalex/works.jsonl]
+    [--openalex-snapshot]
+    [2026-11-03]
+    [--crossref]
+    [s3a://scholarchain-course-data-000000000000-us-east-2/raw/crossref/works.jsonl]
+    [--crossref-snapshot]
+    [2026-11-03]
+    [--orcid]
+    [s3a://scholarchain-course-data-000000000000-us-east-2/raw/orcid/records.jsonl.gz]
+    [--orcid-snapshot]
+    [2026-11-03]
+    [--reducers]
+    [2]
+  step.sh exit=0
+
+=== case 3: the P14-D5 vector from the failed run's steps.json (read-only), empty strings dropped ===
+--- spark mode: "--out" lands in position 5 (expect exit 2, no aws or spark-submit call)
+  Args after dropping empty strings, from "step" on:
+    [step]
+    [spark]
+    [9000]
+    [s3://scholarchain-course-data-834519512655-us-east-2/artifacts/jobs/1232927b8ac8828dd57f30e93e06e263bd57ac2a/sparkAnalytics-assembly.jar]
+    [scholarchain-course-data-834519512655-us-east-2]
+    [2026-10-03]
+    [--out]
+    [s3a://scholarchain-course-data-834519512655-us-east-2/curated/spark]
+    [--checkpoint-dir]
+    [hdfs:///scholarchain/spark/checkpoints]
+    [--code-version]
+    [1232927b8ac8828dd57f30e93e06e263bd57ac2a]
+    [--shuffle-partitions]
+    [16]
+step.sh: spark positional argument 5 of 5 (timeout s, s3 jar, bucket, snapshot, earlier runs or none) is '--out'; an earlier argument is missing
+  step.sh exit=2
+
+=== case 4: argument checks (expect exit 2 each, no stub output) ===
+--- no mode
+  argv: 
+step.sh: missing mode (classpath, hadoop, or spark)
+  step.sh exit=2
+--- spark with 3 of 5 positionals
+  argv: spark 9000 s3://scholarchain-course-data-000000000000-us-east-2/artifacts/jobs/0123456789abcdef0123456789abcdef01234567/sparkAnalytics-assembly.jar scholarchain-course-data-000000000000-us-east-2
+step.sh: spark expects 5 positional arguments (timeout s, s3 jar, bucket, snapshot, earlier runs or none), got 3
+  step.sh exit=2
+--- hadoop with 1 of 2 positionals
+  argv: hadoop 5400
+step.sh: hadoop expects 2 positional arguments (timeout s, s3 jar), got 1
+  step.sh exit=2
+--- hadoop with the jar dropped ("--out" in position 2)
+  argv: hadoop 5400 --out s3a://scholarchain-course-data-000000000000-us-east-2/curated/hadoop --code-version 0123456789abcdef0123456789abcdef01234567
+step.sh: hadoop positional argument 2 of 2 (timeout s, s3 jar) is '--out'; an earlier argument is missing
+  step.sh exit=2
+--- spark with the timeout dropped ("--out" in position 5)
+  argv: spark s3://scholarchain-course-data-000000000000-us-east-2/artifacts/jobs/0123456789abcdef0123456789abcdef01234567/sparkAnalytics-assembly.jar scholarchain-course-data-000000000000-us-east-2 2026-10-03 none --out s3a://scholarchain-course-data-000000000000-us-east-2/curated/spark
+step.sh: spark positional argument 5 of 5 (timeout s, s3 jar, bucket, snapshot, earlier runs or none) is '--out'; an earlier argument is missing
+  step.sh exit=2
+--- classpath with an extra argument
+  argv: classpath extra
+step.sh: classpath takes no arguments, got 1
+  step.sh exit=2
+--- classpath, no arguments (expect exit 0 and the hybrid hash join section)
+  argv: classpath
+openjdk version "17.0.21" 2026-10-20
+OpenJDK Runtime Environment Temurin-17.0.21+9 (build 17.0.21+9)
+OpenJDK 64-Bit Server VM Temurin-17.0.21+9 (build 17.0.21+9, mixed mode, sharing)
+  hadoop argv:
+    [version]
+  spark-submit argv:
+    [--version]
+== hadoop classpath (config, awssdk, scala)
+== /usr/lib/spark/jars (config, awssdk, scala)
+ls: /usr/lib/spark/jars: No such file or directory
+== hybrid hash join settings in the Spark jars
+  timeout seconds: [120]
+  step.sh exit=0

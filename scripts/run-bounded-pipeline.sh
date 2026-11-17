@@ -8,7 +8,7 @@ set -euo pipefail
 usage() {
   cat <<'EOF'
 Usage: scripts/run-bounded-pipeline.sh --fraction 25|50|100 --package-record <package-<sha>.json>
-           [--profile <name>] [--region us-east-2] [--reducers 2] [--shuffle-partitions 16]
+           [--profile <name>] [--region us-east-2] [--reducers 2] [--shuffle-partitions 40]
            [--hadoop-timeout-minutes 90] [--spark-timeout-minutes 150] [--record-dir <dir>] [--dry-run]
 
 Inputs (DBLP snapshot 2026-10-03; OpenAlex, Crossref, ORCID snapshot 2026-11-03):
@@ -53,7 +53,7 @@ EOF
 FRACTION=""
 PACKAGE_RECORD=""
 REDUCERS=2
-SHUFFLE=16
+SHUFFLE=40 # ruling 18 (P14-D6): the PipelineJob default in modules/spark/JOBS.md
 HADOOP_MIN=90
 SPARK_MIN=150
 RECORD_DIR="$SC_ROOT/operations/pipeline-runs"

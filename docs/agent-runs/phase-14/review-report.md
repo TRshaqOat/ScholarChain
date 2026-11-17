@@ -280,3 +280,99 @@ MANUAL ACTION REQUIRED: per ruling 14, the human does the evidence copy, runs ch
 BLOCKED-ON OWNER: none
 BLOCKED-ON EVIDENCE: none
 NEXT GATE: the human gate on APPROVE (ruling 14 sequence). The two MINOR findings go to infra-engineer as notes only and need no repair round.
+
+## Code review 3
+
+STATUS: COMPLETE
+OWNER: code-reviewer
+WORK ORDER: Phase 14, code review 3 (repair-03, work order 4; rulings 18 and 19)
+VERDICT: APPROVE
+
+The change does what work order 4 asks. I found no major or critical findings, only three minor ones.
+
+SCOPE REVIEWED:
+- `git diff` of scripts/emr/step.sh, scripts/run-bounded-pipeline.sh and scripts/README.md, as supplied in /private/tmp/claude-501/-Users-achyutpatel-Developer-Cloud-ScholarChain/20b5480c-4391-4627-b47c-b3b347ca6457/scratchpad/repair-03-changeset.txt
+- Full working-tree reads of /Users/achyutpatel/Developer/Cloud/ScholarChain/scripts/emr/step.sh and /Users/achyutpatel/Developer/Cloud/ScholarChain/scripts/run-bounded-pipeline.sh
+- /Users/achyutpatel/Developer/Cloud/ScholarChain/scripts/README.md lines 189-229
+- /Users/achyutpatel/Developer/Cloud/ScholarChain/docs/agent-runs/phase-14/prompt.md lines 130-192
+- /Users/achyutpatel/Developer/Cloud/ScholarChain/docs/agent-runs/phase-14/repair-03.md
+- The infra-engineer's harness, stubs and harness.log in the session scratchpad (h/)
+- modules/spark grep for the shuffle default
+
+CHECKS REQUESTED
+1. **The --conf placement is correct.** step.sh:87-90 keeps a single `exec timeout "$timeout_s" spark-submit ...` command. `--conf spark.sql.join.hybridHashJoin.enabled=false` sits between `--deploy-mode client` and `--class`, which is before the primary resource as spark-submit requires. The `--input "s3a://..."` quoting and the trailing `"$@"` are unchanged, and so are the positional checks (`need 5`). harness.log lines 54-73 and 193-212 show this exact argv order for both the empty and the non-empty earlier list.
+2. **The classpath scan cannot fail the step or run unbounded.**
+   - The block runs after `set +e` and still ends in `exit 0` (step.sh:46, 61). The only variable read in the outer shell is `found`, which is always assigned, so `set -u` cannot fire. `$j` is expanded in the inner `bash -c`, which does not inherit `-u`.
+   - GNU `timeout`, run without `--foreground`, puts itself in its own process group and signals that whole group when the limit expires. That stops `unzip` and `grep` as well. `sort -u` runs outside `timeout`, gets EOF and finishes.
+   - `unzip -p` streams to a pipe and writes nothing to disk. If the glob matches no jar, the loop gets the literal pattern, `unzip` fails silently, and the output is `none found`.
+   - The harness exercised the `classpath` path under bash 3.2 and got exit 0 (harness.log:329-343).
+3. **Nothing else changed behaviour.** Only the three permitted files changed. scripts/cleanup.sh and lib/common.sh are untouched. The `in_range --shuffle-partitions "$SHUFFLE" 2 200` line (run-bounded-pipeline.sh:82) is unchanged. The new default of 40 matches modules/spark/JOBS.md:11, 430 and modules/spark/src/main/resources/scholarchain-spark.conf:11 (`shuffle-partitions = 40`).
+   - Expected side effect: step.sh's sha256 changes, so a new package record is needed. This is already in ruling 19's mechanics and in the engineer's MANUAL ACTION.
+4. **The README matches the code**, apart from minor finding 2.
+5. **bash 3.2 compatibility holds.** The only change to run-bounded-pipeline.sh is a usage line and `SHUFFLE=40 # ...`. A trailing comment after an assignment is valid in bash 3.2. step.sh adds only `command -v`, `$(...)`, `${var:-word}` and `bash -c`, all valid in 3.2. The harness runs step.sh under /bin/bash 3.2.
+
+FINDINGS (ranked; no CRITICAL or MAJOR)
+
+1. **MINOR: a timed-out or broken scan reads the same as "key absent".**
+   - Where: /Users/achyutpatel/Developer/Cloud/ScholarChain/scripts/emr/step.sh:56-57
+   - Failure input: the scan reaches 120 s, so `timeout` exits 124. Or `timeout` or `bash` is missing on the node, or the key lives in a jar that does not match `spark-*.jar` (for example an EMR-specific jar with another name).
+   - What happens: the output is a partial list or `none found`, with no sign that the scan was incomplete. `found` takes only the output of `sort -u`, so the 124 exit is lost.
+   - Impact: ruling 19 requires the results ruling to quote "whether the hybridHashJoin key was found". A truncated or mis-scoped scan could be read as proof the key does not exist. Only the diagnostic is affected; the step and the run are not.
+   - Owner: infra-engineer. Optional: print the scan's exit status or a "scan incomplete" note. Ruling 19 allows no repair-04, so this goes to Phase 17 notes or is handled by reading the output with care.
+2. **MINOR: two descriptions are more precise in the code than in the text.**
+   - README (/Users/achyutpatel/Developer/Cloud/ScholarChain/scripts/README.md:216-217) says the classpath step "prints the `spark.sql.join.hybridHashJoin*` settings found in the cluster's Spark jars". The code scans only `/usr/lib/spark/jars/spark-*.jar`, prints any matching string (which is not necessarily a registered setting), and can print `none found` or `unzip not available`.
+   - The new text describes the classpath step under item 3 (spark-pipeline). Item 1 (classpath-probe, README:202-203) and step.sh's own header (step.sh:5-7) do not mention the new jar scan.
+   - Failure input: an operator reads item 1 or the step.sh header to learn what the probe prints.
+   - Impact: documentation drift only.
+   - Owner: infra-engineer.
+3. **MINOR (Law 4): an untested claim is written as fact.**
+   - Where: step.sh:85-86 and README:213-216.
+   - Both state that "off gives the sort-merge join Apache Spark plans locally". Nobody has seen this on EMR. Ruling 19 cites a third-party source (NVIDIA/cudf-spark PR 16253), and the engineer's ASSUMPTIONS say the key was not checked against AWS documentation or the cluster jars.
+   - The wording follows work order 4 item 1, which the human wrote.
+   - Failure input: EMR uses a different key name. Spark accepts unknown `spark.sql.*` keys passed through `--conf` without error, so the run would fail again at TemporalSummaryExportJob.scala:442 while the docs say the problem is fixed.
+   - Impact: a misleading record until the 50% rerun confirms the fix.
+   - Owner: infra-engineer, routed by the human. Either the results ruling confirms the statement from the 50% rerun and the classpath-probe output, or the README wording is corrected later.
+
+OWNERSHIP CHECK:
+- scripts/emr/step.sh -> infra-engineer -> author infra-engineer: yes
+- scripts/run-bounded-pipeline.sh -> infra-engineer -> author infra-engineer: yes
+- scripts/README.md -> infra-engineer (`scripts/**`) -> author infra-engineer: yes
+- docs/agent-runs/phase-14/repair-03.md (untracked) -> written by the orchestrator. Allowed, because `repair-NN.md` may be written into phase-14, which has no commit.txt, and ruling 19 explicitly permits it.
+- operations/** (untracked) -> deploy-engineer and human ruling records; not part of this change set and uncommitted by design.
+
+FLOOR AND FENCE CHECK:
+- No hooks, permission rules, `check`, `markTestRun`, agent files or reviewer fences were touched. No Terraform or IAM change. No widening.
+- Script gates are unchanged: the positional checks still exit 2 before any AWS call, and the classpath probe still never fails the step.
+
+EVIDENCE GAPS:
+- **Jar-scan unit check.** The claim that it printed the two strings once each, and `none found` for a missing directory, has no captured log. Only the test jar (scratchpad/jars/spark-sql_test.jar) exists. It also ran with `timeout` removed (macOS has none), so the `timeout 120` wrapper with real GNU timeout was never run.
+- **Harness.** "Harness exit was 0" is not recorded in harness.log. This is the same residual as review 2. The per-case exit codes are in the log and match the report.
+- **Harness classpath case.** The stub `timeout` printed `timeout seconds: [120]` to stdout, so the captured `found` was that stub line rather than `none found`. This is disclosed as a stub artifact, and it means the classpath case shows only exit 0 and the header line.
+- **Shuffle value in the harness.** It hardcodes `--arg shuffle 40` rather than reading the script default, so it does not prove the default. The diff of line 56 is the evidence for the default.
+- **bash -n.** "ok" for both scripts is self-reported. The orchestrator did not replay it and supplied no output.
+- **Process deviation.** The infra-engineer ran read-only `git status --porcelain` and `git diff --stat` against work order 4's "no git" rule. It disclosed this, and nothing changed. Noted for the human; not a code defect.
+
+FILES CREATED: none
+FILES MODIFIED: none
+COMMANDS RUN: none (no Bash tool)
+
+TEST RESULTS (as supplied, from repair-03.md):
+"Case 1, empty earlier list, spark mode: exit=0 ... Case 2 ... exit=0 ... Case 3 ... exit=2 (positional 5 is '--out') ... Case 4 ... exit=2 [x6] ... Added case, classpath with no arguments: exit=0". harness.log in the scratchpad agrees line for line.
+
+VALIDATION RESULTS: "bash -n passed on both scripts. shellcheck was not available." (self-reported; not replayed by the orchestrator)
+
+ASSUMPTIONS:
+- The EMR primary node's `timeout` is GNU coreutils, which signals its whole process group when the limit expires. AL2023 ships it, and spark and hadoop mode already rely on `timeout`.
+- JOBS.md and scholarchain-spark.conf are the authority for the PipelineJob default of 40.
+
+RISKS:
+- If `spark.sql.join.hybridHashJoin.enabled` is not EMR's key, Spark ignores it silently and the 50% run fails again, costing about 24 normalized instance hours. Ruling 19 then requires human escalation. The classpath-probe output (finding 1 caveat) is the first signal.
+- A new package record is needed before any run, because check_sha compares step.sh with the record.
+
+MANUAL ACTION REQUIRED:
+- Human acceptance of this verdict, then commit, `package.sh` at the new HEAD, and the chain run per ruling 19.
+- When quoting the classpath-probe output in the results ruling, read `none found` with finding 1 in mind.
+
+BLOCKED-ON OWNER: none
+BLOCKED-ON EVIDENCE: none
+NEXT GATE: Minor findings 1-3 go to the infra-engineer as Phase 17 notes (no repair-04 under ruling 19). Then the human gate on this APPROVE.

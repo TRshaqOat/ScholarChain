@@ -190,7 +190,7 @@ After the evidence is archived: cleanup.sh --stage infra; after the instructor a
 
 - **Purpose:** one bounded Hadoop and Spark run on an ephemeral EMR cluster (spec Phase 13 item 6, D-13
   size scaling).
-- **Command:** `scripts/run-bounded-pipeline.sh --fraction 25|50|100 --package-record operations/releases/package-<sha>.json [--reducers 2] [--shuffle-partitions 16] [--hadoop-timeout-minutes 90] [--spark-timeout-minutes 150] [--record-dir operations/pipeline-runs] [--profile p] [--region us-east-2] [--dry-run]`
+- **Command:** `scripts/run-bounded-pipeline.sh --fraction 25|50|100 --package-record operations/releases/package-<sha>.json [--reducers 2] [--shuffle-partitions 40] [--hadoop-timeout-minutes 90] [--spark-timeout-minutes 150] [--record-dir operations/pipeline-runs] [--profile p] [--region us-east-2] [--dry-run]`
 - **Steps:** clean tree, HEAD = the package commit, local jars and `emr/step.sh` hash to the record;
   ruling 2 bounds re-checked from the `emr` output (emr-spark-8.0.0, 1 primary, 1 to 2 core, Graviton,
   on-demand); write-once uploads of the five inputs to
@@ -210,7 +210,13 @@ After the evidence is archived: cleanup.sh --stage infra; after the instructor a
      `spark-submit --master yarn --class scholarchain.spark.PipelineJob` (jobs 1 to 11) with
      `--input <that run> --out s3a://<bucket>/curated/spark --checkpoint-dir
      hdfs:///scholarchain/spark/checkpoints --code-version <commit> --shuffle-partitions <n>`, killed at
-     its timeout.
+     its timeout. `step.sh` adds `--conf spark.sql.join.hybridHashJoin.enabled=false`: on
+     emr-spark-8.0.0 EMR plans these joins as HybridHashJoin, which failed with
+     `UNABLE_TO_ACQUIRE_MEMORY` in job 10 at 50% (P14-D7, ruling 19); off gives the sort-merge join
+     Apache Spark plans locally. The `classpath` step prints the `spark.sql.join.hybridHashJoin*`
+     settings found in the cluster's Spark jars.
+  Shuffle partitions default to 40, the PipelineJob default in `modules/spark/JOBS.md` (P14-D6,
+  ruling 18); bounds 2 to 200.
   Then a bounded wait for TERMINATED; collection of step timings, normalized instance hours, the new
   run directories and their `_manifest.json`, and the step logs (bounded wait for EMR to push them);
   then a read-only `ec2 describe-security-groups` of both EMR-managed groups. Terraform ignores their
