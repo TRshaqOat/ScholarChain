@@ -376,3 +376,258 @@ MANUAL ACTION REQUIRED:
 BLOCKED-ON OWNER: none
 BLOCKED-ON EVIDENCE: none
 NEXT GATE: Minor findings 1-3 go to the infra-engineer as Phase 17 notes (no repair-04 under ruling 19). Then the human gate on this APPROVE.
+
+## Code review 4 (work order 5 files)
+
+STATUS: COMPLETE
+OWNER: code-reviewer
+WORK ORDER: Phase 14, work order 6, code review 4 of the work order 5 files (experiments D and F). Rulings 26, 28, 29, 31 and 32 apply.
+VERDICT: REQUEST_CHANGES
+
+**Why REQUEST_CHANGES:** one major finding is open. D's error-rate abort does not limit any load, and a total Neptune failure would not trigger it (finding 1). The other nine findings are minor. I found no blocker:
+- No secret leaks in normal use.
+- F makes exactly one mutating AWS call, and it is the intended one.
+- Both harnesses are compatible with run-experiment.sh.
+- The harnesses' measurements match Worker.scala and Services.scala.
+
+SCOPE REVIEWED:
+- The change set at /private/tmp/claude-501/-Users-achyutpatel-Developer-Cloud-ScholarChain/9379f530-9370-4466-8acd-d352dcc2bd7f/scratchpad/code-review-4-changeset.txt (HEAD 689e84c). All four files are untracked, so I reviewed each one in full:
+  - /Users/achyutpatel/Developer/Cloud/ScholarChain/experiments/manifests/exp-d-query-load-v1.json
+  - /Users/achyutpatel/Developer/Cloud/ScholarChain/load-tests/exp-d-query-load.py
+  - /Users/achyutpatel/Developer/Cloud/ScholarChain/experiments/manifests/exp-f-failure-recovery-v1.json
+  - /Users/achyutpatel/Developer/Cloud/ScholarChain/experiments/harness/exp-f-failure-recovery.sh
+- Context I read:
+  - docs/agent-runs/phase-14/prompt.md lines 225-278 (rulings 23-32, work orders 5 and 6) and the work order 5 report (agent-report.md lines 184-325)
+  - scripts/run-experiment.sh, scripts/lib/common.sh, scripts/smoke-test.sh
+  - Services code: Worker.scala, Services.scala, Models.scala lines 60-160, Http.scala (path decoding, headers, request IDs), Observability.scala (JsonLog)
+  - Storage code: JobQueue.scala, live/ServiceLive.scala lines 180-240
+  - core IdFormat (StableIds.scala lines 259-304) and scholarchain.conf lines 215-306
+  - Terraform: modules/messaging, modules/observability, modules/ecs, envs/course/outputs.tf and main.tf, course.tfvars (service_max_counts)
+  - The services openapi examples
+- Evidence logs: all six files under docs/agent-runs/phase-14/evidence/wo5/.
+
+## Requested checks
+
+**1. Secrets: pass, with one minor hardening gap (finding 8).**
+- D:
+  - The key is read with `subprocess.run(capture_output=True)` (py:121-128). Failure prints a fixed message and never shows stderr.
+  - Only the secret ARN appears in argv.
+  - The key travels only in the HTTP header dict (py:144).
+  - Exceptions are recorded by type name only (py:166-167).
+  - inputs.json, the CSVs and summary.json hold no key.
+- F:
+  - The key is held in a non-exported variable and passed through the `printf` builtin to `curl --config -` on stdin (sh:122), so it never appears in argv or a file.
+  - `-D` writes response headers only.
+  - No `set -x` appears anywhere in the call chain (run-experiment.sh, common.sh, the harness).
+  - Remaining gap: an inherited xtrace is not refused (finding 8).
+
+**2. AWS calls: pass.**
+- D:
+  - Calls: `terraform output` (local state), `sts get-caller-identity`, one `secretsmanager get-secret-value`, and 9 `ecs describe-services` calls (before and after each of 4 levels, plus one at the end).
+  - Every call has `--cli-connect-timeout 10 --cli-read-timeout 120`.
+  - HTTP is `GET` only (py:159), against routes that ALB rules send to graph-evidence-api (ecs/main.tf:156-160).
+- F:
+  - The only mutating call is one `sqs send-message` through `aws_once` (`AWS_MAX_ATTEMPTS=1`, sh:130).
+  - Everything else is read-only: `get-queue-attributes` (about 90 calls at most), `logs filter-log-events` (3 calls), and the secret read.
+  - It makes no delete, purge, change-visibility, redrive, ECS stop or scale call.
+  - It sends 3 POSTs, under the 10-per-minute limit (scholarchain.conf:255).
+- Neither harness changes a deployed resource directly. Load from D may still lead Application Auto Scaling to move graph-evidence-api between 1 and 2 tasks, within the Terraform bounds. The D manifest states this.
+
+**3. Bounds and aborts: D's abort is not adequate (finding 1). The rest passes.**
+- D's planned time is 930 s against `maxMinutes` 25. The harness's hard ceilings (py:49-53, 234-236) would allow up to about 31 min, but the manifest fixes the flags.
+- D's request timeout (10 s) is above the server's neptune-ms (6000).
+- F's waits: the DLQ deadline is measured from the send (sh:175), at most 22 min, and the flag is limited to 16-25. With the logs step, the worst normal case is about 24 min against `maxMinutes` 30.
+- **Is 0.5 too lenient for a db.t4g.medium Neptune? Yes.** It is also checked in the wrong place (finding 1).
+- **Does a timeout leave nothing running?**
+  - No harness loop survives a TERM.
+  - run-experiment.sh signals only the command's PID, so a running `aws` or `curl` child of F can outlive it (finding 10).
+
+**4. What each harness measures: correct, with minor reporting gaps (findings 2, 3, 7).**
+- D's percentile is the standard nearest-rank method (py:65-69), and the self-test values are right.
+- The ECS field names (`desiredCount`, `runningCount`, `pendingCount`) are correct.
+- The smoke-record parse matches the response shape:
+  - `claims[].evidenceIds` is top-level and `answer.resolutions[].researcherId` is nullable (Models.scala:76-95; the examples show Options as null under upickle 4.4.3).
+  - Researcher IDs (`scr:...`) are valid node IDs, and Http.scala:183 percent-decodes them.
+  - The neighbors parameters are allowed (Services.scala:322, 374-387; max depth 3, max limit 200).
+- F:
+  - A body without exactly the three job-message-v1 fields is poison (JobQueue.scala:24-32).
+  - `poison` only logs and never deletes or changes visibility (Worker.scala:155-157).
+  - The event carries a numeric `messageId` and `receiveCount` (Worker.scala:117-125; ServiceLive.scala:229-233).
+  - The redrive is set by Terraform (messaging/main.tf:27-38: visibility 300 s, maxReceiveCount 3).
+  - A replay returns 202 with `Idempotent-Replay: true` and enqueues nothing (Services.scala:150-152, 236-239).
+  - `job-queued` is logged once per enqueue (Services.scala:220-227), and `job-finished` once per run (Worker.scala:225-231).
+  - The selectors `.messageId`, `.receiveCount` and `.jobId` match the JsonLog fields (Observability.scala:68-69).
+
+**5. run-experiment.sh compatibility: pass (from reading the code; I could not run it).**
+- Both manifests satisfy the jq expression at run-experiment.sh:64-68, and both paths match `experiments/*.json`.
+- `command[0]` is under `load-tests/` or `experiments/`, contains no `..`, and contains a slash, so `exec` resolves it from the repository root. The shebangs are present, and the mode is now 100755.
+- F's `$(dirname "$0")/../../scripts/lib/common.sh` resolves from the root.
+- `SCHOLARCHAIN_EXPERIMENT_DIR`, `AWS_PROFILE` and `AWS_REGION` are used. F writes raw files only under `$OUT`. D writes only under `out_dir`.
+- These Terraform outputs exist: `alb_dns_name`, `alb_arn_suffix`, `api_key_secret_arn`, `ecs_cluster_name`, `account_id`, `runtime_enabled`, `job_queue_url`, `job_dlq_url`, and `log_group_names` with the keys `worker` and `query-api`.
+- Every metric dimension names a resource Terraform creates: scholarchain-course-runtime, graph-evidence-api, worker, query-api, scholarchain-course-jobs, scholarchain-course-jobs-dlq, scholarchain-course-graph, and the ALB suffix.
+- Some metric names are not referenced anywhere in Terraform: ECS `MemoryUtilization`, and SQS `NumberOfMessagesSent`, `NumberOfMessagesReceived`, `NumberOfMessagesDeleted` and `ApproximateNumberOfMessagesNotVisible` on the jobs queue. They are standard metrics AWS publishes for these resources without Container Insights, so this is not a finding.
+- `terraform-output:alb_arn_suffix` goes into run-record.json unresolved. D records the resolved value in raw/inputs.json, as documented.
+
+**6. Dry-run and exit codes: dry-run passes; exit codes are not fully distinct (findings 4 and 5).**
+- D's `--dry-run` reads only local smoke files.
+- F's `--dry-run` runs only `command -v` (through `need`) before `dry_run_exit`.
+
+**7. Portability: pass.**
+- F uses only bash 3.2 constructs: arrays and `+=`, here-strings, `${x//a/b}`, `$SECONDS`, and an array that is never empty, so `set -u` does not fail.
+- F uses only BSD userland options: `grep -Eq/-iq`, `tr -d`, `awk`, `date +%s`.
+- `grep -i` accepts the JDK's lower-cased `Idempotent-replay` header.
+- D imports only the Python 3.7+ standard library (`subprocess.run(capture_output=, text=)`).
+
+## FINDINGS (ranked)
+
+**1. MAJOR: D's error-rate abort does not limit any load, and a total Neptune failure does not trigger it.**
+- Where: load-tests/exp-d-query-load.py:292 (checked only after a level finishes), :147-173 (the worker loop has no stop signal), and experiments/manifests/exp-d-query-load-v1.json:11 and :23.
+- Failure input: Neptune slows down or the graph-evidence-api Neptune breaker opens at c=8.
+  - Every `node` and `neighbors` request returns 503 or 504 for the full 180 s.
+  - The check runs only after the level ends, and c=8 is the last level, so the abort never stops any load.
+  - Only `node` and `neighbors` hit Neptune; `evidence` uses DynamoDB and S3 (Services.scala:335-359). So a total Neptune failure produces an overall error rate equal to Neptune's share of the request list.
+  - With B07 (2 researchers) and 10 evidence IDs, that share is 4/14 = 0.29. With 4 evidence IDs it is 4/8 = 0.5, which `> 0.5` does not catch.
+  - The abort fires only if the smoke answer has 3 or fewer evidence IDs.
+  - A level with 49% errors also still lets the next level run.
+- Impact: the bound in the manifest does not limit anything. A db.t4g.medium can face up to 8 closed-loop clients of failing load for a full level, and the ALB 5xx alarm fires. The raw evidence would suggest a safety bound that did not work.
+- Fix:
+  - Add a `threading.Event` that the workers check each loop iteration.
+  - A monitor thread evaluates a sliding window of about 10 s per request kind. It stops the level and the run when a kind has at least 20 requests and a non-2xx rate above 0.05, or after 10 consecutive 5xx responses or timeouts.
+  - Use the same per-kind rule between levels.
+  - Add a preflight: one GET of each path before c=1, exiting 3 on any non-2xx, so later errors can be attributed to load.
+  - Record `abortedAt` and the window counts in summary.json, and update `abortErrorRate` in the manifest (plus the new window field).
+- Owner: experiment-engineer.
+
+**2. MINOR: throughput uses the nominal level length.**
+- Where: py:203 (`len(rows) / float(seconds)`) and :208.
+- Failure input: at c=8, a laptop round trip of about 60 ms gives roughly 130 requests per second, so the 20,000-request cap is reached at about 150 s.
+- Impact: `throughputPerSecond` is understated by about 17%, and `ecsAfter` is sampled earlier than the level length implies.
+- Fix: take `t_start = time.monotonic()` before the threads start and compute `elapsed` after `join()`. Report `elapsedSeconds` and compute throughput from it.
+- Owner: experiment-engineer.
+
+**3. MINOR: level percentiles mix three endpoint kinds in a run-dependent ratio.**
+- Where: py:196-207.
+- Failure input: the ratio of evidence to node to neighbors requests depends on how many IDs the newest PASS smoke record has (up to 10, 5 and 5).
+- Impact: p95 and p99 are not comparable across runs. A slow Neptune is diluted by fast evidence reads.
+- Fix: add per-kind request counts, error counts and percentiles to each level summary. The CSV already has a `kind` column.
+- Owner: experiment-engineer.
+
+**4. MINOR: D's unexpected failures use exit codes that already mean something else.**
+- Where: py:266-273, :281 (`tf["..."]["value"]` raises KeyError when an output is missing) and py:131-140 (`json.loads("null")` gives a TypeError when describe-services finds no service).
+- Impact:
+  - An uncaught exception exits 1, which the docstring (py:23-24) defines as "a level was aborted".
+  - An `aws` failure in the middle of the run exits 3 ("precondition") after load has already run, and no summary.json is written.
+- Fix:
+  - Read outputs with `.get` and `die(..., 3)`.
+  - Wrap `main` in `except Exception` that prints the type only and exits 4, and document code 4.
+  - In `ecs_counts`, after load has started, record `{"error": type}` instead of calling die, and always write summary.json.
+- Owner: experiment-engineer.
+
+**5. MINOR: `set -e` failures in F skip the documented exit codes and the evidence files.**
+- Where: experiments/harness/exp-f-failure-recovery.sh:102, :108, :130, :158, :177-178, :190-191.
+- Failure input 1: `send-message` (one attempt) times out on read at :130. The script exits with the aws status (255). poison-sent.json is not written, but the message may already be in the queue.
+- Failure input 2: `get-queue-attributes` fails 5 times at :177 at minute 12. The script exits 254 or 255 with no summary.json.
+- Failure input 3: no poll response ever arrives, so `cp` at :158 fails and the script exits 1, which reads as "a check failed".
+- Fix:
+  - At :102 and :108, append `|| die "..." 3`.
+  - At :130, append `|| die "send-message failed or timed out; the message may be queued: check both queues before any rerun" 4`, and document exit code 4.
+  - At :177-178, use `Q="$(queue_depth "$QUEUE")" || Q="error"`, do the same for `D`, and keep polling.
+  - At :158, use `[ -f "$OUT/job-poll.json" ] && cp ...`.
+  - In `logs()`, on failure write `[]` and add a FAIL check.
+- Owner: experiment-engineer.
+
+**6. MINOR: the log-query start time has no margin for clock skew.**
+- Where: sh:80 and :190.
+- Failure input: the laptop clock runs 10 s fast. `START_MS` is taken a few seconds before the send. The worker's first receive happens less than 1 s after the send, so the receive-1 event's timestamp falls before `START_MS`.
+- Impact: `RECEIVES` becomes `[2,3]`, and poison-retried reports a false FAIL.
+- Fix: `START_MS=$(( ($(date +%s) - 300) * 1000 ))`. The selection by `messageId` and `jobId` already rules out unrelated events.
+- Owner: experiment-engineer.
+
+**7. MINOR: the replay checks do not check the states their names claim.**
+- Where: sh:143-145 and :168-171.
+- Failure input:
+  - `replay-while-queued` passes even when submit-2 shows `SUCCEEDED`.
+  - `replay-after-final` passes when the job is still `RUNNING` after 5 min. The overall result still fails through the `job` check, but the evidence for this check misreports.
+- Fix: require `.state` to be QUEUED or RUNNING for the first replay (or rename the check `replay-1` and record the state), and SUCCEEDED or FAILED for the third request. Put the state in both details.
+- Owner: experiment-engineer.
+
+**8. MINOR: F does not refuse an inherited xtrace.**
+- Where: sh:5-7, :108-111, :122.
+- Failure input: the human runs it with `bash -x`, or `SHELLOPTS` containing `xtrace` is exported.
+  - bash then traces `API_KEY=<value>`, both `KEY_ESC` assignments, and `printf ... <key>` to stderr.
+  - run-experiment.sh stores that stderr in experiments/results/<id>/<stamp>/stderr.txt. That file is immutable raw evidence meant to be committed.
+- Fix: directly after `set -euo pipefail`, add `case $- in *x*) die "xtrace is on; refusing to handle the API key" 2 ;; esac`.
+- The same gap exists in scripts/smoke-test.sh, which is outside this change set (owner infra-engineer; listed under RISKS).
+- Owner: experiment-engineer.
+
+**9. MINOR: F can run only once per window, and nothing says so.**
+- Where: sh:104 (the DLQ-empty precondition), the manifest's `humanCleanup` (exp-f-failure-recovery-v1.json:39), and the usage text (sh:32-34).
+- Failure input: a first F attempt fails for a transient reason after the poison was sent, for example a Haiku throttle that fails `job`.
+- Impact: every rerun exits 3 for 14 days, unless the human removes the DLQ message. Removing it is a human-only destructive action (agents.md escalation 2).
+- Fix: state "one attempt per window; a rerun first needs the human to remove the DLQ message" in `humanCleanup`, in the usage text, and in the window 2 run notes.
+- Owner: experiment-engineer.
+
+**10. MINOR (context file, outside the change set): run-experiment.sh's maxMinutes stop signals only the command's PID.**
+- Where: scripts/run-experiment.sh:99-110.
+- Failure input: F reaches maxMinutes during `aws logs filter-log-events ... >"$3"` (sh:190-191) or a `curl -o`. bash dies, but the child process keeps running.
+- Impact: the child can write into `raw/` after `run-record.json` is written and after `chmod -R a-w`, because that does not affect file handles that are already open. That breaks the guarantee that raw results are immutable.
+- Fix: before each `kill` of `$PID`, run `pkill -TERM -P "$PID"` and later `pkill -KILL -P "$PID"`. Alternatively, start the command in its own process group and signal the group.
+- Owner: infra-engineer. Not required for this verdict; route it by ruling 30's process.
+
+OWNERSHIP CHECK:
+- experiments/manifests/exp-d-query-load-v1.json: owner experiment-engineer, author experiment-engineer. Matches: yes.
+- experiments/manifests/exp-f-failure-recovery-v1.json: owner experiment-engineer. Matches: yes.
+- load-tests/exp-d-query-load.py: owner experiment-engineer. Matches: yes.
+- experiments/harness/exp-f-failure-recovery.sh: owner experiment-engineer. Matches: yes.
+- docs/agent-runs/phase-14/agent-report.md: an orchestrator report assembly in an open phase folder (no commit.txt). Permitted.
+- docs/agent-runs/phase-14/evidence/wo5/*: a human-owned path. The report says the logs were written to scratch/phase-14-logs/. Who copied them into evidence/wo5/ is not recorded. If anyone other than the human wrote them, that breaches ownership. Please confirm.
+- No production code, Terraform, prompt, threshold, constitutional or `experiments/benchmark/` file was touched.
+
+FLOOR AND FENCE CHECK: no hook, permission rule, `check`, `markTestRun` or reviewer fence is touched. Nothing is weakened or widened.
+
+EVIDENCE GAPS:
+- The run-experiment.sh `--dry-run` never passed for either manifest. Both runs exited 2 at the `-x` gate (wo5-run-experiment-dry-run.txt). The human has set the bits since then, but no rerun is recorded.
+- wo5-manifest-jq.txt shows the placeholder `'<run-experiment.sh manifest checks>'`, not the literal expression. My pass verdict on check 5 comes from reading the code, not from running it.
+- `bash -n` ran under an unspecified bash. There is no `/bin/bash` (3.2) evidence. My portability verdict comes from reading the code.
+- D's smoke-record parser was exercised only with no smoke record present (placeholders). I checked its field paths against Models.scala and the openapi examples, but it has never parsed a real query.json.
+- The report's ASSUMPTIONS list IAM permissions of the scholarchain-sdk profile (`sqs:SendMessage`, `sqs:GetQueueAttributes`, `logs:FilterLogEvents`, `ecs:DescribeServices`, `secretsmanager:GetSecretValue`) as unverified. A missing permission at sh:130 triggers finding 5.
+- The orchestrator did not replay any offline check. Every result listed above is reported by the engineer, not observed by the orchestrator.
+
+FILES CREATED: none
+FILES MODIFIED: none
+COMMANDS RUN: none (no Bash tool). Read, Grep and Glob only.
+
+TEST RESULTS (as supplied, quoted from the evidence logs and not replayed):
+- "$ python3 -B load-tests/exp-d-query-load.py --self-test / ==> OK self-test / exit=0"
+- "$ bash -n experiments/harness/exp-f-failure-recovery.sh / exit=0"
+- "$ python3 -B -c 'import ast,sys; ast.parse(...)' load-tests/exp-d-query-load.py / exit=0"
+
+VALIDATION RESULTS (as supplied):
+- D `--dry-run` with the manifest flags: exit=0. With levels 1,2,4,16: "==> FAIL --levels: 1 to 4 levels, each 1 to 8 (exit 2)".
+- F `--dry-run --dlq-wait-minutes 22 --job-wait-minutes 5`: exit=0. With `--dlq-wait-minutes 10`: exit 2.
+- The jq manifest check printed `true` (exit 0) for both manifests.
+- run-experiment.sh `--dry-run` exited 2 for both: "command[0] is not an executable file".
+
+ASSUMPTIONS:
+- upickle 4.4.3 writes Options as null. The openapi examples show `"abstention": null`.
+- The awslogs driver ships each JsonLog stdout line unchanged as the event message.
+- The ECS service names equal their map keys (ecs/main.tf:349).
+- The name prefix is scholarchain-course. This is consistent with the manifests and with ruling 32's alarm name.
+- AWS CLI v2 auto-paginates `filter-log-events` and applies `--query` to the merged result.
+
+RISKS:
+- D sends the API key over plain HTTP tens of thousands of times. This is the accepted ALB risk (ecs/main.tf:255) at a much larger volume.
+- D may set off the ALB 5xx alarm and graph-evidence-api scaling within 1 to 2 tasks. F leaves the DLQ alarm in ALARM, as ruling 32 expects.
+- scripts/smoke-test.sh has the same xtrace gap as finding 8 (owner infra-engineer).
+- common.sh `tf_outputs` leaves its `mktemp` output file in `$TMPDIR`. From outputs.tf, I found no secret values in it.
+- `ApproximateReceiveCount` is approximate. A rare duplicate delivery from a standard queue would fail `[1,2,3]` without any defect.
+
+MANUAL ACTION REQUIRED:
+1. After the experiment-engineer's repair, replay `./scripts/run-experiment.sh --manifest <each> --profile scholarchain-sdk --dry-run` with the executable bits set, plus `/bin/bash -n` on F, and record the output.
+2. Confirm who wrote docs/agent-runs/phase-14/evidence/wo5/.
+3. Rule on finding 10 (infra-engineer, outside this change set) under ruling 30.
+
+BLOCKED-ON OWNER: none
+BLOCKED-ON EVIDENCE: none
+
+NEXT GATE: route findings 1-9 to the experiment-engineer and finding 10 to the infra-engineer (optional, by ruling). Then re-review the repaired files. A human gate comes before commit and before the window 2 runs.

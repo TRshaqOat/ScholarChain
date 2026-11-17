@@ -180,3 +180,146 @@ BLOCKED-ON OWNER: none
 BLOCKED-ON EVIDENCE: none
 NEXT GATE: human acceptance of the deployment or run record
 ```
+
+## Work order 5 (experiment-engineer)
+
+```
+Experiments D and F are ready for the human to commit. Experiment E is BLOCKED-ON: the deployed query-api has no way to select a retrieval mode, so I wrote no E manifest and no E harness. Nothing ran against AWS. No aws, terraform, git, sbt, MCP or network call was made.
+
+STATUS: BLOCKED-ON (E only; D and F are complete)
+OWNER: experiment-engineer
+WORK ORDER: Phase 14 work order 5, manifests and harnesses for experiments D, E and F (cloud window 2), rulings 23-30
+
+FILES CREATED:
+- /Users/achyutpatel/Developer/Cloud/ScholarChain/experiments/manifests/exp-d-query-load-v1.json
+- /Users/achyutpatel/Developer/Cloud/ScholarChain/load-tests/exp-d-query-load.py (Python 3 standard library)
+- /Users/achyutpatel/Developer/Cloud/ScholarChain/experiments/manifests/exp-f-failure-recovery-v1.json
+- /Users/achyutpatel/Developer/Cloud/ScholarChain/experiments/harness/exp-f-failure-recovery.sh (bash 3.2; sources scripts/lib/common.sh as smoke-test.sh does)
+- Logs, written by Bash redirection: /Users/achyutpatel/Developer/Cloud/ScholarChain/scratch/phase-14-logs/wo5-bash-n.txt, wo5-python-ast.txt, wo5-manifest-jq.txt, wo5-exp-d-dry-run.txt, wo5-exp-f-dry-run.txt, wo5-run-experiment-dry-run.txt
+
+FILES MODIFIED: none
+FILES DELETED: none (raw results: always none)
+MANIFEST: exp-d-query-load-v1.json and exp-f-failure-recovery-v1.json, both uncommitted. The human commits them; the commit SHA goes into run-record.json at run time.
+RUN IDENTIFIERS: none (nothing ran)
+RAW RESULT LOCATIONS AND CHECKSUMS: none yet. At run time they go to experiments/results/<experimentId>/<stamp>/raw/ through $SCHOLARCHAIN_EXPERIMENT_DIR.
+OBSERVATIONS: none (offline session)
+
+### (a) E: no retrieval-mode selection in the deployed query-api
+- `QueryBody.retrieval` accepts only three positive limits: graphLimit, vectorLimit, maxPathDepth.
+  - modules/services/src/main/scala/scholarchain/services/Models.scala:52-56 (RetrievalBody)
+  - Models.scala:400 (the field allowlist)
+  - Models.scala:403-408: any other retrieval field is 422 UNSUPPORTED_RETRIEVAL_MODE.
+  - Models.scala:487: `retrieval.$name must be at least 1`, so neither graph nor vectors can be turned off.
+  - modules/services/openapi.yaml:654-662 says the same.
+- The rag side matches.
+  - modules/rag/src/main/scala/scholarchain/rag/runtime/Records.scala:36-41 (RequestRetrieval holds only the three limits)
+  - modules/rag/src/main/scala/scholarchain/rag/runtime/Planner.scala:638-652: limits are clamped to at least 1. There is no mode.
+- The services image is SCHOLARCHAIN_STUB_LLM=false in infra/terraform/envs/course/main.tf:207. Stubbing model calls (Composition.scala:192, conf `services.stub-llm`) would therefore need a task-definition change. For that reason D also makes no Haiku calls.
+- Smallest change needed:
+  - rag-engineer: an optional `retrieval.mode` (FUSED as the default, GRAPH_ONLY, VECTOR_ONLY) in RequestRetrieval, honoured by the planner and retrieval fusion (skip semantic retrieval or graph retrieval), and recorded in the audit.
+  - service-engineer: the same field in RetrievalBody, the Models.scala:400 allowlist, the validation, and openapi.yaml.
+  - This needs a new package and image, which conflicts with ruling 23 (no new package before window 2) and ruling 30 (no code change before window 2), so it also needs a human ruling.
+
+### (b) F: a poison message is retried and reaches the DLQ; it is not deleted
+- modules/services/src/main/scala/scholarchain/services/Worker.scala:130: a body that fails JobMessage.parse goes to `poison(m, "malformed message")`.
+- Worker.scala:155-157: `poison` only counts the message and logs a `poison-message` event. There is no delete and no visibility change. The class doc at Worker.scala:23-25 says the same ("never deleted; the queue's redrive policy moves it to the dead-letter queue").
+- Delete happens only through `settle` and `delete` for a job in a final state (Worker.scala:251-258).
+- What makes a body a poison message: modules/storage/src/main/scala/scholarchain/storage/JobQueue.scala:24-31 (anything other than exactly the three job-message-v1 fields is Left).
+- Queue settings:
+  - Worker receive uses a 300 s visibility timeout (Worker.scala:112; conf `visibility-timeout-seconds = 300`).
+  - Terraform: infra/terraform/modules/messaging/main.tf has `visibility_timeout_seconds = 300` and `redrive_policy` maxReceiveCount = var.max_receive_count, which is 3 (envs/course/main.tf:15 and 115). The DLQ keeps messages for 14 days.
+- The idempotent replay does not enqueue a second message: modules/services/src/main/scala/scholarchain/services/Services.scala:150 sends Unchanged to replay(), and lines 236-240 return the job reference with `Idempotent-Replay: true` and no queue send.
+- I did not need the alternative (one worker task stop), so I proposed no ECS stop call.
+
+### Per experiment
+**D, query load**
+- Window 2 commands:
+  - `./scripts/run-experiment.sh --manifest experiments/manifests/exp-d-query-load-v1.json --profile scholarchain-sdk --dry-run`
+  - then the same command without `--dry-run`
+- Design:
+  - Concurrency levels 1, 2, 4 and 8, 180 s each, 30 s pauses, then 120 s of idle observation.
+  - Load is GET only against graph-evidence-api: evidence, node, and neighbors (depth 1, limit 50, COAUTHORED_WITH).
+  - IDs come from the latest PASS smoke record in operations/releases. A PASS smoke test must therefore come first.
+  - ECS desired, running and pending counts are recorded before and after each level and once at the end.
+  - Bounds: at most 20,000 requests per level, a 10 s request timeout, and an abort when a level's error rate is above 0.5.
+- Expected about 16 min (930 s planned); maxMinutes 25.
+- Haiku calls: 0.
+- Cleanup: none.
+- Logs: wo5-exp-d-dry-run.txt, wo5-python-ast.txt, wo5-manifest-jq.txt.
+
+**E, retrieval modes**
+- Blocked as described in (a). No commands, no minutes, 0 Haiku calls, no files.
+
+**F, failure and recovery**
+- Window 2 commands:
+  - `./scripts/run-experiment.sh --manifest experiments/manifests/exp-f-failure-recovery-v1.json --profile scholarchain-sdk --dry-run`
+  - then the same command without `--dry-run`
+- Design:
+  - Precondition: the DLQ is empty.
+  - One `sqs send-message` of a malformed body to the job queue.
+  - One async POST of B07 with an Idempotency-Key, replayed while it is queued and again after it finishes.
+  - Job polling, the job result, and DLQ depth polling for up to 22 min.
+  - Worker and query-api log events. Checks: receiveCount [1,2,3], exactly one job-queued and one job-finished event, and the DLQ reaches a depth of at least 1.
+- Expected about 19 min (the redrive comes at about 15-16 min plus metric lag); maxMinutes 30.
+- Haiku calls: 2 expected, at most 4 (one question; planner and synthesis, each with at most one retry).
+- Cleanup (human):
+  - The poison message stays in scholarchain-course-jobs-dlq for 14 days.
+  - The alarm scholarchain-course-jobs-dlq-not-empty will go to ALARM; there is no SNS topic (ruling 27).
+  - Leave both until `cleanup.sh --stage runtime`. Removing the message earlier is a human-only action.
+  - The job record (TTL 168 h), the idempotency record (TTL 24 h) and the audit and answer objects go with the runtime cleanup.
+- Logs: wo5-exp-f-dry-run.txt, wo5-bash-n.txt, wo5-manifest-jq.txt.
+
+**Total:** D plus F is about 35 min of run time, well under the 2 h of ruling 26.
+
+ESTIMATED COST:
+- D: under $0.10 (ALB, on-demand DynamoDB reads, and Neptune db.t4g.medium CPU credits, which already run).
+- F: under $0.05 (2-4 Haiku calls, a few SQS calls).
+- The runtime stack's hourly cost is separate and not included.
+
+FAILED OR ANOMALOUS RUNS: none run.
+
+LIMITATIONS AND THREATS TO VALIDITY:
+- D is a closed loop from one laptop, so laptop-to-us-east-2 network time is part of the measured latency.
+- Each D level lasts 180 s. CPU target tracking (60%, 60 s scale-out cooldown) may not finish a scale-out in that time, and scale-in (target tracking needs about 15 min of low CPU) will not be seen.
+- The D ID set is small: at most 10 evidence IDs and 5 researchers from one smoke answer. That favours caches.
+- The ALB metrics' LoadBalancer dimension is the post-apply `alb_arn_suffix` output. The manifests write it as `terraform-output:alb_arn_suffix`, and D records the resolved value in raw/inputs.json.
+- Container Insights is disabled, so task counts come from describe-services, not CloudWatch.
+
+COMMANDS RUN (all offline, in the repository root):
+- File reads: sed, cat, grep, ls.
+- `mkdir -p scratch/phase-14-logs`
+- `bash -n experiments/harness/exp-f-failure-recovery.sh`: exit 0.
+- `python3 -B -c 'import ast,sys; ast.parse(open(sys.argv[1]).read())' load-tests/exp-d-query-load.py`: exit 0.
+- The run-experiment.sh jq expression run directly on each manifest: `true`, exit 0, for both. The command[0] prefix and `..` checks pass, and each command[0] file exists.
+- `python3 -B load-tests/exp-d-query-load.py --self-test`: OK, exit 0.
+- D `--dry-run` with the manifest flags: OK, exit 0. With levels 1,2,4,16: exit 2, as intended.
+- `bash experiments/harness/exp-f-failure-recovery.sh --dry-run --dlq-wait-minutes 22 --job-wait-minutes 5`: OK, exit 0. With `--dlq-wait-minutes 10`: exit 2, as intended.
+- `./scripts/run-experiment.sh --manifest <each> --profile scholarchain-sdk --dry-run`: exit 2 for both, "command[0] is not an executable file". The files have no executable bit yet, because the work order leaves that to the human. I read the script before running it: before `dry_run_exit` it makes no AWS, git or network call.
+- No `__pycache__` was created.
+
+TEST RESULTS: the D percentile self-test passed. There are no other tests, because no Scala or sbt sources changed.
+VALIDATION RESULTS: as listed under COMMANDS RUN. The run-experiment.sh dry-run itself fails only on the executable-bit gate.
+
+ASSUMPTIONS:
+- The scholarchain-sdk profile may call sqs:SendMessage on the job queue, sqs:GetQueueAttributes, logs:FilterLogEvents, ecs:DescribeServices and secretsmanager:GetSecretValue. I did not verify this.
+- `terraform output` from local state is available on the human's laptop, as for smoke-test.sh.
+- The smoke answer for B07 carries researcher resolutions and evidence IDs. If it does not, D exits 3.
+- Service log lines are the raw JSON that JsonLog prints, with no prefix.
+
+RISKS:
+- At c=8, Neptune db.t4g.medium may open graph-evidence-api breakers (503 CIRCUIT_OPEN). D then aborts and records it, and the ALB 5xx alarm may fire.
+- F leaves the DLQ alarm in ALARM for the rest of the window. Read it as an expected F result, not an incident.
+- F must not run at the same time as the smoke test or another Haiku run (ruling 26).
+
+MANUAL ACTION REQUIRED:
+1. Before committing, run `chmod +x load-tests/exp-d-query-load.py experiments/harness/exp-f-failure-recovery.sh`, so git records mode 100755 and run-experiment.sh passes its `-x` gate.
+2. Review and commit the four files.
+3. In window 2, run D and F only after load-stores.sh and a PASS smoke-test.sh. Run them one at a time.
+4. Rule on E (see BLOCKED-ON).
+
+BLOCKED-ON OWNER: E needs rag-engineer and service-engineer, plus a human ruling, because the change contradicts rulings 23 and 30.
+BLOCKED-ON EVIDENCE: Models.scala:52-56, 400, 403-408, 487-491; openapi.yaml:654-662; Records.scala:36-41; Planner.scala:638-652.
+NEXT GATE: human review and commit of the D and F manifests and harnesses, and a ruling on E. Then the window 2 runs, human review of the raw evidence, and the documentation-engineer write-up once the results are frozen.
+
+I skipped a worker-level duplicate-delivery injection (re-sending a valid job message), because the work order asked only for the poison message plus the idempotent replay. Everything here is checked by syntax checks and dry-runs only: no live HTTP, SQS or ECS path was exercised. The executable bit must be set before commit, or both run-experiment.sh invocations fail with exit 2.
+```

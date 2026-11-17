@@ -1,0 +1,675 @@
+# Code review 4 change set (phase 14, work order 6), built 2026-11-17T18:43:22Z
+# HEAD: 689e84cf29a1547604b32b4daa7cc41a5005fe19
+
+== git status --porcelain --untracked-files=all
+ M docs/agent-runs/phase-14/agent-report.md
+?? docs/agent-runs/phase-14/evidence/wo5/wo5-bash-n.txt
+?? docs/agent-runs/phase-14/evidence/wo5/wo5-exp-d-dry-run.txt
+?? docs/agent-runs/phase-14/evidence/wo5/wo5-exp-f-dry-run.txt
+?? docs/agent-runs/phase-14/evidence/wo5/wo5-manifest-jq.txt
+?? docs/agent-runs/phase-14/evidence/wo5/wo5-python-ast.txt
+?? docs/agent-runs/phase-14/evidence/wo5/wo5-run-experiment-dry-run.txt
+?? experiments/harness/exp-f-failure-recovery.sh
+?? experiments/manifests/exp-d-query-load-v1.json
+?? experiments/manifests/exp-f-failure-recovery-v1.json
+?? load-tests/exp-d-query-load.py
+
+== git diff --stat (tracked changes; agent-report.md is orchestrator evidence, not under review)
+ docs/agent-runs/phase-14/agent-report.md | 143 +++++++++++++++++++++++++++++++
+ 1 file changed, 143 insertions(+)
+
+== git ls-files for the four files (empty = all untracked)
+
+== git ls-files experiments load-tests (tracked content in those trees)
+experiments/benchmark/benchmark-questions-v1.csv
+
+== mode, size, sha256
+-rw-r--r--@ 1 achyutpatel  staff  4079 Nov 17 12:25 experiments/manifests/exp-d-query-load-v1.json
+6d4454daf98f9fc70fcf0aa4891161d90da563006e6cea969eadb186f0b9eea1  experiments/manifests/exp-d-query-load-v1.json
+-rwxr-xr-x@ 1 achyutpatel  staff  14368 Nov 17 12:23 load-tests/exp-d-query-load.py
+d1391df826b267b9aadce4f23a01f09d74137fcd4ae26cffabf42bb2dde7f7ec  load-tests/exp-d-query-load.py
+-rw-r--r--@ 1 achyutpatel  staff  4037 Nov 17 12:25 experiments/manifests/exp-f-failure-recovery-v1.json
+1bb1d492c7f95c4d99827186069d757f12ccb4540977e1afa8bee24ac10ac3a9  experiments/manifests/exp-f-failure-recovery-v1.json
+-rwxr-xr-x@ 1 achyutpatel  staff  11981 Nov 17 12:24 experiments/harness/exp-f-failure-recovery.sh
+55764c334a6e122c717a50e6c3fca51ae3b06996b7dee8560d620d3b19db5388  experiments/harness/exp-f-failure-recovery.sh
+
+==================== experiments/manifests/exp-d-query-load-v1.json (full content, line-numbered; untracked, so git diff shows nothing)
+     1	{
+     2	  "schemaVersion": "experiment-manifest-v1",
+     3	  "experimentId": "exp-d-query-load-v1",
+     4	  "description": "Experiment D, query load (phase 14 work order 5, cloud window 2). Closed-loop GET load on graph-evidence-api through the ALB at concurrency 1, 2, 4 and 8, 180 s per level, 30 s between levels, 120 s idle observation at the end. Requests: /v1/evidence/<id>, /v1/graph/nodes/<researcherId>, /v1/graph/nodes/<researcherId>/neighbors (direction both, depth 1, limit 50, COAUTHORED_WITH), with IDs taken from the latest PASS smoke record. No /v1/query and no Haiku call: the deployed tasks set SCHOLARCHAIN_STUB_LLM=false (infra/terraform/envs/course/main.tf), and stubbing would need a task-definition change. Records per-request latency and status, p50/p95/p99, error rate, throughput, and graph-evidence-api desired/running/pending task counts before and after each level (aws ecs describe-services, read-only). Run by the human (ruling 29) after load-stores.sh and a PASS smoke-test.sh.",
+     5	  "command": [
+     6	    "load-tests/exp-d-query-load.py",
+     7	    "--levels", "1,2,4,8",
+     8	    "--level-seconds", "180",
+     9	    "--pause-seconds", "30",
+    10	    "--post-observe-seconds", "120",
+    11	    "--abort-error-rate", "0.5"
+    12	  ],
+    13	  "limits": {
+    14	    "maxMinutes": 25,
+    15	    "plannedMinutes": 16,
+    16	    "concurrencyLevels": [1, 2, 4, 8],
+    17	    "maxConcurrency": 8,
+    18	    "levelSeconds": 180,
+    19	    "pauseSeconds": 30,
+    20	    "postObserveSeconds": 120,
+    21	    "maxRequestsPerLevel": 20000,
+    22	    "requestTimeoutSeconds": 10,
+    23	    "abortErrorRate": 0.5,
+    24	    "haikuCalls": 0,
+    25	    "bedrockCalls": 0,
+    26	    "httpMethods": ["GET"],
+    27	    "targetService": "graph-evidence-api",
+    28	    "graphEvidenceApiMaxTasks": 2,
+    29	    "scaleChanges": "none by the harness; Application Auto Scaling may move graph-evidence-api between 1 and 2 (Terraform service_max_counts)",
+    30	    "region": "us-east-2",
+    31	    "budgetUsd": 0.5
+    32	  },
+    33	  "context": {
+    34	    "region": "us-east-2",
+    35	    "datasetSnapshot": "2026-10-03",
+    36	    "servicesImagePackageRecord": "operations/releases/package-deef29516bf395ac2b551beb93710b6a48a937a8.json",
+    37	    "servicesImageDigest": "sha256:5c751b1e1341fd9dd86101cdc8fffc9b8b9c91284b83ec1757758218588047ea",
+    38	    "runtimeGraphRun": "run-1d6a86491812ff94887270c1ab885e69",
+    39	    "runtimeItemsRun": "run-1d6a86491812ff94887270c1ab885e69",
+    40	    "runtimeVectorsRun": "run-b28edbd40f932f0342c05d5b6f57b46c",
+    41	    "windowSummaryRun": "run-6fbad498beb0d8f570df67665fb97544",
+    42	    "inputs": "terraform output (alb_dns_name, api_key_secret_arn, ecs_cluster_name, account_id, runtime_enabled, alb_arn_suffix); Secrets Manager API key (memory only); latest PASS operations/releases/smoke-*.json",
+    43	    "rawOutputs": "inputs.json, requests-c<n>.csv, ecs-<before|after>-c<n>.json, ecs-post-observe.json, summary.json",
+    44	    "metricsNote": "LoadBalancer is the value of terraform output alb_arn_suffix (app/scholarchain-course-api/<id>), known only after apply; the harness records it in raw/inputs.json. Container Insights is disabled, so task counts come from describe-services, not CloudWatch."
+    45	  },
+    46	  "metrics": [
+    47	    {"namespace": "AWS/ECS", "metricName": "CPUUtilization", "dimensions": {"ClusterName": "scholarchain-course-runtime", "ServiceName": "graph-evidence-api"}},
+    48	    {"namespace": "AWS/ECS", "metricName": "MemoryUtilization", "dimensions": {"ClusterName": "scholarchain-course-runtime", "ServiceName": "graph-evidence-api"}},
+    49	    {"namespace": "AWS/ApplicationELB", "metricName": "RequestCount", "dimensions": {"LoadBalancer": "terraform-output:alb_arn_suffix"}},
+    50	    {"namespace": "AWS/ApplicationELB", "metricName": "TargetResponseTime", "dimensions": {"LoadBalancer": "terraform-output:alb_arn_suffix"}},
+    51	    {"namespace": "AWS/ApplicationELB", "metricName": "HTTPCode_Target_5XX_Count", "dimensions": {"LoadBalancer": "terraform-output:alb_arn_suffix"}},
+    52	    {"namespace": "AWS/ApplicationELB", "metricName": "HTTPCode_ELB_5XX_Count", "dimensions": {"LoadBalancer": "terraform-output:alb_arn_suffix"}},
+    53	    {"namespace": "AWS/Neptune", "metricName": "CPUUtilization", "dimensions": {"DBClusterIdentifier": "scholarchain-course-graph"}}
+    54	  ]
+    55	}
+
+==================== load-tests/exp-d-query-load.py (full content, line-numbered; untracked, so git diff shows nothing)
+     1	#!/usr/bin/env python3
+     2	"""Experiment D: bounded closed-loop load on graph-evidence-api (no model calls).
+     3	
+     4	Run only through scripts/run-experiment.sh with experiments/manifests/exp-d-query-load-v1.json.
+     5	Python 3 standard library only (D-09).
+     6	
+     7	Inputs come from the same sources as scripts/smoke-test.sh: terraform output (local state, no
+     8	cloud call) for alb_dns_name, api_key_secret_arn and the ECS names, and Secrets Manager for the
+     9	API key, which is held in memory only and never printed, logged or written. Evidence and node IDs
+    10	come from the latest PASS smoke record (operations/releases/smoke-<stamp>.json and its query.json).
+    11	
+    12	Requests (GET only, graph-evidence-api; no /v1/query, so no Haiku call: the deployed tasks set
+    13	SCHOLARCHAIN_STUB_LLM=false and stubbing needs a task-definition change):
+    14	  /v1/evidence/<evidenceId>
+    15	  /v1/graph/nodes/<researcherId>
+    16	  /v1/graph/nodes/<researcherId>/neighbors?direction=both&depth=1&limit=50&edgeTypes=COAUTHORED_WITH
+    17	
+    18	Per level: <c> workers, each a closed loop over the request list for --level-seconds, one
+    19	keep-alive connection per worker. graph-evidence-api desired/running/pending counts are read
+    20	(aws ecs describe-services, read-only) before and after each level and once more after
+    21	--post-observe-seconds. Raw results go only under $SCHOLARCHAIN_EXPERIMENT_DIR.
+    22	
+    23	Exit: 0 every level ran; 1 a level was aborted (error rate above --abort-error-rate); 2 usage;
+    24	3 precondition (missing input, runtime disabled, no PASS smoke record, account mismatch).
+    25	"""
+    26	
+    27	import argparse
+    28	import csv
+    29	import glob
+    30	import http.client
+    31	import json
+    32	import math
+    33	import os
+    34	import subprocess
+    35	import sys
+    36	import threading
+    37	import time
+    38	import urllib.parse
+    39	from datetime import datetime, timezone
+    40	
+    41	ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    42	TF_DIR = os.path.join(ROOT, "infra", "terraform", "envs", "course")
+    43	SMOKE_DIR = os.path.join(ROOT, "operations", "releases")
+    44	SERVICE = "graph-evidence-api"
+    45	NEIGHBORS_QS = "direction=both&depth=1&limit=50&edgeTypes=COAUTHORED_WITH"
+    46	AWS_TIMEOUTS = ["--cli-connect-timeout", "10", "--cli-read-timeout", "120"]
+    47	
+    48	# Hard ceilings; the manifest's flags must stay inside them.
+    49	MAX_LEVEL = 8
+    50	MAX_LEVELS = 4
+    51	MAX_LEVEL_SECONDS = 300
+    52	MAX_REQUESTS_PER_LEVEL = 20000
+    53	REQUEST_TIMEOUT_S = 10
+    54	
+    55	
+    56	def utc_now():
+    57	    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
+    58	
+    59	
+    60	def die(msg, code):
+    61	    print("==> FAIL %s (exit %d)" % (msg, code), file=sys.stderr)
+    62	    sys.exit(code)
+    63	
+    64	
+    65	def percentile(sorted_ms, p):
+    66	    """Nearest-rank percentile of an ascending list; None when empty."""
+    67	    if not sorted_ms:
+    68	        return None
+    69	    return sorted_ms[max(1, math.ceil(p / 100.0 * len(sorted_ms))) - 1]
+    70	
+    71	
+    72	def self_test():
+    73	    xs = list(range(1, 101))
+    74	    assert percentile(xs, 50) == 50 and percentile(xs, 95) == 95 and percentile(xs, 99) == 99
+    75	    assert percentile([7], 99) == 7 and percentile([], 50) is None
+    76	    assert percentile([1, 2, 3, 4], 50) == 2
+    77	    print("==> OK self-test")
+    78	
+    79	
+    80	def latest_pass_smoke():
+    81	    """(record path, evidence IDs, researcher IDs) of the newest PASS smoke record, or None."""
+    82	    for rec in sorted(glob.glob(os.path.join(SMOKE_DIR, "smoke-*.json")), reverse=True):
+    83	        try:
+    84	            with open(rec) as f:
+    85	                r = json.load(f)
+    86	            if r.get("result") != "PASS":
+    87	                continue
+    88	            with open(os.path.join(SMOKE_DIR, r["bodies"], "query.json")) as f:
+    89	                q = json.load(f)
+    90	        except (OSError, ValueError, KeyError):
+    91	            continue
+    92	        ev = sorted({e for c in q.get("claims") or [] for e in c.get("evidenceIds") or []})
+    93	        nodes = sorted({x["researcherId"] for x in (q.get("answer") or {}).get("resolutions") or []
+    94	                        if x.get("researcherId")})
+    95	        if ev and nodes:
+    96	            return rec, ev[:10], nodes[:5]
+    97	    return None
+    98	
+    99	
+   100	def request_list(ev, nodes):
+   101	    paths = [("evidence", "/v1/evidence/" + e) for e in ev]
+   102	    for n in nodes:
+   103	        q = urllib.parse.quote(n, safe="")
+   104	        paths.append(("node", "/v1/graph/nodes/" + q))
+   105	        paths.append(("neighbors", "/v1/graph/nodes/%s/neighbors?%s" % (q, NEIGHBORS_QS)))
+   106	    return paths
+   107	
+   108	
+   109	def run_cmd(args):
+   110	    r = subprocess.run(args, capture_output=True, text=True)
+   111	    if r.returncode != 0:
+   112	        # stderr of terraform output / aws ecs / sts never holds the key; the secret call is separate.
+   113	        die("%s failed: %s" % (" ".join(args[:3]), r.stderr.strip()[:300]), 3)
+   114	    return r.stdout
+   115	
+   116	
+   117	def aws(*args):
+   118	    return run_cmd(["aws"] + list(args) + AWS_TIMEOUTS)
+   119	
+   120	
+   121	def read_api_key(secret_arn):
+   122	    r = subprocess.run(["aws", "secretsmanager", "get-secret-value", "--secret-id", secret_arn,
+   123	                        "--query", "SecretString", "--output", "text"] + AWS_TIMEOUTS,
+   124	                       capture_output=True, text=True)
+   125	    key = r.stdout.strip()
+   126	    if r.returncode != 0 or not key or key == "None":
+   127	        die("the API key secret could not be read (stderr not shown)", 3)
+   128	    return key
+   129	
+   130	
+   131	def ecs_counts(cluster, label, out_dir):
+   132	    raw = aws("ecs", "describe-services", "--cluster", cluster, "--services", SERVICE, "--query",
+   133	              "services[0].{desired:desiredCount,running:runningCount,pending:pendingCount,"
+   134	              "events:events[0:5].[createdAt,message]}", "--output", "json")
+   135	    rec = {"label": label, "at": utc_now(), "service": SERVICE, "describe": json.loads(raw)}
+   136	    with open(os.path.join(out_dir, "ecs-%s.json" % label), "w") as f:
+   137	        json.dump(rec, f, indent=2)
+   138	    d = rec["describe"]
+   139	    print("    ecs %-22s desired=%s running=%s pending=%s" % (label, d["desired"], d["running"], d["pending"]))
+   140	    return {k: d[k] for k in ("desired", "running", "pending")}
+   141	
+   142	
+   143	def worker(host, port, key, paths, offset, deadline, cap, level, wid, rows, lock):
+   144	    headers = {"X-Api-Key": key, "X-Request-Id": "exp-d-c%d-w%d" % (level, wid)}
+   145	    conn = None
+   146	    i = offset
+   147	    while time.monotonic() < deadline:
+   148	        with lock:
+   149	            if len(rows) >= cap:
+   150	                return
+   151	        kind, path = paths[i % len(paths)]
+   152	        i += 1
+   153	        start = utc_now()
+   154	        t0 = time.perf_counter()
+   155	        status, err = 0, ""
+   156	        try:
+   157	            if conn is None:
+   158	                conn = http.client.HTTPConnection(host, port, timeout=REQUEST_TIMEOUT_S)
+   159	            conn.request("GET", path, headers=headers)
+   160	            resp = conn.getresponse()
+   161	            resp.read()
+   162	            status = resp.status
+   163	            if (resp.getheader("Connection") or "").lower() == "close":
+   164	                conn.close()
+   165	                conn = None
+   166	        except Exception as e:  # recorded as its type only, never with headers
+   167	            err = type(e).__name__
+   168	            if conn is not None:
+   169	                conn.close()
+   170	            conn = None
+   171	        ms = (time.perf_counter() - t0) * 1000.0
+   172	        with lock:
+   173	            rows.append([level, wid, start, kind, path, status, "%.1f" % ms, err])
+   174	    if conn is not None:
+   175	        conn.close()
+   176	
+   177	
+   178	def run_level(base, key, paths, level, seconds, out_dir):
+   179	    u = urllib.parse.urlsplit(base)
+   180	    rows, lock = [], threading.Lock()
+   181	    deadline = time.monotonic() + seconds
+   182	    started = utc_now()
+   183	    ts = [threading.Thread(target=worker, args=(u.hostname, u.port or 80, key, paths,
+   184	                                                w * (len(paths) // level or 1), deadline,
+   185	                                                MAX_REQUESTS_PER_LEVEL, level, w, rows, lock))
+   186	          for w in range(level)]
+   187	    for t in ts:
+   188	        t.start()
+   189	    for t in ts:
+   190	        t.join()
+   191	    ended = utc_now()
+   192	    with open(os.path.join(out_dir, "requests-c%d.csv" % level), "w", newline="") as f:
+   193	        w = csv.writer(f)
+   194	        w.writerow(["concurrency", "worker", "startUtc", "kind", "path", "status", "latencyMs", "error"])
+   195	        w.writerows(rows)
+   196	    lat = sorted(float(r[6]) for r in rows)
+   197	    ok = sorted(float(r[6]) for r in rows if 200 <= r[5] < 300)
+   198	    errors = sum(1 for r in rows if not 200 <= r[5] < 300)
+   199	    by_status = {}
+   200	    for r in rows:
+   201	        by_status[str(r[5])] = by_status.get(str(r[5]), 0) + 1
+   202	    s = {"concurrency": level, "startedAt": started, "endedAt": ended, "seconds": seconds,
+   203	         "requests": len(rows), "throughputPerSecond": round(len(rows) / float(seconds), 2),
+   204	         "errors": errors, "errorRate": round(errors / float(len(rows)), 4) if rows else None,
+   205	         "statusCounts": by_status,
+   206	         "latencyMsAll": {"p50": percentile(lat, 50), "p95": percentile(lat, 95), "p99": percentile(lat, 99)},
+   207	         "latencyMs2xx": {"p50": percentile(ok, 50), "p95": percentile(ok, 95), "p99": percentile(ok, 99)},
+   208	         "requestCapReached": len(rows) >= MAX_REQUESTS_PER_LEVEL}
+   209	    print("    level c=%d requests=%d rps=%s errors=%d p50=%s p95=%s p99=%s" % (
+   210	        level, s["requests"], s["throughputPerSecond"], errors, s["latencyMsAll"]["p50"],
+   211	        s["latencyMsAll"]["p95"], s["latencyMsAll"]["p99"]))
+   212	    return s
+   213	
+   214	
+   215	def main():
+   216	    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+   217	    ap.add_argument("--levels", default="1,2,4,8")
+   218	    ap.add_argument("--level-seconds", type=int, default=180)
+   219	    ap.add_argument("--pause-seconds", type=int, default=30)
+   220	    ap.add_argument("--post-observe-seconds", type=int, default=120)
+   221	    ap.add_argument("--abort-error-rate", type=float, default=0.5)
+   222	    ap.add_argument("--dry-run", action="store_true")
+   223	    ap.add_argument("--self-test", action="store_true")
+   224	    a = ap.parse_args()
+   225	    if a.self_test:
+   226	        self_test()
+   227	        return 0
+   228	    try:
+   229	        levels = [int(x) for x in a.levels.split(",")]
+   230	    except ValueError:
+   231	        die("--levels must be comma-separated integers", 2)
+   232	    if not (1 <= len(levels) <= MAX_LEVELS and all(1 <= c <= MAX_LEVEL for c in levels)):
+   233	        die("--levels: 1 to %d levels, each 1 to %d" % (MAX_LEVELS, MAX_LEVEL), 2)
+   234	    if not (10 <= a.level_seconds <= MAX_LEVEL_SECONDS and 0 <= a.pause_seconds <= 120
+   235	            and 0 <= a.post_observe_seconds <= 300 and 0 < a.abort_error_rate <= 1):
+   236	        die("a duration or the abort rate is out of bounds (see --help)", 2)
+   237	    planned_s = len(levels) * a.level_seconds + (len(levels) - 1) * a.pause_seconds + a.post_observe_seconds
+   238	    bounds = {"levels": levels, "levelSeconds": a.level_seconds, "pauseSeconds": a.pause_seconds,
+   239	              "postObserveSeconds": a.post_observe_seconds, "abortErrorRate": a.abort_error_rate,
+   240	              "maxRequestsPerLevel": MAX_REQUESTS_PER_LEVEL, "requestTimeoutSeconds": REQUEST_TIMEOUT_S,
+   241	              "plannedSeconds": planned_s, "haikuCalls": 0, "service": SERVICE, "serviceMaxTasks": 2}
+   242	
+   243	    if a.dry_run:
+   244	        smoke = latest_pass_smoke()
+   245	        ev, nodes = (smoke[1], smoke[2]) if smoke else (["<evidenceId>"], ["<researcherId>"])
+   246	        print("==> STEP dry-run (no terraform, AWS or HTTP call)")
+   247	        print("    inputs: terraform output alb_dns_name, api_key_secret_arn, ecs_cluster_name, "
+   248	              "account_id, runtime_enabled; Secrets Manager API key (memory only)")
+   249	        print("    ids from: %s" % (smoke[0] if smoke else "the latest PASS operations/releases/smoke-*.json (none yet)"))
+   250	        print("    bounds: %s" % json.dumps(bounds))
+   251	        print("    planned requests (round-robin per worker, GET, X-Api-Key header):")
+   252	        for kind, path in request_list(ev, nodes):
+   253	            print("      %-9s GET http://<alb_dns_name>%s" % (kind, path))
+   254	        for c in levels:
+   255	            print("    level c=%d: ecs describe-services %s; %d s closed loop; ecs describe-services" % (c, SERVICE, a.level_seconds))
+   256	        print("    then %d s idle and a final ecs describe-services; write summary.json" % a.post_observe_seconds)
+   257	        print("==> OK dry-run")
+   258	        return 0
+   259	
+   260	    out_dir = os.environ.get("SCHOLARCHAIN_EXPERIMENT_DIR")
+   261	    if not out_dir or not os.path.isdir(out_dir):
+   262	        die("SCHOLARCHAIN_EXPERIMENT_DIR is not a directory (run through scripts/run-experiment.sh)", 3)
+   263	    smoke = latest_pass_smoke()
+   264	    if not smoke:
+   265	        die("no PASS smoke record with evidence and researcher IDs under operations/releases", 3)
+   266	    tf = json.loads(run_cmd(["terraform", "-chdir=" + TF_DIR, "output", "-json"]))
+   267	    if not tf.get("runtime_enabled", {}).get("value"):
+   268	        die("runtime_enabled is false", 3)
+   269	    acct = aws("sts", "get-caller-identity", "--query", "Account", "--output", "text").strip()
+   270	    if acct != tf["account_id"]["value"]:
+   271	        die("profile account %s differs from the state account" % acct, 3)
+   272	    base = "http://" + tf["alb_dns_name"]["value"]
+   273	    cluster = tf["ecs_cluster_name"]["value"]
+   274	    paths = request_list(smoke[1], smoke[2])
+   275	    with open(os.path.join(out_dir, "inputs.json"), "w") as f:
+   276	        json.dump({"baseUrl": base, "account": acct, "region": os.environ.get("AWS_REGION"),
+   277	                   "cluster": cluster, "albArnSuffix": tf.get("alb_arn_suffix", {}).get("value"),
+   278	                   "smokeRecord": os.path.relpath(smoke[0], ROOT), "evidenceIds": smoke[1],
+   279	                   "researcherIds": smoke[2], "requests": paths, "bounds": bounds,
+   280	                   "startedAt": utc_now()}, f, indent=2)
+   281	    key = read_api_key(tf["api_key_secret_arn"]["value"])
+   282	    print("==> OK API key read (not printed)")
+   283	
+   284	    summary = {"schemaVersion": "exp-d-summary-v1", "levels": [], "aborted": None}
+   285	    for n, c in enumerate(levels):
+   286	        if n:
+   287	            time.sleep(a.pause_seconds)
+   288	        before = ecs_counts(cluster, "before-c%d" % c, out_dir)
+   289	        s = run_level(base, key, paths, c, a.level_seconds, out_dir)
+   290	        s["ecsBefore"], s["ecsAfter"] = before, ecs_counts(cluster, "after-c%d" % c, out_dir)
+   291	        summary["levels"].append(s)
+   292	        if s["errorRate"] is None or (s["requests"] >= 20 and s["errorRate"] > a.abort_error_rate):
+   293	            summary["aborted"] = "level c=%d error rate %s above %s" % (c, s["errorRate"], a.abort_error_rate)
+   294	            break
+   295	    del key
+   296	    if summary["aborted"] is None:
+   297	        time.sleep(a.post_observe_seconds)
+   298	        summary["ecsPostObserve"] = ecs_counts(cluster, "post-observe", out_dir)
+   299	    summary["endedAt"] = utc_now()
+   300	    with open(os.path.join(out_dir, "summary.json"), "w") as f:
+   301	        json.dump(summary, f, indent=2)
+   302	    print("==> EXP-D levels=%d aborted=%s" % (len(summary["levels"]), summary["aborted"]))
+   303	    return 1 if summary["aborted"] else 0
+   304	
+   305	
+   306	if __name__ == "__main__":
+   307	    sys.exit(main())
+
+==================== experiments/manifests/exp-f-failure-recovery-v1.json (full content, line-numbered; untracked, so git diff shows nothing)
+     1	{
+     2	  "schemaVersion": "experiment-manifest-v1",
+     3	  "experimentId": "exp-f-failure-recovery-v1",
+     4	  "description": "Experiment F, failure and recovery (phase 14 work order 5, cloud window 2). One poison message (a body that is not a job-message-v1 object) is sent to the job queue; the worker logs it as poison-message and never deletes it (modules/services Worker.scala), so it is received 3 times, 300 s apart, and the redrive policy (maxReceiveCount 3) moves it to scholarchain-course-jobs-dlq. Alongside, one async POST /v1/query (benchmark B07) with an Idempotency-Key is replayed twice (while queued and after it finished): the same jobId with Idempotent-Replay true, exactly one job-queued and one job-finished event. Non-destructive: no task stop, no deletion, no scale change. Run by the human (ruling 29) after a PASS smoke-test.sh and never at the same time as another Haiku run.",
+     5	  "command": [
+     6	    "experiments/harness/exp-f-failure-recovery.sh",
+     7	    "--dlq-wait-minutes", "22",
+     8	    "--job-wait-minutes", "5"
+     9	  ],
+    10	  "limits": {
+    11	    "maxMinutes": 30,
+    12	    "plannedMinutes": 19,
+    13	    "poisonMessages": 1,
+    14	    "asyncQuestions": 1,
+    15	    "postRequests": 3,
+    16	    "haikuCallsExpected": 2,
+    17	    "haikuCallsMax": 4,
+    18	    "haikuCallsPerMinuteCap": 4,
+    19	    "dlqWaitMinutes": 22,
+    20	    "jobWaitMinutes": 5,
+    21	    "queueMaxReceiveCount": 3,
+    22	    "queueVisibilityTimeoutSeconds": 300,
+    23	    "failureInjection": "one SQS send-message of a malformed body to the job queue; nothing else is mutated",
+    24	    "region": "us-east-2",
+    25	    "budgetUsd": 0.1
+    26	  },
+    27	  "context": {
+    28	    "region": "us-east-2",
+    29	    "datasetSnapshot": "2026-10-03",
+    30	    "servicesImagePackageRecord": "operations/releases/package-deef29516bf395ac2b551beb93710b6a48a937a8.json",
+    31	    "servicesImageDigest": "sha256:5c751b1e1341fd9dd86101cdc8fffc9b8b9c91284b83ec1757758218588047ea",
+    32	    "runtimeGraphRun": "run-1d6a86491812ff94887270c1ab885e69",
+    33	    "runtimeItemsRun": "run-1d6a86491812ff94887270c1ab885e69",
+    34	    "runtimeVectorsRun": "run-b28edbd40f932f0342c05d5b6f57b46c",
+    35	    "windowSummaryRun": "run-6fbad498beb0d8f570df67665fb97544",
+    36	    "question": "B07: Have Jack J. Dongarra and Yves Robert coauthored a paper?",
+    37	    "inputs": "terraform output (alb_dns_name, api_key_secret_arn, job_queue_url, job_dlq_url, log_group_names, runtime_enabled, account_id); Secrets Manager API key (memory only)",
+    38	    "rawOutputs": "inputs.json, dlq-before.txt, poison-sent.json, query-request.json, submit-<1|2|3>.json(.headers), job-polls.txt, job-final.json, result.json, queue-depths.txt, worker-poison-events.json, worker-job-finished-events.json, query-api-job-queued-events.json, summary.json",
+    39	    "humanCleanup": "The poison message stays in the DLQ (14-day retention) and the alarm scholarchain-course-jobs-dlq-not-empty goes to ALARM (no SNS topic, ruling 27). Leave both until cleanup.sh --stage runtime destroys the queues; removing the message earlier is a human-only action. The job record (TTL 168 h), the idempotency record (TTL 24 h) and the audit and answer objects go with the runtime cleanup."
+    40	  },
+    41	  "metrics": [
+    42	    {"namespace": "AWS/SQS", "metricName": "ApproximateNumberOfMessagesVisible", "dimensions": {"QueueName": "scholarchain-course-jobs-dlq"}},
+    43	    {"namespace": "AWS/SQS", "metricName": "NumberOfMessagesSent", "dimensions": {"QueueName": "scholarchain-course-jobs"}},
+    44	    {"namespace": "AWS/SQS", "metricName": "NumberOfMessagesReceived", "dimensions": {"QueueName": "scholarchain-course-jobs"}},
+    45	    {"namespace": "AWS/SQS", "metricName": "NumberOfMessagesDeleted", "dimensions": {"QueueName": "scholarchain-course-jobs"}},
+    46	    {"namespace": "AWS/SQS", "metricName": "ApproximateNumberOfMessagesNotVisible", "dimensions": {"QueueName": "scholarchain-course-jobs"}},
+    47	    {"namespace": "AWS/ECS", "metricName": "CPUUtilization", "dimensions": {"ClusterName": "scholarchain-course-runtime", "ServiceName": "worker"}},
+    48	    {"namespace": "AWS/ECS", "metricName": "CPUUtilization", "dimensions": {"ClusterName": "scholarchain-course-runtime", "ServiceName": "query-api"}}
+    49	  ]
+    50	}
+
+==================== experiments/harness/exp-f-failure-recovery.sh (full content, line-numbered; untracked, so git diff shows nothing)
+     1	#!/usr/bin/env bash
+     2	# Experiment F: one poison message (retry, then DLQ) plus an idempotent async replay.
+     3	# Run only through scripts/run-experiment.sh with experiments/manifests/exp-f-failure-recovery-v1.json.
+     4	# Bash 3.2; reuses scripts/lib/common.sh (the smoke-test.sh input sources and helpers).
+     5	set -euo pipefail
+     6	# shellcheck source=../../scripts/lib/common.sh
+     7	. "$(dirname "$0")/../../scripts/lib/common.sh"
+     8	
+     9	# Benchmark B07, the smoke-test.sh default question (one bounded researcher query).
+    10	QUESTION="Have Jack J. Dongarra and Yves Robert coauthored a paper?"
+    11	
+    12	usage() {
+    13	  cat <<EOF
+    14	Usage: experiments/harness/exp-f-failure-recovery.sh [--dlq-wait-minutes 22] [--job-wait-minutes 5] [--dry-run]
+    15	
+    16	Steps (each prints ==> STEP; raw files go only under \$SCHOLARCHAIN_EXPERIMENT_DIR):
+    17	  preconditions  terraform output (local state); runtime_enabled true; the job DLQ is empty
+    18	  poison         ONE aws sqs send-message to the job queue with a body that is not a
+    19	                 job-message-v1 object (Worker.scala: logged as poison-message, never deleted,
+    20	                 so it is received 3 times, 300 s apart, and SQS redrives it to the DLQ)
+    21	  submit         POST /v1/query {"execution":"async"} with Idempotency-Key exp-f-<stamp> = 202
+    22	  replay         the same POST and key = 202, Idempotent-Replay: true, the same jobId
+    23	  job            GET /v1/jobs/<jobId> every 10 s until SUCCEEDED or FAILED (--job-wait-minutes)
+    24	  result         GET /v1/jobs/<jobId>/result; the same POST and key again = 202 with the final state
+    25	  dlq            get-queue-attributes of both queues every 30 s until the DLQ holds 1 message
+    26	                 (--dlq-wait-minutes after the send)
+    27	  logs           worker poison-message and job-finished events, query-api job-queued events
+    28	  verdict        summary.json; exit 0 when every check passed, 1 otherwise
+    29	
+    30	Haiku calls: the one async question (planner and synthesis, 2; at most 4 with one retry each).
+    31	The API key is read from Secrets Manager into a variable and reaches curl on standard input only.
+    32	Cleanup (human): the poison message stays in the DLQ (14-day retention) and the DLQ alarm stays in
+    33	ALARM until cleanup.sh --stage runtime destroys the queue; the job, idempotency and audit records
+    34	expire by TTL or go with the runtime stores.
+    35	Exit: 0 all checks passed; 1 a check failed; 2 usage; 3 precondition.
+    36	EOF
+    37	}
+    38	
+    39	DLQ_WAIT_MIN=22
+    40	JOB_WAIT_MIN=5
+    41	while [ $# -gt 0 ]; do
+    42	  case "$1" in
+    43	    --dlq-wait-minutes) DLQ_WAIT_MIN="$(flag_val "$1" "${2-}")"; shift 2 ;;
+    44	    --job-wait-minutes) JOB_WAIT_MIN="$(flag_val "$1" "${2-}")"; shift 2 ;;
+    45	    --dry-run) DRY_RUN=1; shift ;;
+    46	    --help | -h) usage; exit 0 ;;
+    47	    *) usage >&2; die "unknown argument: $1" 2 ;;
+    48	  esac
+    49	done
+    50	printf '%s' "$DLQ_WAIT_MIN" | grep -Eq '^[0-9]+$' && [ "$DLQ_WAIT_MIN" -ge 16 ] && [ "$DLQ_WAIT_MIN" -le 25 ] ||
+    51	  die "--dlq-wait-minutes must be 16 to 25 (3 receives x 300 s visibility, then the redrive)" 2
+    52	printf '%s' "$JOB_WAIT_MIN" | grep -Eq '^[0-9]+$' && [ "$JOB_WAIT_MIN" -ge 1 ] && [ "$JOB_WAIT_MIN" -le 5 ] ||
+    53	  die "--job-wait-minutes must be 1 to 5" 2
+    54	need curl jq aws terraform
+    55	
+    56	dry_run_exit \
+    57	  "terraform output alb_dns_name, api_key_secret_arn, job_queue_url, job_dlq_url, log_group_names; aws sts get-caller-identity" \
+    58	  "precondition: DLQ ApproximateNumberOfMessages + NotVisible = 0" \
+    59	  "aws sqs send-message --queue-url <job_queue_url> --message-body '{\"schemaVersion\":\"exp-f-poison-v1\",\"note\":\"experiment F poison <stamp>\"}' (one attempt)" \
+    60	  "POST http://<alb>/v1/query {\"question\":\"$QUESTION\",\"execution\":\"async\"} Idempotency-Key exp-f-<stamp> -> 202 jobId" \
+    61	  "POST the same body and key -> 202, Idempotent-Replay: true, same jobId" \
+    62	  "GET /v1/jobs/<jobId> every 10 s for at most $JOB_WAIT_MIN min; GET /v1/jobs/<jobId>/result; POST the same body and key once more" \
+    63	  "get-queue-attributes (job queue and DLQ) every 30 s for at most $DLQ_WAIT_MIN min after the send" \
+    64	  "aws logs filter-log-events: worker poison-message and job-finished, query-api job-queued" \
+    65	  "write \$SCHOLARCHAIN_EXPERIMENT_DIR/summary.json; Haiku calls 2 (at most 4)"
+    66	
+    67	OUT="${SCHOLARCHAIN_EXPERIMENT_DIR:-}"
+    68	[ -n "$OUT" ] && [ -d "$OUT" ] || die "SCHOLARCHAIN_EXPERIMENT_DIR is not a directory (run through scripts/run-experiment.sh)" 3
+    69	require_profile
+    70	aws_target
+    71	tf_outputs
+    72	[ "$(tfo '.runtime_enabled.value')" = true ] || die "runtime_enabled is false" 3
+    73	BASE="http://$(tfo '.alb_dns_name.value')"
+    74	SECRET="$(tfo '.api_key_secret_arn.value')"
+    75	QUEUE="$(tfo '.job_queue_url.value')"
+    76	DLQ="$(tfo '.job_dlq_url.value')"
+    77	WORKER_LOG="$(tfo '.log_group_names.value.worker')"
+    78	QAPI_LOG="$(tfo '.log_group_names.value["query-api"]')"
+    79	STAMP="$(utc_stamp)"
+    80	START_MS=$(($(date +%s) * 1000))
+    81	IDEM="exp-f-$STAMP"
+    82	jq -n --arg base "$BASE" --arg q "$QUEUE" --arg d "$DLQ" --arg w "$WORKER_LOG" --arg a "$QAPI_LOG" \
+    83	  --arg acct "$ACCOUNT" --arg region "$REGION" --arg idem "$IDEM" --arg at "$(utc_now)" \
+    84	  --argjson dlqWait "$DLQ_WAIT_MIN" --argjson jobWait "$JOB_WAIT_MIN" \
+    85	  '{baseUrl: $base, jobQueueUrl: $q, dlqUrl: $d, workerLogGroup: $w, queryApiLogGroup: $a,
+    86	    account: $acct, region: $region, idempotencyKey: $idem, startedAt: $at,
+    87	    bounds: {dlqWaitMinutes: $dlqWait, jobWaitMinutes: $jobWait, poisonMessages: 1, asyncQuestions: 1}}' >"$OUT/inputs.json"
+    88	
+    89	CHECKS='[]'
+    90	check() { # name PASS|FAIL detail
+    91	  CHECKS="$(jq -c --arg n "$1" --arg r "$2" --arg d "$3" '. + [{check: $n, result: $r, detail: $d}]' <<<"$CHECKS")"
+    92	  if [ "$2" = PASS ]; then ok "$1 $3"; else warn "$1 FAIL $3"; fi
+    93	}
+    94	
+    95	queue_depth() { # url -> "visible notVisible"
+    96	  aws_retry sqs get-queue-attributes --queue-url "$1" \
+    97	    --attribute-names ApproximateNumberOfMessages ApproximateNumberOfMessagesNotVisible \
+    98	    --query 'Attributes.[ApproximateNumberOfMessages, ApproximateNumberOfMessagesNotVisible]' --output text
+    99	}
+   100	
+   101	step "preconditions"
+   102	DLQ0="$(queue_depth "$DLQ")"
+   103	printf '%s %s\n' "$(utc_now)" "$DLQ0" >"$OUT/dlq-before.txt"
+   104	[ "$(printf '%s' "$DLQ0" | awk '{print $1 + $2}')" = 0 ] || die "the DLQ is not empty ($DLQ0); the evidence would be ambiguous" 3
+   105	ok "DLQ empty"
+   106	
+   107	step "api-key"
+   108	API_KEY="$(aws_retry secretsmanager get-secret-value --secret-id "$SECRET" --query SecretString --output text)"
+   109	[ -n "$API_KEY" ] && [ "$API_KEY" != None ] || die "the API key secret has no value" 3
+   110	KEY_ESC="${API_KEY//\\/\\\\}"
+   111	KEY_ESC="${KEY_ESC//\"/\\\"}"
+   112	unset API_KEY
+   113	ok "API key read (not printed)"
+   114	
+   115	# req method path out [body-file] -> prints the HTTP status; response headers go to <out>.headers.
+   116	# As smoke-test.sh: the key reaches curl on standard input (--config -), never argv or a file.
+   117	req() {
+   118	  local method="$1" path="$2" out="$3" body="${4-}"
+   119	  local args=(-sS -o "$out" -D "$out.headers" -w '%{http_code}' --connect-timeout 10 --max-time 60
+   120	    -X "$method" -H "X-Request-Id: $IDEM")
+   121	  [ -z "$body" ] || args+=(-H 'Content-Type: application/json' -H "Idempotency-Key: $IDEM" --data-binary "@$body")
+   122	  printf 'header = "X-Api-Key: %s"\n' "$KEY_ESC" | curl --config - "${args[@]}" "$BASE$path" || true
+   123	}
+   124	replayed() { tr -d '\r' <"$1.headers" | grep -iq '^Idempotent-Replay: true$'; }
+   125	
+   126	step "poison"
+   127	POISON_BODY="$(jq -cn --arg s "$STAMP" '{schemaVersion: "exp-f-poison-v1", note: ("experiment F poison " + $s)}')"
+   128	SENT_AT="$(utc_now)"
+   129	SENT_S=$SECONDS
+   130	MSG_ID="$(aws_once sqs send-message --queue-url "$QUEUE" --message-body "$POISON_BODY" --query MessageId --output text)"
+   131	jq -n --arg id "$MSG_ID" --arg at "$SENT_AT" --arg body "$POISON_BODY" '{messageId: $id, sentAt: $at, body: $body}' >"$OUT/poison-sent.json"
+   132	ok "poison message $MSG_ID sent at $SENT_AT"
+   133	
+   134	step "submit"
+   135	jq -n --arg q "$QUESTION" '{question: $q, execution: "async"}' >"$OUT/query-request.json"
+   136	CODE1="$(req POST /v1/query "$OUT/submit-1.json" "$OUT/query-request.json")"
+   137	JOB="$(jq -r '.jobId // empty' "$OUT/submit-1.json" 2>/dev/null || true)"
+   138	if [ "$CODE1" = 202 ] && [ -n "$JOB" ]; then check submit PASS "202 $JOB"; else check submit FAIL "http $CODE1"; fi
+   139	
+   140	step "replay"
+   141	CODE2="$(req POST /v1/query "$OUT/submit-2.json" "$OUT/query-request.json")"
+   142	JOB2="$(jq -r '.jobId // empty' "$OUT/submit-2.json" 2>/dev/null || true)"
+   143	if [ "$CODE2" = 202 ] && [ -n "$JOB" ] && [ "$JOB2" = "$JOB" ] && replayed "$OUT/submit-2.json"; then
+   144	  check replay-while-queued PASS "202 same jobId, Idempotent-Replay true"
+   145	else check replay-while-queued FAIL "http $CODE2 jobId '$JOB2'"; fi
+   146	
+   147	step "job"
+   148	STATE=""
+   149	if [ -n "$JOB" ]; then
+   150	  END_S=$((SECONDS + JOB_WAIT_MIN * 60))
+   151	  while [ "$SECONDS" -lt "$END_S" ]; do
+   152	    CODE="$(req GET "/v1/jobs/$JOB" "$OUT/job-poll.json")"
+   153	    STATE="$(jq -r '.state // empty' "$OUT/job-poll.json" 2>/dev/null || true)"
+   154	    printf '%s %s %s\n' "$(utc_now)" "$CODE" "$STATE" >>"$OUT/job-polls.txt"
+   155	    case "$STATE" in SUCCEEDED | FAILED) break ;; esac
+   156	    sleep 10
+   157	  done
+   158	  cp "$OUT/job-poll.json" "$OUT/job-final.json"
+   159	fi
+   160	if [ "$STATE" = SUCCEEDED ]; then check job PASS "SUCCEEDED"; else check job FAIL "state '${STATE:-none}'"; fi
+   161	
+   162	step "result"
+   163	if [ "$STATE" = SUCCEEDED ]; then
+   164	  CODE="$(req GET "/v1/jobs/$JOB/result" "$OUT/result.json")"
+   165	  if [ "$CODE" = 200 ]; then check result PASS "200 $(jq -r .queryId "$OUT/result.json")"; else check result FAIL "http $CODE"; fi
+   166	fi
+   167	CODE3="$(req POST /v1/query "$OUT/submit-3.json" "$OUT/query-request.json")"
+   168	if [ "$CODE3" = 202 ] && [ "$(jq -r '.jobId // empty' "$OUT/submit-3.json" 2>/dev/null)" = "$JOB" ] &&
+   169	  replayed "$OUT/submit-3.json"; then
+   170	  check replay-after-final PASS "202 same jobId, state $(jq -r .state "$OUT/submit-3.json")"
+   171	else check replay-after-final FAIL "http $CODE3"; fi
+   172	
+   173	step "dlq"
+   174	DLQ_AT=""
+   175	END_S=$((SENT_S + DLQ_WAIT_MIN * 60))
+   176	while [ "$SECONDS" -lt "$END_S" ]; do
+   177	  Q="$(queue_depth "$QUEUE")"
+   178	  D="$(queue_depth "$DLQ")"
+   179	  printf '%s jobs %s dlq %s\n' "$(utc_now)" "$Q" "$D" >>"$OUT/queue-depths.txt"
+   180	  if [ "$(printf '%s' "$D" | awk '{print $1 + $2}')" -ge 1 ]; then
+   181	    DLQ_AT="$(utc_now)"
+   182	    break
+   183	  fi
+   184	  sleep 30
+   185	done
+   186	if [ -n "$DLQ_AT" ]; then check dlq PASS "DLQ holds the message at $DLQ_AT (sent $SENT_AT)"; else check dlq FAIL "DLQ still empty after $DLQ_WAIT_MIN min"; fi
+   187	
+   188	step "logs"
+   189	logs() { # group pattern out
+   190	  aws_retry logs filter-log-events --log-group-name "$1" --start-time "$START_MS" \
+   191	    --filter-pattern "$2" --query 'events[].message' --output json >"$3"
+   192	}
+   193	logs "$WORKER_LOG" '"poison-message"' "$OUT/worker-poison-events.json"
+   194	logs "$WORKER_LOG" '"job-finished"' "$OUT/worker-job-finished-events.json"
+   195	logs "$QAPI_LOG" '"job-queued"' "$OUT/query-api-job-queued-events.json"
+   196	# Each element is a JSON log line; the ones for this message or job are selected.
+   197	RECEIVES="$(jq -c --arg id "$MSG_ID" '[.[] | fromjson? | select(.messageId == $id) | .receiveCount] | sort' "$OUT/worker-poison-events.json")"
+   198	FINISHED="$(jq --arg j "$JOB" '[.[] | fromjson? | select(.jobId == $j)] | length' "$OUT/worker-job-finished-events.json")"
+   199	QUEUED="$(jq --arg j "$JOB" '[.[] | fromjson? | select(.jobId == $j)] | length' "$OUT/query-api-job-queued-events.json")"
+   200	if [ "$RECEIVES" = "[1,2,3]" ]; then check poison-retried PASS "receiveCount $RECEIVES"; else check poison-retried FAIL "receiveCount $RECEIVES"; fi
+   201	if [ "$FINISHED" = 1 ] && [ "$QUEUED" = 1 ]; then check one-job-run PASS "job-queued 1, job-finished 1"; else check one-job-run FAIL "job-queued $QUEUED, job-finished $FINISHED"; fi
+   202	
+   203	step "verdict"
+   204	RESULT=PASS
+   205	[ "$(jq '[.[] | select(.result == "FAIL")] | length' <<<"$CHECKS")" = 0 ] || RESULT=FAIL
+   206	jq -n --arg r "$RESULT" --arg job "$JOB" --arg msg "$MSG_ID" --arg sent "$SENT_AT" --arg dlq "$DLQ_AT" \
+   207	  --arg end "$(utc_now)" --argjson receives "${RECEIVES:-null}" --argjson checks "$CHECKS" \
+   208	  '{schemaVersion: "exp-f-summary-v1", result: $r, jobId: $job, poisonMessageId: $msg, poisonSentAt: $sent,
+   209	    dlqObservedAt: (if $dlq == "" then null else $dlq end), poisonReceiveCounts: $receives,
+   210	    endedAt: $end, checks: $checks}' >"$OUT/summary.json"
+   211	printf '==> EXP-F result=%s job=%s poison=%s dlq=%s\n' "$RESULT" "${JOB:-none}" "$MSG_ID" "${DLQ_AT:-none}"
+   212	[ "$RESULT" = PASS ] || exit 1
+
+== evidence logs: docs/agent-runs/phase-14/evidence/wo5/
+total 48
+-rw-r--r--@ 1 achyutpatel  staff    63 Nov 17 12:41 wo5-bash-n.txt
+-rw-r--r--@ 1 achyutpatel  staff  1788 Nov 17 12:41 wo5-exp-d-dry-run.txt
+-rw-r--r--@ 1 achyutpatel  staff  1418 Nov 17 12:41 wo5-exp-f-dry-run.txt
+-rw-r--r--@ 1 achyutpatel  staff   639 Nov 17 12:41 wo5-manifest-jq.txt
+-rw-r--r--@ 1 achyutpatel  staff   108 Nov 17 12:41 wo5-python-ast.txt
+-rw-r--r--@ 1 achyutpatel  staff   459 Nov 17 12:41 wo5-run-experiment-dry-run.txt

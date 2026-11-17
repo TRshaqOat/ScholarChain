@@ -1,0 +1,16 @@
+$ jq -e '<run-experiment.sh manifest checks>' experiments/manifests/exp-d-query-load-v1.json
+true
+exit=0
+experimentId=exp-d-query-load-v1 maxMinutes=25 command0=load-tests/exp-d-query-load.py
+command0 prefix ok
+command0 has no ..
+command0 file exists
+command0 NOT executable (human sets the bit at commit)
+$ jq -e '<run-experiment.sh manifest checks>' experiments/manifests/exp-f-failure-recovery-v1.json
+true
+exit=0
+experimentId=exp-f-failure-recovery-v1 maxMinutes=30 command0=experiments/harness/exp-f-failure-recovery.sh
+command0 prefix ok
+command0 has no ..
+command0 file exists
+command0 NOT executable (human sets the bit at commit)

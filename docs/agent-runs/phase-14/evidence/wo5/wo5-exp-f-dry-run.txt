@@ -1,0 +1,17 @@
+$ bash experiments/harness/exp-f-failure-recovery.sh --dry-run --dlq-wait-minutes 22 --job-wait-minutes 5
+==> STEP dry-run
+    no AWS, Terraform, or git call was made; steps that would run:
+    - terraform output alb_dns_name, api_key_secret_arn, job_queue_url, job_dlq_url, log_group_names; aws sts get-caller-identity
+    - precondition: DLQ ApproximateNumberOfMessages + NotVisible = 0
+    - aws sqs send-message --queue-url <job_queue_url> --message-body '{"schemaVersion":"exp-f-poison-v1","note":"experiment F poison <stamp>"}' (one attempt)
+    - POST http://<alb>/v1/query {"question":"Have Jack J. Dongarra and Yves Robert coauthored a paper?","execution":"async"} Idempotency-Key exp-f-<stamp> -> 202 jobId
+    - POST the same body and key -> 202, Idempotent-Replay: true, same jobId
+    - GET /v1/jobs/<jobId> every 10 s for at most 5 min; GET /v1/jobs/<jobId>/result; POST the same body and key once more
+    - get-queue-attributes (job queue and DLQ) every 30 s for at most 22 min after the send
+    - aws logs filter-log-events: worker poison-message and job-finished, query-api job-queued
+    - write $SCHOLARCHAIN_EXPERIMENT_DIR/summary.json; Haiku calls 2 (at most 4)
+==> OK dry-run
+exit=0
+$ bash experiments/harness/exp-f-failure-recovery.sh --dry-run --dlq-wait-minutes 10  (bound check)
+==> FAIL --dlq-wait-minutes must be 16 to 25 (3 receives x 300 s visibility, then the redrive) (exit 2)
+exit=2

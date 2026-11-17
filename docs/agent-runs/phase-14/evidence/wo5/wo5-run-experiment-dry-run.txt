@@ -1,0 +1,6 @@
+$ ./scripts/run-experiment.sh --manifest experiments/manifests/exp-d-query-load-v1.json --profile scholarchain-sdk --dry-run
+==> FAIL command[0] is not an executable file: load-tests/exp-d-query-load.py (exit 2)
+exit=2
+$ ./scripts/run-experiment.sh --manifest experiments/manifests/exp-f-failure-recovery-v1.json --profile scholarchain-sdk --dry-run
+==> FAIL command[0] is not an executable file: experiments/harness/exp-f-failure-recovery.sh (exit 2)
+exit=2

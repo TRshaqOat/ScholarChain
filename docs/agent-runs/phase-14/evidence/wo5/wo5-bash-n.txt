@@ -1,0 +1,2 @@
+$ bash -n experiments/harness/exp-f-failure-recovery.sh
+exit=0
