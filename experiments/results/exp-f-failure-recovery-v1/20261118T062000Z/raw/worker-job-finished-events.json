@@ -1,0 +1,3 @@
+[
+    "{\"ts\":\"2026-11-18T06:20:27.038181353Z\",\"type\":\"event\",\"service\":\"worker\",\"event\":\"job-finished\",\"messageId\":\"333ed8e9-ca8b-493a-ab16-97343c44c90c\",\"receiveCount\":1,\"jobId\":\"job-c03f4e524f0f99b0199fcdc4cf35e788\",\"queryId\":\"qry-57be24c8990bea22a55002efceabf377\",\"state\":\"SUCCEEDED\",\"error\":null,\"latencyMs\":21805}"
+]

@@ -1,0 +1,15 @@
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] running scholarchain.storage.cli.LoadS3Cli --manifest runs/embed/snapshot=2026-10-03/run=run-b28edbd40f932f0342c05d5b6f57b46c/manifest.json --root /Users/achyutpatel/Developer/Cloud/ScholarChain/scratch/stores/s3 --live --profile scholarchain-sdk --region us-east-2
+manifest runs/embed/snapshot=2026-10-03/run=run-b28edbd40f932f0342c05d5b6f57b46c/manifest.json: stage embed run run-b28edbd40f932f0342c05d5b6f57b46c objects 13028
+LIVE: bucket scholarchain-course-data-834519512655-us-east-2 in us-east-2, profile scholarchain-sdk
+SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+SLF4J: Defaulting to no-operation (NOP) logger implementation
+SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+Inserted 13029
+violations 0
+[success] Total time: 3993 s (01:06:33.0), completed Nov 17, 2026, 5:15:15 PM

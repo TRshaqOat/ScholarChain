@@ -1,0 +1,27 @@
+==> STEP clean-tree
+==> OK clean-tree at 506eddf46f23c7004150b2373403adf49518953a
+==> STEP target
+==> TARGET account=834519512655 region=us-east-2 profile=scholarchain-sdk
+==> STEP run exp-f-failure-recovery-v1
+==> STEP api-key
+==> OK API key read (not printed)
+==> STEP poison
+==> OK poison message 6cacde65-e4ce-4489-b415-f0884c4dff1b sent at 2026-11-18T06:20:03Z
+==> STEP submit
+==> OK submit 202 job-c03f4e524f0f99b0199fcdc4cf35e788
+==> STEP replay
+==> OK replay-while-queued 202 same jobId, Idempotent-Replay true, state QUEUED
+==> STEP job
+==> OK job SUCCEEDED
+==> STEP result
+==> OK result 200 qry-57be24c8990bea22a55002efceabf377
+==> OK replay-after-final 202 same jobId, Idempotent-Replay true, state SUCCEEDED
+==> STEP dlq
+==> OK dlq DLQ holds the message at 2026-11-18T06:35:31Z (sent 2026-11-18T06:20:03Z)
+==> STEP logs
+==> OK poison-retried receiveCount [1,2,3]
+==> OK one-job-run job-queued 1, job-finished 1
+==> STEP verdict
+==> EXP-F result=PASS job=job-c03f4e524f0f99b0199fcdc4cf35e788 poison=6cacde65-e4ce-4489-b415-f0884c4dff1b dlq=2026-11-18T06:35:31Z
+==> EXPERIMENT id=exp-f-failure-recovery-v1 record=/Users/achyutpatel/Developer/Cloud/ScholarChain/experiments/results/exp-f-failure-recovery-v1/20261118T062000Z/run-record.json exit=0
+==> OK experiment complete

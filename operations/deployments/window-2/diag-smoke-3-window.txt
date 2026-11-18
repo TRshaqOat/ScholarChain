@@ -1,0 +1,62 @@
+=== query-api, 05:18:40-05:19:10Z, health checks excluded
+/logs/rag-runtime/snapshot%3D2026-10-03/run%3Drun-c9f26a9ecfe83c96526d50d79d99fd67/readiness-probe
+amz-sdk-invocation-id:16ce8ed9-7ee7-204e-2596-d8ff92c42bc4
+amz-sdk-request:attempt=1; max=1
+host:scholarchain-course-data-834519512655-us-east-2.s3.us-east-2.amazonaws.com
+x-amz-checksum-crc32:AAAAAA==
+x-amz-content-sha256:UNSIGNED-PAYLOAD
+x-amz-date:20261118T051844Z
+x-amz-te:append-md5
+UNSIGNED-PAYLOAD
+20261118T051844Z
+20261118/us-east-2/s3/aws4_request
+34c5c1dcd5fd1267c547f09181535ce03642c321ac89cb432b0a5d1551c3c7dd
+software.amazon.awssdk.services.s3.model.NoSuchKeyException: The specified key does not exist. (Service: S3, Status Code: 404, Request ID: KNYD4HYQE5YEZXJ7, Extended Request ID: EtWPoMHR9JDlO/KWCJNMtYf5qhFwBt1pqTmlYz52jQfB24mYTiVeSzE0O68m+rdCzRqHo65Sy0Q=)
+
+at software.amazon.awssdk.core.internal.http.CombinedResponseHandler.handleErrorResponse(CombinedResponseHandler.java:124)
+
+at software.amazon.awssdk.core.internal.http.CombinedResponseHandler.handleResponse(CombinedResponseHandler.java:81)
+
+at software.amazon.awssdk.core.internal.http.CombinedResponseHandler.handle(CombinedResponseHandler.java:59)
+
+at software.amazon.awssdk.core.internal.http.CombinedResponseHandler.handle(CombinedResponseHandler.java:40)
+
+at software.amazon.awssdk.core.internal.http.pipeline.stages.HandleResponseStage.execute(HandleResponseStage.java:52)
+
+at software.amazon.awssdk.core.internal.http.pipeline.stages.HandleResponseStage.execute(HandleResponseStage.java:40)
+
+at software.amazon.awssdk.core.internal.http.pipeline.RequestPipelineBuilder$ComposingRequestPipelineStage.execute(RequestPipelineBuilder.java:206)
+
+at software.amazon.awssdk.core.internal.http.pipeline.stages.ApiCallAttemptTimeoutTrackingStage.execute(ApiCallAttemptTimeoutTrackingStage.java:74)
+
+at software.amazon.awssdk.core.internal.http.pipeline.stages.ApiCallAttemptTimeoutTrackingStage.execute(ApiCallAttemptTimeoutTrackingStage.java:43)
+
+at software.amazon.awssdk.core.internal.http.pipeline.stages.TimeoutExceptionHandlingStage.execute(TimeoutExceptionHandlingStage.java:79)
+
+at software.amazon.awssdk.core.internal.http.pipeline.stages.TimeoutExceptionHandlingStage.execute(TimeoutExceptionHandlingStage.java:41)
+
+at software.amazon.awssdk.core.internal.http.pipeline.stages.ApiCallAttemptMetricCollectionStage.execute(ApiCallAttemptMetricCollectionStage.java:58)
+
+at software.amazon.awssdk.core.internal.http.pipeline.stages.ApiCallAttemptMetricCollectionStage.execute(ApiCallAttemptMetricCollectionStage.java:41)
+
+at software.amazon.awssdk.core.internal.http.pipeline.stages.RetryableStage.executeRequest(RetryableStage.java:93)
+
+at software.amazon.awssdk.core.internal.http.pipeline.stages.RetryableStage.execute(RetryableStage.java:56)
+
+at software.amazon.awssdk.core.internal.http.pipeline.stages.RetryableStage.execute(RetryableStage.java:36)
+
+at software.amazon.awssdk.core.internal.http.pipeline.RequestPipelineBuilder$ComposingRequestPipelineStage.execute(RequestPipelineBuilder.java:206)
+
+at software.amazon.awssdk.core.internal.http.StreamManagingStage.execute(StreamManagingStage.java:53)
+
+at software.amazon.awssdk.core.internal.http.StreamManagingStage.execute(StreamManagingStage.java:35)
+
+at software.amazon.awssdk.core.internal.http.pipeline.stages.ApiCallTimeoutTrackingStage.executeWithTimer(ApiCallTimeoutTrackingStage.java:82)
+
+at software.amazon.awssdk.core.internal.http.pipeline.stages.ApiCallTimeoutTrackingStage.execute(ApiCallTimeoutTrackingStage.java:62)
+
+at software.amazon.awssdk.core.internal.http.pipeline.stages.ApiCallTimeoutTrackingStage.execute(ApiCallTimeoutTrackingStage.java:43)
+
+at software.amazon.awssdk.core.internal.http.pipeline.stages.ApiCallMetricCollectionStage.execute(ApiCallMetricCollectionStage.java:50)
+
+=== graph-evidence-api, 05:18:40-05:19:10Z, health checks excluded

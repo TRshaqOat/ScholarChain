@@ -1,0 +1,56 @@
+{
+  "schemaVersion": "exp-f-summary-v1",
+  "result": "PASS",
+  "jobId": "job-c03f4e524f0f99b0199fcdc4cf35e788",
+  "poisonMessageId": "6cacde65-e4ce-4489-b415-f0884c4dff1b",
+  "poisonSentAt": "2026-11-18T06:20:03Z",
+  "dlqObservedAt": "2026-11-18T06:35:31Z",
+  "poisonReceiveCounts": [
+    1,
+    2,
+    3
+  ],
+  "endedAt": "2026-11-18T06:35:36Z",
+  "checks": [
+    {
+      "check": "submit",
+      "result": "PASS",
+      "detail": "202 job-c03f4e524f0f99b0199fcdc4cf35e788"
+    },
+    {
+      "check": "replay-while-queued",
+      "result": "PASS",
+      "detail": "202 same jobId, Idempotent-Replay true, state QUEUED"
+    },
+    {
+      "check": "job",
+      "result": "PASS",
+      "detail": "SUCCEEDED"
+    },
+    {
+      "check": "result",
+      "result": "PASS",
+      "detail": "200 qry-57be24c8990bea22a55002efceabf377"
+    },
+    {
+      "check": "replay-after-final",
+      "result": "PASS",
+      "detail": "202 same jobId, Idempotent-Replay true, state SUCCEEDED"
+    },
+    {
+      "check": "dlq",
+      "result": "PASS",
+      "detail": "DLQ holds the message at 2026-11-18T06:35:31Z (sent 2026-11-18T06:20:03Z)"
+    },
+    {
+      "check": "poison-retried",
+      "result": "PASS",
+      "detail": "receiveCount [1,2,3]"
+    },
+    {
+      "check": "one-job-run",
+      "result": "PASS",
+      "detail": "job-queued 1, job-finished 1"
+    }
+  ]
+}

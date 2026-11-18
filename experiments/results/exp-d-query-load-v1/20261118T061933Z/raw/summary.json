@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "exp-d-summary-v1",
+  "startedAt": "2026-11-18T06:19:36.040Z",
+  "abortRule": {
+    "scope": "per request kind (evidence, node, neighbors); sliding window within a level, whole level between levels; preflight GET of each path before the first level",
+    "errorRateAbove": 0.05,
+    "windowSeconds": 10.0,
+    "minRequestsPerKind": 20,
+    "consecutive5xxOrTransport": 10
+  },
+  "preflight": {
+    "requests": 6,
+    "non2xx": 1,
+    "raw": "preflight.json"
+  },
+  "levels": [],
+  "aborted": "preflight: 1 of 6 paths returned non-2xx",
+  "abortedAt": {
+    "utc": "2026-11-18T06:19:44.933Z",
+    "phase": "preflight",
+    "concurrency": null
+  },
+  "abortWindowCounts": null,
+  "error": null,
+  "endedAt": "2026-11-18T06:19:44.934Z"
+}

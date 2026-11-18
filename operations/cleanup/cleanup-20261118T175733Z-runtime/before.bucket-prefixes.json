@@ -1,0 +1,11 @@
+[
+    "artifacts/",
+    "curated/",
+    "graph/",
+    "logs/",
+    "raw/",
+    "reports/",
+    "runs/",
+    "semantic-context/",
+    "vectors/"
+]

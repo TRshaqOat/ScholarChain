@@ -1,0 +1,57 @@
+=== query-api
+[
+    0,
+    1,
+    [
+        [
+            "PRIMARY",
+            "FAILED",
+            0,
+            3
+        ]
+    ]
+]
+2026-11-17T14:50:02.760000-06:00	(service query-api, taskSet ecs-svc/6102041179954207881) has begun draining connections on 1 tasks.
+2026-11-17T14:50:02.755000-06:00	(service query-api) deregistered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-2:834519512655:targetgroup/scholarchain-course-query-api/f40c1b171bb4809b)
+2026-11-17T14:49:44.048000-06:00	(service query-api) registered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-2:834519512655:targetgroup/scholarchain-course-query-api/f40c1b171bb4809b)
+2026-11-17T14:49:43.811000-06:00	(service query-api) (deployment ecs-svc/6102041179954207881) deployment failed: tasks failed to start.
+2026-11-17T14:49:25.195000-06:00	(service query-api) has started 1 tasks: (task 2569a414164f4494ad2b5d33997f2b7c).
+2026-11-17T14:49:24.405000-06:00	(service query-api, taskSet ecs-svc/6102041179954207881) has begun draining connections on 1 tasks.
+=== graph-evidence-api
+[
+    1,
+    1,
+    [
+        [
+            "PRIMARY",
+            "COMPLETED",
+            1,
+            0
+        ]
+    ]
+]
+2026-11-17T14:46:56.952000-06:00	(service graph-evidence-api) has reached a steady state.
+2026-11-17T14:46:56.950000-06:00	(service graph-evidence-api) (deployment ecs-svc/0852225901410241900) deployment completed.
+2026-11-17T14:46:35.768000-06:00	(service graph-evidence-api) registered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-2:834519512655:targetgroup/scholarchain-course-graph-eviden/fa410079657f438a)
+2026-11-17T14:46:06.332000-06:00	(service graph-evidence-api) has started 1 tasks: (task 0a463ac0ca834fe8a40f67c54717dffb).
+2026-11-17T14:38:36.786000-06:00	(service graph-evidence-api) (deployment ecs-svc/8635108468576531227) deployment failed: tasks failed to start.
+2026-11-17T14:38:29.643000-06:00	(service graph-evidence-api) was unable to place a task. Reason: ResourceInitializationError: unable to pull secrets or registry auth: execution resource retrieval failed: unable to retrieve secret from asm: service call has been retried 1 time(s): failed to fetch secret arn:aws:secretsmanager:us-east-2:834519512655:secret:scholarchain-course/api-key-wtvIzb from secrets manager: operation error Secrets Manager: GetSecretValue, https response error StatusCode: 400, RequestID: dd45b761-ee0c-4c88-a32b-11e4ef485e1f, ResourceNotFoundException: Secrets Manager can't find the specified secret value for staging label: AWSCURRENT.
+=== worker
+[
+    0,
+    1,
+    [
+        [
+            "PRIMARY",
+            "FAILED",
+            0,
+            3
+        ]
+    ]
+]
+2026-11-17T14:48:39.919000-06:00	(service worker) (deployment ecs-svc/2329643825827912860) deployment failed: tasks failed to start.
+2026-11-17T14:48:35.055000-06:00	(service worker) has started 1 tasks: (task 68840b42859d49a6b642b1b235e9d5c1).
+2026-11-17T14:47:44.300000-06:00	(service worker) has started 1 tasks: (task ec5eb2c0eb8c4949abe73c0f824e33be).
+2026-11-17T14:46:53.493000-06:00	(service worker) has started 1 tasks: (task 9540e7fbca7e4a90855c6f4cba61c932).
+2026-11-17T14:46:02.509000-06:00	(service worker) has started 1 tasks: (task 9a310e9c7df74969b3a757bd9e4cf191).
+2026-11-17T14:38:01.459000-06:00	(service worker) (deployment ecs-svc/9220638174453208731) deployment failed: tasks failed to start.

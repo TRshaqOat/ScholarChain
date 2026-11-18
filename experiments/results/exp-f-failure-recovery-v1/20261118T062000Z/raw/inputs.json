@@ -1,0 +1,17 @@
+{
+  "baseUrl": "http://scholarchain-course-api-347204453.us-east-2.elb.amazonaws.com",
+  "jobQueueUrl": "https://sqs.us-east-2.amazonaws.com/834519512655/scholarchain-course-jobs",
+  "dlqUrl": "https://sqs.us-east-2.amazonaws.com/834519512655/scholarchain-course-jobs-dlq",
+  "workerLogGroup": "/scholarchain/scholarchain-course/ecs/worker",
+  "queryApiLogGroup": "/scholarchain/scholarchain-course/ecs/query-api",
+  "account": "834519512655",
+  "region": "us-east-2",
+  "idempotencyKey": "exp-f-20261118T062002Z",
+  "startedAt": "2026-11-18T06:20:02Z",
+  "bounds": {
+    "dlqWaitMinutes": 22,
+    "jobWaitMinutes": 5,
+    "poisonMessages": 1,
+    "asyncQuestions": 1
+  }
+}

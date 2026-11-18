@@ -1,0 +1,109 @@
+{
+  "schemaVersion": "experiment-run-record-v1",
+  "experimentId": "exp-f-failure-recovery-v1",
+  "commit": "506eddf46f23c7004150b2373403adf49518953a",
+  "manifest": "experiments/manifests/exp-f-failure-recovery-v1.json",
+  "manifestSha256": "99068980a0c04593d148406857f20f19a2214ba1a98226f68251f40e04719966",
+  "limits": {
+    "maxMinutes": 30,
+    "plannedMinutes": 19,
+    "poisonMessages": 1,
+    "asyncQuestions": 1,
+    "postRequests": 3,
+    "haikuCallsExpected": 2,
+    "haikuCallsMax": 4,
+    "haikuCallsPerMinuteCap": 4,
+    "dlqWaitMinutes": 22,
+    "jobWaitMinutes": 5,
+    "queueMaxReceiveCount": 3,
+    "queueVisibilityTimeoutSeconds": 300,
+    "failureInjection": "one SQS send-message of a malformed body to the job queue; nothing else is mutated",
+    "attemptsPerWindow": 1,
+    "exitCodes": "0 all checks passed; 1 a check failed; 2 usage or xtrace on; 3 precondition; 4 send-message failed or timed out (the message may be queued)",
+    "region": "us-east-2",
+    "budgetUsd": 0.1
+  },
+  "command": [
+    "experiments/harness/exp-f-failure-recovery.sh",
+    "--dlq-wait-minutes",
+    "22",
+    "--job-wait-minutes",
+    "5"
+  ],
+  "startedAt": "2026-11-18T06:20:00Z",
+  "endedAt": "2026-11-18T06:35:38Z",
+  "exitCode": 0,
+  "timedOut": false,
+  "account": "834519512655",
+  "region": "us-east-2",
+  "rawResults": "raw/",
+  "stdout": "stdout.txt",
+  "stderr": "stderr.txt",
+  "metricLocations": [
+    {
+      "namespace": "AWS/SQS",
+      "metricName": "ApproximateNumberOfMessagesVisible",
+      "dimensions": {
+        "QueueName": "scholarchain-course-jobs-dlq"
+      },
+      "region": "us-east-2",
+      "source": "CloudWatch"
+    },
+    {
+      "namespace": "AWS/SQS",
+      "metricName": "NumberOfMessagesSent",
+      "dimensions": {
+        "QueueName": "scholarchain-course-jobs"
+      },
+      "region": "us-east-2",
+      "source": "CloudWatch"
+    },
+    {
+      "namespace": "AWS/SQS",
+      "metricName": "NumberOfMessagesReceived",
+      "dimensions": {
+        "QueueName": "scholarchain-course-jobs"
+      },
+      "region": "us-east-2",
+      "source": "CloudWatch"
+    },
+    {
+      "namespace": "AWS/SQS",
+      "metricName": "NumberOfMessagesDeleted",
+      "dimensions": {
+        "QueueName": "scholarchain-course-jobs"
+      },
+      "region": "us-east-2",
+      "source": "CloudWatch"
+    },
+    {
+      "namespace": "AWS/SQS",
+      "metricName": "ApproximateNumberOfMessagesNotVisible",
+      "dimensions": {
+        "QueueName": "scholarchain-course-jobs"
+      },
+      "region": "us-east-2",
+      "source": "CloudWatch"
+    },
+    {
+      "namespace": "AWS/ECS",
+      "metricName": "CPUUtilization",
+      "dimensions": {
+        "ClusterName": "scholarchain-course-runtime",
+        "ServiceName": "worker"
+      },
+      "region": "us-east-2",
+      "source": "CloudWatch"
+    },
+    {
+      "namespace": "AWS/ECS",
+      "metricName": "CPUUtilization",
+      "dimensions": {
+        "ClusterName": "scholarchain-course-runtime",
+        "ServiceName": "query-api"
+      },
+      "region": "us-east-2",
+      "source": "CloudWatch"
+    }
+  ]
+}

@@ -1,0 +1,135 @@
+{
+  "schemaVersion": "experiment-run-record-v1",
+  "experimentId": "exp-d-query-load-v1",
+  "commit": "506eddf46f23c7004150b2373403adf49518953a",
+  "manifest": "experiments/manifests/exp-d-query-load-v1.json",
+  "manifestSha256": "1f1cbf821ef57093b66d2d6a75863a15a4f327051403534a30956ade633fe1a1",
+  "limits": {
+    "maxMinutes": 25,
+    "plannedMinutes": 16,
+    "concurrencyLevels": [
+      1,
+      2,
+      4,
+      8
+    ],
+    "maxConcurrency": 8,
+    "levelSeconds": 180,
+    "pauseSeconds": 30,
+    "postObserveSeconds": 120,
+    "maxRequestsPerLevel": 20000,
+    "requestTimeoutSeconds": 10,
+    "abortErrorRate": 0.05,
+    "abortWindowSeconds": 10,
+    "abortMinRequestsPerKind": 20,
+    "abortConsecutive5xxOrTimeouts": 10,
+    "abortScope": "per request kind (evidence, node, neighbors): a sliding window within each level (a stop event checked by every worker before each request) and the whole level before the next one starts; trips when a kind has at least abortMinRequestsPerKind requests and a non-2xx rate above abortErrorRate, or abortConsecutive5xxOrTimeouts consecutive 5xx or transport errors (code review 4 finding 1)",
+    "preflight": "one GET of each request path before concurrency 1; any non-2xx stops the run (exit 3)",
+    "exitCodes": "0 every level ran; 1 abort rule; 2 usage; 3 precondition or non-2xx preflight; 4 unexpected error",
+    "haikuCalls": 0,
+    "bedrockCalls": 0,
+    "httpMethods": [
+      "GET"
+    ],
+    "targetService": "graph-evidence-api",
+    "graphEvidenceApiMaxTasks": 2,
+    "scaleChanges": "none by the harness; Application Auto Scaling may move graph-evidence-api between 1 and 2 (Terraform service_max_counts)",
+    "region": "us-east-2",
+    "budgetUsd": 0.5
+  },
+  "command": [
+    "load-tests/exp-d-query-load.py",
+    "--levels",
+    "1,2,4,8",
+    "--level-seconds",
+    "180",
+    "--pause-seconds",
+    "30",
+    "--post-observe-seconds",
+    "120",
+    "--abort-error-rate",
+    "0.05",
+    "--abort-window-seconds",
+    "10",
+    "--abort-min-requests",
+    "20",
+    "--abort-consecutive",
+    "10"
+  ],
+  "startedAt": "2026-11-18T06:39:04Z",
+  "endedAt": "2026-11-18T06:54:52Z",
+  "exitCode": 0,
+  "timedOut": false,
+  "account": "834519512655",
+  "region": "us-east-2",
+  "rawResults": "raw/",
+  "stdout": "stdout.txt",
+  "stderr": "stderr.txt",
+  "metricLocations": [
+    {
+      "namespace": "AWS/ECS",
+      "metricName": "CPUUtilization",
+      "dimensions": {
+        "ClusterName": "scholarchain-course-runtime",
+        "ServiceName": "graph-evidence-api"
+      },
+      "region": "us-east-2",
+      "source": "CloudWatch"
+    },
+    {
+      "namespace": "AWS/ECS",
+      "metricName": "MemoryUtilization",
+      "dimensions": {
+        "ClusterName": "scholarchain-course-runtime",
+        "ServiceName": "graph-evidence-api"
+      },
+      "region": "us-east-2",
+      "source": "CloudWatch"
+    },
+    {
+      "namespace": "AWS/ApplicationELB",
+      "metricName": "RequestCount",
+      "dimensions": {
+        "LoadBalancer": "terraform-output:alb_arn_suffix"
+      },
+      "region": "us-east-2",
+      "source": "CloudWatch"
+    },
+    {
+      "namespace": "AWS/ApplicationELB",
+      "metricName": "TargetResponseTime",
+      "dimensions": {
+        "LoadBalancer": "terraform-output:alb_arn_suffix"
+      },
+      "region": "us-east-2",
+      "source": "CloudWatch"
+    },
+    {
+      "namespace": "AWS/ApplicationELB",
+      "metricName": "HTTPCode_Target_5XX_Count",
+      "dimensions": {
+        "LoadBalancer": "terraform-output:alb_arn_suffix"
+      },
+      "region": "us-east-2",
+      "source": "CloudWatch"
+    },
+    {
+      "namespace": "AWS/ApplicationELB",
+      "metricName": "HTTPCode_ELB_5XX_Count",
+      "dimensions": {
+        "LoadBalancer": "terraform-output:alb_arn_suffix"
+      },
+      "region": "us-east-2",
+      "source": "CloudWatch"
+    },
+    {
+      "namespace": "AWS/Neptune",
+      "metricName": "CPUUtilization",
+      "dimensions": {
+        "DBClusterIdentifier": "scholarchain-course-graph"
+      },
+      "region": "us-east-2",
+      "source": "CloudWatch"
+    }
+  ]
+}

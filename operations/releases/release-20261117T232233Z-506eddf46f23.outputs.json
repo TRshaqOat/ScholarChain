@@ -1,0 +1,389 @@
+{
+  "account_id": {
+    "sensitive": false,
+    "type": "string",
+    "value": "834519512655"
+  },
+  "alb_arn_suffix": {
+    "sensitive": false,
+    "type": "string",
+    "value": "app/scholarchain-course-api/b6a5198faaadd0ef"
+  },
+  "alb_dns_name": {
+    "sensitive": false,
+    "type": "string",
+    "value": "scholarchain-course-api-347204453.us-east-2.elb.amazonaws.com"
+  },
+  "api_key_secret_arn": {
+    "sensitive": false,
+    "type": "string",
+    "value": "arn:aws:secretsmanager:us-east-2:834519512655:secret:scholarchain-course/api-key-wtvIzb"
+  },
+  "api_key_secret_name": {
+    "sensitive": false,
+    "type": "string",
+    "value": "scholarchain-course/api-key"
+  },
+  "codebuild_project_name": {
+    "sensitive": false,
+    "type": "string",
+    "value": "scholarchain-course-services-image"
+  },
+  "codebuild_source_prefix": {
+    "sensitive": false,
+    "type": "string",
+    "value": "artifacts/codebuild/source/"
+  },
+  "dashboard_name": {
+    "sensitive": false,
+    "type": "string",
+    "value": "scholarchain-course-runtime"
+  },
+  "data_bucket_name": {
+    "sensitive": false,
+    "type": "string",
+    "value": "scholarchain-course-data-834519512655-us-east-2"
+  },
+  "data_bucket_prefixes": {
+    "sensitive": false,
+    "type": [
+      "object",
+      {
+        "artifacts": "string",
+        "curated": "string",
+        "graph": "string",
+        "logs": "string",
+        "raw": "string",
+        "reports": "string",
+        "runs": "string",
+        "semantic_context": "string",
+        "vectors": "string"
+      }
+    ],
+    "value": {
+      "artifacts": "artifacts/",
+      "curated": "curated/",
+      "graph": "graph/",
+      "logs": "logs/",
+      "raw": "raw/",
+      "reports": "reports/",
+      "runs": "runs/",
+      "semantic_context": "semantic-context/",
+      "vectors": "vectors/"
+    }
+  },
+  "dynamodb_table_names": {
+    "sensitive": false,
+    "type": [
+      "object",
+      {
+        "ArtifactRegistry": "string",
+        "EntityLinkCache": "string",
+        "EvidenceBundle": "string",
+        "QuerySession": "string",
+        "ResearcherMetricCache": "string",
+        "RunLedger": "string",
+        "ServiceState": "string"
+      }
+    ],
+    "value": {
+      "ArtifactRegistry": "scholarchain-course-ArtifactRegistry",
+      "EntityLinkCache": "scholarchain-course-EntityLinkCache",
+      "EvidenceBundle": "scholarchain-course-EvidenceBundle",
+      "QuerySession": "scholarchain-course-QuerySession",
+      "ResearcherMetricCache": "scholarchain-course-ResearcherMetricCache",
+      "RunLedger": "scholarchain-course-RunLedger",
+      "ServiceState": "scholarchain-course-ServiceState"
+    }
+  },
+  "dynamodb_table_prefix": {
+    "sensitive": false,
+    "type": "string",
+    "value": "scholarchain-course-"
+  },
+  "ecr_repository_name": {
+    "sensitive": false,
+    "type": "string",
+    "value": "scholarchain-course-services"
+  },
+  "ecr_repository_url": {
+    "sensitive": false,
+    "type": "string",
+    "value": "834519512655.dkr.ecr.us-east-2.amazonaws.com/scholarchain-course-services"
+  },
+  "ecs_cluster_name": {
+    "sensitive": false,
+    "type": "string",
+    "value": "scholarchain-course-runtime"
+  },
+  "ecs_service_names": {
+    "sensitive": false,
+    "type": [
+      "object",
+      {
+        "graph-evidence-api": "string",
+        "query-api": "string",
+        "worker": "string"
+      }
+    ],
+    "value": {
+      "graph-evidence-api": "graph-evidence-api",
+      "query-api": "query-api",
+      "worker": "worker"
+    }
+  },
+  "ecs_task_definition_arns": {
+    "sensitive": false,
+    "type": [
+      "object",
+      {
+        "graph-evidence-api": "string",
+        "neptune-loader": "string",
+        "query-api": "string",
+        "worker": "string"
+      }
+    ],
+    "value": {
+      "graph-evidence-api": "arn:aws:ecs:us-east-2:834519512655:task-definition/scholarchain-course-graph-evidence-api:1",
+      "neptune-loader": "arn:aws:ecs:us-east-2:834519512655:task-definition/scholarchain-course-neptune-loader:1",
+      "query-api": "arn:aws:ecs:us-east-2:834519512655:task-definition/scholarchain-course-query-api:1",
+      "worker": "arn:aws:ecs:us-east-2:834519512655:task-definition/scholarchain-course-worker:1"
+    }
+  },
+  "ecs_task_definition_families": {
+    "sensitive": false,
+    "type": [
+      "object",
+      {
+        "graph-evidence-api": "string",
+        "neptune-loader": "string",
+        "query-api": "string",
+        "worker": "string"
+      }
+    ],
+    "value": {
+      "graph-evidence-api": "scholarchain-course-graph-evidence-api",
+      "neptune-loader": "scholarchain-course-neptune-loader",
+      "query-api": "scholarchain-course-query-api",
+      "worker": "scholarchain-course-worker"
+    }
+  },
+  "emr": {
+    "sensitive": false,
+    "type": [
+      "object",
+      {
+        "artifacts_prefix": "string",
+        "core_instance_count": "number",
+        "core_security_group_id": "string",
+        "instance_profile": "string",
+        "instance_type": "string",
+        "log_uri": "string",
+        "primary_instance_count": "number",
+        "primary_security_group_id": "string",
+        "release_label": "string",
+        "service_role": "string",
+        "subnet_id": "string"
+      }
+    ],
+    "value": {
+      "artifacts_prefix": "artifacts/jobs/",
+      "core_instance_count": 2,
+      "core_security_group_id": "sg-045cdc6a597240486",
+      "instance_profile": "scholarchain-course-emr-instance",
+      "instance_type": "m6g.xlarge",
+      "log_uri": "s3://scholarchain-course-data-834519512655-us-east-2/logs/emr/",
+      "primary_instance_count": 1,
+      "primary_security_group_id": "sg-06850b56e702003b3",
+      "release_label": "emr-spark-8.0.0",
+      "service_role": "scholarchain-course-emr-service",
+      "subnet_id": "subnet-01ba5443d067a76f4"
+    }
+  },
+  "execution_role_arns": {
+    "sensitive": false,
+    "type": [
+      "object",
+      {
+        "loader": "string",
+        "services": "string"
+      }
+    ],
+    "value": {
+      "loader": "arn:aws:iam::834519512655:role/scholarchain-course-ecs-exec-loader",
+      "services": "arn:aws:iam::834519512655:role/scholarchain-course-ecs-exec-services"
+    }
+  },
+  "job_dlq_url": {
+    "sensitive": false,
+    "type": "string",
+    "value": "https://sqs.us-east-2.amazonaws.com/834519512655/scholarchain-course-jobs-dlq"
+  },
+  "job_queue_url": {
+    "sensitive": false,
+    "type": "string",
+    "value": "https://sqs.us-east-2.amazonaws.com/834519512655/scholarchain-course-jobs"
+  },
+  "log_group_names": {
+    "sensitive": false,
+    "type": [
+      "object",
+      {
+        "codebuild": "string",
+        "graph-evidence-api": "string",
+        "neptune-loader": "string",
+        "query-api": "string",
+        "worker": "string"
+      }
+    ],
+    "value": {
+      "codebuild": "/scholarchain/scholarchain-course/codebuild/services-image",
+      "graph-evidence-api": "/scholarchain/scholarchain-course/ecs/graph-evidence-api",
+      "neptune-loader": "/scholarchain/scholarchain-course/ecs/neptune-loader",
+      "query-api": "/scholarchain/scholarchain-course/ecs/query-api",
+      "worker": "/scholarchain/scholarchain-course/ecs/worker"
+    }
+  },
+  "name_prefix": {
+    "sensitive": false,
+    "type": "string",
+    "value": "scholarchain-course"
+  },
+  "neptune_cluster_id": {
+    "sensitive": false,
+    "type": "string",
+    "value": "scholarchain-course-graph"
+  },
+  "neptune_endpoint": {
+    "sensitive": false,
+    "type": "string",
+    "value": "scholarchain-course-graph.cluster-c5cckicqu7i7.us-east-2.neptune.amazonaws.com"
+  },
+  "neptune_loader_role_arn": {
+    "sensitive": false,
+    "type": "string",
+    "value": "arn:aws:iam::834519512655:role/scholarchain-course-neptune-bulk-loader"
+  },
+  "neptune_port": {
+    "sensitive": false,
+    "type": "number",
+    "value": 8182
+  },
+  "private_subnet_ids": {
+    "sensitive": false,
+    "type": [
+      "tuple",
+      [
+        "string",
+        "string"
+      ]
+    ],
+    "value": [
+      "subnet-08e8a7e37da4af95f",
+      "subnet-0d62d88d3791db7bc"
+    ]
+  },
+  "public_subnet_ids": {
+    "sensitive": false,
+    "type": [
+      "tuple",
+      [
+        "string",
+        "string"
+      ]
+    ],
+    "value": [
+      "subnet-01ba5443d067a76f4",
+      "subnet-0e94ae0d8ed9a3c09"
+    ]
+  },
+  "region": {
+    "sensitive": false,
+    "type": "string",
+    "value": "us-east-2"
+  },
+  "runtime_enabled": {
+    "sensitive": false,
+    "type": "bool",
+    "value": true
+  },
+  "runtime_environment": {
+    "sensitive": false,
+    "type": [
+      "map",
+      "string"
+    ],
+    "value": {
+      "SCHOLARCHAIN_ADJUDICATION_MODEL_ID": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+      "SCHOLARCHAIN_AWS_ACCOUNT_ID": "834519512655",
+      "SCHOLARCHAIN_AWS_REGION": "us-east-2",
+      "SCHOLARCHAIN_BUCKET": "scholarchain-course-data-834519512655-us-east-2",
+      "SCHOLARCHAIN_DYNAMODB_TABLE_PREFIX": "scholarchain-course-",
+      "SCHOLARCHAIN_EMBEDDING_MODEL_ID": "amazon.titan-embed-text-v2:0",
+      "SCHOLARCHAIN_ENVIRONMENT": "course",
+      "SCHOLARCHAIN_JOB_DLQ_URL": "https://sqs.us-east-2.amazonaws.com/834519512655/scholarchain-course-jobs-dlq",
+      "SCHOLARCHAIN_JOB_MAX_RECEIVE_COUNT": "3",
+      "SCHOLARCHAIN_JOB_QUEUE_URL": "https://sqs.us-east-2.amazonaws.com/834519512655/scholarchain-course-jobs",
+      "SCHOLARCHAIN_LLM_REQUESTS_PER_MINUTE": "4",
+      "SCHOLARCHAIN_NEPTUNE_ENDPOINT": "scholarchain-course-graph.cluster-c5cckicqu7i7.us-east-2.neptune.amazonaws.com",
+      "SCHOLARCHAIN_NEPTUNE_LOADER_ROLE_ARN": "arn:aws:iam::834519512655:role/scholarchain-course-neptune-bulk-loader",
+      "SCHOLARCHAIN_NEPTUNE_PORT": "8182",
+      "SCHOLARCHAIN_PLANNER_MODEL_ID": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+      "SCHOLARCHAIN_PROMPTS_DIR": "/opt/docker/prompts",
+      "SCHOLARCHAIN_STUB_LLM": "false",
+      "SCHOLARCHAIN_SYNTHESIS_MODEL_ID": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+      "SCHOLARCHAIN_VECTOR_BUCKET": "scholarchain-course-vectors-834519512655",
+      "SCHOLARCHAIN_VERIFICATION_MODEL_ID": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+    }
+  },
+  "security_group_ids": {
+    "sensitive": false,
+    "type": [
+      "object",
+      {
+        "alb": "string",
+        "graph_evidence_api": "string",
+        "loader": "string",
+        "neptune": "string",
+        "query_api": "string",
+        "worker": "string"
+      }
+    ],
+    "value": {
+      "alb": "sg-09a4d5d7f225bf6b9",
+      "graph_evidence_api": "sg-07ef1e5f9d9cb271f",
+      "loader": "sg-0c222befeda01d2d9",
+      "neptune": "sg-068d12a7c4381e218",
+      "query_api": "sg-0e330f779866fa224",
+      "worker": "sg-09251f82cf7ead7c9"
+    }
+  },
+  "task_role_arns": {
+    "sensitive": false,
+    "type": [
+      "object",
+      {
+        "graph-evidence-api": "string",
+        "neptune-loader": "string",
+        "query-api": "string",
+        "worker": "string"
+      }
+    ],
+    "value": {
+      "graph-evidence-api": "arn:aws:iam::834519512655:role/scholarchain-course-task-graph-evidence-api",
+      "neptune-loader": "arn:aws:iam::834519512655:role/scholarchain-course-task-neptune-loader",
+      "query-api": "arn:aws:iam::834519512655:role/scholarchain-course-task-query-api",
+      "worker": "arn:aws:iam::834519512655:role/scholarchain-course-task-worker"
+    }
+  },
+  "vector_bucket_name": {
+    "sensitive": false,
+    "type": "string",
+    "value": "scholarchain-course-vectors-834519512655"
+  },
+  "vpc_id": {
+    "sensitive": false,
+    "type": "string",
+    "value": "vpc-0fd8e31fa7b48c139"
+  }
+}

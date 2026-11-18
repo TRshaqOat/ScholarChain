@@ -1,0 +1,3 @@
+==> OK API key read (not printed)
+    preflight requests=6 non2xx=1
+==> EXP-D levels=0 aborted=preflight: 1 of 6 paths returned non-2xx error=None exit=3

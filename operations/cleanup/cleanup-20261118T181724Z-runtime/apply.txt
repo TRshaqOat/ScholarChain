@@ -1,0 +1,82 @@
+[0m[1mmodule.neptune[0].aws_neptune_parameter_group.this: Destroying... [id=scholarchain-course-neptune-instance][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster.this: Destroying... [id=scholarchain-course-graph][0m[0m
+[0m[1mmodule.data.aws_s3_bucket_server_side_encryption_configuration.data: Modifying... [id=scholarchain-course-data-834519512655-us-east-2][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_parameter_group.this: Destruction complete after 1s[0m
+[0m[1mmodule.data.aws_s3_bucket_server_side_encryption_configuration.data: Modifications complete after 1s [id=scholarchain-course-data-834519512655-us-east-2][0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster.this: Still destroying... [id=scholarchain-course-graph, 00m10s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster.this: Still destroying... [id=scholarchain-course-graph, 00m20s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster.this: Still destroying... [id=scholarchain-course-graph, 00m30s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster.this: Still destroying... [id=scholarchain-course-graph, 00m40s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster.this: Destruction complete after 41s[0m
+[0m[1mmodule.neptune[0].aws_neptune_subnet_group.this: Destroying... [id=scholarchain-course-neptune][0m[0m
+[0m[1mmodule.network.aws_security_group.alb[0]: Destroying... [id=sg-09a4d5d7f225bf6b9][0m[0m
+[0m[1mmodule.network.aws_security_group.graph_evidence_api[0]: Destroying... [id=sg-07ef1e5f9d9cb271f][0m[0m
+[0m[1mmodule.network.aws_security_group.worker[0]: Destroying... [id=sg-09251f82cf7ead7c9][0m[0m
+[0m[1mmodule.network.aws_security_group.loader[0]: Destroying... [id=sg-0c222befeda01d2d9][0m[0m
+[0m[1mmodule.neptune[0].aws_iam_role.bulk_loader: Destroying... [id=scholarchain-course-neptune-bulk-loader][0m[0m
+[0m[1mmodule.network.aws_security_group.query_api[0]: Destroying... [id=sg-0e330f779866fa224][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_parameter_group.this: Destroying... [id=scholarchain-course-neptune-cluster][0m[0m
+[0m[1mmodule.network.aws_security_group.neptune[0]: Destroying... [id=sg-068d12a7c4381e218][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_subnet_group.this: Destruction complete after 0s[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_parameter_group.this: Destruction complete after 0s[0m
+[0m[1mmodule.neptune[0].aws_iam_role.bulk_loader: Destruction complete after 1s[0m
+[0m[1mmodule.network.aws_security_group.graph_evidence_api[0]: Destruction complete after 1s[0m
+[0m[1mmodule.network.aws_security_group.loader[0]: Destruction complete after 1s[0m
+[0m[1mmodule.network.aws_security_group.query_api[0]: Destruction complete after 1s[0m
+[0m[1mmodule.network.aws_security_group.neptune[0]: Destruction complete after 1s[0m
+[0m[1mmodule.network.aws_security_group.alb[0]: Destruction complete after 1s[0m
+[0m[1mmodule.network.aws_security_group.worker[0]: Destruction complete after 1s[0m
+[0m[1m[32m
+Apply complete! Resources: 0 added, 1 changed, 11 destroyed.[0m
+[0m[1m[32m
+Outputs:
+
+[0maccount_id = "834519512655"
+codebuild_project_name = "scholarchain-course-services-image"
+codebuild_source_prefix = "artifacts/codebuild/source/"
+data_bucket_name = "scholarchain-course-data-834519512655-us-east-2"
+data_bucket_prefixes = {
+  "artifacts" = "artifacts/"
+  "curated" = "curated/"
+  "graph" = "graph/"
+  "logs" = "logs/"
+  "raw" = "raw/"
+  "reports" = "reports/"
+  "runs" = "runs/"
+  "semantic_context" = "semantic-context/"
+  "vectors" = "vectors/"
+}
+ecr_repository_name = "scholarchain-course-services"
+ecr_repository_url = "834519512655.dkr.ecr.us-east-2.amazonaws.com/scholarchain-course-services"
+emr = {
+  "artifacts_prefix" = "artifacts/jobs/"
+  "core_instance_count" = 2
+  "core_security_group_id" = "sg-045cdc6a597240486"
+  "instance_profile" = "scholarchain-course-emr-instance"
+  "instance_type" = "m6g.xlarge"
+  "log_uri" = "s3://scholarchain-course-data-834519512655-us-east-2/logs/emr/"
+  "primary_instance_count" = 1
+  "primary_security_group_id" = "sg-06850b56e702003b3"
+  "release_label" = "emr-spark-8.0.0"
+  "service_role" = "scholarchain-course-emr-service"
+  "subnet_id" = "subnet-01ba5443d067a76f4"
+}
+log_group_names = {
+  "codebuild" = "/scholarchain/scholarchain-course/codebuild/services-image"
+  "graph-evidence-api" = "/scholarchain/scholarchain-course/ecs/graph-evidence-api"
+  "neptune-loader" = "/scholarchain/scholarchain-course/ecs/neptune-loader"
+  "query-api" = "/scholarchain/scholarchain-course/ecs/query-api"
+  "worker" = "/scholarchain/scholarchain-course/ecs/worker"
+}
+name_prefix = "scholarchain-course"
+private_subnet_ids = [
+  "subnet-08e8a7e37da4af95f",
+  "subnet-0d62d88d3791db7bc",
+]
+public_subnet_ids = [
+  "subnet-01ba5443d067a76f4",
+  "subnet-0e94ae0d8ed9a3c09",
+]
+region = "us-east-2"
+runtime_enabled = false
+vpc_id = "vpc-0fd8e31fa7b48c139"

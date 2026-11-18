@@ -1,0 +1,25 @@
+135,137d134
+< loader s3-store-conversion "storage/runMain scholarchain.storage.cli.LoadS3Cli --manifest $M_STORE --root $ROOT $LIVE"
+< loader s3-embed "storage/runMain scholarchain.storage.cli.LoadS3Cli --manifest $M_EMBED --root $VROOT $LIVE"
+< loader s3-window-summary "storage/runMain scholarchain.storage.cli.LoadS3Cli --manifest $M_WS --root $WS_ROOT $LIVE"
+169,188d165
+< step "neptune"
+< T0=$SECONDS
+< run_loader_task start --live --stage-from-bucket --dir "/tmp/stores/s3/graph/neptune/snapshot=$D/run=$STORE_RUN" --out /tmp/stores
+< LOAD_ID="$(sed -n 's/.*started load \([^ ;]*\).*/\1/p' "$LAST_LOG" | head -1)"
+< [ -n "$LOAD_ID" ] || die "no 'started load <id>' line in $LAST_LOG" 1
+< printf '==> NEPTUNE load=%s\n' "$LOAD_ID"
+< NEPTUNE_STATUS=""
+< _load_done() {
+<   run_loader_task status --live --status "$LOAD_ID"
+<   NEPTUNE_STATUS="$(sed -n 's/^load [^ ]* status \([A-Z_]*\).*/\1/p' "$LAST_LOG" | head -1)"
+<   info "load $LOAD_ID $NEPTUNE_STATUS"
+<   case "$NEPTUNE_STATUS" in
+<     LOAD_COMPLETED) return 0 ;;
+<     LOAD_NOT_STARTED | LOAD_IN_PROGRESS | LOAD_IN_QUEUE | "") sleep 120; return 1 ;;
+<     *) die "Neptune load $LOAD_ID ended $NEPTUNE_STATUS; log $LAST_LOG" 1 ;;
+<   esac
+< }
+< wait_until "Neptune load $LOAD_ID" $((NEPTUNE_MIN * 60)) 1 _load_done
+< note neptune "$NEPTUNE_STATUS" "$((SECONDS - T0))" "$(basename "$LAST_LOG")"
+< ok "neptune load $LOAD_ID completed"

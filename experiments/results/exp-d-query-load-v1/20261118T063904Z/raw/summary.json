@@ -1,0 +1,412 @@
+{
+  "schemaVersion": "exp-d-summary-v1",
+  "startedAt": "2026-11-18T06:39:07.181Z",
+  "abortRule": {
+    "scope": "per request kind (evidence, node, neighbors); sliding window within a level, whole level between levels; preflight GET of each path before the first level",
+    "errorRateAbove": 0.05,
+    "windowSeconds": 10.0,
+    "minRequestsPerKind": 20,
+    "consecutive5xxOrTransport": 10
+  },
+  "preflight": {
+    "requests": 6,
+    "non2xx": 0,
+    "raw": "preflight.json"
+  },
+  "levels": [
+    {
+      "concurrency": 1,
+      "startedAt": "2026-11-18T06:39:09.480Z",
+      "endedAt": "2026-11-18T06:42:09.498Z",
+      "seconds": 180,
+      "elapsedSeconds": 180.019,
+      "throughputPerSecond": 8.19,
+      "requestCapReached": false,
+      "stoppedByAbortRule": false,
+      "requests": 1475,
+      "errors": 0,
+      "errorRate": 0.0,
+      "statusCounts": {
+        "200": 1475
+      },
+      "maxConsecutive5xxOrTransport": 0,
+      "latencyMsAll": {
+        "p50": 87.5,
+        "p95": 281.0,
+        "p99": 427.9
+      },
+      "latencyMs2xx": {
+        "p50": 87.5,
+        "p95": 281.0,
+        "p99": 427.9
+      },
+      "byKind": {
+        "evidence": {
+          "requests": 492,
+          "errors": 0,
+          "errorRate": 0.0,
+          "statusCounts": {
+            "200": 492
+          },
+          "maxConsecutive5xxOrTransport": 0,
+          "latencyMsAll": {
+            "p50": 59.0,
+            "p95": 92.3,
+            "p99": 102.8
+          },
+          "latencyMs2xx": {
+            "p50": 59.0,
+            "p95": 92.3,
+            "p99": 102.8
+          }
+        },
+        "neighbors": {
+          "requests": 491,
+          "errors": 0,
+          "errorRate": 0.0,
+          "statusCounts": {
+            "200": 491
+          },
+          "maxConsecutive5xxOrTransport": 0,
+          "latencyMsAll": {
+            "p50": 216.3,
+            "p95": 362.6,
+            "p99": 537.0
+          },
+          "latencyMs2xx": {
+            "p50": 216.3,
+            "p95": 362.6,
+            "p99": 537.0
+          }
+        },
+        "node": {
+          "requests": 492,
+          "errors": 0,
+          "errorRate": 0.0,
+          "statusCounts": {
+            "200": 492
+          },
+          "maxConsecutive5xxOrTransport": 0,
+          "latencyMsAll": {
+            "p50": 73.2,
+            "p95": 107.8,
+            "p99": 133.7
+          },
+          "latencyMs2xx": {
+            "p50": 73.2,
+            "p95": 107.8,
+            "p99": 133.7
+          }
+        }
+      },
+      "ecsBefore": {
+        "desired": 1,
+        "running": 1,
+        "pending": 0
+      },
+      "ecsAfter": {
+        "desired": 1,
+        "running": 1,
+        "pending": 0
+      }
+    },
+    {
+      "concurrency": 2,
+      "startedAt": "2026-11-18T06:42:42.203Z",
+      "endedAt": "2026-11-18T06:45:42.292Z",
+      "seconds": 180,
+      "elapsedSeconds": 180.088,
+      "throughputPerSecond": 16.5,
+      "requestCapReached": false,
+      "stoppedByAbortRule": false,
+      "requests": 2972,
+      "errors": 0,
+      "errorRate": 0.0,
+      "statusCounts": {
+        "200": 2972
+      },
+      "maxConsecutive5xxOrTransport": 0,
+      "latencyMsAll": {
+        "p50": 84.9,
+        "p95": 295.5,
+        "p99": 462.9
+      },
+      "latencyMs2xx": {
+        "p50": 84.9,
+        "p95": 295.5,
+        "p99": 462.9
+      },
+      "byKind": {
+        "evidence": {
+          "requests": 991,
+          "errors": 0,
+          "errorRate": 0.0,
+          "statusCounts": {
+            "200": 991
+          },
+          "maxConsecutive5xxOrTransport": 0,
+          "latencyMsAll": {
+            "p50": 62.3,
+            "p95": 91.5,
+            "p99": 113.0
+          },
+          "latencyMs2xx": {
+            "p50": 62.3,
+            "p95": 91.5,
+            "p99": 113.0
+          }
+        },
+        "neighbors": {
+          "requests": 991,
+          "errors": 0,
+          "errorRate": 0.0,
+          "statusCounts": {
+            "200": 991
+          },
+          "maxConsecutive5xxOrTransport": 0,
+          "latencyMsAll": {
+            "p50": 217.0,
+            "p95": 405.5,
+            "p99": 565.7
+          },
+          "latencyMs2xx": {
+            "p50": 217.0,
+            "p95": 405.5,
+            "p99": 565.7
+          }
+        },
+        "node": {
+          "requests": 990,
+          "errors": 0,
+          "errorRate": 0.0,
+          "statusCounts": {
+            "200": 990
+          },
+          "maxConsecutive5xxOrTransport": 0,
+          "latencyMsAll": {
+            "p50": 79.2,
+            "p95": 103.5,
+            "p99": 135.5
+          },
+          "latencyMs2xx": {
+            "p50": 79.2,
+            "p95": 103.5,
+            "p99": 135.5
+          }
+        }
+      },
+      "ecsBefore": {
+        "desired": 1,
+        "running": 1,
+        "pending": 0
+      },
+      "ecsAfter": {
+        "desired": 1,
+        "running": 1,
+        "pending": 0
+      }
+    },
+    {
+      "concurrency": 4,
+      "startedAt": "2026-11-18T06:46:14.465Z",
+      "endedAt": "2026-11-18T06:49:14.536Z",
+      "seconds": 180,
+      "elapsedSeconds": 180.071,
+      "throughputPerSecond": 25.6,
+      "requestCapReached": false,
+      "stoppedByAbortRule": false,
+      "requests": 4610,
+      "errors": 0,
+      "errorRate": 0.0,
+      "statusCounts": {
+        "200": 4610
+      },
+      "maxConsecutive5xxOrTransport": 0,
+      "latencyMsAll": {
+        "p50": 92.7,
+        "p95": 446.5,
+        "p99": 590.6
+      },
+      "latencyMs2xx": {
+        "p50": 92.7,
+        "p95": 446.5,
+        "p99": 590.6
+      },
+      "byKind": {
+        "evidence": {
+          "requests": 1536,
+          "errors": 0,
+          "errorRate": 0.0,
+          "statusCounts": {
+            "200": 1536
+          },
+          "maxConsecutive5xxOrTransport": 0,
+          "latencyMsAll": {
+            "p50": 62.9,
+            "p95": 114.5,
+            "p99": 172.4
+          },
+          "latencyMs2xx": {
+            "p50": 62.9,
+            "p95": 114.5,
+            "p99": 172.4
+          }
+        },
+        "neighbors": {
+          "requests": 1537,
+          "errors": 0,
+          "errorRate": 0.0,
+          "statusCounts": {
+            "200": 1537
+          },
+          "maxConsecutive5xxOrTransport": 0,
+          "latencyMsAll": {
+            "p50": 289.4,
+            "p95": 554.2,
+            "p99": 702.5
+          },
+          "latencyMs2xx": {
+            "p50": 289.4,
+            "p95": 554.2,
+            "p99": 702.5
+          }
+        },
+        "node": {
+          "requests": 1537,
+          "errors": 0,
+          "errorRate": 0.0,
+          "statusCounts": {
+            "200": 1537
+          },
+          "maxConsecutive5xxOrTransport": 0,
+          "latencyMsAll": {
+            "p50": 81.5,
+            "p95": 131.0,
+            "p99": 196.6
+          },
+          "latencyMs2xx": {
+            "p50": 81.5,
+            "p95": 131.0,
+            "p99": 196.6
+          }
+        }
+      },
+      "ecsBefore": {
+        "desired": 1,
+        "running": 1,
+        "pending": 0
+      },
+      "ecsAfter": {
+        "desired": 1,
+        "running": 1,
+        "pending": 0
+      }
+    },
+    {
+      "concurrency": 8,
+      "startedAt": "2026-11-18T06:49:46.583Z",
+      "endedAt": "2026-11-18T06:52:46.846Z",
+      "seconds": 180,
+      "elapsedSeconds": 180.263,
+      "throughputPerSecond": 35.72,
+      "requestCapReached": false,
+      "stoppedByAbortRule": false,
+      "requests": 6439,
+      "errors": 0,
+      "errorRate": 0.0,
+      "statusCounts": {
+        "200": 6439
+      },
+      "maxConsecutive5xxOrTransport": 0,
+      "latencyMsAll": {
+        "p50": 119.8,
+        "p95": 673.5,
+        "p99": 914.3
+      },
+      "latencyMs2xx": {
+        "p50": 119.8,
+        "p95": 673.5,
+        "p99": 914.3
+      },
+      "byKind": {
+        "evidence": {
+          "requests": 2147,
+          "errors": 0,
+          "errorRate": 0.0,
+          "statusCounts": {
+            "200": 2147
+          },
+          "maxConsecutive5xxOrTransport": 0,
+          "latencyMsAll": {
+            "p50": 70.2,
+            "p95": 122.6,
+            "p99": 199.9
+          },
+          "latencyMs2xx": {
+            "p50": 70.2,
+            "p95": 122.6,
+            "p99": 199.9
+          }
+        },
+        "neighbors": {
+          "requests": 2146,
+          "errors": 0,
+          "errorRate": 0.0,
+          "statusCounts": {
+            "200": 2146
+          },
+          "maxConsecutive5xxOrTransport": 0,
+          "latencyMsAll": {
+            "p50": 435.6,
+            "p95": 849.2,
+            "p99": 1072.7
+          },
+          "latencyMs2xx": {
+            "p50": 435.6,
+            "p95": 849.2,
+            "p99": 1072.7
+          }
+        },
+        "node": {
+          "requests": 2146,
+          "errors": 0,
+          "errorRate": 0.0,
+          "statusCounts": {
+            "200": 2146
+          },
+          "maxConsecutive5xxOrTransport": 0,
+          "latencyMsAll": {
+            "p50": 113.2,
+            "p95": 266.4,
+            "p99": 384.0
+          },
+          "latencyMs2xx": {
+            "p50": 113.2,
+            "p95": 266.4,
+            "p99": 384.0
+          }
+        }
+      },
+      "ecsBefore": {
+        "desired": 1,
+        "running": 1,
+        "pending": 0
+      },
+      "ecsAfter": {
+        "desired": 1,
+        "running": 1,
+        "pending": 0
+      }
+    }
+  ],
+  "aborted": null,
+  "abortedAt": null,
+  "abortWindowCounts": null,
+  "error": null,
+  "ecsPostObserve": {
+    "desired": 1,
+    "running": 1,
+    "pending": 0
+  },
+  "endedAt": "2026-11-18T06:54:49.876Z"
+}

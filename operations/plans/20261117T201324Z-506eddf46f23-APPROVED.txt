@@ -1,0 +1,7 @@
+Plan: scratch/plans/20261117T201324Z-506eddf46f23/plan.tfplan
+plan.tfplan sha256: ba816190fb85a236d10641c531980af10456bd1ea8b9a0400a6a81428f0c2ea0
+HEAD: 506eddf46f23c7004150b2373403adf49518953a
+Counts: 89 add, 1 change, 0 destroy (the change is accepted by ruling 38)
+runtime_enabled: true; TF_VAR_alarm_email empty (ruling 27)
+Package record: operations/releases/package-deef29516bf395ac2b551beb93710b6a48a937a8.json
+Approved by Achyut Patel at 2026-11-17T20:30:45Z

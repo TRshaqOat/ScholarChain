@@ -1,0 +1,27 @@
+{
+  "schemaVersion": "store-load-record-v1",
+  "finishedAt": "2026-11-18T01:01:48Z",
+  "account": "834519512655",
+  "region": "us-east-2",
+  "commit": "506eddf46f23c7004150b2373403adf49518953a",
+  "snapshot": "2026-10-03",
+  "storeRun": "run-1d6a86491812ff94887270c1ab885e69",
+  "vectorsRun": "run-b28edbd40f932f0342c05d5b6f57b46c",
+  "windowSummaryRun": "run-6fbad498beb0d8f570df67665fb97544",
+  "neptuneLoadId": "153fcdc9-00a3-40d8-8dd4-204dc9a7a25c",
+  "steps": [
+    {
+      "step": "dynamodb",
+      "status": "ok",
+      "seconds": 5539,
+      "log": "dynamodb.txt"
+    },
+    {
+      "step": "vectors",
+      "status": "ok",
+      "seconds": 86,
+      "log": "vectors.txt"
+    }
+  ],
+  "counts": "printed by each loader; see the per-step logs in this directory"
+}

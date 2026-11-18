@@ -1,0 +1,6 @@
+609 objects checked: {'OK': 607, 'ERROR': 2}
+ERROR curated/coauthor-evidence/snapshot=2026-10-03/run=run-1d6a86491812ff94887270c1ab885e69/window=2000-2014/cae-16b2f1007e792c20de8132ca9b2d58b3.json aws: [ERROR]: An error occurred (429) when calling the CreateOAuth2Token operation: Rate exceeded.
+ERROR curated/coauthor-evidence/snapshot=2026-10-03/run=run-1d6a86491812ff94887270c1ab885e69/window=2000-2014/cae-177202bd529d54078b9598c986b2490d.json aws: [ERROR]: An error occurred (429) when calling the CreateOAuth2Token operation: Rate exceeded.
+--- recheck of the 2 keys that hit the login-token rate limit (sequential)
+OK curated/coauthor-evidence/snapshot=2026-10-03/run=run-1d6a86491812ff94887270c1ab885e69/window=2000-2014/cae-16b2f1007e792c20de8132ca9b2d58b3.json
+OK curated/coauthor-evidence/snapshot=2026-10-03/run=run-1d6a86491812ff94887270c1ab885e69/window=2000-2014/cae-177202bd529d54078b9598c986b2490d.json

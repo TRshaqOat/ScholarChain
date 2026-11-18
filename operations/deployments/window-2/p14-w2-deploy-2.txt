@@ -1,0 +1,31 @@
+    plan file /Users/achyutpatel/Developer/Cloud/ScholarChain/scratch/plans/20261117T201324Z-506eddf46f23/plan.tfplan
+==> STEP approval
+==> OK plan checksum approved: ba816190fb85a236d10641c531980af10456bd1ea8b9a0400a6a81428f0c2ea0
+==> STEP clean-tree
+==> OK clean-tree at 506eddf46f23c7004150b2373403adf49518953a
+==> STEP target
+==> TARGET account=834519512655 region=us-east-2 profile=scholarchain-sdk
+==> STEP apply
+    SKIPPED (--resume)
+==> STEP terraform-outputs
+==> OK outputs for account 834519512655
+==> STEP secret-value
+==> OK secret has a version (value not read)
+==> STEP force-new-deployment
+query-api
+graph-evidence-api
+worker
+==> STEP wait-stable
+    query-api deployments/rollout/running/desired: 2	IN_PROGRESS	0	1
+    query-api deployments/rollout/running/desired: 2	IN_PROGRESS	0	1
+    query-api deployments/rollout/running/desired: 1	IN_PROGRESS	0	1
+    query-api deployments/rollout/running/desired: 1	IN_PROGRESS	0	1
+    query-api deployments/rollout/running/desired: 1	IN_PROGRESS	0	1
+    query-api deployments/rollout/running/desired: 1	IN_PROGRESS	0	1
+    query-api deployments/rollout/running/desired: 1	IN_PROGRESS	0	1
+    query-api deployments/rollout/running/desired: 1	IN_PROGRESS	0	1
+    query-api deployments/rollout/running/desired: 1	IN_PROGRESS	0	1
+    query-api deployments/rollout/running/desired: 1	IN_PROGRESS	0	1
+    query-api deployments/rollout/running/desired: 1	IN_PROGRESS	0	1
+    query-api deployments/rollout/running/desired: 1	FAILED	0	1
+==> FAIL query-api deployment FAILED (the circuit breaker rolls it back); see the ECS service events (exit 1)

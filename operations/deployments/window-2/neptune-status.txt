@@ -1,0 +1,49 @@
+load 153fcdc9-00a3-40d8-8dd4-204dc9a7a25c status LOAD_IN_PROGRESS records 1403902 duplicates 0
+load 153fcdc9-00a3-40d8-8dd4-204dc9a7a25c status LOAD_CANCELLED_DUE_TO_ERRORS records 5059443 duplicates 0
+resize up start 2026-11-18T02:53:19Z
+02:53:21 db.t4g.medium available
+02:53:51 db.t4g.medium modifying
+02:54:22 db.t4g.medium modifying
+02:54:53 db.t4g.medium modifying
+02:55:23 db.t4g.medium modifying
+02:55:54 db.t4g.medium modifying
+02:56:25 db.t4g.medium modifying
+02:56:55 db.t4g.medium modifying
+02:57:26 db.t4g.medium modifying
+02:57:57 db.t4g.medium modifying
+02:58:27 db.t4g.medium modifying
+02:58:58 db.t4g.medium modifying
+02:59:29 db.t4g.medium modifying
+02:59:59 db.t4g.medium modifying
+03:00:30 db.t4g.medium modifying
+03:01:01 db.t4g.medium modifying
+03:01:31 db.t4g.medium modifying
+03:02:02 db.t4g.medium modifying
+03:02:33 db.t4g.medium modifying
+03:03:03 db.r6g.large modifying
+03:03:34 db.r6g.large modifying
+03:04:05 db.r6g.large available
+03:11:42Z start task arn:aws:ecs:us-east-2:834519512655:task/scholarchain-course-runtime/4fc09f51f71043868565fe50a647618f
+started load 08a704ef-ce9c-4bc6-93c9-ee0a48072fdb; check it with --live --status 08a704ef-ce9c-4bc6-93c9-ee0a48072fdb
+04:59:47Z load 08a704ef-ce9c-4bc6-93c9-ee0a48072fdb status LOAD_COMPLETED records 29054998 duplicates 0
+resize down start 2026-11-18T05:00:15Z
+05:00:17 db.r6g.large available
+05:00:48 db.r6g.large modifying
+05:01:19 db.r6g.large modifying
+05:01:50 db.r6g.large modifying
+05:02:20 db.r6g.large modifying
+05:02:51 db.r6g.large modifying
+05:03:22 db.r6g.large modifying
+05:03:52 db.r6g.large modifying
+05:04:23 db.r6g.large modifying
+05:04:54 db.r6g.large modifying
+05:05:24 db.r6g.large modifying
+05:05:55 db.r6g.large modifying
+05:06:26 db.r6g.large modifying
+05:06:56 db.r6g.large modifying
+05:07:27 db.r6g.large modifying
+05:07:58 db.r6g.large modifying
+05:08:29 db.r6g.large modifying
+05:09:00 db.t4g.medium modifying
+05:09:30 db.t4g.medium modifying
+05:10:01 db.t4g.medium available

@@ -1,0 +1,189 @@
+{
+  "schemaVersion": "cleanup-record-v1",
+  "stage": "runtime",
+  "planSha256": "7265a2fce841344871dc57bf45d9bea719d7e30c534f68d0c9f2b802e836a7b8",
+  "finishedAt": "2026-11-18T18:18:25Z",
+  "account": "834519512655",
+  "region": "us-east-2",
+  "commit": "506eddf46f23c7004150b2373403adf49518953a",
+  "evidenceArchive": null,
+  "retained": [
+    {
+      "address": "module.build.aws_cloudwatch_log_group.codebuild",
+      "reason": "log groups: logs kept as evidence (14-day retention)"
+    },
+    {
+      "address": "module.build.aws_codebuild_project.services_image",
+      "reason": "kept by this stage"
+    },
+    {
+      "address": "module.build.aws_ecr_lifecycle_policy.services",
+      "reason": "ECR: image history for reproduction (force_delete=false)"
+    },
+    {
+      "address": "module.build.aws_ecr_repository.services",
+      "reason": "ECR: image history for reproduction (force_delete=false)"
+    },
+    {
+      "address": "module.build.aws_iam_role.codebuild",
+      "reason": "kept by this stage"
+    },
+    {
+      "address": "module.build.aws_iam_role_policy.codebuild",
+      "reason": "kept by this stage"
+    },
+    {
+      "address": "module.data.aws_s3_bucket.data",
+      "reason": "data bucket: grading evidence until the instructor approves the archive (force_destroy=false)"
+    },
+    {
+      "address": "module.data.aws_s3_bucket_lifecycle_configuration.data",
+      "reason": "data bucket: grading evidence until the instructor approves the archive (force_destroy=false)"
+    },
+    {
+      "address": "module.data.aws_s3_bucket_ownership_controls.data",
+      "reason": "data bucket: grading evidence until the instructor approves the archive (force_destroy=false)"
+    },
+    {
+      "address": "module.data.aws_s3_bucket_policy.data",
+      "reason": "data bucket: grading evidence until the instructor approves the archive (force_destroy=false)"
+    },
+    {
+      "address": "module.data.aws_s3_bucket_public_access_block.data",
+      "reason": "data bucket: grading evidence until the instructor approves the archive (force_destroy=false)"
+    },
+    {
+      "address": "module.data.aws_s3_bucket_server_side_encryption_configuration.data",
+      "reason": "data bucket: grading evidence until the instructor approves the archive (force_destroy=false)"
+    },
+    {
+      "address": "module.data.aws_s3_bucket_versioning.data",
+      "reason": "data bucket: grading evidence until the instructor approves the archive (force_destroy=false)"
+    },
+    {
+      "address": "module.emr.aws_iam_instance_profile.instance",
+      "reason": "kept by this stage"
+    },
+    {
+      "address": "module.emr.aws_iam_role.instance",
+      "reason": "kept by this stage"
+    },
+    {
+      "address": "module.emr.aws_iam_role.service",
+      "reason": "kept by this stage"
+    },
+    {
+      "address": "module.emr.aws_iam_role_policy.instance_s3",
+      "reason": "kept by this stage"
+    },
+    {
+      "address": "module.emr.aws_iam_role_policy.service_pass_role",
+      "reason": "kept by this stage"
+    },
+    {
+      "address": "module.emr.aws_iam_role_policy_attachment.service_v2",
+      "reason": "kept by this stage"
+    },
+    {
+      "address": "module.emr.aws_security_group.core",
+      "reason": "kept by this stage"
+    },
+    {
+      "address": "module.emr.aws_security_group.primary",
+      "reason": "kept by this stage"
+    },
+    {
+      "address": "module.emr.aws_vpc_security_group_egress_rule.emr_all[\"core\"]",
+      "reason": "kept by this stage"
+    },
+    {
+      "address": "module.emr.aws_vpc_security_group_egress_rule.emr_all[\"primary\"]",
+      "reason": "kept by this stage"
+    },
+    {
+      "address": "module.network.aws_default_security_group.this",
+      "reason": "kept by this stage"
+    },
+    {
+      "address": "module.network.aws_internet_gateway.this",
+      "reason": "kept by this stage"
+    },
+    {
+      "address": "module.network.aws_route.public_internet",
+      "reason": "kept by this stage"
+    },
+    {
+      "address": "module.network.aws_route_table.private",
+      "reason": "kept by this stage"
+    },
+    {
+      "address": "module.network.aws_route_table.public",
+      "reason": "kept by this stage"
+    },
+    {
+      "address": "module.network.aws_route_table_association.private[0]",
+      "reason": "kept by this stage"
+    },
+    {
+      "address": "module.network.aws_route_table_association.private[1]",
+      "reason": "kept by this stage"
+    },
+    {
+      "address": "module.network.aws_route_table_association.public[0]",
+      "reason": "kept by this stage"
+    },
+    {
+      "address": "module.network.aws_route_table_association.public[1]",
+      "reason": "kept by this stage"
+    },
+    {
+      "address": "module.network.aws_subnet.private[0]",
+      "reason": "kept by this stage"
+    },
+    {
+      "address": "module.network.aws_subnet.private[1]",
+      "reason": "kept by this stage"
+    },
+    {
+      "address": "module.network.aws_subnet.public[0]",
+      "reason": "kept by this stage"
+    },
+    {
+      "address": "module.network.aws_subnet.public[1]",
+      "reason": "kept by this stage"
+    },
+    {
+      "address": "module.network.aws_vpc.this",
+      "reason": "kept by this stage"
+    },
+    {
+      "address": "module.network.aws_vpc_endpoint.dynamodb",
+      "reason": "kept by this stage"
+    },
+    {
+      "address": "module.network.aws_vpc_endpoint.s3",
+      "reason": "kept by this stage"
+    },
+    {
+      "address": "module.observability.aws_cloudwatch_log_group.ecs[\"graph-evidence-api\"]",
+      "reason": "log groups: logs kept as evidence (14-day retention)"
+    },
+    {
+      "address": "module.observability.aws_cloudwatch_log_group.ecs[\"neptune-loader\"]",
+      "reason": "log groups: logs kept as evidence (14-day retention)"
+    },
+    {
+      "address": "module.observability.aws_cloudwatch_log_group.ecs[\"query-api\"]",
+      "reason": "log groups: logs kept as evidence (14-day retention)"
+    },
+    {
+      "address": "module.observability.aws_cloudwatch_log_group.ecs[\"worker\"]",
+      "reason": "log groups: logs kept as evidence (14-day retention)"
+    }
+  ],
+  "inventories": [
+    "before.*.json",
+    "after.*.json"
+  ],
+  "stateKept": true
+}

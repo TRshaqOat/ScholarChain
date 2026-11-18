@@ -1,0 +1,3 @@
+load 153fcdc9-00a3-40d8-8dd4-204dc9a7a25c status LOAD_CANCELLED_DUE_TO_ERRORS records 5059443 duplicates 0
+errors parsing 0 datatype 0 insert 2
+  {"errorCode":"OUT_OF_MEMORY_ERROR","errorMessage":"Out of memory error. Resume load and try again.","fileName":"s3://scholarchain-course-data-834519512655-us-east-2/graph/neptune/snapshot=2026-10-03/run=run-1d6a86491812ff94887270c1ab885e69/edges/affiliated-with/part-00000.csv","recordNum":0}

@@ -1,0 +1,2 @@
+135d134
+< loader s3-store-conversion "storage/runMain scholarchain.storage.cli.LoadS3Cli --manifest $M_STORE --root $ROOT $LIVE"

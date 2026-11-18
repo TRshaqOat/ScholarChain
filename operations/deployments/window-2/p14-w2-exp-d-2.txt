@@ -1,0 +1,27 @@
+==> STEP clean-tree
+==> OK clean-tree at 506eddf46f23c7004150b2373403adf49518953a
+==> STEP target
+==> TARGET account=834519512655 region=us-east-2 profile=scholarchain-sdk
+==> STEP run exp-d-query-load-v1
+    ecs before-c2              desired=1 running=1 pending=0
+    level c=2 requests=2972 elapsed=180.1s rps=16.5 errors=0 p50=84.9 p95=295.5 p99=462.9
+      evidence  requests=991 errors=0 p50=62.3 p95=91.5 p99=113.0
+      neighbors requests=991 errors=0 p50=217.0 p95=405.5 p99=565.7
+      node      requests=990 errors=0 p50=79.2 p95=103.5 p99=135.5
+    ecs after-c2               desired=1 running=1 pending=0
+    ecs before-c4              desired=1 running=1 pending=0
+    level c=4 requests=4610 elapsed=180.1s rps=25.6 errors=0 p50=92.7 p95=446.5 p99=590.6
+      evidence  requests=1536 errors=0 p50=62.9 p95=114.5 p99=172.4
+      neighbors requests=1537 errors=0 p50=289.4 p95=554.2 p99=702.5
+      node      requests=1537 errors=0 p50=81.5 p95=131.0 p99=196.6
+    ecs after-c4               desired=1 running=1 pending=0
+    ecs before-c8              desired=1 running=1 pending=0
+    level c=8 requests=6439 elapsed=180.3s rps=35.72 errors=0 p50=119.8 p95=673.5 p99=914.3
+      evidence  requests=2147 errors=0 p50=70.2 p95=122.6 p99=199.9
+      neighbors requests=2146 errors=0 p50=435.6 p95=849.2 p99=1072.7
+      node      requests=2146 errors=0 p50=113.2 p95=266.4 p99=384.0
+    ecs after-c8               desired=1 running=1 pending=0
+    ecs post-observe           desired=1 running=1 pending=0
+==> EXP-D levels=4 aborted=None error=None exit=0
+==> EXPERIMENT id=exp-d-query-load-v1 record=/Users/achyutpatel/Developer/Cloud/ScholarChain/experiments/results/exp-d-query-load-v1/20261118T063904Z/run-record.json exit=0
+==> OK experiment complete

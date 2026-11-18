@@ -1,0 +1,3 @@
+[
+    "{\"ts\":\"2026-11-18T06:20:05.007887448Z\",\"type\":\"event\",\"service\":\"query-api\",\"event\":\"job-queued\",\"traceId\":\"trace-b5073e8b94024d1ab079110c136b2da8\",\"requestId\":\"exp-f-20261118T062002Z\",\"jobId\":\"job-c03f4e524f0f99b0199fcdc4cf35e788\",\"queryId\":\"qry-57be24c8990bea22a55002efceabf377\"}"
+]

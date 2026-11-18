@@ -1,0 +1,10 @@
+==> STEP clean-tree
+==> OK clean-tree at 506eddf46f23c7004150b2373403adf49518953a
+==> STEP target
+==> TARGET account=834519512655 region=us-east-2 profile=scholarchain-sdk
+==> STEP run exp-d-query-load-v1
+==> OK API key read (not printed)
+    preflight requests=6 non2xx=1
+==> EXP-D levels=0 aborted=preflight: 1 of 6 paths returned non-2xx error=None exit=3
+==> EXPERIMENT id=exp-d-query-load-v1 record=/Users/achyutpatel/Developer/Cloud/ScholarChain/experiments/results/exp-d-query-load-v1/20261118T061933Z/run-record.json exit=3
+==> FAIL experiment command exited 3 (exit 1)

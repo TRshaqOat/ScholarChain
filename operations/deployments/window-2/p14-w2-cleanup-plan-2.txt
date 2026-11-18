@@ -1,0 +1,537 @@
+==> STEP clean-tree
+==> OK clean-tree at 506eddf46f23c7004150b2373403adf49518953a
+==> STEP target
+==> TARGET account=834519512655 region=us-east-2 profile=scholarchain-sdk
+[0m[1mInitializing the backend...[0m
+
+[0m[1mInitializing modules...[0m
+
+[0m[1mInitializing provider plugins...[0m
+- Reusing previous version of hashicorp/aws from the dependency lock file
+- Using previously-installed hashicorp/aws v6.28.0
+
+[0m[1m[32mTerraform has been successfully initialized![0m[32m[0m
+[0m[32m
+You may now begin working with Terraform. Try running "terraform plan" to see
+any changes that are required for your infrastructure. All Terraform commands
+should now work.
+
+If you ever set or change modules or backend configuration for Terraform,
+rerun this command to reinitialize your working directory. If you forget, other
+commands will detect it and remind you to do so if necessary.[0m
+==> STEP terraform-outputs
+==> OK outputs for account 834519512655
+==> STEP inventory inventory-before
+    terraform: 55 resources; tagged: 72; active EMR: 0
+==> STEP plan runtime
+[0m[1mmodule.observability.aws_cloudwatch_log_group.ecs["worker"]: Refreshing state... [id=/scholarchain/scholarchain-course/ecs/worker][0m
+[0m[1mmodule.network.aws_vpc.this: Refreshing state... [id=vpc-0fd8e31fa7b48c139][0m
+[0m[1mmodule.foundation.data.aws_partition.current: Reading...[0m[0m
+[0m[1mmodule.build.aws_cloudwatch_log_group.codebuild: Refreshing state... [id=/scholarchain/scholarchain-course/codebuild/services-image][0m
+[0m[1mmodule.foundation.data.aws_region.current: Reading...[0m[0m
+[0m[1mmodule.emr.data.aws_iam_policy_document.instance_trust: Reading...[0m[0m
+[0m[1mmodule.foundation.data.aws_caller_identity.current: Reading...[0m[0m
+[0m[1mmodule.observability.aws_cloudwatch_log_group.ecs["query-api"]: Refreshing state... [id=/scholarchain/scholarchain-course/ecs/query-api][0m
+[0m[1mmodule.build.aws_ecr_repository.services: Refreshing state... [id=scholarchain-course-services][0m
+[0m[1mmodule.observability.aws_cloudwatch_log_group.ecs["neptune-loader"]: Refreshing state... [id=/scholarchain/scholarchain-course/ecs/neptune-loader][0m
+[0m[1mmodule.emr.data.aws_iam_policy_document.instance_trust: Read complete after 0s [id=2851119427][0m
+[0m[1mmodule.foundation.data.aws_region.current: Read complete after 0s [id=us-east-2][0m
+[0m[1mmodule.foundation.data.aws_partition.current: Read complete after 0s [id=aws][0m
+[0m[1mmodule.neptune[0].aws_neptune_parameter_group.this: Refreshing state... [id=scholarchain-course-neptune-instance][0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_parameter_group.this: Refreshing state... [id=scholarchain-course-neptune-cluster][0m
+[0m[1mmodule.observability.aws_cloudwatch_log_group.ecs["graph-evidence-api"]: Refreshing state... [id=/scholarchain/scholarchain-course/ecs/graph-evidence-api][0m
+[0m[1mmodule.foundation.data.aws_caller_identity.current: Read complete after 1s [id=834519512655][0m
+[0m[1mmodule.emr.aws_iam_role.instance: Refreshing state... [id=scholarchain-course-emr-instance][0m
+[0m[1mmodule.build.data.aws_iam_policy_document.trust: Reading...[0m[0m
+[0m[1mmodule.neptune[0].aws_iam_role.bulk_loader: Refreshing state... [id=scholarchain-course-neptune-bulk-loader][0m
+[0m[1mmodule.build.data.aws_iam_policy_document.trust: Read complete after 0s [id=99223622][0m
+[0m[1mmodule.emr.data.aws_iam_policy_document.service_trust: Reading...[0m[0m
+[0m[1mmodule.emr.data.aws_iam_policy_document.service_trust: Read complete after 0s [id=1250819272][0m
+[0m[1mmodule.build.aws_iam_role.codebuild: Refreshing state... [id=scholarchain-course-codebuild-services-image][0m
+[0m[1mmodule.data.aws_s3_bucket.data: Refreshing state... [id=scholarchain-course-data-834519512655-us-east-2][0m
+[0m[1mmodule.build.aws_ecr_lifecycle_policy.services: Refreshing state... [id=scholarchain-course-services][0m
+[0m[1mmodule.emr.aws_iam_role.service: Refreshing state... [id=scholarchain-course-emr-service][0m
+[0m[1mmodule.emr.aws_iam_instance_profile.instance: Refreshing state... [id=scholarchain-course-emr-instance][0m
+[0m[1mmodule.emr.data.aws_iam_policy_document.service_pass_role: Reading...[0m[0m
+[0m[1mmodule.emr.data.aws_iam_policy_document.service_pass_role: Read complete after 0s [id=1648478373][0m
+[0m[1mmodule.emr.aws_iam_role_policy.service_pass_role: Refreshing state... [id=scholarchain-course-emr-service:pass-instance-role][0m
+[0m[1mmodule.emr.aws_iam_role_policy_attachment.service_v2: Refreshing state... [id=scholarchain-course-emr-service/arn:aws:iam::aws:policy/service-role/AmazonEMRServicePolicy_v2][0m
+[0m[1mmodule.network.aws_route_table.public: Refreshing state... [id=rtb-0028b1800699e4081][0m
+[0m[1mmodule.network.aws_route_table.private: Refreshing state... [id=rtb-0138ac54c060f3f07][0m
+[0m[1mmodule.network.aws_default_security_group.this: Refreshing state... [id=sg-0b349594ad1ea9774][0m
+[0m[1mmodule.network.aws_subnet.private[0]: Refreshing state... [id=subnet-08e8a7e37da4af95f][0m
+[0m[1mmodule.network.aws_subnet.private[1]: Refreshing state... [id=subnet-0d62d88d3791db7bc][0m
+[0m[1mmodule.network.aws_security_group.worker[0]: Refreshing state... [id=sg-09251f82cf7ead7c9][0m
+[0m[1mmodule.network.aws_security_group.alb[0]: Refreshing state... [id=sg-09a4d5d7f225bf6b9][0m
+[0m[1mmodule.emr.aws_security_group.core: Refreshing state... [id=sg-045cdc6a597240486][0m
+[0m[1mmodule.emr.aws_security_group.primary: Refreshing state... [id=sg-06850b56e702003b3][0m
+[0m[1mmodule.network.aws_security_group.loader[0]: Refreshing state... [id=sg-0c222befeda01d2d9][0m
+[0m[1mmodule.network.aws_security_group.neptune[0]: Refreshing state... [id=sg-068d12a7c4381e218][0m
+[0m[1mmodule.network.aws_internet_gateway.this: Refreshing state... [id=igw-040a287096deb8c67][0m
+[0m[1mmodule.network.aws_security_group.graph_evidence_api[0]: Refreshing state... [id=sg-07ef1e5f9d9cb271f][0m
+[0m[1mmodule.network.aws_subnet.public[0]: Refreshing state... [id=subnet-01ba5443d067a76f4][0m
+[0m[1mmodule.network.aws_subnet.public[1]: Refreshing state... [id=subnet-0e94ae0d8ed9a3c09][0m
+[0m[1mmodule.network.aws_security_group.query_api[0]: Refreshing state... [id=sg-0e330f779866fa224][0m
+[0m[1mmodule.network.aws_vpc_endpoint.s3: Refreshing state... [id=vpce-0881c52adddf58849][0m
+[0m[1mmodule.network.aws_vpc_endpoint.dynamodb: Refreshing state... [id=vpce-0b5684d029a8efdc1][0m
+[0m[1mmodule.emr.aws_vpc_security_group_egress_rule.emr_all["primary"]: Refreshing state... [id=sgr-050b04d48aee6d4c5][0m
+[0m[1mmodule.emr.aws_vpc_security_group_egress_rule.emr_all["core"]: Refreshing state... [id=sgr-06e4c31f1ea609093][0m
+[0m[1mmodule.network.aws_route_table_association.private[0]: Refreshing state... [id=rtbassoc-049d9e593ab27cc17][0m
+[0m[1mmodule.network.aws_route_table_association.private[1]: Refreshing state... [id=rtbassoc-04174e65a4af63c90][0m
+[0m[1mmodule.network.aws_route.public_internet: Refreshing state... [id=r-rtb-0028b1800699e40811080289494][0m
+[0m[1mmodule.neptune[0].aws_neptune_subnet_group.this: Refreshing state... [id=scholarchain-course-neptune][0m
+[0m[1mmodule.network.aws_route_table_association.public[0]: Refreshing state... [id=rtbassoc-0ce1bb2df39bf5948][0m
+[0m[1mmodule.network.aws_route_table_association.public[1]: Refreshing state... [id=rtbassoc-018058d7ebb5f6e08][0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster.this: Refreshing state... [id=scholarchain-course-graph][0m
+[0m[1mmodule.data.aws_s3_bucket_versioning.data: Refreshing state... [id=scholarchain-course-data-834519512655-us-east-2][0m
+[0m[1mmodule.data.aws_s3_bucket_server_side_encryption_configuration.data: Refreshing state... [id=scholarchain-course-data-834519512655-us-east-2][0m
+[0m[1mmodule.data.aws_s3_bucket_public_access_block.data: Refreshing state... [id=scholarchain-course-data-834519512655-us-east-2][0m
+[0m[1mmodule.data.aws_s3_bucket_ownership_controls.data: Refreshing state... [id=scholarchain-course-data-834519512655-us-east-2][0m
+[0m[1mmodule.data.data.aws_iam_policy_document.tls_only: Reading...[0m[0m
+[0m[1mmodule.emr.data.aws_iam_policy_document.instance_s3: Reading...[0m[0m
+[0m[1mmodule.build.data.aws_iam_policy_document.codebuild: Reading...[0m[0m
+[0m[1mmodule.data.data.aws_iam_policy_document.tls_only: Read complete after 0s [id=2599753479][0m
+[0m[1mmodule.build.aws_codebuild_project.services_image: Refreshing state... [id=arn:aws:codebuild:us-east-2:834519512655:project/scholarchain-course-services-image][0m
+[0m[1mmodule.build.data.aws_iam_policy_document.codebuild: Read complete after 0s [id=1895859041][0m
+[0m[1mmodule.emr.data.aws_iam_policy_document.instance_s3: Read complete after 0s [id=1038427236][0m
+[0m[1mmodule.build.aws_iam_role_policy.codebuild: Refreshing state... [id=scholarchain-course-codebuild-services-image:services-image][0m
+[0m[1mmodule.emr.aws_iam_role_policy.instance_s3: Refreshing state... [id=scholarchain-course-emr-instance:data-bucket][0m
+[0m[1mmodule.data.aws_s3_bucket_policy.data: Refreshing state... [id=scholarchain-course-data-834519512655-us-east-2][0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_instance.this: Refreshing state... [id=scholarchain-course-graph-1][0m
+[0m[1mmodule.data.aws_s3_bucket_lifecycle_configuration.data: Refreshing state... [id=scholarchain-course-data-834519512655-us-east-2][0m
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  [33m~[0m update in-place[0m
+  [31m-[0m destroy[0m
+
+Terraform will perform the following actions:
+
+[1m  # module.data.aws_s3_bucket_server_side_encryption_configuration.data[0m will be updated in-place
+[0m  [33m~[0m[0m resource "aws_s3_bucket_server_side_encryption_configuration" "data" {
+        id                    = "scholarchain-course-data-834519512655-us-east-2"
+        [90m# (3 unchanged attributes hidden)[0m[0m
+
+      [31m-[0m[0m rule {
+          [31m-[0m[0m blocked_encryption_types = [
+              [31m-[0m[0m "SSE-C",
+            ] [90m-> null[0m[0m
+          [31m-[0m[0m bucket_key_enabled       = false [90m-> null[0m[0m
+
+          [31m-[0m[0m apply_server_side_encryption_by_default {
+              [31m-[0m[0m sse_algorithm     = "AES256" [90m-> null[0m[0m
+                [90m# (1 unchanged attribute hidden)[0m[0m
+            }
+        }
+      [32m+[0m[0m rule {
+          [32m+[0m[0m blocked_encryption_types = []
+
+          [32m+[0m[0m apply_server_side_encryption_by_default {
+              [32m+[0m[0m sse_algorithm     = "AES256"
+                [90m# (1 unchanged attribute hidden)[0m[0m
+            }
+        }
+    }
+
+[1m  # module.neptune[0].aws_iam_role.bulk_loader[0m will be [1m[31mdestroyed[0m
+  # (because module.neptune[0] is not in configuration)
+[0m  [31m-[0m[0m resource "aws_iam_role" "bulk_loader" {
+      [31m-[0m[0m arn                   = "arn:aws:iam::834519512655:role/scholarchain-course-neptune-bulk-loader" [90m-> null[0m[0m
+      [31m-[0m[0m assume_role_policy    = jsonencode(
+            {
+              [31m-[0m[0m Statement = [
+                  [31m-[0m[0m {
+                      [31m-[0m[0m Action    = "sts:AssumeRole"
+                      [31m-[0m[0m Condition = {
+                          [31m-[0m[0m StringEquals = {
+                              [31m-[0m[0m "aws:SourceAccount" = "834519512655"
+                            }
+                        }
+                      [31m-[0m[0m Effect    = "Allow"
+                      [31m-[0m[0m Principal = {
+                          [31m-[0m[0m Service = "rds.amazonaws.com"
+                        }
+                    },
+                ]
+              [31m-[0m[0m Version   = "2012-10-17"
+            }
+        ) [90m-> null[0m[0m
+      [31m-[0m[0m create_date           = "2026-11-17T20:31:11Z" [90m-> null[0m[0m
+      [31m-[0m[0m description           = "Assumed by Neptune to read graph/ for bulk loads" [90m-> null[0m[0m
+      [31m-[0m[0m force_detach_policies = false [90m-> null[0m[0m
+      [31m-[0m[0m id                    = "scholarchain-course-neptune-bulk-loader" [90m-> null[0m[0m
+      [31m-[0m[0m managed_policy_arns   = [] [90m-> null[0m[0m
+      [31m-[0m[0m max_session_duration  = 3600 [90m-> null[0m[0m
+      [31m-[0m[0m name                  = "scholarchain-course-neptune-bulk-loader" [90m-> null[0m[0m
+      [31m-[0m[0m path                  = "/" [90m-> null[0m[0m
+      [31m-[0m[0m tags                  = {} [90m-> null[0m[0m
+      [31m-[0m[0m tags_all              = {
+          [31m-[0m[0m "Course"      = "CS441"
+          [31m-[0m[0m "Environment" = "course"
+          [31m-[0m[0m "Expiration"  = "2026-12-15"
+          [31m-[0m[0m "ManagedBy"   = "terraform"
+          [31m-[0m[0m "Owner"       = "scholarchain-human-architect"
+          [31m-[0m[0m "Project"     = "ScholarChain"
+        } [90m-> null[0m[0m
+      [31m-[0m[0m unique_id             = "AROA4ETJ5GZHTGW5JGX3P" [90m-> null[0m[0m
+        [90m# (2 unchanged attributes hidden)[0m[0m
+    }
+
+[1m  # module.neptune[0].aws_neptune_cluster.this[0m will be [1m[31mdestroyed[0m
+  # (because module.neptune[0] is not in configuration)
+[0m  [31m-[0m[0m resource "aws_neptune_cluster" "this" {
+      [31m-[0m[0m apply_immediately                    = true [90m-> null[0m[0m
+      [31m-[0m[0m arn                                  = "arn:aws:rds:us-east-2:834519512655:cluster:scholarchain-course-graph" [90m-> null[0m[0m
+      [31m-[0m[0m availability_zones                   = [
+          [31m-[0m[0m "us-east-2a",
+          [31m-[0m[0m "us-east-2b",
+          [31m-[0m[0m "us-east-2c",
+        ] [90m-> null[0m[0m
+      [31m-[0m[0m backup_retention_period              = 1 [90m-> null[0m[0m
+      [31m-[0m[0m cluster_identifier                   = "scholarchain-course-graph" [90m-> null[0m[0m
+      [31m-[0m[0m cluster_members                      = [] [90m-> null[0m[0m
+      [31m-[0m[0m cluster_resource_id                  = "cluster-6AJGGDFYQPUUNO6CVJ2OBPVO4Q" [90m-> null[0m[0m
+      [31m-[0m[0m copy_tags_to_snapshot                = true [90m-> null[0m[0m
+      [31m-[0m[0m deletion_protection                  = false [90m-> null[0m[0m
+      [31m-[0m[0m enable_cloudwatch_logs_exports       = [] [90m-> null[0m[0m
+      [31m-[0m[0m endpoint                             = "scholarchain-course-graph.cluster-c5cckicqu7i7.us-east-2.neptune.amazonaws.com" [90m-> null[0m[0m
+      [31m-[0m[0m engine                               = "neptune" [90m-> null[0m[0m
+      [31m-[0m[0m engine_version                       = "1.4.8.1" [90m-> null[0m[0m
+      [31m-[0m[0m hosted_zone_id                       = "Z18MU2VX5LLW0S" [90m-> null[0m[0m
+      [31m-[0m[0m iam_database_authentication_enabled  = true [90m-> null[0m[0m
+      [31m-[0m[0m iam_roles                            = [
+          [31m-[0m[0m "arn:aws:iam::834519512655:role/scholarchain-course-neptune-bulk-loader",
+        ] [90m-> null[0m[0m
+      [31m-[0m[0m id                                   = "scholarchain-course-graph" [90m-> null[0m[0m
+      [31m-[0m[0m kms_key_arn                          = "arn:aws:kms:us-east-2:834519512655:key/e8f0af0c-cd84-4c8b-b236-68a762686bb8" [90m-> null[0m[0m
+      [31m-[0m[0m neptune_cluster_parameter_group_name = "scholarchain-course-neptune-cluster" [90m-> null[0m[0m
+      [31m-[0m[0m neptune_subnet_group_name            = "scholarchain-course-neptune" [90m-> null[0m[0m
+      [31m-[0m[0m port                                 = 8182 [90m-> null[0m[0m
+      [31m-[0m[0m preferred_backup_window              = "07:00-08:00" [90m-> null[0m[0m
+      [31m-[0m[0m preferred_maintenance_window         = "tue:04:30-tue:05:00" [90m-> null[0m[0m
+      [31m-[0m[0m reader_endpoint                      = "scholarchain-course-graph.cluster-ro-c5cckicqu7i7.us-east-2.neptune.amazonaws.com" [90m-> null[0m[0m
+      [31m-[0m[0m region                               = "us-east-2" [90m-> null[0m[0m
+      [31m-[0m[0m skip_final_snapshot                  = true [90m-> null[0m[0m
+      [31m-[0m[0m storage_encrypted                    = true [90m-> null[0m[0m
+      [31m-[0m[0m tags                                 = {} [90m-> null[0m[0m
+      [31m-[0m[0m tags_all                             = {
+          [31m-[0m[0m "Course"      = "CS441"
+          [31m-[0m[0m "Environment" = "course"
+          [31m-[0m[0m "Expiration"  = "2026-12-15"
+          [31m-[0m[0m "ManagedBy"   = "terraform"
+          [31m-[0m[0m "Owner"       = "scholarchain-human-architect"
+          [31m-[0m[0m "Project"     = "ScholarChain"
+        } [90m-> null[0m[0m
+      [31m-[0m[0m vpc_security_group_ids               = [
+          [31m-[0m[0m "sg-068d12a7c4381e218",
+        ] [90m-> null[0m[0m
+        [90m# (4 unchanged attributes hidden)[0m[0m
+    }
+
+[1m  # module.neptune[0].aws_neptune_cluster_parameter_group.this[0m will be [1m[31mdestroyed[0m
+  # (because module.neptune[0] is not in configuration)
+[0m  [31m-[0m[0m resource "aws_neptune_cluster_parameter_group" "this" {
+      [31m-[0m[0m arn         = "arn:aws:rds:us-east-2:834519512655:cluster-pg:scholarchain-course-neptune-cluster" [90m-> null[0m[0m
+      [31m-[0m[0m description = "ScholarChain Neptune cluster parameters" [90m-> null[0m[0m
+      [31m-[0m[0m family      = "neptune1.4" [90m-> null[0m[0m
+      [31m-[0m[0m id          = "scholarchain-course-neptune-cluster" [90m-> null[0m[0m
+      [31m-[0m[0m name        = "scholarchain-course-neptune-cluster" [90m-> null[0m[0m
+      [31m-[0m[0m region      = "us-east-2" [90m-> null[0m[0m
+      [31m-[0m[0m tags        = {} [90m-> null[0m[0m
+      [31m-[0m[0m tags_all    = {
+          [31m-[0m[0m "Course"      = "CS441"
+          [31m-[0m[0m "Environment" = "course"
+          [31m-[0m[0m "Expiration"  = "2026-12-15"
+          [31m-[0m[0m "ManagedBy"   = "terraform"
+          [31m-[0m[0m "Owner"       = "scholarchain-human-architect"
+          [31m-[0m[0m "Project"     = "ScholarChain"
+        } [90m-> null[0m[0m
+        [90m# (1 unchanged attribute hidden)[0m[0m
+
+      [31m-[0m[0m parameter {
+          [31m-[0m[0m apply_method = "pending-reboot" [90m-> null[0m[0m
+          [31m-[0m[0m name         = "neptune_query_timeout" [90m-> null[0m[0m
+          [31m-[0m[0m value        = "30000" [90m-> null[0m[0m
+        }
+    }
+
+[1m  # module.neptune[0].aws_neptune_parameter_group.this[0m will be [1m[31mdestroyed[0m
+  # (because module.neptune[0] is not in configuration)
+[0m  [31m-[0m[0m resource "aws_neptune_parameter_group" "this" {
+      [31m-[0m[0m arn         = "arn:aws:rds:us-east-2:834519512655:pg:scholarchain-course-neptune-instance" [90m-> null[0m[0m
+      [31m-[0m[0m description = "ScholarChain Neptune instance parameters" [90m-> null[0m[0m
+      [31m-[0m[0m family      = "neptune1.4" [90m-> null[0m[0m
+      [31m-[0m[0m id          = "scholarchain-course-neptune-instance" [90m-> null[0m[0m
+      [31m-[0m[0m name        = "scholarchain-course-neptune-instance" [90m-> null[0m[0m
+      [31m-[0m[0m region      = "us-east-2" [90m-> null[0m[0m
+      [31m-[0m[0m tags        = {} [90m-> null[0m[0m
+      [31m-[0m[0m tags_all    = {
+          [31m-[0m[0m "Course"      = "CS441"
+          [31m-[0m[0m "Environment" = "course"
+          [31m-[0m[0m "Expiration"  = "2026-12-15"
+          [31m-[0m[0m "ManagedBy"   = "terraform"
+          [31m-[0m[0m "Owner"       = "scholarchain-human-architect"
+          [31m-[0m[0m "Project"     = "ScholarChain"
+        } [90m-> null[0m[0m
+        [90m# (1 unchanged attribute hidden)[0m[0m
+    }
+
+[1m  # module.neptune[0].aws_neptune_subnet_group.this[0m will be [1m[31mdestroyed[0m
+  # (because module.neptune[0] is not in configuration)
+[0m  [31m-[0m[0m resource "aws_neptune_subnet_group" "this" {
+      [31m-[0m[0m arn         = "arn:aws:rds:us-east-2:834519512655:subgrp:scholarchain-course-neptune" [90m-> null[0m[0m
+      [31m-[0m[0m description = "Private subnets for Neptune" [90m-> null[0m[0m
+      [31m-[0m[0m id          = "scholarchain-course-neptune" [90m-> null[0m[0m
+      [31m-[0m[0m name        = "scholarchain-course-neptune" [90m-> null[0m[0m
+      [31m-[0m[0m region      = "us-east-2" [90m-> null[0m[0m
+      [31m-[0m[0m subnet_ids  = [
+          [31m-[0m[0m "subnet-08e8a7e37da4af95f",
+          [31m-[0m[0m "subnet-0d62d88d3791db7bc",
+        ] [90m-> null[0m[0m
+      [31m-[0m[0m tags        = {} [90m-> null[0m[0m
+      [31m-[0m[0m tags_all    = {
+          [31m-[0m[0m "Course"      = "CS441"
+          [31m-[0m[0m "Environment" = "course"
+          [31m-[0m[0m "Expiration"  = "2026-12-15"
+          [31m-[0m[0m "ManagedBy"   = "terraform"
+          [31m-[0m[0m "Owner"       = "scholarchain-human-architect"
+          [31m-[0m[0m "Project"     = "ScholarChain"
+        } [90m-> null[0m[0m
+        [90m# (1 unchanged attribute hidden)[0m[0m
+    }
+
+[1m  # module.network.aws_security_group.alb[0][0m will be [1m[31mdestroyed[0m
+  # (because index [0] is out of range for count)
+[0m  [31m-[0m[0m resource "aws_security_group" "alb" {
+      [31m-[0m[0m arn                    = "arn:aws:ec2:us-east-2:834519512655:security-group/sg-09a4d5d7f225bf6b9" [90m-> null[0m[0m
+      [31m-[0m[0m description            = "Public ALB: HTTP listener only" [90m-> null[0m[0m
+      [31m-[0m[0m egress                 = [] [90m-> null[0m[0m
+      [31m-[0m[0m id                     = "sg-09a4d5d7f225bf6b9" [90m-> null[0m[0m
+      [31m-[0m[0m ingress                = [] [90m-> null[0m[0m
+      [31m-[0m[0m name                   = "scholarchain-course-alb" [90m-> null[0m[0m
+      [31m-[0m[0m owner_id               = "834519512655" [90m-> null[0m[0m
+      [31m-[0m[0m region                 = "us-east-2" [90m-> null[0m[0m
+      [31m-[0m[0m revoke_rules_on_delete = false [90m-> null[0m[0m
+      [31m-[0m[0m tags                   = {
+          [31m-[0m[0m "Name" = "scholarchain-course-alb"
+        } [90m-> null[0m[0m
+      [31m-[0m[0m tags_all               = {
+          [31m-[0m[0m "Course"      = "CS441"
+          [31m-[0m[0m "Environment" = "course"
+          [31m-[0m[0m "Expiration"  = "2026-12-15"
+          [31m-[0m[0m "ManagedBy"   = "terraform"
+          [31m-[0m[0m "Name"        = "scholarchain-course-alb"
+          [31m-[0m[0m "Owner"       = "scholarchain-human-architect"
+          [31m-[0m[0m "Project"     = "ScholarChain"
+        } [90m-> null[0m[0m
+      [31m-[0m[0m vpc_id                 = "vpc-0fd8e31fa7b48c139" [90m-> null[0m[0m
+        [90m# (1 unchanged attribute hidden)[0m[0m
+    }
+
+[1m  # module.network.aws_security_group.graph_evidence_api[0][0m will be [1m[31mdestroyed[0m
+  # (because index [0] is out of range for count)
+[0m  [31m-[0m[0m resource "aws_security_group" "graph_evidence_api" {
+      [31m-[0m[0m arn                    = "arn:aws:ec2:us-east-2:834519512655:security-group/sg-07ef1e5f9d9cb271f" [90m-> null[0m[0m
+      [31m-[0m[0m description            = "graph-evidence-api tasks: from the ALB only" [90m-> null[0m[0m
+      [31m-[0m[0m egress                 = [] [90m-> null[0m[0m
+      [31m-[0m[0m id                     = "sg-07ef1e5f9d9cb271f" [90m-> null[0m[0m
+      [31m-[0m[0m ingress                = [] [90m-> null[0m[0m
+      [31m-[0m[0m name                   = "scholarchain-course-graph-evidence-api" [90m-> null[0m[0m
+      [31m-[0m[0m owner_id               = "834519512655" [90m-> null[0m[0m
+      [31m-[0m[0m region                 = "us-east-2" [90m-> null[0m[0m
+      [31m-[0m[0m revoke_rules_on_delete = false [90m-> null[0m[0m
+      [31m-[0m[0m tags                   = {
+          [31m-[0m[0m "Name" = "scholarchain-course-graph-evidence-api"
+        } [90m-> null[0m[0m
+      [31m-[0m[0m tags_all               = {
+          [31m-[0m[0m "Course"      = "CS441"
+          [31m-[0m[0m "Environment" = "course"
+          [31m-[0m[0m "Expiration"  = "2026-12-15"
+          [31m-[0m[0m "ManagedBy"   = "terraform"
+          [31m-[0m[0m "Name"        = "scholarchain-course-graph-evidence-api"
+          [31m-[0m[0m "Owner"       = "scholarchain-human-architect"
+          [31m-[0m[0m "Project"     = "ScholarChain"
+        } [90m-> null[0m[0m
+      [31m-[0m[0m vpc_id                 = "vpc-0fd8e31fa7b48c139" [90m-> null[0m[0m
+        [90m# (1 unchanged attribute hidden)[0m[0m
+    }
+
+[1m  # module.network.aws_security_group.loader[0][0m will be [1m[31mdestroyed[0m
+  # (because index [0] is out of range for count)
+[0m  [31m-[0m[0m resource "aws_security_group" "loader" {
+      [31m-[0m[0m arn                    = "arn:aws:ec2:us-east-2:834519512655:security-group/sg-0c222befeda01d2d9" [90m-> null[0m[0m
+      [31m-[0m[0m description            = "One-off Neptune loader tasks: no inbound traffic" [90m-> null[0m[0m
+      [31m-[0m[0m egress                 = [] [90m-> null[0m[0m
+      [31m-[0m[0m id                     = "sg-0c222befeda01d2d9" [90m-> null[0m[0m
+      [31m-[0m[0m ingress                = [] [90m-> null[0m[0m
+      [31m-[0m[0m name                   = "scholarchain-course-neptune-loader" [90m-> null[0m[0m
+      [31m-[0m[0m owner_id               = "834519512655" [90m-> null[0m[0m
+      [31m-[0m[0m region                 = "us-east-2" [90m-> null[0m[0m
+      [31m-[0m[0m revoke_rules_on_delete = false [90m-> null[0m[0m
+      [31m-[0m[0m tags                   = {
+          [31m-[0m[0m "Name" = "scholarchain-course-neptune-loader"
+        } [90m-> null[0m[0m
+      [31m-[0m[0m tags_all               = {
+          [31m-[0m[0m "Course"      = "CS441"
+          [31m-[0m[0m "Environment" = "course"
+          [31m-[0m[0m "Expiration"  = "2026-12-15"
+          [31m-[0m[0m "ManagedBy"   = "terraform"
+          [31m-[0m[0m "Name"        = "scholarchain-course-neptune-loader"
+          [31m-[0m[0m "Owner"       = "scholarchain-human-architect"
+          [31m-[0m[0m "Project"     = "ScholarChain"
+        } [90m-> null[0m[0m
+      [31m-[0m[0m vpc_id                 = "vpc-0fd8e31fa7b48c139" [90m-> null[0m[0m
+        [90m# (1 unchanged attribute hidden)[0m[0m
+    }
+
+[1m  # module.network.aws_security_group.neptune[0][0m will be [1m[31mdestroyed[0m
+  # (because index [0] is out of range for count)
+[0m  [31m-[0m[0m resource "aws_security_group" "neptune" {
+      [31m-[0m[0m arn                    = "arn:aws:ec2:us-east-2:834519512655:security-group/sg-068d12a7c4381e218" [90m-> null[0m[0m
+      [31m-[0m[0m description            = "Neptune: from the service and loader groups only" [90m-> null[0m[0m
+      [31m-[0m[0m egress                 = [] [90m-> null[0m[0m
+      [31m-[0m[0m id                     = "sg-068d12a7c4381e218" [90m-> null[0m[0m
+      [31m-[0m[0m ingress                = [] [90m-> null[0m[0m
+      [31m-[0m[0m name                   = "scholarchain-course-neptune" [90m-> null[0m[0m
+      [31m-[0m[0m owner_id               = "834519512655" [90m-> null[0m[0m
+      [31m-[0m[0m region                 = "us-east-2" [90m-> null[0m[0m
+      [31m-[0m[0m revoke_rules_on_delete = false [90m-> null[0m[0m
+      [31m-[0m[0m tags                   = {
+          [31m-[0m[0m "Name" = "scholarchain-course-neptune"
+        } [90m-> null[0m[0m
+      [31m-[0m[0m tags_all               = {
+          [31m-[0m[0m "Course"      = "CS441"
+          [31m-[0m[0m "Environment" = "course"
+          [31m-[0m[0m "Expiration"  = "2026-12-15"
+          [31m-[0m[0m "ManagedBy"   = "terraform"
+          [31m-[0m[0m "Name"        = "scholarchain-course-neptune"
+          [31m-[0m[0m "Owner"       = "scholarchain-human-architect"
+          [31m-[0m[0m "Project"     = "ScholarChain"
+        } [90m-> null[0m[0m
+      [31m-[0m[0m vpc_id                 = "vpc-0fd8e31fa7b48c139" [90m-> null[0m[0m
+        [90m# (1 unchanged attribute hidden)[0m[0m
+    }
+
+[1m  # module.network.aws_security_group.query_api[0][0m will be [1m[31mdestroyed[0m
+  # (because index [0] is out of range for count)
+[0m  [31m-[0m[0m resource "aws_security_group" "query_api" {
+      [31m-[0m[0m arn                    = "arn:aws:ec2:us-east-2:834519512655:security-group/sg-0e330f779866fa224" [90m-> null[0m[0m
+      [31m-[0m[0m description            = "query-api tasks: from the ALB only" [90m-> null[0m[0m
+      [31m-[0m[0m egress                 = [] [90m-> null[0m[0m
+      [31m-[0m[0m id                     = "sg-0e330f779866fa224" [90m-> null[0m[0m
+      [31m-[0m[0m ingress                = [] [90m-> null[0m[0m
+      [31m-[0m[0m name                   = "scholarchain-course-query-api" [90m-> null[0m[0m
+      [31m-[0m[0m owner_id               = "834519512655" [90m-> null[0m[0m
+      [31m-[0m[0m region                 = "us-east-2" [90m-> null[0m[0m
+      [31m-[0m[0m revoke_rules_on_delete = false [90m-> null[0m[0m
+      [31m-[0m[0m tags                   = {
+          [31m-[0m[0m "Name" = "scholarchain-course-query-api"
+        } [90m-> null[0m[0m
+      [31m-[0m[0m tags_all               = {
+          [31m-[0m[0m "Course"      = "CS441"
+          [31m-[0m[0m "Environment" = "course"
+          [31m-[0m[0m "Expiration"  = "2026-12-15"
+          [31m-[0m[0m "ManagedBy"   = "terraform"
+          [31m-[0m[0m "Name"        = "scholarchain-course-query-api"
+          [31m-[0m[0m "Owner"       = "scholarchain-human-architect"
+          [31m-[0m[0m "Project"     = "ScholarChain"
+        } [90m-> null[0m[0m
+      [31m-[0m[0m vpc_id                 = "vpc-0fd8e31fa7b48c139" [90m-> null[0m[0m
+        [90m# (1 unchanged attribute hidden)[0m[0m
+    }
+
+[1m  # module.network.aws_security_group.worker[0][0m will be [1m[31mdestroyed[0m
+  # (because index [0] is out of range for count)
+[0m  [31m-[0m[0m resource "aws_security_group" "worker" {
+      [31m-[0m[0m arn                    = "arn:aws:ec2:us-east-2:834519512655:security-group/sg-09251f82cf7ead7c9" [90m-> null[0m[0m
+      [31m-[0m[0m description            = "worker tasks: no inbound traffic" [90m-> null[0m[0m
+      [31m-[0m[0m egress                 = [] [90m-> null[0m[0m
+      [31m-[0m[0m id                     = "sg-09251f82cf7ead7c9" [90m-> null[0m[0m
+      [31m-[0m[0m ingress                = [] [90m-> null[0m[0m
+      [31m-[0m[0m name                   = "scholarchain-course-worker" [90m-> null[0m[0m
+      [31m-[0m[0m owner_id               = "834519512655" [90m-> null[0m[0m
+      [31m-[0m[0m region                 = "us-east-2" [90m-> null[0m[0m
+      [31m-[0m[0m revoke_rules_on_delete = false [90m-> null[0m[0m
+      [31m-[0m[0m tags                   = {
+          [31m-[0m[0m "Name" = "scholarchain-course-worker"
+        } [90m-> null[0m[0m
+      [31m-[0m[0m tags_all               = {
+          [31m-[0m[0m "Course"      = "CS441"
+          [31m-[0m[0m "Environment" = "course"
+          [31m-[0m[0m "Expiration"  = "2026-12-15"
+          [31m-[0m[0m "ManagedBy"   = "terraform"
+          [31m-[0m[0m "Name"        = "scholarchain-course-worker"
+          [31m-[0m[0m "Owner"       = "scholarchain-human-architect"
+          [31m-[0m[0m "Project"     = "ScholarChain"
+        } [90m-> null[0m[0m
+      [31m-[0m[0m vpc_id                 = "vpc-0fd8e31fa7b48c139" [90m-> null[0m[0m
+        [90m# (1 unchanged attribute hidden)[0m[0m
+    }
+
+[1mPlan:[0m [0m0 to add, 1 to change, 11 to destroy.
+[90m
+─────────────────────────────────────────────────────────────────────────────[0m
+
+Saved the plan to:
+/Users/achyutpatel/Developer/Cloud/ScholarChain/scratch/plans/cleanup-20261118T181353Z-runtime/plan.tfplan
+
+To perform exactly these actions, run the following command to apply:
+    terraform apply "/Users/achyutpatel/Developer/Cloud/ScholarChain/scratch/plans/cleanup-20261118T181353Z-runtime/plan.tfplan"
+==> STEP resources destroyed
+- delete module.neptune[0].aws_iam_role.bulk_loader
+- delete module.neptune[0].aws_neptune_cluster.this
+- delete module.neptune[0].aws_neptune_cluster_parameter_group.this
+- delete module.neptune[0].aws_neptune_parameter_group.this
+- delete module.neptune[0].aws_neptune_subnet_group.this
+- delete module.network.aws_security_group.alb[0]
+- delete module.network.aws_security_group.graph_evidence_api[0]
+- delete module.network.aws_security_group.loader[0]
+- delete module.network.aws_security_group.neptune[0]
+- delete module.network.aws_security_group.query_api[0]
+- delete module.network.aws_security_group.worker[0]
+==> STEP resources kept
+- module.build.aws_cloudwatch_log_group.codebuild: log groups: logs kept as evidence (14-day retention)
+- module.build.aws_codebuild_project.services_image: kept by this stage
+- module.build.aws_ecr_lifecycle_policy.services: ECR: image history for reproduction (force_delete=false)
+- module.build.aws_ecr_repository.services: ECR: image history for reproduction (force_delete=false)
+- module.build.aws_iam_role.codebuild: kept by this stage
+- module.build.aws_iam_role_policy.codebuild: kept by this stage
+- module.data.aws_s3_bucket.data: data bucket: grading evidence until the instructor approves the archive (force_destroy=false)
+- module.data.aws_s3_bucket_lifecycle_configuration.data: data bucket: grading evidence until the instructor approves the archive (force_destroy=false)
+- module.data.aws_s3_bucket_ownership_controls.data: data bucket: grading evidence until the instructor approves the archive (force_destroy=false)
+- module.data.aws_s3_bucket_policy.data: data bucket: grading evidence until the instructor approves the archive (force_destroy=false)
+- module.data.aws_s3_bucket_public_access_block.data: data bucket: grading evidence until the instructor approves the archive (force_destroy=false)
+- module.data.aws_s3_bucket_server_side_encryption_configuration.data: data bucket: grading evidence until the instructor approves the archive (force_destroy=false)
+- module.data.aws_s3_bucket_versioning.data: data bucket: grading evidence until the instructor approves the archive (force_destroy=false)
+- module.emr.aws_iam_instance_profile.instance: kept by this stage
+- module.emr.aws_iam_role.instance: kept by this stage
+- module.emr.aws_iam_role.service: kept by this stage
+- module.emr.aws_iam_role_policy.instance_s3: kept by this stage
+- module.emr.aws_iam_role_policy.service_pass_role: kept by this stage
+- module.emr.aws_iam_role_policy_attachment.service_v2: kept by this stage
+- module.emr.aws_security_group.core: kept by this stage
+- module.emr.aws_security_group.primary: kept by this stage
+- module.emr.aws_vpc_security_group_egress_rule.emr_all["core"]: kept by this stage
+- module.emr.aws_vpc_security_group_egress_rule.emr_all["primary"]: kept by this stage
+- module.network.aws_default_security_group.this: kept by this stage
+- module.network.aws_internet_gateway.this: kept by this stage
+- module.network.aws_route.public_internet: kept by this stage
+- module.network.aws_route_table.private: kept by this stage
+- module.network.aws_route_table.public: kept by this stage
+- module.network.aws_route_table_association.private[0]: kept by this stage
+- module.network.aws_route_table_association.private[1]: kept by this stage
+- module.network.aws_route_table_association.public[0]: kept by this stage
+- module.network.aws_route_table_association.public[1]: kept by this stage
+- module.network.aws_subnet.private[0]: kept by this stage
+- module.network.aws_subnet.private[1]: kept by this stage
+- module.network.aws_subnet.public[0]: kept by this stage
+- module.network.aws_subnet.public[1]: kept by this stage
+- module.network.aws_vpc.this: kept by this stage
+- module.network.aws_vpc_endpoint.dynamodb: kept by this stage
+- module.network.aws_vpc_endpoint.s3: kept by this stage
+- module.observability.aws_cloudwatch_log_group.ecs["graph-evidence-api"]: log groups: logs kept as evidence (14-day retention)
+- module.observability.aws_cloudwatch_log_group.ecs["neptune-loader"]: log groups: logs kept as evidence (14-day retention)
+- module.observability.aws_cloudwatch_log_group.ecs["query-api"]: log groups: logs kept as evidence (14-day retention)
+- module.observability.aws_cloudwatch_log_group.ecs["worker"]: log groups: logs kept as evidence (14-day retention)
+==> CLEANUP-PLAN stage=runtime file=/Users/achyutpatel/Developer/Cloud/ScholarChain/scratch/plans/cleanup-20261118T181353Z-runtime/plan.tfplan sha256=7265a2fce841344871dc57bf45d9bea719d7e30c534f68d0c9f2b802e836a7b8 destroys=11
+==> OK nothing destroyed. To proceed, the human runs: scripts/cleanup.sh --plan-file /Users/achyutpatel/Developer/Cloud/ScholarChain/scratch/plans/cleanup-20261118T181353Z-runtime/plan.tfplan --confirm 7265a2fce841344871dc57bf45d9bea719d7e30c534f68d0c9f2b802e836a7b8

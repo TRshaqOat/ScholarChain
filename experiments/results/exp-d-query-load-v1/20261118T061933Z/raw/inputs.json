@@ -1,0 +1,67 @@
+{
+  "baseUrl": "http://scholarchain-course-api-347204453.us-east-2.elb.amazonaws.com",
+  "account": "834519512655",
+  "region": "us-east-2",
+  "cluster": "scholarchain-course-runtime",
+  "albArnSuffix": "app/scholarchain-course-api/b6a5198faaadd0ef",
+  "smokeRecord": "operations/releases/smoke-20261118T061612Z.json",
+  "evidenceIds": [
+    "ev-927665f3bbac87eb60685e50cfeb8f9b",
+    "ev-9edfbd8136ecefa015ada3457f655f52"
+  ],
+  "researcherIds": [
+    "scr:canon-v1.er-v2:6de4012bbe8608f1d49d18cf9a40a763",
+    "scr:canon-v1.er-v2:da6e3bdff14745638f3f5425f0133388"
+  ],
+  "requests": [
+    [
+      "evidence",
+      "/v1/evidence/ev-927665f3bbac87eb60685e50cfeb8f9b"
+    ],
+    [
+      "evidence",
+      "/v1/evidence/ev-9edfbd8136ecefa015ada3457f655f52"
+    ],
+    [
+      "node",
+      "/v1/graph/nodes/scr%3Acanon-v1.er-v2%3A6de4012bbe8608f1d49d18cf9a40a763"
+    ],
+    [
+      "neighbors",
+      "/v1/graph/nodes/scr%3Acanon-v1.er-v2%3A6de4012bbe8608f1d49d18cf9a40a763/neighbors?direction=both&depth=1&limit=50&edgeTypes=COAUTHORED_WITH"
+    ],
+    [
+      "node",
+      "/v1/graph/nodes/scr%3Acanon-v1.er-v2%3Ada6e3bdff14745638f3f5425f0133388"
+    ],
+    [
+      "neighbors",
+      "/v1/graph/nodes/scr%3Acanon-v1.er-v2%3Ada6e3bdff14745638f3f5425f0133388/neighbors?direction=both&depth=1&limit=50&edgeTypes=COAUTHORED_WITH"
+    ]
+  ],
+  "bounds": {
+    "levels": [
+      1,
+      2,
+      4,
+      8
+    ],
+    "levelSeconds": 180,
+    "pauseSeconds": 30,
+    "postObserveSeconds": 120,
+    "abortRule": {
+      "scope": "per request kind (evidence, node, neighbors); sliding window within a level, whole level between levels; preflight GET of each path before the first level",
+      "errorRateAbove": 0.05,
+      "windowSeconds": 10.0,
+      "minRequestsPerKind": 20,
+      "consecutive5xxOrTransport": 10
+    },
+    "maxRequestsPerLevel": 20000,
+    "requestTimeoutSeconds": 10,
+    "plannedSeconds": 930,
+    "haikuCalls": 0,
+    "service": "graph-evidence-api",
+    "serviceMaxTasks": 2
+  },
+  "startedAt": "2026-11-18T06:19:35.096Z"
+}
