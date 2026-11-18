@@ -1,0 +1,16 @@
+2026-11-17T14:33:26.386000-06:00	scholarchain-course-jobs-dlq-not-empty	Alarm updated from INSUFFICIENT_DATA to OK
+2026-11-17T14:34:10.756000-06:00	scholarchain-course-query-api-unhealthy-targets	Alarm updated from INSUFFICIENT_DATA to OK
+2026-11-17T14:34:38.940000-06:00	scholarchain-course-graph-evidence-api-unhealthy-targets	Alarm updated from INSUFFICIENT_DATA to OK
+2026-11-17T14:34:39.963000-06:00	scholarchain-course-alb-elb-5xx	Alarm updated from INSUFFICIENT_DATA to OK
+2026-11-17T14:34:43.624000-06:00	scholarchain-course-graph-evidence-api-cpu	Alarm updated from INSUFFICIENT_DATA to OK
+2026-11-17T14:35:13.914000-06:00	scholarchain-course-query-api-cpu	Alarm updated from INSUFFICIENT_DATA to OK
+2026-11-17T14:35:19.829000-06:00	scholarchain-course-worker-cpu	Alarm updated from INSUFFICIENT_DATA to OK
+2026-11-17T14:35:37.326000-06:00	scholarchain-course-alb-target-5xx	Alarm updated from INSUFFICIENT_DATA to OK
+2026-11-17T14:44:25.656000-06:00	scholarchain-course-neptune-cpu	Alarm updated from INSUFFICIENT_DATA to OK
+2026-11-17T14:49:33.165000-06:00	TargetTracking-service/scholarchain-course-runtime/graph-evidence-api-AlarmHigh-69a9d2be-4ec5-4ebc-bea8-c961d3836db6	Alarm updated from INSUFFICIENT_DATA to OK
+2026-11-17T15:03:07.956000-06:00	TargetTracking-service/scholarchain-course-runtime/graph-evidence-api-AlarmLow-d5537d88-e146-453d-a43d-0c2c4754d795	Alarm updated from INSUFFICIENT_DATA to ALARM
+2026-11-17T17:28:25.656000-06:00	scholarchain-course-neptune-cpu	Alarm updated from OK to ALARM
+2026-11-17T17:32:25.652000-06:00	scholarchain-course-neptune-cpu	Alarm updated from ALARM to OK
+2026-11-17T21:25:25.658000-06:00	scholarchain-course-neptune-cpu	Alarm updated from OK to ALARM
+2026-11-17T22:15:25.655000-06:00	scholarchain-course-neptune-cpu	Alarm updated from ALARM to OK
+2026-11-18T00:38:26.386000-06:00	scholarchain-course-jobs-dlq-not-empty	Alarm updated from OK to ALARM

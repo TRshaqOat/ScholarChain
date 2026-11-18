@@ -132,3 +132,8 @@ Running log for the Phase 16 agentic-factory evaluation. One row per agent invoc
 | 2026-11-16 | 14 | code-reviewer (review 2) | APPROVE | y | ? | 2 | 0 | ? | |
 | 2026-11-16 | 14 | infra-engineer (repair-03) | COMPLETE | y | - | 3 | 0 | ? | P14-D6, P14-D7; read-only git deviation (ruling 20) |
 | 2026-11-16 | 14 | code-reviewer (review 3) | APPROVE | y | 0/0/3 | 3 | 0 | ? | minors to Phase 17 (rulings 20, 22) |
+| 2026-11-17 | 14 | experiment-engineer (WO5) | COMPLETE | n | - | 0 | 0 | ? | D and F harnesses; E BLOCKED-ON, no retrieval-mode switch (ruling 31); orchestrator read-only git status (ruling 32) |
+| 2026-11-17 | 14 | code-reviewer (review 4) | REQUEST_CHANGES | y | 0/1/9 | 0 | 0 | ? | major: D's abort did not stop the load; finding 10 residual (ruling 34) |
+| 2026-11-17 | 14 | experiment-engineer (repair-04) | COMPLETE | y | - | 4 | 0 | ? | review 4 findings 1-9; human exception (ruling 33) |
+| 2026-11-17 | 14 | code-reviewer (review 5) | APPROVE | y | 0/0/2 | 4 | 0 | ? | minors residual (ruling 35) |
+| 2026-11-17 | 14 | deploy-engineer (WO8 smoke) | FAILED | n | - | 0 | 0 | ? | smoke 1 Neptune timeout, cold cache (ruling 44); no agent rerun; human rerun PASS (ruling 45) |
