@@ -64,3 +64,28 @@ Not in scope: scripts/cleanup.sh (Phase 12 ruling 10), any plan, apply or aws ca
 Not in scope: Terraform, scripts/, the services, experiments/benchmark/ and labels/.
 
 5. Session 1 (work orders 1 to 3): all COMPLETE (agent-report.md). Accepted read-only deviations, recorded and not to be repeated: rag-engineer ran git status --porcelain once; experiment-engineer ran aws --version once (no API call). Guard false positives in work order 2 ([cleanup-script] on the text "cleanup.sh" in a heredoc; [protected-path-write] on a jq read under ~/.claude with tee) were not worked around. The human removed load-tests/__pycache__ (left by py_compile); a .gitignore rule for it is a build-engineer follow-up and a Phase 17 note. Code review 1 (session 2) reviews work orders 1 to 3 from the change set in evidence/code-review-1/ and the working tree; one repair round follows only if it requests changes.
+
+6. Code review 1: APPROVE, 0 critical / 0 major / 7 minor (review-report.md). Human decisions:
+   - m1, m2, m4 and m6 (infra-engineer), m3 (experiment-engineer) and m7 (rag-engineer) are repaired in repair-01 (one round, ruling 4) before the window 3 plan pins HEAD.
+   - m2: the window 3 load command uses --neptune-timeout-minutes 180.
+   - m3: exp-d-scale-v1 maxMinutes rises to 45 (at least 5 minutes of margin, Phase 14 ruling 34).
+   - m5 is accepted as a limitation: the ranked list is the post-budget bundle, so recall at K is capped at the bundle size. The E method and the report state this.
+   - rag-audit-v3 is kept with the default-valued retrievalMode field (the FUSED wire form is unchanged); this exception to the version convention is ratified.
+   - VECTOR_ONLY without the identity record is accepted as intended: the verifier requires graph evidence, so VECTOR_ONLY answers abstain with NO_VERIFIED_CLAIM. E reports this as a finding; the Haiku calls it spends stay within ruling 31's bound.
+   - At the window 3 plan, the human accepts at most one in-place change, to the data bucket's SSE configuration toward blocked_encryption_types ["SSE-C"]; any other change stops the window.
+   - service_cpu_target_percent = 15 is reverted to 60 after window 3 (Phase 17 infra-engineer follow-up, or a README note if not done).
+   - The secret scholarchain-course/api-key was restored and force-deleted by the human on Nov 19 (ruling 3).
+
+## Repair-01 (code review 1 findings; one round)
+
+Part A (infra-engineer), scripts/load-stores.sh and scripts/README.md:
+- m1: After a Neptune task exits 0, a missing expected line is a log-read problem, not "still running". Re-read with filter-log-events up to 3 times about 15 s apart (ingestion lag). If the line is still missing, exit 1 and name the log group and stream. Remove the empty status from the in-progress set. Apply the same re-read before the start-line check. An API error from filter-log-events is not turned into an empty result: it is reported, and the script exits 1.
+- m4: Keep the failure diagnostics. The status record also keeps the "errors parsing" lines. When a Neptune task exits non-zero, a second filtered read saves its error lines. Every recorded line is checked: a line matching x-amz-security-token, X-Amz-Security-Token, aws_session_token, SessionToken, "Authorization:" or "Credential=" is dropped and counted, never written. Show this with a fixture check, without AWS.
+- m2 and m6: The README window 3 command adds --neptune-timeout-minutes 180. The README states that in window 3 every script is human-run (Phase 15 ruling 3), and the window 3 order includes the Neptune class change to db.r6g.large for the bulk load and back (Phase 14 rulings 42 and 43) and the Neptune warm-up before the smoke test.
+- Keep the exit codes. Checks: bash -n, --dry-run, and the fixture checks.
+
+Part B (experiment-engineer), m3: exp-d-scale-v1 maxMinutes is 45 (ruling 6). When --poll-seconds is above 0, the three ecs_counts calls run with a subprocess timeout. collect.json is written after every collection call, not only at the end. exp-d-query-load-v1 behaves exactly as before. Checks: --self-test, the v1 dry-run diff, and the run-experiment.sh --dry-run for both manifests.
+
+Part C (rag-engineer), m7: RUNTIME.md section 14 lists retrieval=<MODE> as a runtime run-ID input when the mode is not FUSED (section 24). No code change.
+
+The same rules as ruling 4 apply. Each part's report is appended verbatim to docs/agent-runs/phase-15/repair-01.md.
