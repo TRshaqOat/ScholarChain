@@ -140,6 +140,19 @@ enum RuntimeMode:
 object RuntimeMode:
   given ReadWriter[RuntimeMode] = enumRW(values)
 
+/** Which retrievers a run uses (experiment E, Phase 14 ruling 31; RUNTIME.md section 24). FUSED is
+  * the default and the behaviour before the mode existed; GRAPH_ONLY queries no vector index;
+  * VECTOR_ONLY reads no graph fact beyond researcher resolution.
+  */
+enum RetrievalMode:
+  case FUSED, GRAPH_ONLY, VECTOR_ONLY
+
+  /** The CLI form: fused, graph-only, vector-only. */
+  def flag: String = toString.toLowerCase.replace('_', '-')
+object RetrievalMode:
+  given ReadWriter[RetrievalMode] = enumRW(values)
+  def fromFlag(s: String): Option[RetrievalMode] = values.find(_.flag == s)
+
 /** ResearcherMetricCache attribute of each core metric (WINDOW# items; CHANGE# prefixes `from` or
   * `to` and capitalizes). Only the seven `ranked` metrics have stored RANKING# items.
   */

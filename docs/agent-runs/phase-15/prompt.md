@@ -89,3 +89,15 @@ Part B (experiment-engineer), m3: exp-d-scale-v1 maxMinutes is 45 (ruling 6). Wh
 Part C (rag-engineer), m7: RUNTIME.md section 14 lists retrieval=<MODE> as a runtime run-ID input when the mode is not FUSED (section 24). No code change.
 
 The same rules as ruling 4 apply. Each part's report is appended verbatim to docs/agent-runs/phase-15/repair-01.md.
+
+## Human ruling 7 (Nov 19, 2026): code review 2, repair-01 accepted, window 3 go
+
+7. Code review 2 (repair-01): APPROVE, 0/0/5 (N1 to N5; N5 plausible). Repair-01 is accepted; there is no further repair round (ruling 4).
+   (a) N4 accepted: Part B lowered COLLECT_BUDGET_S and the manifest's collectBudgetSeconds from 150 to 90 s, beyond the Part B text. The reviewer recomputed the worst case from the harness code: about 39.4 min under maxMinutes 45 (5.6 min margin). With 150 s the margin would be 4.6 min, below ruling 6.
+   (b) Residual risks: N1 (a rerun of load-stores.sh after the Neptune load has started starts a second, queued bulk load; the "rerun skips loaded data" sentences are wrong for Neptune), N2 (ERROR_PATTERN misses the `stage:` detail lines; Part A's coverage claim was inaccurate), N3 (the README window 3 order does not say to wait for the upsize), N5 (no lag re-read on the failure path). Phase 17 follow-ups for infra-engineer: a `--neptune-load-id` resume flag and corrected sentences (N1), `?"stage:"` in ERROR_PATTERN (N2), the wait in the README order (N3), the failure-path re-read (N5), and service_cpu_target_percent back to 60 with its README note (ruling 6).
+   (c) Window 3 operator rules (N1, N3), binding:
+       1. Start load-stores.sh only after describe-db-instances shows scholarchain-course-graph-1 as db.r6g.large and available, with no pending modified values.
+       2. Once `==> NEPTUNE load=<id>` has printed, never rerun load-stores.sh without `neptune` in --skip. If the script stops after that line (exit 1 or 6), record the load ID, check it with manual status tasks (Phase 14 ruling 41 procedure) until LOAD_COMPLETED or a failure, and write a mid-window ruling in operations/rulings/ before anything else. The remaining steps then run with `--skip s3-store-conversion,s3-embed,s3-window-summary,neptune`, and the load ID is recorded beside that run's run.json (its neptuneLoadId is null).
+       3. Run aws login immediately before load-stores.sh; it can run for 3 h or more.
+   (d) Human check.sh on the final working tree (11:24 to 11:28 CST): exit 0; 845 passed, 0 failed, 10 pending (evidence/gate/check-sh-prewindow3.txt). The secret scan matched only the credential filter's own pattern text and FAKE fixture values; no raw session token and no credential value.
+   (e) Window 3 goes ahead under ruling 3 at the commit that follows this ruling. From the plan until cleanup, nothing is written under docs/agent-runs/; mid-window rulings go to operations/rulings/ (ruling 3).

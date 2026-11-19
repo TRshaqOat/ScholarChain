@@ -1,0 +1,21 @@
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] compiling 1 Scala source to /Users/achyutpatel/Developer/Cloud/ScholarChain/modules/rag/target/scala-3.3.7/test-classes ...
+[info] done compiling
+[info] RetrievalModeSpec:
+[info] - FUSED is the default and the path before the mode existed: same run ID, same audit bytes
+[info] - GRAPH_ONLY: no embedding, no vector query, no semantic item; graph stages run
+[info] - VECTOR_ONLY: resolution reads only, stages 3 to 5 skipped, vector items only
+[info] - VECTOR_ONLY drops the filters taken from graph facts; FUSED skips those indexes
+[info] - BenchmarkCli --retrieval-mode: one run per mode, the mode recorded, a ranked-list file each
+[info] - BenchmarkCli refuses an unknown --retrieval-mode before loading the stores
+[info] Run completed in 1 second, 208 milliseconds.
+[info] Total number of tests run: 6
+[info] Suites: completed 1, aborted 0
+[info] Tests: succeeded 6, failed 0, canceled 0, ignored 0, pending 0
+[info] All tests passed.
+[success] Total time: 4 s, completed Nov 18, 2026, 9:41:59 PM

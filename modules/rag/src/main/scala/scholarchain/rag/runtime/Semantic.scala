@@ -37,7 +37,8 @@ object SemanticStage:
       modelVersion: String,
       cfg: ScholarChainConfig,
       nowMs: () => Long,
-      checkDeadline: String => Unit = _ => ()
+      checkDeadline: String => Unit = _ => (),
+      mode: RetrievalMode = RetrievalMode.FUSED
   ): Output =
     val ix = cfg.s3Vectors.indexes
     val corpus = Windows.corpusWindowName(cfg)
@@ -51,6 +52,7 @@ object SemanticStage:
         for x <- m.get(op.researchers(0)); y <- m.get(op.researchers(1)) yield (x, y)
       }
     val communities = facts.metrics.flatMap(_.metrics.communityId).distinct
+    val vectorOnly = mode == RetrievalMode.VECTOR_ONLY
     val workIds = facts.works.map(_.workId).distinct.take(VectorContract.MaxFilterConstraints - 2)
     val queries: Vector[(String, String, Option[VectorFilter])] = plan.semanticIndexes.flatMap {
       index =>
@@ -75,6 +77,11 @@ object SemanticStage:
               )
             )
           )
+        // VECTOR_ONLY has no graph facts, so the community and work filters (taken from them) are
+        // dropped: those indexes are queried by similarity within the window alone (section 24).
+        else if vectorOnly && ix.get("communities").contains(index) then
+          Some((index, plan.window.window, None))
+        else if vectorOnly && ix.get("abstracts").contains(index) then Some((index, corpus, None))
         else if ix.get("communities").contains(index) then
           Option.when(communities.nonEmpty)(
             (index, plan.window.window, Some(VectorFilter.In("communityId", str(communities))))

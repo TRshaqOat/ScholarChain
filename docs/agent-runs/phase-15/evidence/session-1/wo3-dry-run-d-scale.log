@@ -1,0 +1,58 @@
+$ jq empty experiments/manifests/exp-d-scale-v1.json
+exit=0
+$ jq -e <run-experiment.sh experiment-manifest-v1 checks> experiments/manifests/exp-d-scale-v1.json
+true
+exit=0
+$ python3 load-tests/exp-d-query-load.py --dry-run --levels 8 --level-seconds 600 --pause-seconds 0 --post-observe-seconds 1500 --abort-error-rate 0.05 --abort-window-seconds 10 --abort-min-requests 20 --abort-consecutive 10 --max-requests-per-level 40000 --poll-seconds 30
+==> STEP dry-run (no terraform, AWS or HTTP call)
+    inputs: terraform output alb_dns_name, api_key_secret_arn, ecs_cluster_name, account_id, runtime_enabled; Secrets Manager API key (memory only)
+    ids from: /Users/achyutpatel/Developer/Cloud/ScholarChain/operations/releases/smoke-20261118T061612Z.json
+    bounds: {"levels": [8], "levelSeconds": 600, "pauseSeconds": 0, "postObserveSeconds": 1500, "abortRule": {"scope": "per request kind (evidence, node, neighbors); sliding window within a level, whole level between levels; preflight GET of each path before the first level", "errorRateAbove": 0.05, "windowSeconds": 10.0, "minRequestsPerKind": 20, "consecutive5xxOrTransport": 10}, "maxRequestsPerLevel": 40000, "requestTimeoutSeconds": 10, "plannedSeconds": 2100, "haikuCalls": 0, "service": "graph-evidence-api", "serviceMaxTasks": 2, "pollSeconds": 30, "collectBudgetSeconds": 150}
+    planned requests (round-robin per worker, GET, X-Api-Key header):
+      evidence  GET http://<alb_dns_name>/v1/evidence/ev-927665f3bbac87eb60685e50cfeb8f9b
+      evidence  GET http://<alb_dns_name>/v1/evidence/ev-9edfbd8136ecefa015ada3457f655f52
+      node      GET http://<alb_dns_name>/v1/graph/nodes/scr%3Acanon-v1.er-v2%3A6de4012bbe8608f1d49d18cf9a40a763
+      neighbors GET http://<alb_dns_name>/v1/graph/nodes/scr%3Acanon-v1.er-v2%3A6de4012bbe8608f1d49d18cf9a40a763/neighbors?direction=both&depth=1&limit=50&edgeTypes=COAUTHORED_WITH
+      node      GET http://<alb_dns_name>/v1/graph/nodes/scr%3Acanon-v1.er-v2%3Ada6e3bdff14745638f3f5425f0133388
+      neighbors GET http://<alb_dns_name>/v1/graph/nodes/scr%3Acanon-v1.er-v2%3Ada6e3bdff14745638f3f5425f0133388/neighbors?direction=both&depth=1&limit=50&edgeTypes=COAUTHORED_WITH
+    preflight: one GET of each path above, sequential; any non-2xx stops the run (exit 3)
+    level c=8: ecs describe-services graph-evidence-api; 600 s closed loop; ecs describe-services
+    then 1500 s idle and a final ecs describe-services; write summary.json
+    poll: every 30 s from before the preflight to the end of the post-observation, ecs describe-services graph-evidence-api -> ecs-timeline.csv (UTC)
+    collect (read-only, TZ=UTC, at most 150 s, failures recorded, exit code unchanged):
+      aws application-autoscaling describe-scaling-activities
+      aws application-autoscaling describe-scaling-policies
+      aws cloudwatch describe-alarm-history
+      aws cloudwatch describe-alarms
+      aws cloudwatch get-metric-data
+      aws ecs describe-services
+    metrics (60 s, from 5 min before the start to the collection time):
+      ecs_cpu          AWS/ECS CPUUtilization Average
+      ecs_memory       AWS/ECS MemoryUtilization Average
+      alb_healthy_min  AWS/ApplicationELB HealthyHostCount Minimum
+      alb_healthy_max  AWS/ApplicationELB HealthyHostCount Maximum
+      alb_requests     AWS/ApplicationELB RequestCount Sum
+      alb_trt_p50      AWS/ApplicationELB TargetResponseTime p50
+      alb_trt_p95      AWS/ApplicationELB TargetResponseTime p95
+      alb_target_5xx   AWS/ApplicationELB HTTPCode_Target_5XX_Count Sum
+      neptune_cpu      AWS/Neptune CPUUtilization Average
+==> OK dry-run
+exit=0
+$ scripts/run-experiment.sh --manifest experiments/manifests/exp-d-scale-v1.json --dry-run
+==> STEP dry-run
+    no AWS, Terraform, or git call was made; steps that would run:
+    - manifest experiments/manifests/exp-d-scale-v1.json tracked and unchanged from HEAD; clean tree; load-tests/exp-d-query-load.py tracked
+    - aws sts get-caller-identity; print account and Region
+    - run load-tests/exp-d-query-load.py --levels 8 --level-seconds 600 --pause-seconds 0 --post-observe-seconds 1500 --abort-error-rate 0.05 --abort-window-seconds 10 --abort-min-requests 20 --abort-consecutive 10 --max-requests-per-level 40000 --poll-seconds 30 for at most 40 min
+    - write /Users/achyutpatel/Developer/Cloud/ScholarChain/experiments/results/exp-d-scale-v1/<stamp>/run-record.json; make the directory read-only
+==> OK dry-run
+exit=0
+$ scripts/run-experiment.sh --manifest experiments/manifests/exp-d-query-load-v1.json --dry-run
+==> STEP dry-run
+    no AWS, Terraform, or git call was made; steps that would run:
+    - manifest experiments/manifests/exp-d-query-load-v1.json tracked and unchanged from HEAD; clean tree; load-tests/exp-d-query-load.py tracked
+    - aws sts get-caller-identity; print account and Region
+    - run load-tests/exp-d-query-load.py --levels 1,2,4,8 --level-seconds 180 --pause-seconds 30 --post-observe-seconds 120 --abort-error-rate 0.05 --abort-window-seconds 10 --abort-min-requests 20 --abort-consecutive 10 for at most 25 min
+    - write /Users/achyutpatel/Developer/Cloud/ScholarChain/experiments/results/exp-d-query-load-v1/<stamp>/run-record.json; make the directory read-only
+==> OK dry-run
+exit=0

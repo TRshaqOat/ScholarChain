@@ -1,7 +1,7 @@
 package scholarchain.rag.cli
 
 import scholarchain.core.StableIds
-import scholarchain.rag.runtime.Audit
+import scholarchain.rag.runtime.{Audit, RetrievalMode}
 import scholarchain.storage.cli.Cli
 import scholarchain.storage.{FileObjectStore, Hashing, ManifestEntry, RunManifest, Throttle}
 import upickle.default.{read, write}
@@ -16,13 +16,16 @@ import java.nio.file.{Files, Paths}
   * every invocation the summary of all results present and a run manifest are written (keyed by the
   * number of results, write-once). A question whose runtime fails, or whose model or embedding call
   * never succeeded because of an error (`Benchmark.callFailure`), gets no result; the run stops
-  * there and the next run retries it. Exit 0 when no question failed in this invocation, 1
+  * there and the next run retries it. `--retrieval-mode fused|graph-only|vector-only` (default
+  * fused; RUNTIME.md section 24) picks the retrievers; each result's ranked retrieved list is also
+  * written as `.../retrieval/<id>-<mode>.csv`. Exit 0 when no question failed in this invocation, 1
   * otherwise, 2 usage, 3 disk.
   */
 object BenchmarkCli:
   val UsageText =
     "rag/runMain scholarchain.rag.cli.BenchmarkCli --questions <benchmark CSV> " +
-      s"--path-evidence <stored path hops CSV> [--max <n>] ${AskCli.StoreUsage}"
+      s"--path-evidence <stored path hops CSV> [--max <n>] " +
+      s"[--retrieval-mode fused|graph-only|vector-only] ${AskCli.StoreUsage}"
 
   def main(args: Array[String]): Unit = Cli.main("BenchmarkCli", args)(run(_, _))
 
@@ -36,7 +39,7 @@ object BenchmarkCli:
     RagCli.withArgs(
       args,
       Cli.LiveFlags,
-      AskCli.StoreOpts ++ Set("questions", "path-evidence", "max"),
+      AskCli.StoreOpts ++ Set("questions", "path-evidence", "max", "retrieval-mode"),
       UsageText,
       out,
       env
@@ -49,7 +52,11 @@ object BenchmarkCli:
         qs <- Benchmark.questions(new String(qBytes, UTF_8)).left.map(e => s"$qPath: $e")
         ref <- Benchmark.pathReference(new String(pBytes, UTF_8)).left.map(e => s"$pPath: $e")
         max <- a.int("max", Some(qs.size)).filterOrElse(_ >= 1, "--max must be at least 1")
-        loaded <- AskCli.open(a, cfg, out, sleep, nowMs)
+        retrieval <- a
+          .get("retrieval-mode")
+          .fold(Some(RetrievalMode.FUSED))(RetrievalMode.fromFlag)
+          .toRight("--retrieval-mode must be fused, graph-only, or vector-only")
+        loaded <- AskCli.open(a, cfg, out, sleep, nowMs, retrieval)
       yield loaded.fold(1) { rt =>
         val s = rt.setup
         val benchRun = StableIds.runId(
@@ -107,10 +114,28 @@ object BenchmarkCli:
           }
         val failed = if failure.isDefined then 1 else 0
         val results = qs.flatMap(q => stored(q.id))
-        val sum = Benchmark.summary(benchRun, s.runId, s.mode.toString, qs, results)
+        val sum = Benchmark.summary(
+          benchRun,
+          s.runId,
+          s.mode.toString,
+          s.retrievalMode.toString,
+          qs,
+          results
+        )
         val summaryBytes = write(sum, indent = 2).getBytes(UTF_8)
         val n = f"${results.size}%03d"
+        // Rebuilt from every stored result (resume-safe: same result, same bytes, Unchanged). Not in
+        // the manifest: each list is a copy of the `retrieved` field of a result that is.
+        val lists = results.map(r =>
+          Audit.putOnce(
+            store.loader,
+            s"$base/retrieval/${r.questionId}-${s.retrievalMode.flag}.csv",
+            Benchmark.retrievedCsv(r.retrieved).getBytes(UTF_8),
+            r.queryId
+          )
+        )
         val written = for
+          _ <- lists.collectFirst { case Left(e) => e }.toLeft(())
           se <- Audit.putOnce(store.loader, s"$base/summary-$n.json", summaryBytes, "summary")
           entries = results.map(r =>
             val b = store.reader.get(resultKey(r.questionId)).get
@@ -151,7 +176,10 @@ object BenchmarkCli:
   def printSummary(s: Benchmark.Summary, out: String => Unit): Unit =
     def m(x: Map[String, Int]) = x.toVector.sorted.map((k, v) => s"$k $v").mkString(", ")
     def l(x: Benchmark.Latency) = s"p50 ${x.p50Ms} ms, p95 ${x.p95Ms} ms, max ${x.maxMs} ms"
-    out(s"done ${s.questionsDone} of ${s.questionsTotal} (${s.mode.toLowerCase} mode)")
+    out(
+      s"done ${s.questionsDone} of ${s.questionsTotal} (${s.mode.toLowerCase} mode, " +
+        s"${s.retrievalMode.toLowerCase.replace('_', '-')} retrieval)"
+    )
     if s.notDone.nonEmpty then out(s"not done: ${s.notDone.mkString(" ")}")
     s.checks.toVector.sortBy(_._1).foreach { (k, t) =>
       out(s"  check $k: ${t.pass} pass, ${t.fail} fail, ${t.notApplicable} n/a")

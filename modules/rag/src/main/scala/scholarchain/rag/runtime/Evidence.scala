@@ -511,14 +511,20 @@ object EvidenceBuilder:
       semantic: Vector[SemanticResult],
       extraMissing: Vector[MissingEvidence],
       cfg: ScholarChainConfig,
-      runId: String
+      runId: String,
+      mode: RetrievalMode = RetrievalMode.FUSED
   ): EvidenceBundle =
     val b = cfg.runtime.budget
     def tokens(s: String) = (s.length + b.charsPerToken - 1) / b.charsPerToken
     var count = 0
     var graphTokens = 0
     var omittedGraph = Vector.empty[EvidenceItem]
-    val graph = graphGroups(plan, resolutions, g, cfg).flatMap { group =>
+    // Section 24: VECTOR_ONLY keeps no graph item (not even the identity record of resolution);
+    // GRAPH_ONLY keeps no semantic item.
+    val groups =
+      if mode == RetrievalMode.VECTOR_ONLY then Vector.empty
+      else graphGroups(plan, resolutions, g, cfg)
+    val graph = groups.flatMap { group =>
       val t = group.map(e => tokens(render(e))).sum
       if graphTokens + t <= b.graphEvidenceTokens && count + group.size <= b.maxEvidenceItems then
         graphTokens += t
@@ -530,7 +536,7 @@ object EvidenceBuilder:
     }
     var semanticTokens = 0
     var omittedSemantic = 0
-    val ordered = semantic
+    val ordered = (if mode == RetrievalMode.GRAPH_ONLY then Vector.empty else semantic)
       .flatMap(_.items)
       .sortBy(e => (-e.score.getOrElse(0d), e.evidenceId))
       .distinctBy(e => e.chunkId.getOrElse(e.evidenceId))

@@ -1,0 +1,396 @@
+diff --git a/experiments/manifests/exp-d-scale-v1.json b/experiments/manifests/exp-d-scale-v1.json
+new file mode 100644
+index 0000000..c84a4c5
+--- /dev/null
++++ b/experiments/manifests/exp-d-scale-v1.json
+@@ -0,0 +1,74 @@
++{
++  "schemaVersion": "experiment-manifest-v1",
++  "experimentId": "exp-d-scale-v1",
++  "description": "Experiment D-scale (Phase 15 ruling 2, work order 3, cloud window 3). The same request mix as exp-d-query-load-v1 (closed-loop GET on graph-evidence-api through the ALB: /v1/evidence/<id>, /v1/graph/nodes/<researcherId>, /v1/graph/nodes/<researcherId>/neighbors with direction both, depth 1, limit 50, COAUTHORED_WITH; IDs from the latest PASS smoke record), held at one level, concurrency 8, for 600 s, then 1,500 s of post-observation with no load. No /v1/query, so no Haiku or Bedrock call. Purpose: observe one target-tracking scale-out and one scale-in of graph-evidence-api (1 to 2 tasks). EXPERIMENT SETTING, NOT A TUNED PRODUCTION VALUE: the target-tracking CPU target is 15 percent (Terraform variable service_cpu_target_percent = 15 in course.tfvars for window 3; the variable default and production value is 60). Reason (ruling 2): in window 2, graph-evidence-api averaged 20 to 27 percent CPU at concurrency 8 (about 2,150 requests per minute) while Neptune db.t4g.medium reached 80 to 93 percent CPU, so a 60 percent target was never reached and nothing scaled. Every 30 s during the load and the post-observation, the harness samples desired, running and pending task counts (read-only describe-services) into raw/ecs-timeline.csv. After the post-observation it collects, read-only and in UTC, the Application Auto Scaling scaling activities and policies, the ECS service events, the target-tracking alarms and their history, and CloudWatch 1-minute metrics (see metrics). A failed collection is recorded in raw/collect.json and its collect-<name>.json and does not change the exit code or summary.json. Run by the human through scripts/run-experiment.sh after deploy.sh --resume, the Neptune warm-up and a PASS smoke-test.sh in window 3.",
++  "command": [
++    "load-tests/exp-d-query-load.py",
++    "--levels", "8",
++    "--level-seconds", "600",
++    "--pause-seconds", "0",
++    "--post-observe-seconds", "1500",
++    "--abort-error-rate", "0.05",
++    "--abort-window-seconds", "10",
++    "--abort-min-requests", "20",
++    "--abort-consecutive", "10",
++    "--max-requests-per-level", "40000",
++    "--poll-seconds", "30"
++  ],
++  "limits": {
++    "maxMinutes": 40,
++    "plannedMinutes": 38,
++    "plannedBreakdown": "setup (terraform output, sts, secret) under 1 min; preflight seconds; 600 s load; 1,500 s post-observation; collection at most 150 s",
++    "concurrencyLevels": [8],
++    "maxConcurrency": 8,
++    "levelSeconds": 600,
++    "pauseSeconds": 0,
++    "postObserveSeconds": 1500,
++    "maxRequestsPerLevel": 40000,
++    "maxRequestsPerLevelReason": "window 2 ran about 36 requests per second at concurrency 8, so 600 s is about 21,500 requests, above the 20,000 default cap",
++    "requestTimeoutSeconds": 10,
++    "abortErrorRate": 0.05,
++    "abortWindowSeconds": 10,
++    "abortMinRequestsPerKind": 20,
++    "abortConsecutive5xxOrTimeouts": 10,
++    "abortScope": "unchanged from exp-d-query-load-v1: per request kind, a sliding window within the level and the whole level; preflight GET of each path first",
++    "pollSeconds": 30,
++    "collectBudgetSeconds": 150,
++    "exitCodes": "0 the level ran; 1 abort rule; 2 usage; 3 precondition or non-2xx preflight; 4 unexpected error. Collection never changes the exit code.",
++    "haikuCalls": 0,
++    "bedrockCalls": 0,
++    "httpMethods": ["GET"],
++    "awsCallsByHarness": "read-only only: sts get-caller-identity, secretsmanager get-secret-value (API key, memory only), ecs describe-services, application-autoscaling describe-scaling-activities and describe-scaling-policies, cloudwatch describe-alarms, describe-alarm-history and get-metric-data; the collection calls are allowlisted in the harness (READ_ONLY_CALLS)",
++    "targetService": "graph-evidence-api",
++    "graphEvidenceApiMaxTasks": 2,
++    "cpuTargetPercent": 15,
++    "cpuTargetIs": "an experiment setting for window 3 (Phase 15 ruling 2), not a tuned production value; production default 60",
++    "scaleChanges": "none by the harness; Application Auto Scaling may move graph-evidence-api between 1 and 2 tasks (Terraform service_max_counts.graph_evidence_api = 2, cpu target 15, scale-out cooldown 60 s, scale-in cooldown 120 s)",
++    "region": "us-east-2",
++    "budgetUsd": 0.5,
++    "budgetNote": "incremental cost of the run only (one extra Fargate task for at most about 25 minutes, ALB requests, Neptune I/O, about 9 CloudWatch metric series in one get-metric-data call); the window's runtime hours are counted in the window 3 budget (ruling 3)"
++  },
++  "expectedFinding": "Stated before the run and reported either way (ruling 2): with the CPU target at 15 percent, one sustained concurrency-8 level should trigger one scale-out (the high alarm needs 3 minutes above target) and, after the load stops, one scale-in (the low alarm needs about 15 minutes below its threshold; both alarms' exact thresholds and periods are recorded in raw/collect-alarms.json). A second task is expected to add no throughput while Neptune (db.t4g.medium) is the bottleneck: requests per second and latency after the second task is healthy should match the single-task period within noise, and Neptune CPU should stay high. If no scale-out, no scale-in, or a throughput gain is observed, that is the reported result.",
++  "context": {
++    "region": "us-east-2",
++    "window": "cloud window 3 (Phase 15 ruling 3)",
++    "datasetSnapshot": "2026-10-03",
++    "neptuneInstanceClassDuringRun": "db.t4g.medium (the bulk load runs on db.r6g.large, then the instance returns to db.t4g.medium before the run; Phase 14 rulings 42 and 43)",
++    "servicesImage": "the image deploy.sh --resume deploys at the window 3 HEAD; its package record under operations/releases/ is the authority, not known when this manifest is written",
++    "runtimeStores": "loaded by load-stores.sh in window 3 from the window 2 S3 objects (ruling 3); the run IDs are those in the window 3 load-stores record, expected to match exp-d-query-load-v1's context",
++    "comparisonRun": "experiments/results/exp-d-query-load-v1/20261118T063904Z (window 2; concurrency 8 level: 6,439 requests in 180 s, about 35.7 per second, 0 errors, desired stayed 1)",
++    "inputs": "terraform output (alb_dns_name, api_key_secret_arn, ecs_cluster_name, account_id, runtime_enabled, alb_arn_suffix, neptune_cluster_id); Secrets Manager API key (memory only); latest PASS operations/releases/smoke-*.json",
++    "rawOutputs": "inputs.json, preflight.json, requests-c8.csv, ecs-before-c8.json, ecs-after-c8.json, ecs-post-observe.json, summary.json (written before the collection), ecs-timeline.csv (utc, desired, running, pending, error every 30 s), collect.json (index: metrics interval, target group ARN, skipped metric queries, each call's time and error), collect-scaling-activities.json, collect-scaling-policies.json, collect-ecs-service.json (events and loadBalancers), collect-alarms.json, collect-alarm-history-<n>.json, collect-metrics.json (get-metric-data output and its queries)",
++    "metricsInterval": "from 5 minutes before the harness start (minute-aligned, UTC) to the minute after collection; period 60 s",
++    "metricsNote": "TargetGroup is the suffix of the targetGroupArn in describe-services loadBalancers, found at collection time; LoadBalancer is terraform output alb_arn_suffix; DBClusterIdentifier is terraform output neptune_cluster_id. All three are recorded in raw/collect-metrics.json. Container Insights is disabled, so task counts come from describe-services, not CloudWatch."
++  },
++  "metrics": [
++    {"namespace": "AWS/ECS", "metricName": "CPUUtilization", "stat": "Average", "dimensions": {"ClusterName": "scholarchain-course-runtime", "ServiceName": "graph-evidence-api"}},
++    {"namespace": "AWS/ECS", "metricName": "MemoryUtilization", "stat": "Average", "dimensions": {"ClusterName": "scholarchain-course-runtime", "ServiceName": "graph-evidence-api"}},
++    {"namespace": "AWS/ApplicationELB", "metricName": "HealthyHostCount", "stat": "Minimum and Maximum", "dimensions": {"TargetGroup": "describe-services:loadBalancers[].targetGroupArn suffix", "LoadBalancer": "terraform-output:alb_arn_suffix"}},
++    {"namespace": "AWS/ApplicationELB", "metricName": "RequestCount", "stat": "Sum", "dimensions": {"TargetGroup": "describe-services:loadBalancers[].targetGroupArn suffix", "LoadBalancer": "terraform-output:alb_arn_suffix"}},
++    {"namespace": "AWS/ApplicationELB", "metricName": "TargetResponseTime", "stat": "p50 and p95", "dimensions": {"TargetGroup": "describe-services:loadBalancers[].targetGroupArn suffix", "LoadBalancer": "terraform-output:alb_arn_suffix"}},
++    {"namespace": "AWS/ApplicationELB", "metricName": "HTTPCode_Target_5XX_Count", "stat": "Sum", "dimensions": {"TargetGroup": "describe-services:loadBalancers[].targetGroupArn suffix", "LoadBalancer": "terraform-output:alb_arn_suffix"}},
++    {"namespace": "AWS/Neptune", "metricName": "CPUUtilization", "stat": "Average", "dimensions": {"DBClusterIdentifier": "terraform-output:neptune_cluster_id"}}
++  ]
++}
+diff --git a/modules/rag/src/test/scala/scholarchain/rag/runtime/RetrievalModeSpec.scala b/modules/rag/src/test/scala/scholarchain/rag/runtime/RetrievalModeSpec.scala
+new file mode 100644
+index 0000000..793aaeb
+--- /dev/null
++++ b/modules/rag/src/test/scala/scholarchain/rag/runtime/RetrievalModeSpec.scala
+@@ -0,0 +1,310 @@
++package scholarchain.rag.runtime
++
++import org.scalatest.funsuite.AnyFunSuite
++import scholarchain.rag.cli.{Benchmark, BenchmarkCli}
++import scholarchain.storage.{Embedder, FileObjectStore, VectorFilter, VectorHit, VectorReadPort}
++import upickle.default.{read, write}
++
++import java.nio.charset.StandardCharsets.UTF_8
++import java.nio.file.{Files, Path}
++
++/** Retrieval modes for experiment E (RUNTIME.md section 24), in fake mode on the fixture world:
++  * which stages run in each mode, the audit field, the BenchmarkCli flag, and the ranked-list file.
++  */
++class RetrievalModeSpec extends AnyFunSuite:
++  import RuntimeFixtures.*
++
++  private val pathQ =
++    "What is the shortest coauthorship path between Ada Lovelace and Edsger Dijkstra?"
++  private def ok(r: Either[RuntimeFailure, RuntimeResult]) = r.fold(f => fail(s"$f"), identity)
++  private val queryId = "qry-" + "0" * 32
++  private def request(q: String) =
++    QueryRequest(RuntimeSchemas.QueryRequest, queryId, None, q, None, None, None, None)
++
++  /** The world's ports with the embedder and the vector store counted. */
++  private final class Counted(w: World):
++    var embeds = 0
++    var queries = Vector.empty[String]
++    val ports: RuntimePorts = w.ports.copy(
++      embedder = new Embedder:
++        def modelId = w.embedder.modelId
++        def isFake = w.embedder.isFake
++        def embed(text: String) =
++          embeds += 1
++          w.embedder.embed(text)
++      ,
++      vectors = new VectorReadPort:
++        def get(index: String, keys: Seq[String]) = w.ports.vectors.get(index, keys)
++        def query(
++            index: String,
++            vector: Array[Float],
++            topK: Int,
++            filter: Option[VectorFilter]
++        ): Either[String, Vector[VectorHit]] =
++          queries :+= index
++          w.ports.vectors.query(index, vector, topK, filter)
++    )
++    def ask(mode: RetrievalMode): RuntimeResult =
++      ok(Workflow.answer(request(pathQ), ports, w.setup.copy(retrievalMode = mode)))
++
++  private def outcomes(r: RuntimeResult) = r.audit.stages.map(s => s.stage -> s.outcome).toMap
++  private val graphStages =
++    Vector(Stage.COLLABORATION_METRICS, Stage.PATH_FINDING, Stage.COMMUNITY_ANALYSIS)
++  // The reads researcher resolution makes (Resolver); nothing else is allowed in VECTOR_ONLY.
++  private val resolutionReads =
++    Set(
++      "kv.entity-link",
++      "graph.authored-counts",
++      "graph.researcher-institutions",
++      "graph.coauthors"
++    )
++
++  test("FUSED is the default and the path before the mode existed: same run ID, same audit bytes") {
++    withWorld() { w1 =>
++      withWorld() { w2 =>
++        assert(w1.setup.retrievalMode == RetrievalMode.FUSED)
++        val default = ok(Workflow.answer(request(pathQ), w1.ports, w1.setup))
++        val fused = ok(
++          Workflow.answer(
++            request(pathQ),
++            w2.ports,
++            w2.setup.copy(retrievalMode = RetrievalMode.FUSED)
++          )
++        )
++        assert(default.answer == fused.answer && default.bundle == fused.bundle)
++        assert(write(default.audit) == write(fused.audit))
++        // The audit is the v3 wire form it had before: no retrievalMode key, read back as FUSED.
++        val json = write(default.audit)
++        assert(default.audit.schemaVersion == "rag-audit-v3" && !json.contains("retrievalMode"))
++        assert(read[AuditRecord](json) == default.audit)
++        // FUSED still plans vector indexes and runs the graph and semantic stages.
++        val st = outcomes(default)
++        assert(default.answer.plan.semanticIndexes.nonEmpty)
++        assert(st(Stage.PATH_FINDING) == StageOutcome.OK)
++        assert(st(Stage.SEMANTIC_CONTEXT) == StageOutcome.OK)
++        val b = default.bundle.get
++        assert(b.graphEvidence.nonEmpty && b.semanticEvidence.nonEmpty)
++        // The run ID gains a retrieval input only for the other modes.
++        def id(m: RetrievalMode) =
++          Workflow.runIdFor(config, Seq("g"), w1.prompts, RuntimeMode.FAKE, retrieval = m)
++        assert(
++          id(RetrievalMode.FUSED) == Workflow.runIdFor(
++            config,
++            Seq("g"),
++            w1.prompts,
++            RuntimeMode.FAKE
++          )
++        )
++        assert(RetrievalMode.values.map(id).distinct.length == 3)
++      }
++    }
++  }
++
++  test("GRAPH_ONLY: no embedding, no vector query, no semantic item; graph stages run") {
++    withWorld() { w =>
++      val c = Counted(w)
++      val r = c.ask(RetrievalMode.GRAPH_ONLY)
++      assert(c.embeds == 0 && c.queries.isEmpty)
++      assert(r.answer.plan.semanticIndexes.isEmpty)
++      val st = outcomes(r)
++      assert(st(Stage.PATH_FINDING) == StageOutcome.OK)
++      assert(st(Stage.SEMANTIC_CONTEXT) == StageOutcome.SKIPPED)
++      assert(r.audit.embeddingCalls.isEmpty && r.audit.vectorIndexes.isEmpty)
++      val b = r.bundle.get
++      assert(b.graphEvidence.nonEmpty && b.semanticEvidence.isEmpty)
++      assert(!r.answer.response.abstained)
++      assert(r.audit.retrievalMode == RetrievalMode.GRAPH_ONLY)
++      val json = write(r.audit)
++      assert(json.contains("\"retrievalMode\":\"GRAPH_ONLY\""))
++      assert(read[AuditRecord](json) == r.audit)
++    }
++  }
++
++  test("VECTOR_ONLY: resolution reads only, stages 3 to 5 skipped, vector items only") {
++    withWorld() { w =>
++      val fused = Counted(w).ask(RetrievalMode.FUSED)
++      assert(!fused.audit.templateCalls.map(_.templateId).toSet.subsetOf(resolutionReads))
++    }
++    withWorld() { w =>
++      val c = Counted(w)
++      val r = c.ask(RetrievalMode.VECTOR_ONLY)
++      val reads = r.audit.templateCalls.map(_.templateId).toSet
++      assert(reads.nonEmpty && reads.subsetOf(resolutionReads), reads)
++      val st = outcomes(r)
++      graphStages.foreach(s => assert(st(s) == StageOutcome.SKIPPED, s))
++      assert(st(Stage.SEMANTIC_CONTEXT) == StageOutcome.OK)
++      assert(c.embeds == 1 && c.queries.nonEmpty)
++      val b = r.bundle.get
++      // Not even the identity record of resolution is a bundle item.
++      assert(b.graphEvidence.isEmpty && b.semanticEvidence.nonEmpty)
++      assert(b.semanticEvidence.exists(_.chunkId.contains(pathKey)))
++      // Vector text never proves a fact (law 3): with no graph item, no claim verifies.
++      assert(
++        r.answer.abstention.map(_.reason).contains(AbstentionReason.NO_VERIFIED_CLAIM),
++        r.answer.abstention
++      )
++      assert(r.audit.retrievalMode == RetrievalMode.VECTOR_ONLY)
++      assert(write(r.audit).contains("\"retrievalMode\":\"VECTOR_ONLY\""))
++    }
++  }
++
++  test("VECTOR_ONLY drops the filters taken from graph facts; FUSED skips those indexes") {
++    withWorld() { w =>
++      val ix = config.s3Vectors.indexes
++      val plan = ok(w.ask(pathQ)).answer.plan
++        .copy(semanticIndexes = Vector(ix("communities"), ix("abstracts")))
++      val noFacts = GraphFacts(
++        RuntimeSchemas.GraphFacts,
++        queryId,
++        graphRun,
++        Vector.empty,
++        Vector.empty,
++        Vector.empty,
++        Vector.empty,
++        Vector.empty,
++        Vector.empty,
++        Vector.empty,
++        Vector.empty,
++        Vector.empty,
++        Vector.empty
++      )
++      def run(m: RetrievalMode) = SemanticStage.run(
++        pathQ,
++        plan,
++        Vector.empty,
++        noFacts,
++        w.embedder,
++        None,
++        w.ports.vectors,
++        w.ports.objects,
++        modelVersion,
++        config,
++        w.nowMs,
++        _ => (),
++        m
++      )
++      assert(run(RetrievalMode.FUSED).results.isEmpty)
++      val v = run(RetrievalMode.VECTOR_ONLY).results
++      assert(v.map(_.index) == Vector(ix("communities"), ix("abstracts")))
++      assert(v.forall(r => !r.filter.contains("communityId") && !r.filter.contains("entityIds")))
++    }
++  }
++
++  // ---- BenchmarkCli ----
++
++  private val questionsCsv =
++    s"""question_id,category,question_text,researcher_a,researcher_b,window,answer_type,should_abstain
++       |T01,shortest_path,$pathQ,Ada Lovelace,Edsger Dijkstra,all,path,no
++       |""".stripMargin
++  private val pathsCsv =
++    s"""window,researcherX,researcherY,jointPublicationCount,firstCollaborationYear,lastCollaborationYear
++       |all-years,$ada,$grace,2,2001,2002
++       |all-years,$grace,$edsger,1,2012,2012
++       |""".stripMargin
++
++  private def withFiles[A](body: (Path, Vector[String]) => A): A =
++    val root = tempDir()
++    try
++      val seg = s"snapshot=$snapshot/run=$graphRun"
++      writeGraph(root.resolve(s"graph/$seg"))
++      writeItems(root.resolve(s"items/$seg"))
++      writeVectors(root.resolve("vectors"))
++      val objects = FileObjectStore(root.resolve("s3")).loader
++      objects.putNew(profileRef, profileText.getBytes(UTF_8))
++      objects.putNew(pathRef, pathText.getBytes(UTF_8))
++      Files.writeString(root.resolve("questions.csv"), questionsCsv, UTF_8)
++      Files.writeString(root.resolve("paths.csv"), pathsCsv, UTF_8)
++      body(
++        root,
++        Vector(
++          "--questions",
++          root.resolve("questions.csv").toString,
++          "--path-evidence",
++          root.resolve("paths.csv").toString,
++          "--graph",
++          root.resolve(s"graph/$seg").toString,
++          "--items",
++          root.resolve(s"items/$seg").toString,
++          "--objects",
++          root.resolve("s3").toString,
++          "--vectors",
++          root.resolve("vectors").toString,
++          "--out",
++          root.resolve("out").toString
++        )
++      )
++    finally deleteTree(root)
++
++  private def runCli(args: Vector[String]): (Int, Vector[String]) =
++    val lines = Vector.newBuilder[String]
++    val code = BenchmarkCli.run(args, lines += _, _ => (), () => 0L, env)
++    (code, lines.result())
++
++  test(
++    "BenchmarkCli --retrieval-mode: one run per mode, the mode recorded, a ranked-list file each"
++  ) {
++    withFiles { (root, args) =>
++      val store = FileObjectStore(root.resolve("out/s3")).reader
++      def keys(part: String) = store.list("reports/rag-benchmark/").filter(_.contains(part))
++      val modes = Vector(
++        (None, "fused", "FUSED"),
++        (Some("graph-only"), "graph", "GRAPH_ONLY"),
++        (Some("vector-only"), "vector", "VECTOR_ONLY")
++      )
++      modes.foreach { (flag, source, mode) =>
++        val a = args ++ flag.toVector.flatMap(f => Vector("--retrieval-mode", f))
++        val (code, out) = runCli(a)
++        assert(code == 0, out.mkString("\n"))
++        assert(out.exists(_.contains(s"${mode.toLowerCase.replace('_', '-')} retrieval)")), out)
++        val (again, out2) = runCli(a) // resume: nothing new, the list is rewritten Unchanged
++        assert(again == 0 && out2.exists(_.contains("1 already done")), out2.mkString("\n"))
++
++        val fileFlag = flag.getOrElse("fused")
++        val list = keys(s"/retrieval/T01-$fileFlag.csv")
++        assert(list.size == 1, keys("/retrieval/"))
++        val runDir = list.head.split("/retrieval/").head
++        val result =
++          read[Benchmark.Result](new String(store.get(s"$runDir/questions/T01.json").get, UTF_8))
++        val summary = keys(s"$runDir/summary-").last
++        assert(result.schemaVersion == "rag-benchmark-result-v3" && result.retrievalMode == mode)
++        assert(
++          read[Benchmark.Summary](new String(store.get(summary).get, UTF_8)).retrievalMode == mode
++        )
++        val rows = new String(store.get(list.head).get, UTF_8).linesIterator.toVector
++        assert(rows.head == "rank,source,origin,evidenceId,elementId")
++        assert(
++          rows.tail.nonEmpty && rows.tail == result.retrieved.map(x =>
++            s"${x.rank},${x.source},${x.origin},${x.evidenceId},${x.elementId}"
++          )
++        )
++        assert(result.retrieved.map(_.rank) == (1 to result.retrieved.size).toVector)
++        assert(result.retrieved.forall(_.source == source))
++        val origins = result.retrieved.map(_.origin).toSet
++        source match
++          case "fused"  => assert(origins == Set("graph", "vector"))
++          case "graph"  => assert(origins == Set("graph"))
++          case "vector" => assert(origins == Set("vector"))
++        // Graph items name their store pointer; vector items their vector key.
++        if source != "graph" then
++          assert(result.retrieved.filter(_.origin == "vector").exists(_.elementId == pathKey))
++        assert(
++          result.retrieved
++            .filter(_.origin == "graph")
++            .forall(x =>
++              x.elementId.startsWith("dynamodb:") || x.elementId.startsWith("neptune:") ||
++                x.elementId.startsWith("runtime:")
++            )
++        )
++      }
++      // Three modes, three benchmark runs (the runtime run ID differs by mode).
++      assert(keys("/questions/T01.json").size == 3)
++    }
++  }
++
++  test("BenchmarkCli refuses an unknown --retrieval-mode before loading the stores") {
++    withFiles { (root, args) =>
++      val (code, out) = runCli(args ++ Vector("--retrieval-mode", "hybrid"))
++      assert(code == 2 && out.exists(_.contains("--retrieval-mode must be")), out)
++      assert(!Files.exists(root.resolve("out/s3")))
++    }
++  }

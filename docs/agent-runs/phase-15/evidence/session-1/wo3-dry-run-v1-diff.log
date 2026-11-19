@@ -1,0 +1,22 @@
+$ <changed harness, same scratch layout> --dry-run --levels 1,2,4,8 --level-seconds 180 --pause-seconds 30 --post-observe-seconds 120 --abort-error-rate 0.05 --abort-window-seconds 10 --abort-min-requests 20 --abort-consecutive 10  (v1 manifest args)
+exit=0
+$ diff <original v1 dry-run> <changed v1 dry-run>
+IDENTICAL
+--- bound checks (each must exit 2) ---
+--level-seconds 601 -> exit=2 ==> FAIL a duration or the request cap is out of bounds (see --help) (exit 2)
+--post-observe-seconds 1801 -> exit=2 ==> FAIL a duration or the request cap is out of bounds (see --help) (exit 2)
+--poll-seconds 5 -> exit=2 ==> FAIL a duration or the request cap is out of bounds (see --help) (exit 2)
+--poll-seconds 61 -> exit=2 ==> FAIL a duration or the request cap is out of bounds (see --help) (exit 2)
+--max-requests-per-level 40001 -> exit=2 ==> FAIL a duration or the request cap is out of bounds (see --help) (exit 2)
+--max-requests-per-level 0 -> exit=2 ==> FAIL a duration or the request cap is out of bounds (see --help) (exit 2)
+--levels 9 -> exit=2 ==> FAIL --levels: 1 to 4 levels, each 1 to 8 (exit 2)
+--abort-error-rate 0.06 -> exit=2 ==> FAIL abort rule bounds: rate 0 to 0.05, window 5 to 10 s, 1 to 20 requests, 1 to 10 consecutive (exit 2)
+--- mutation 1: poller started regardless of --poll-seconds ---
+==> FAIL unexpected AssertionError (exit 4)
+exit=4
+--- mutation 2: no TZ=UTC for collection calls ---
+==> FAIL unexpected KeyError (exit 4)
+exit=4
+--- mutation 3: collection before summary.json is written ---
+==> FAIL unexpected AssertionError (exit 4)
+exit=4

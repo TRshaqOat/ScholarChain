@@ -1,0 +1,44 @@
+### bash -n (bash on PATH: 3.2.57(1)-release)
+exit 0
+### /bin/bash -n
+exit 0
+### shellcheck
+shellcheck not installed: SKIPPED
+### dry-run, window 3 command
+==> STEP dry-run
+    no AWS, Terraform, or git call was made; steps that would run:
+    - skip: s3-store-conversion,s3-embed,s3-window-summary
+    - refuse a dirty tree (the loaders run from this checkout); account and Region; terraform outputs
+    - s3: LoadS3Cli --live for runs/store-conversion/snapshot=2026-10-03/run=run-1d6a86491812ff94887270c1ab885e69/manifest.json (/Users/achyutpatel/Developer/Cloud/ScholarChain/scratch/stores/s3), runs/embed/snapshot=2026-10-03/run=run-b28edbd40f932f0342c05d5b6f57b46c/manifest.json (/Users/achyutpatel/Developer/Cloud/ScholarChain/scratch/stores/s3), runs/load-window-summary/snapshot=2026-10-03/run=run-6fbad498beb0d8f570df67665fb97544/manifest.json (/Users/achyutpatel/Developer/Cloud/ScholarChain/scratch/runtime/wo8/s3)
+    - neptune: ECS run-task scholarchain-course-neptune-loader (LoadNeptuneCli --live --stage-from-bucket, run run-1d6a86491812ff94887270c1ab885e69), then --status tasks until LOAD_COMPLETED (180 min)
+    - dynamodb: LoadDynamoCli --live --dir /Users/achyutpatel/Developer/Cloud/ScholarChain/scratch/stores/s3/curated/dynamodb/snapshot=2026-10-03/run=run-1d6a86491812ff94887270c1ab885e69 --concurrency 8
+    - vectors: LoadVectorsCli --live --input /Users/achyutpatel/Developer/Cloud/ScholarChain/scratch/stores/s3/vectors/backup/snapshot=2026-10-03/run=run-b28edbd40f932f0342c05d5b6f57b46c
+    - write /Users/achyutpatel/Developer/Cloud/ScholarChain/operations/pipeline-runs/store-load-<stamp>/run.json
+==> OK dry-run
+exit 0
+### dry-run, no --skip, default timeout
+==> STEP dry-run
+    no AWS, Terraform, or git call was made; steps that would run:
+    - skip: none
+    - refuse a dirty tree (the loaders run from this checkout); account and Region; terraform outputs
+    - s3: LoadS3Cli --live for runs/store-conversion/snapshot=2026-10-03/run=run-1d6a86491812ff94887270c1ab885e69/manifest.json (/Users/achyutpatel/Developer/Cloud/ScholarChain/scratch/stores/s3), runs/embed/snapshot=2026-10-03/run=run-b28edbd40f932f0342c05d5b6f57b46c/manifest.json (/Users/achyutpatel/Developer/Cloud/ScholarChain/scratch/stores/s3), runs/load-window-summary/snapshot=2026-10-03/run=run-6fbad498beb0d8f570df67665fb97544/manifest.json (/Users/achyutpatel/Developer/Cloud/ScholarChain/scratch/runtime/wo8/s3)
+    - neptune: ECS run-task scholarchain-course-neptune-loader (LoadNeptuneCli --live --stage-from-bucket, run run-1d6a86491812ff94887270c1ab885e69), then --status tasks until LOAD_COMPLETED (60 min)
+    - dynamodb: LoadDynamoCli --live --dir /Users/achyutpatel/Developer/Cloud/ScholarChain/scratch/stores/s3/curated/dynamodb/snapshot=2026-10-03/run=run-1d6a86491812ff94887270c1ab885e69 --concurrency 8
+    - vectors: LoadVectorsCli --live --input /Users/achyutpatel/Developer/Cloud/ScholarChain/scratch/stores/s3/vectors/backup/snapshot=2026-10-03/run=run-b28edbd40f932f0342c05d5b6f57b46c
+    - write /Users/achyutpatel/Developer/Cloud/ScholarChain/operations/pipeline-runs/store-load-<stamp>/run.json
+==> OK dry-run
+exit 0
+### --neptune-timeout-minutes 181
+==> FAIL --neptune-timeout-minutes must be 5 to 180 (exit 2)
+exit 2
+### --skip bogus
+==> FAIL unknown --skip step 'bogus' (steps: s3-store-conversion s3-embed s3-window-summary neptune dynamodb vectors) (exit 2)
+exit 2
+### missing --store-run
+==> FAIL run IDs must be run-<32 hex> (--store-run and --vectors-run are required) (exit 2)
+exit 2
+### --help mentions re-reads and errors file
+20:              filter-log-events; after an exit-0 task a missing result line gets up to 3 re-reads 15 s
+22:              lines are saved too. A line that could carry a credential is dropped and counted.
+37:neptune-<start|status>-<task>-errors.txt, and run.json; .txt, not .log, so that Git does not ignore them).
+exit 0

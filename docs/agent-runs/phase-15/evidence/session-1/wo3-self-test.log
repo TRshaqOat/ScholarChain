@@ -1,0 +1,6 @@
+$ python3 -m py_compile load-tests/exp-d-query-load.py
+exit=0
+$ time python3 load-tests/exp-d-query-load.py --self-test
+==> OK self-test
+python3 load-tests/exp-d-query-load.py --self-test  2.08s user 1.06s system 27% cpu 11.309 total
+exit=0

@@ -110,7 +110,8 @@ values are in `envs/course/course.tfvars`. The ones a human sets or changes:
   `vectors/`, `reports/`, `logs/`, `runs/`) plus `artifacts/` (job jars under `artifacts/jobs/`, image
   build contexts under `artifacts/codebuild/source/`). The work order's "rag" prefix is
   `semantic-context/` plus `vectors/`.
-- Versioning, SSE-S3, all four public access blocks, `BucketOwnerEnforced`, and a TLS-only policy.
+- Versioning, SSE-S3 with SSE-C blocked (`blocked_encryption_types`, the S3 default, declared so plans
+  show no drift; Phase 14 rulings 38 and 48), all four public access blocks, `BucketOwnerEnforced`, and a TLS-only policy.
 - Lifecycle: incomplete multipart uploads abort after 1 day; `logs/` current objects expire after 30
   days (the Phase 7 ruling 22 audit retention); `artifacts/` after 90 days; noncurrent versions of
   both after 7 days. No rule touches the data prefixes.
@@ -185,7 +186,8 @@ values are in `envs/course/course.tfvars`. The ones a human sets or changes:
 - Sizes: 1 vCPU and 2 GiB per service task; 2 vCPU and 8 GiB for the loader.
 - Services: desired 1, minimum healthy 100%, deployment circuit breaker with rollback, public IP in
   the public subnets. Application Auto Scaling holds each service between 1 and its maximum; services
-  with a maximum above 1 (graph-evidence-api by default) track 60% CPU.
+  with a maximum above 1 (graph-evidence-api by default) track `service_cpu_target_percent` average CPU
+  (default 60; course.tfvars sets 15 as the window 3 scale-out experiment setting, Phase 15 ruling 2).
 - Haiku bound: each process throttles its own Haiku calls at `runtime.llm.requests-per-minute`, so
   the combined rate is that value times the query-api plus worker task count. Defaults: query-api
   maximum 1, worker maximum 1, 4 per minute each, 8 per minute in total. For the scale-out

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Experiment D: bounded closed-loop load on graph-evidence-api (no model calls).
 
-Run only through scripts/run-experiment.sh with experiments/manifests/exp-d-query-load-v1.json.
-Python 3 standard library only (D-09).
+Run only through scripts/run-experiment.sh with experiments/manifests/exp-d-query-load-v1.json or
+experiments/manifests/exp-d-scale-v1.json. Python 3 standard library only (D-09).
 
 Inputs come from the same sources as scripts/smoke-test.sh: terraform output (local state, no
 cloud call) for alb_dns_name, api_key_secret_arn and the ECS names, and Secrets Manager for the
@@ -33,6 +33,18 @@ one starts. Flag bounds: rate at most 0.05, window 5 to 10 s, at most 20 request
 consecutive (the reviewed rule; a longer window would dilute a burst, a shorter one would rarely
 reach the request minimum).
 
+D-scale (Phase 15 ruling 2), only when --poll-seconds is above 0 (default 0: off, so
+exp-d-query-load-v1 runs exactly as before): a background thread samples graph-evidence-api's
+desired, running and pending counts every --poll-seconds from just before the preflight until the
+post-observation ends, into ecs-timeline.csv (UTC). After summary.json is written, read-only calls
+collect into collect-<name>.json: Application Auto Scaling scaling activities and policies, the ECS
+service events and load balancers, the target-tracking alarms and their history, and CloudWatch
+1-minute metrics (get-metric-data) from 5 minutes before the start to the collection time; index in
+collect.json, rewritten after every call. A failed or timed-out call is recorded in its file and never
+changes the exit code or summary.json. Collection stops after COLLECT_BUDGET_S seconds, and the three
+describe-services task-count reads around the level and after the post-observation time out after
+POLL_CALL_TIMEOUT_S, so the manifest's maxMinutes keeps at least 5 minutes of margin (code review 1 m3).
+
 Exit: 0 every level ran; 1 the abort rule stopped the run (in a level or between levels);
 2 usage; 3 precondition (missing input or terraform output, runtime disabled, no PASS smoke
 record, account mismatch, a non-2xx preflight GET); 4 unexpected error (only its type is printed;
@@ -52,7 +64,7 @@ import sys
 import threading
 import time
 import urllib.parse
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TF_DIR = os.path.join(ROOT, "infra", "terraform", "envs", "course")
@@ -64,9 +76,16 @@ AWS_TIMEOUTS = ["--cli-connect-timeout", "10", "--cli-read-timeout", "120"]
 # Hard ceilings; the manifest's flags must stay inside them.
 MAX_LEVEL = 8
 MAX_LEVELS = 4
-MAX_LEVEL_SECONDS = 300
-MAX_REQUESTS_PER_LEVEL = 20000
+MAX_LEVEL_SECONDS = 600  # D-scale holds one level for 600 s; exp-d-query-load-v1 uses 180
+MAX_POST_OBSERVE_SECONDS = 1800  # D-scale observes scale-in (about 15 min below target) for 1,500 s
+MAX_REQUESTS_PER_LEVEL = 20000  # the default cap (--max-requests-per-level)
+MAX_REQUESTS_CEILING = 40000  # c=8 ran at about 36 requests/s in window 2: 600 s is about 21,500
 REQUEST_TIMEOUT_S = 10
+COLLECT_BUDGET_S = 90  # all post-run collection calls; each call at most 60 s (m3: was 150)
+POLL_CALL_TIMEOUT_S = 20
+READ_ONLY_CALLS = {("ecs", "describe-services"), ("application-autoscaling", "describe-scaling-activities"),
+                   ("application-autoscaling", "describe-scaling-policies"), ("cloudwatch", "describe-alarms"),
+                   ("cloudwatch", "describe-alarm-history"), ("cloudwatch", "get-metric-data")}
 # Abort-rule bounds: the flags cannot loosen the reviewed rule (code review 4 finding 1).
 MAX_ABORT_ERROR_RATE = 0.05
 MIN_ABORT_WINDOW_SECONDS = 5
@@ -205,7 +224,156 @@ def self_test():
     assert level_trip(dict(ev, node=stats(rows("node", [200] * 94 + [503] * 6))), 0.05, 20, 10)
     assert level_trip(dict(ev, node=stats(rows("node", [503] * 9))), 0.05, 20, 10) is None
     assert level_trip(dict(ev, node=stats(rows("node", [0] * 10))), 0.05, 20, 10)
+    self_test_fakes()
     print("==> OK self-test")
+
+
+def self_test_fakes():
+    """execute() against a local HTTP server and a fake `aws` (subprocess.run replaced): the v1 path
+    is unchanged; the D-scale poller and collection are read-only, UTC, and failures stay recorded."""
+    import contextlib
+    import http.server
+    import io
+    import shutil
+    import tempfile
+
+    class H(http.server.BaseHTTPRequestHandler):
+        protocol_version = "HTTP/1.1"
+
+        def do_GET(self):
+            self.send_response(200)
+            self.send_header("Content-Length", "2")
+            self.end_headers()
+            self.wfile.write(b"{}")
+
+        def log_message(self, *args):
+            pass
+    srv = http.server.ThreadingHTTPServer(("127.0.0.1", 0), H)
+    threading.Thread(target=srv.serve_forever, daemon=True).start()
+    base = "http://127.0.0.1:%d" % srv.server_address[1]
+    tg = "arn:aws:elasticloadbalancing:us-east-2:111122223333:targetgroup/tg-x/abc"
+    canned = {"describe-services": {"desired": 1, "running": 1, "pending": 0, "events": [],
+                                    "loadBalancers": [{"targetGroupArn": tg}]},
+              "describe-scaling-activities": {"ScalingActivities": []},
+              "describe-scaling-policies": {"ScalingPolicies": [{"Alarms": [
+                  {"AlarmName": "TargetTracking-x-AlarmHigh-1"}, {"AlarmName": "TargetTracking-x-AlarmLow-2"}]}]},
+              "describe-alarms": {"MetricAlarms": []}, "describe-alarm-history": {"AlarmHistoryItems": []},
+              "get-metric-data": {"MetricDataResults": []}}
+    calls, fail, cur = [], {}, {}
+
+    def fake(args, **kw):
+        op = args[2]
+        idx_path = os.path.join(cur["dir"], "collect.json")  # calls indexed so far (m3), None before the first
+        n_idx = len(json.load(open(idx_path))["calls"]) if os.path.exists(idx_path) else None
+        calls.append((list(args), kw.get("env"), os.path.exists(os.path.join(cur["dir"], "summary.json")),
+                      kw.get("timeout"), n_idx))
+        if fail.get(op) == "timeout":
+            raise subprocess.TimeoutExpired(args, 1)
+        if fail.get(op):
+            return subprocess.CompletedProcess(args, 255, "", "boom")
+        return subprocess.CompletedProcess(args, 0, json.dumps(canned[op]), "")
+    tf = {"alb_arn_suffix": {"value": "app/alb/1"}, "neptune_cluster_id": {"value": "graph"}}
+
+    def go(poll, post=1):
+        cur["dir"] = tempfile.mkdtemp(prefix="exp-d-selftest-")
+        del calls[:]
+        a = argparse.Namespace(pause_seconds=0, level_seconds=1, post_observe_seconds=post,
+                               abort_error_rate=0.05, abort_window_seconds=10, abort_min_requests=20,
+                               abort_consecutive=10, max_requests_per_level=MAX_REQUESTS_PER_LEVEL,
+                               poll_seconds=poll)
+        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+            code = execute(base, "k", request_list(["ev-1"], ["r-1"]), [1], a, "cl", tf, cur["dir"], {})
+        files = sorted(os.listdir(cur["dir"]))
+        data = {}
+        for fn in files:
+            with open(os.path.join(cur["dir"], fn)) as f:
+                data[fn] = f.read()
+        shutil.rmtree(cur["dir"])
+        return code, files, data, list(calls)
+
+    real = subprocess.run
+    subprocess.run = fake
+    try:
+        # v1 (--poll-seconds 0): the same files and the same three describe-services calls as before.
+        code, files, data, cs = go(0)
+        assert code == 0, code
+        assert files == ["ecs-after-c1.json", "ecs-before-c1.json", "ecs-post-observe.json", "preflight.json",
+                         "requests-c1.csv", "summary.json"], files
+        assert [c[0][1:3] for c in cs] == [["ecs", "describe-services"]] * 3 and all(c[1] is None for c in cs)
+        assert all(c[3] is None for c in cs)  # v1: no subprocess timeout, as before (m3)
+        s = json.loads(data["summary.json"])
+        assert s["levels"][0]["requests"] > 0 and s["levels"][0]["errors"] == 0 and s["aborted"] is None
+
+        # D-scale: timeline plus collection, every call allowlisted, TZ=UTC, after summary.json.
+        code, files, data, cs = go(1, post=2)
+        assert code == 0, code
+        for fn in ["ecs-timeline.csv", "collect.json", "collect-scaling-activities.json",
+                   "collect-scaling-policies.json", "collect-ecs-service.json", "collect-alarms.json",
+                   "collect-alarm-history-0.json", "collect-alarm-history-1.json", "collect-metrics.json"]:
+            assert fn in files, fn
+        tl = list(csv.reader(data["ecs-timeline.csv"].splitlines()))
+        assert tl[0] == ["utc", "desired", "running", "pending", "error"] and len(tl) >= 3, tl
+        assert tl[1][0].endswith("Z") and tl[1][1:] == ["1", "1", "0", ""], tl[1]
+        assert all(tuple(c[0][1:3]) in READ_ONLY_CALLS for c in cs)
+        new = [c for c in cs if c[1] is not None]
+        assert len(cs) - len(new) == 3 and all(c[1]["TZ"] == "UTC" for c in new)
+        assert all(c[3] == POLL_CALL_TIMEOUT_S for c in cs if c[1] is None)  # m3: the 3 ecs_counts calls
+        coll = [c for c in new if c[0][2] != "describe-services" or "events:events" in " ".join(c[0])]
+        assert len(coll) == 7 and all(c[2] for c in coll), [c[0][1:3] for c in coll]
+        assert [c[4] for c in coll] == [None, 1, 2, 3, 4, 5, 6], [c[4] for c in coll]  # m3: index per call
+        m = json.loads(data["collect-metrics.json"])
+        q = json.loads(m["command"][m["command"].index("--metric-data-queries") + 1])
+        assert [x["Id"] for x in q] == ["ecs_cpu", "ecs_memory", "alb_healthy_min", "alb_healthy_max",
+                                        "alb_requests", "alb_trt_p50", "alb_trt_p95", "alb_target_5xx",
+                                        "neptune_cpu"]
+        assert {"Name": "TargetGroup", "Value": "targetgroup/tg-x/abc"} in q[2]["MetricStat"]["Metric"]["Dimensions"]
+        assert all(x["MetricStat"]["Period"] == 60 for x in q)
+        idx = json.loads(data["collect.json"])
+        assert all(c["error"] is None for c in idx["calls"]) and idx["skippedMetricQueries"] == []
+        assert idx["metricsStartUtc"].endswith(":00Z") and idx["metricsStartUtc"] < idx["metricsEndUtc"]
+
+        # Failed collection and polling: recorded; the load result and exit code stand.
+        fail.update({"describe-services": "exit", "describe-scaling-activities": "timeout",
+                     "describe-scaling-policies": "exit", "get-metric-data": "exit"})
+        code, files, data, cs = go(1)
+        assert code == 0 and json.loads(data["summary.json"])["levels"][0]["requests"] > 0
+        assert all(r[4].startswith("aws exit 255") for r in list(csv.reader(data["ecs-timeline.csv"].splitlines()))[1:])
+        idx = json.loads(data["collect.json"])
+        errs = {c["name"]: c["error"] for c in idx["calls"]}
+        assert errs["scaling-activities"] == "TimeoutExpired" and errs["metrics"].startswith("aws exit 255")
+        assert "no target-tracking alarm" in errs["alarms"] and idx["targetGroupArn"] is None
+        assert idx["skippedMetricQueries"] == ["alb_healthy_min", "alb_healthy_max", "alb_requests",
+                                               "alb_trt_p50", "alb_trt_p95", "alb_target_5xx"]
+        assert json.loads(data["collect-scaling-activities.json"])["data"] is None
+        assert cs[-1][0][2] == "get-metric-data" and cs[-1][4] == 4  # m3: includes the no-alarm entry
+        assert "collect.json.tmp" not in files
+
+        # m3: an ecs_counts timeout (D-scale only) is recorded; the run goes on and exits 0.
+        fail.clear()
+        fail["describe-services"] = "timeout"
+        code, files, data, cs = go(1)
+        assert code == 0, code
+        s = json.loads(data["summary.json"])
+        assert s["levels"][0]["ecsBefore"] == {"error": "TimeoutExpired"} == s["ecsPostObserve"]
+        assert json.loads(data["ecs-after-c1.json"])["error"] == "TimeoutExpired" and "collect.json" in files
+        fail.clear()
+
+        # Spent budget: every call is skipped without running aws.
+        cur["dir"] = tempfile.mkdtemp(prefix="exp-d-selftest-")
+        del calls[:]
+        with contextlib.redirect_stdout(io.StringIO()):
+            collect("cl", tf, datetime.now(timezone.utc), cur["dir"], budget_s=0)
+        with open(os.path.join(cur["dir"], "collect.json")) as f:
+            idx = json.load(f)
+        shutil.rmtree(cur["dir"])
+        assert calls == [] and all(c["error"].startswith(("skipped", "no target-tracking")) for c in idx["calls"])
+
+        # A mutating call is refused before any subprocess.
+        assert aws_read(["ecs", "update-service", "--desired-count", "2"], 5)[1].startswith("refused")
+        assert calls == []
+    finally:
+        subprocess.run = real
+        srv.shutdown()
 
 
 def latest_pass_smoke():
@@ -259,17 +427,21 @@ def read_api_key(secret_arn):
     return key
 
 
-def ecs_counts(cluster, label, out_dir):
-    """Task counts. Called only after load has started, so a failure is recorded, never fatal."""
-    r = subprocess.run(["aws", "ecs", "describe-services", "--cluster", cluster, "--services", SERVICE,
-                        "--query", "services[0].{desired:desiredCount,running:runningCount,"
-                        "pending:pendingCount,events:events[0:5].[createdAt,message]}",
-                        "--output", "json"] + AWS_TIMEOUTS, capture_output=True, text=True)
+def ecs_counts(cluster, label, out_dir, timeout=None):
+    """Task counts. Called only after load has started, so a failure is recorded, never fatal.
+    timeout: None (v1, unchanged) or POLL_CALL_TIMEOUT_S when --poll-seconds is set (m3)."""
     d, err = None, None
-    if r.returncode != 0:
+    try:
+        r = subprocess.run(["aws", "ecs", "describe-services", "--cluster", cluster, "--services", SERVICE,
+                            "--query", "services[0].{desired:desiredCount,running:runningCount,"
+                            "pending:pendingCount,events:events[0:5].[createdAt,message]}",
+                            "--output", "json"] + AWS_TIMEOUTS, capture_output=True, text=True, timeout=timeout)
+    except subprocess.TimeoutExpired:  # only possible when timeout is set
+        r, err = None, "TimeoutExpired"
+    if r is not None and r.returncode != 0:
         err = "aws exit %d" % r.returncode
         print("    ecs %s: describe-services failed: %s" % (label, r.stderr.strip()[:300]), file=sys.stderr)
-    else:
+    elif r is not None:
         try:
             d = json.loads(r.stdout)
         except ValueError:
@@ -284,6 +456,131 @@ def ecs_counts(cluster, label, out_dir):
         return {"error": err}
     print("    ecs %-22s desired=%s running=%s pending=%s" % (label, d.get("desired"), d.get("running"), d.get("pending")))
     return {k: d.get(k) for k in ("desired", "running", "pending")}
+
+
+def aws_read(args, timeout):
+    """One allowlisted read-only aws call with TZ=UTC (so the CLI prints UTC timestamps):
+    (data, None) or (None, error). Never raises."""
+    if tuple(args[:2]) not in READ_ONLY_CALLS:
+        return None, "refused: %s is not an allowlisted read-only call" % " ".join(args[:2])
+    try:
+        r = subprocess.run(["aws"] + list(args) + ["--output", "json"] + AWS_TIMEOUTS, capture_output=True,
+                           text=True, timeout=timeout, env=dict(os.environ, TZ="UTC"))
+    except Exception as e:  # TimeoutExpired or OSError
+        return None, type(e).__name__
+    if r.returncode != 0:
+        return None, "aws exit %d: %s" % (r.returncode, r.stderr.strip()[:300])
+    try:
+        return json.loads(r.stdout or "null"), None
+    except ValueError:
+        return None, "unparsable output"
+
+
+def start_poller(cluster, seconds, out_dir):
+    """Samples task counts every `seconds` into ecs-timeline.csv until the returned event is set."""
+    stop = threading.Event()
+
+    def loop():
+        with open(os.path.join(out_dir, "ecs-timeline.csv"), "w", newline="") as f:
+            w = csv.writer(f)
+            w.writerow(["utc", "desired", "running", "pending", "error"])
+            while True:
+                at = utc_now()
+                d, err = aws_read(["ecs", "describe-services", "--cluster", cluster, "--services", SERVICE,
+                                   "--query", "services[0].{desired:desiredCount,running:runningCount,"
+                                   "pending:pendingCount}"], POLL_CALL_TIMEOUT_S)
+                if err is None and not isinstance(d, dict):
+                    err, d = "service %s not found" % SERVICE, None
+                d = d or {}
+                w.writerow([at, d.get("desired"), d.get("running"), d.get("pending"), err or ""])
+                f.flush()
+                if stop.wait(seconds):
+                    return
+    t = threading.Thread(target=loop, daemon=True)
+    t.start()
+    return stop, t
+
+
+def metric_queries(cluster, alb, tg, neptune):
+    """get-metric-data queries (60 s period); queries whose dimension value is unknown are skipped."""
+    ecs = [{"Name": "ClusterName", "Value": cluster}, {"Name": "ServiceName", "Value": SERVICE}]
+    elb = [{"Name": "TargetGroup", "Value": tg}, {"Name": "LoadBalancer", "Value": alb}]
+    nep = [{"Name": "DBClusterIdentifier", "Value": neptune}]
+    spec = [("ecs_cpu", "AWS/ECS", "CPUUtilization", ecs, "Average"),
+            ("ecs_memory", "AWS/ECS", "MemoryUtilization", ecs, "Average"),
+            ("alb_healthy_min", "AWS/ApplicationELB", "HealthyHostCount", elb, "Minimum"),
+            ("alb_healthy_max", "AWS/ApplicationELB", "HealthyHostCount", elb, "Maximum"),
+            ("alb_requests", "AWS/ApplicationELB", "RequestCount", elb, "Sum"),
+            ("alb_trt_p50", "AWS/ApplicationELB", "TargetResponseTime", elb, "p50"),
+            ("alb_trt_p95", "AWS/ApplicationELB", "TargetResponseTime", elb, "p95"),
+            ("alb_target_5xx", "AWS/ApplicationELB", "HTTPCode_Target_5XX_Count", elb, "Sum"),
+            ("neptune_cpu", "AWS/Neptune", "CPUUtilization", nep, "Average")]
+    queries, skipped = [], []
+    for qid, ns, name, dims, stat in spec:
+        if any(not d["Value"] for d in dims):
+            skipped.append(qid)
+            continue
+        queries.append({"Id": qid, "ReturnData": True, "MetricStat": {
+            "Metric": {"Namespace": ns, "MetricName": name, "Dimensions": dims}, "Period": 60, "Stat": stat}})
+    return queries, skipped
+
+
+def collect(cluster, tf, started, out_dir, budget_s=COLLECT_BUDGET_S):
+    """Post-run read-only collection (D-scale). Every call's result or error goes to its own file, and
+    collect.json is rewritten after every call (m3), so a TERM at maxMinutes keeps the calls so far."""
+    deadline = time.monotonic() + budget_s
+    index = []
+    fmt = "%Y-%m-%dT%H:%M:%SZ"
+    t0 = started.replace(second=0, microsecond=0) - timedelta(minutes=5)
+    head = {"schemaVersion": "exp-d-collect-v1", "metricsStartUtc": t0.strftime(fmt), "metricsEndUtc": None,
+            "targetGroupArn": None, "skippedMetricQueries": None, "budgetSeconds": budget_s, "calls": index}
+
+    def save():  # temp file and rename: a kill mid-write never leaves a truncated collect.json
+        tmp = os.path.join(out_dir, "collect.json.tmp")
+        with open(tmp, "w") as f:
+            json.dump(head, f, indent=2)
+        os.replace(tmp, os.path.join(out_dir, "collect.json"))
+
+    def get(name, args):
+        left = deadline - time.monotonic()
+        at = utc_now()
+        d, err = aws_read(args, min(60, left)) if left > 1 else (None, "skipped: collection budget used")
+        fn = "collect-%s.json" % name
+        with open(os.path.join(out_dir, fn), "w") as f:
+            json.dump({"at": at, "command": ["aws"] + args, "data": d, "error": err}, f, indent=2)
+        index.append({"name": name, "file": fn, "at": at, "error": err})
+        save()
+        print("    collect %-20s %s" % (name, "error=" + err if err else "ok"))
+        return d
+
+    scal = ["--service-namespace", "ecs", "--resource-id", "service/%s/%s" % (cluster, SERVICE),
+            "--scalable-dimension", "ecs:service:DesiredCount"]
+    get("scaling-activities", ["application-autoscaling", "describe-scaling-activities"] + scal)
+    pol = get("scaling-policies", ["application-autoscaling", "describe-scaling-policies"] + scal)
+    svc = get("ecs-service", ["ecs", "describe-services", "--cluster", cluster, "--services", SERVICE,
+                              "--query", "services[0].{events:events,loadBalancers:loadBalancers}"])
+    alarms = sorted({x["AlarmName"] for p in (pol or {}).get("ScalingPolicies") or []
+                     for x in p.get("Alarms") or [] if x.get("AlarmName")})
+    if alarms:
+        get("alarms", ["cloudwatch", "describe-alarms", "--alarm-names"] + alarms)
+    else:
+        index.append({"name": "alarms", "file": None, "at": utc_now(),
+                      "error": "no target-tracking alarm names in collect-scaling-policies.json"})
+        save()
+    for i, n in enumerate(alarms):
+        get("alarm-history-%d" % i, ["cloudwatch", "describe-alarm-history", "--alarm-name", n])
+    tg = next((lb["targetGroupArn"] for lb in (svc if isinstance(svc, dict) else {}).get("loadBalancers") or []
+               if lb.get("targetGroupArn")), None)
+    queries, skipped = metric_queries(cluster, (tf.get("alb_arn_suffix") or {}).get("value"),
+                                      tg.split(":")[-1] if tg else None,
+                                      (tf.get("neptune_cluster_id") or {}).get("value"))
+    t1 = datetime.now(timezone.utc).replace(second=0, microsecond=0) + timedelta(minutes=1)
+    head.update(metricsEndUtc=t1.strftime(fmt), targetGroupArn=tg, skippedMetricQueries=skipped)
+    if queries:
+        get("metrics", ["cloudwatch", "get-metric-data", "--start-time", t0.strftime(fmt), "--end-time",
+                        t1.strftime(fmt), "--scan-by", "TimestampAscending",
+                        "--metric-data-queries", json.dumps(queries)])
+    save()
 
 
 def timed_get(conn, host, port, path, headers):
@@ -309,13 +606,13 @@ def timed_get(conn, host, port, path, headers):
     return conn, status, err, (time.perf_counter() - t0) * 1000.0
 
 
-def worker(host, port, key, paths, offset, deadline, level, wid, rows, lock, stop, mon):
+def worker(host, port, key, paths, offset, deadline, level, wid, rows, lock, stop, mon, cap):
     headers = {"X-Api-Key": key, "X-Request-Id": "exp-d-c%d-w%d" % (level, wid)}
     conn = None
     i = offset
     while not stop.is_set() and time.monotonic() < deadline:
         with lock:
-            if len(rows) >= MAX_REQUESTS_PER_LEVEL:
+            if len(rows) >= cap:
                 break
         kind, path = paths[i % len(paths)]
         i += 1
@@ -348,7 +645,7 @@ def preflight(base, key, paths, out_dir):
     return bad
 
 
-def run_level(base, key, paths, level, seconds, out_dir, mon):
+def run_level(base, key, paths, level, seconds, out_dir, mon, cap=MAX_REQUESTS_PER_LEVEL):
     u = urllib.parse.urlsplit(base)
     rows, lock, stop = [], threading.Lock(), threading.Event()
     started = utc_now()
@@ -356,7 +653,7 @@ def run_level(base, key, paths, level, seconds, out_dir, mon):
     deadline = t_start + seconds
     ts = [threading.Thread(target=worker, args=(u.hostname, u.port or 80, key, paths,
                                                 w * (len(paths) // level or 1), deadline,
-                                                level, w, rows, lock, stop, mon))
+                                                level, w, rows, lock, stop, mon, cap))
           for w in range(level)]
     for t in ts:
         t.start()
@@ -371,7 +668,7 @@ def run_level(base, key, paths, level, seconds, out_dir, mon):
     s = {"concurrency": level, "startedAt": started, "endedAt": ended, "seconds": seconds,
          "elapsedSeconds": round(elapsed, 3),
          "throughputPerSecond": round(len(rows) / elapsed, 2) if elapsed > 0 else None,
-         "requestCapReached": len(rows) >= MAX_REQUESTS_PER_LEVEL,
+         "requestCapReached": len(rows) >= cap,
          "stoppedByAbortRule": mon.tripped is not None}
     s.update(stats(rows))
     s["byKind"] = {k: stats([r for r in rows if r[3] == k]) for k in sorted({r[3] for r in rows})}
@@ -394,14 +691,15 @@ def run_load(base, key, paths, levels, a, cluster, out_dir, summary):
         summary["abortedAt"] = {"utc": utc_now(), "phase": "preflight", "concurrency": None}
         print("==> FAIL %s (exit 3)" % summary["aborted"], file=sys.stderr)
         return 3
+    ecs_timeout = POLL_CALL_TIMEOUT_S if a.poll_seconds else None  # v1: no timeout, as before
     for n, c in enumerate(levels):
         if n:
             time.sleep(a.pause_seconds)
-        before = ecs_counts(cluster, "before-c%d" % c, out_dir)
+        before = ecs_counts(cluster, "before-c%d" % c, out_dir, ecs_timeout)
         mon = AbortMonitor(a.abort_error_rate, a.abort_window_seconds, a.abort_min_requests,
                            a.abort_consecutive)
-        s = run_level(base, key, paths, c, a.level_seconds, out_dir, mon)
-        s["ecsBefore"], s["ecsAfter"] = before, ecs_counts(cluster, "after-c%d" % c, out_dir)
+        s = run_level(base, key, paths, c, a.level_seconds, out_dir, mon, a.max_requests_per_level)
+        s["ecsBefore"], s["ecsAfter"] = before, ecs_counts(cluster, "after-c%d" % c, out_dir, ecs_timeout)
         summary["levels"].append(s)
         trip, phase = mon.tripped, "level"
         if trip is None:
@@ -415,7 +713,7 @@ def run_load(base, key, paths, levels, a, cluster, out_dir, summary):
             summary["abortWindowCounts"] = trip["windowCounts"]
             return 1
     time.sleep(a.post_observe_seconds)
-    summary["ecsPostObserve"] = ecs_counts(cluster, "post-observe", out_dir)
+    summary["ecsPostObserve"] = ecs_counts(cluster, "post-observe", out_dir, ecs_timeout)
     return 0
 
 
@@ -429,6 +727,9 @@ def main():
     ap.add_argument("--abort-window-seconds", type=float, default=MAX_ABORT_WINDOW_SECONDS)
     ap.add_argument("--abort-min-requests", type=int, default=MAX_ABORT_MIN_REQUESTS)
     ap.add_argument("--abort-consecutive", type=int, default=MAX_ABORT_CONSECUTIVE)
+    ap.add_argument("--max-requests-per-level", type=int, default=MAX_REQUESTS_PER_LEVEL)
+    ap.add_argument("--poll-seconds", type=int, default=0,
+                    help="0 (default) off; 10 to 60: ECS timeline and post-run collection (D-scale)")
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--self-test", action="store_true")
     a = ap.parse_args()
@@ -442,8 +743,10 @@ def main():
     if not (1 <= len(levels) <= MAX_LEVELS and all(1 <= c <= MAX_LEVEL for c in levels)):
         die("--levels: 1 to %d levels, each 1 to %d" % (MAX_LEVELS, MAX_LEVEL), 2)
     if not (10 <= a.level_seconds <= MAX_LEVEL_SECONDS and 0 <= a.pause_seconds <= 120
-            and 0 <= a.post_observe_seconds <= 300):
-        die("a duration is out of bounds (see --help)", 2)
+            and 0 <= a.post_observe_seconds <= MAX_POST_OBSERVE_SECONDS
+            and (a.poll_seconds == 0 or 10 <= a.poll_seconds <= 60)
+            and 1 <= a.max_requests_per_level <= MAX_REQUESTS_CEILING):
+        die("a duration or the request cap is out of bounds (see --help)", 2)
     if not (0 < a.abort_error_rate <= MAX_ABORT_ERROR_RATE
             and MIN_ABORT_WINDOW_SECONDS <= a.abort_window_seconds <= MAX_ABORT_WINDOW_SECONDS
             and 1 <= a.abort_min_requests <= MAX_ABORT_MIN_REQUESTS and 1 <= a.abort_consecutive <= MAX_ABORT_CONSECUTIVE):
@@ -457,8 +760,10 @@ def main():
                   "minRequestsPerKind": a.abort_min_requests, "consecutive5xxOrTransport": a.abort_consecutive}
     bounds = {"levels": levels, "levelSeconds": a.level_seconds, "pauseSeconds": a.pause_seconds,
               "postObserveSeconds": a.post_observe_seconds, "abortRule": abort_rule,
-              "maxRequestsPerLevel": MAX_REQUESTS_PER_LEVEL, "requestTimeoutSeconds": REQUEST_TIMEOUT_S,
+              "maxRequestsPerLevel": a.max_requests_per_level, "requestTimeoutSeconds": REQUEST_TIMEOUT_S,
               "plannedSeconds": planned_s, "haikuCalls": 0, "service": SERVICE, "serviceMaxTasks": 2}
+    if a.poll_seconds:  # absent when off, so exp-d-query-load-v1's records are unchanged
+        bounds.update(pollSeconds=a.poll_seconds, collectBudgetSeconds=COLLECT_BUDGET_S)
 
     if a.dry_run:
         smoke = latest_pass_smoke()
@@ -475,6 +780,17 @@ def main():
         for c in levels:
             print("    level c=%d: ecs describe-services %s; %d s closed loop; ecs describe-services" % (c, SERVICE, a.level_seconds))
         print("    then %d s idle and a final ecs describe-services; write summary.json" % a.post_observe_seconds)
+        if a.poll_seconds:
+            print("    poll: every %d s from before the preflight to the end of the post-observation, "
+                  "ecs describe-services %s -> ecs-timeline.csv (UTC)" % (a.poll_seconds, SERVICE))
+            print("    collect (read-only, TZ=UTC, at most %d s, failures recorded, exit code unchanged):" % COLLECT_BUDGET_S)
+            for svc, op in sorted(READ_ONLY_CALLS):
+                print("      aws %s %s" % (svc, op))
+            print("    metrics (60 s, from 5 min before the start to the collection time):")
+            for q in metric_queries("<ecs_cluster_name>", "<alb_arn_suffix>", "<targetgroup from describe-services>",
+                                    "<neptune_cluster_id>")[0]:
+                m = q["MetricStat"]
+                print("      %-16s %s %s %s" % (q["Id"], m["Metric"]["Namespace"], m["Metric"]["MetricName"], m["Stat"]))
         print("==> OK dry-run")
         return 0
 
@@ -509,9 +825,18 @@ def main():
     key = read_api_key(secret_arn)
     print("==> OK API key read (not printed)")
 
+    code = execute(base, key, paths, levels, a, cluster, tf, out_dir, abort_rule)
+    key = None
+    return code
+
+
+def execute(base, key, paths, levels, a, cluster, tf, out_dir, abort_rule):
+    """The load (with the poller when --poll-seconds is set), summary.json, then the D-scale collection."""
+    started = datetime.now(timezone.utc)
     summary = {"schemaVersion": "exp-d-summary-v1", "startedAt": utc_now(), "abortRule": abort_rule,
                "preflight": None, "levels": [], "aborted": None, "abortedAt": None,
                "abortWindowCounts": None, "error": None}
+    poll = start_poller(cluster, a.poll_seconds, out_dir) if a.poll_seconds else None
     try:
         code = run_load(base, key, paths, levels, a, cluster, out_dir, summary)
     except Exception as e:  # type only: a message could quote a request
@@ -520,11 +845,19 @@ def main():
         code = 4
     finally:
         key = None
+        if poll:
+            poll[0].set()
+            poll[1].join()
         summary["endedAt"] = utc_now()
         with open(os.path.join(out_dir, "summary.json"), "w") as f:
             json.dump(summary, f, indent=2)
     print("==> EXP-D levels=%d aborted=%s error=%s exit=%d" % (
         len(summary["levels"]), summary["aborted"], summary["error"], code))
+    if a.poll_seconds:
+        try:
+            collect(cluster, tf, started, out_dir)
+        except Exception as e:  # recorded; the load result and exit code stand
+            print("    collect failed: %s (exit code unchanged)" % type(e).__name__, file=sys.stderr)
     return code
 
 

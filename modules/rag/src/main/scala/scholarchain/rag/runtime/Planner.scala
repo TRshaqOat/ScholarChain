@@ -708,6 +708,10 @@ object Planner:
       case (_, Left(why)) => Left((Abstention(AbstentionReason.NO_DATA_IN_WINDOW, why), plan))
       case (_, Right(_))  => Right(plan)
 
+  /** The plan under a retrieval mode (section 24): GRAPH_ONLY selects no vector index. */
+  def forMode(p: QueryPlan, mode: RetrievalMode): QueryPlan =
+    if mode == RetrievalMode.GRAPH_ONLY then p.copy(semanticIndexes = Vector.empty) else p
+
   /** Indexes chosen by code, in priority order, at most runtime.semantic.max-indexes (section 9).
     */
   def semanticIndexes(

@@ -107,6 +107,11 @@ variable "window_summary_run" {
   type = string
 }
 
+variable "cpu_target_percent" {
+  description = "Target-tracking average CPU percent of the services with a maximum above 1."
+  type        = number
+}
+
 locals {
   image = "${var.repository_url}:${var.image_tag}"
 
@@ -405,7 +410,7 @@ resource "aws_appautoscaling_policy" "cpu" {
   scalable_dimension = aws_appautoscaling_target.this[each.key].scalable_dimension
 
   target_tracking_scaling_policy_configuration {
-    target_value       = 60
+    target_value       = var.cpu_target_percent
     scale_in_cooldown  = 120
     scale_out_cooldown = 60
 

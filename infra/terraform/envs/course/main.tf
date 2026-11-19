@@ -178,6 +178,7 @@ module "ecs" {
   log_group_names     = module.observability.log_group_names
   api_key_secret_arn  = module.apikey[0].api_key_secret_arn
   window_summary_run  = var.window_summary_run
+  cpu_target_percent  = var.service_cpu_target_percent
 
   runtime_args = {
     snapshot    = var.runtime_snapshot

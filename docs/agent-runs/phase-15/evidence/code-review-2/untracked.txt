@@ -1,0 +1,2 @@
+experiments/manifests/exp-d-scale-v1.json
+modules/rag/src/test/scala/scholarchain/rag/runtime/RetrievalModeSpec.scala

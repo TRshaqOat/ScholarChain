@@ -398,6 +398,17 @@ variable "service_max_counts" {
   }
 }
 
+variable "service_cpu_target_percent" {
+  description = "Target-tracking average CPU percent for the ECS services whose maximum is above 1. 60 is the production value; course.tfvars may lower it for a scale-out experiment (Phase 15 ruling 2)."
+  type        = number
+  default     = 60
+
+  validation {
+    condition     = floor(var.service_cpu_target_percent) == var.service_cpu_target_percent && var.service_cpu_target_percent >= 10 && var.service_cpu_target_percent <= 90
+    error_message = "service_cpu_target_percent must be a whole number from 10 to 90."
+  }
+}
+
 variable "haiku_calls_per_minute_cap" {
   description = "Upper bound on live Haiku calls per minute from query-api and the worker together (work order 2: 8)."
   type        = number

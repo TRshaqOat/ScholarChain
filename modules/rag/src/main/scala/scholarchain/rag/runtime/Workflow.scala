@@ -51,7 +51,7 @@ final case class RuntimePorts(
 )
 
 /** Everything fixed for a runtime run. llm None is fake mode: the rule planner and the template
-  * synthesizer, no model call.
+  * synthesizer, no model call. retrievalMode: section 24 (experiment E); services leave it FUSED.
   */
 final case class RuntimeSetup(
     cfg: ScholarChainConfig,
@@ -65,7 +65,8 @@ final case class RuntimeSetup(
     snapshot: String,
     runId: String,
     nowMs: () => Long,
-    now: () => Instant
+    now: () => Instant,
+    retrievalMode: RetrievalMode = RetrievalMode.FUSED
 )
 
 /** A stage that failed (a store error after the storage retry policy, or a refused write). It is
@@ -89,14 +90,16 @@ object Workflow:
 
   /** The runtime run ID (RUNTIME.md section 14): timestamp-free, over the served store runs, the
     * vector store content, the embedding model version, prompt versions and hashes, model IDs, and
-    * the mode.
+    * the mode. A retrieval mode other than FUSED is an input too (section 24), so FUSED keeps the
+    * run ID it had before the mode existed and each mode gets its own run.
     */
   def runIdFor(
       cfg: ScholarChainConfig,
       inputs: Seq[String],
       prompts: PromptSet,
       mode: RuntimeMode,
-      verifier: String = Verifier.Version
+      verifier: String = Verifier.Version,
+      retrieval: RetrievalMode = RetrievalMode.FUSED
   ): String =
     StableIds.runId(
       "rag-runtime",
@@ -108,7 +111,7 @@ object Workflow:
           s"synthesis-model=${cfg.models.synthesisModel}",
           s"mode=$mode",
           s"verifier=$verifier"
-        ),
+        ) ++ Option.when(retrieval != RetrievalMode.FUSED)(s"retrieval=$retrieval"),
       1
     )
 
@@ -390,7 +393,8 @@ object Workflow:
         abstention.isDefined,
         abstention.map(_.reason),
         answerHash,
-        prov
+        prov,
+        setup.retrievalMode
       )
       // The audit's own stage time is the time to build it; the write happens after.
       val record = audit(stages :+ StageTiming(Stage.AUDIT, StageOutcome.OK, setup.nowMs() - t0))
@@ -458,7 +462,8 @@ object Workflow:
               )
 
     private def run(): Either[RuntimeFailure, RuntimeResult] =
-      timed(Stage.QUERY_PLANNING)(plan())(r =>
+      def forMode(q: QueryPlan) = Planner.forMode(q, setup.retrievalMode)
+      timed(Stage.QUERY_PLANNING)(plan().map(forMode).left.map((a, q) => (a, forMode(q))))(r =>
         if r.isLeft then StageOutcome.ABSTAINED else StageOutcome.OK
       ) match
         case Left((a, p)) => abstain(p, Vector.empty, a, Stage.RESEARCHER_RESOLUTION)
@@ -505,22 +510,48 @@ object Workflow:
         rs: Vector[ResearcherResolution]
     ): Either[RuntimeFailure, RuntimeResult] =
       val resolved = rs.zipWithIndex.flatMap((r, i) => r.researcherId.map(Resolved(i, _, r.name)))
-      val g = timed(Stage.COLLABORATION_METRICS)(
-        GraphStages(
-          p,
-          resolved,
-          ports.graph,
-          ports.kv,
-          ports.objects,
-          cfg,
-          log,
-          setup.graphRunId,
-          ports.windowSummaries
-        ).run(queryId)
-      )(_ => StageOutcome.OK)
+      val vectorOnly = setup.retrievalMode == RetrievalMode.VECTOR_ONLY
+      // Section 24: VECTOR_ONLY reads no graph fact; stages 3 to 5 are recorded SKIPPED.
+      val g = if vectorOnly then
+        val none = Vector.empty
+        GraphStageResult(
+          GraphFacts(
+            RuntimeSchemas.GraphFacts,
+            queryId,
+            setup.graphRunId,
+            none,
+            none,
+            none,
+            none,
+            none,
+            none,
+            none,
+            none,
+            none,
+            none
+          ),
+          Map.empty,
+          none,
+          none,
+          Map.empty
+        )
+      else
+        timed(Stage.COLLABORATION_METRICS)(
+          GraphStages(
+            p,
+            resolved,
+            ports.graph,
+            ports.kv,
+            ports.objects,
+            cfg,
+            log,
+            setup.graphRunId,
+            ports.windowSummaries
+          ).run(queryId)
+        )(_ => StageOutcome.OK)
       // Stages 3 to 5 run as one pass over the plan; each is recorded with its own time, or SKIPPED
       // when the plan gave it nothing to do (review 1 m1).
-      stages = stages.dropRight(1) ++
+      stages = (if vectorOnly then stages else stages.dropRight(1)) ++
         Vector(Stage.COLLABORATION_METRICS, Stage.PATH_FINDING, Stage.COMMUNITY_ANALYSIS).map(s =>
           g.stageMs
             .get(s)
@@ -533,7 +564,7 @@ object Workflow:
       val onlyUnsupported =
         p.operations.nonEmpty && p.operations.forall(o => g.unsupported.contains(o.operation)) &&
           (p.metrics.isEmpty || f.metrics.isEmpty)
-      if onlyUnsupported then
+      if !vectorOnly && onlyUnsupported then
         abstain(
           p,
           rs,
@@ -547,7 +578,7 @@ object Workflow:
           Stage.SEMANTIC_CONTEXT,
           f.missing
         )
-      else if empty then
+      else if !vectorOnly && empty then
         abstain(
           p,
           rs,
@@ -575,11 +606,21 @@ object Workflow:
             setup.embeddingModelVersion,
             cfg,
             setup.nowMs,
-            log.checkDeadline
+            log.checkDeadline,
+            setup.retrievalMode
           )
         )(o => if o.call.isEmpty then StageOutcome.SKIPPED else StageOutcome.OK)
         val bundle = timed(Stage.EVIDENCE_BUILDING)(
-          EvidenceBuilder.build(p, rs, g, sem.results, sem.missing, cfg, setup.runId)
+          EvidenceBuilder.build(
+            p,
+            rs,
+            g,
+            sem.results,
+            sem.missing,
+            cfg,
+            setup.runId,
+            setup.retrievalMode
+          )
         )(_ => StageOutcome.OK)
         // The limitations the corpus rows carry (node basis, convergence, window lengths) are stated.
         val lines = (notes(p, rs, bundle.missing) ++ g.limitations).distinct

@@ -1,0 +1,143 @@
+### harness:       95 lines
+#!/usr/bin/env bash
+# Repair-01 part A fixture check: sources the real SECRET_RE, ERROR_PATTERN, task_lines and
+# expect_line from scripts/load-stores.sh against a fake aws_retry. No AWS call; sleep is a no-op.
+set -euo pipefail
+REPO="$1"
+T="$(mktemp -d "${TMPDIR:-/tmp}/r01-fixture.XXXXXX")"
+. "$REPO/scripts/lib/common.sh"
+sed -n '/^SECRET_RE=/p; /^ERROR_PATTERN=/p; /^task_lines() {/,/^}/p; /^expect_line() {/,/^}/p' "$REPO/scripts/load-stores.sh" >"$T/fns.sh"
+# shellcheck disable=SC1091
+. "$T/fns.sh"
+LOG_GROUP="/fixture/neptune-loader"
+stream="neptune-loader/neptune-loader/fixture-task"
+sleep() { echo "    (fake sleep $1)"; }
+CALLS="$T/calls"
+: >"$CALLS"
+# Fake: MODE=events prints $T/events.json; MODE=lag prints [] for the first LAG calls; MODE=error fails.
+aws_retry() {
+  echo "$*" >>"$CALLS"
+  case "$MODE" in
+    error) echo "An error occurred (AccessDeniedException) when calling the FilterLogEvents operation" >&2; return 254 ;;
+    lag) [ "$(wc -l <"$CALLS")" -gt "$LAG" ] && cat "$T/events.json" || echo '[]' ;;
+    *) cat "$T/events.json" ;;
+  esac
+}
+pass=0
+fail=0
+check() { if eval "$2"; then echo "PASS $1"; pass=$((pass + 1)); else echo "FAIL $1"; fail=$((fail + 1)); fi; }
+
+# Six token-bearing lines (one per rule term, mixed case) and four safe lines, one with an embedded tab.
+cat >"$T/events.json" <<'EOF'
+["load 0f1e-aa status LOAD_IN_PROGRESS records 10 duplicates 0",
+ "errors parsing 0 datatype 0 insert 2",
+ "DEBUG header x-amz-security-token: FAKETOKENAAAA",
+ "DEBUG header X-Amz-Security-Token: FAKETOKENBBBB",
+ "DEBUG profile aws_session_token=FAKETOKENCCCC",
+ "DEBUG {\"SessionToken\":\"FAKETOKENDDDD\"}",
+ "DEBUG Authorization: AWS4-HMAC-SHA256 FAKESIGEEEE",
+ "DEBUG signing Credential=ASIAFAKEFFFF/20261119/us-east-2/neptune-db/aws4_request",
+ "  {\"errorCode\":\"OUT_OF_MEMORY_ERROR\",\"recordNum\":0}",
+ "tab\tinside one event"]
+EOF
+
+echo "== case 1: credential lines dropped and counted, safe lines kept"
+MODE=events
+task_lines '?"load 0f1e-aa status" ?"errors parsing"' "$T/rec1.txt" 2>"$T/err1"
+sed 's/^/    rec: /' "$T/rec1.txt"
+sed 's/^/    stderr: /' "$T/err1"
+check "no token value written" '! grep -q FAKE "$T/rec1.txt"'
+check "no rule term written" '! grep -Eiq "$SECRET_RE" "$T/rec1.txt"'
+check "6 lines counted in the record" 'grep -qx "(6 line(s) dropped: could carry a credential)" "$T/rec1.txt"'
+check "6 lines counted in a WARN" 'grep -q "WARN dropped 6 line" "$T/err1"'
+check "status line kept" 'grep -q "^load 0f1e-aa status LOAD_IN_PROGRESS" "$T/rec1.txt"'
+check "errors parsing line kept" 'grep -qx "errors parsing 0 datatype 0 insert 2" "$T/rec1.txt"'
+check "errorCode line kept" 'grep -q OUT_OF_MEMORY_ERROR "$T/rec1.txt"'
+check "one event is one line (tab replaced)" 'grep -qx "tab inside one event" "$T/rec1.txt"'
+check "5 lines in the record" '[ "$(wc -l <"$T/rec1.txt" | tr -d " ")" = 5 ]'
+check "status parsed by the script's sed" '[ "$(sed -n "s/^load [^ ]* status \([A-Z_]*\).*/\1/p" "$T/rec1.txt" | head -1)" = LOAD_IN_PROGRESS ]'
+
+echo "== case 2: line appears after 2 empty reads (ingestion lag) -> found on re-read 2"
+: >"$CALLS"
+MODE=lag LAG=2
+expect_line '?"load 0f1e-aa status" ?"errors parsing"' "$T/rec2.txt" '^load 0f1e-aa status [A-Z_]+' 2>/dev/null
+check "3 filter-log-events calls" '[ "$(wc -l <"$CALLS" | tr -d " ")" = 3 ]'
+check "status line recorded" 'grep -q "^load 0f1e-aa status" "$T/rec2.txt"'
+
+echo "== case 3: line never appears -> exit 1 after 3 re-reads, names group and stream"
+: >"$CALLS"
+MODE=lag LAG=99
+rc=0
+(expect_line '"started load"' "$T/rec3.txt" 'started load [^ ;]+') >"$T/out3" 2>&1 || rc=$?
+sed 's/^/    out: /' "$T/out3"
+check "exit 1" '[ "$rc" = 1 ]'
+check "4 reads (1 + 3 re-reads)" '[ "$(wc -l <"$CALLS" | tr -d " ")" = 4 ]'
+check "names log group and stream" 'grep -q "CloudWatch /fixture/neptune-loader neptune-loader/neptune-loader/fixture-task" "$T/out3"'
+
+echo "== case 4: filter-log-events API error -> reported, exit 1, not an empty result"
+: >"$CALLS"
+MODE=error
+rc=0
+(expect_line '"started load"' "$T/rec4.txt" 'started load [^ ;]+') >"$T/out4" 2>&1 || rc=$?
+sed 's/^/    out: /' "$T/out4"
+check "exit 1" '[ "$rc" = 1 ]'
+check "one call, no re-read" '[ "$(wc -l <"$CALLS" | tr -d " ")" = 1 ]'
+check "API error printed" 'grep -q AccessDeniedException "$T/out4"'
+check "FAIL names filter-log-events and the stream" 'grep -q "FAIL filter-log-events failed.*fixture-task" "$T/out4"'
+
+echo "== case 5: the error read pattern is passed to the API unchanged"
+: >"$CALLS"
+MODE=events
+task_lines "$ERROR_PATTERN" "$T/rec5.txt" 2>/dev/null
+check "pattern passed" 'grep -qF -- "--filter-pattern $ERROR_PATTERN" "$CALLS"'
+
+rm -rf "$T"
+echo "fixture checks: $pass passed, $fail failed"
+[ "$fail" = 0 ]
+### run (/bin/bash 3.2.57(1)-release)
+== case 1: credential lines dropped and counted, safe lines kept
+    rec: load 0f1e-aa status LOAD_IN_PROGRESS records 10 duplicates 0
+    rec: errors parsing 0 datatype 0 insert 2
+    rec:   {"errorCode":"OUT_OF_MEMORY_ERROR","recordNum":0}
+    rec: tab inside one event
+    rec: (6 line(s) dropped: could carry a credential)
+    stderr: ==> WARN dropped 6 line(s) that could carry a credential from rec1.txt
+PASS no token value written
+PASS no rule term written
+PASS 6 lines counted in the record
+PASS 6 lines counted in a WARN
+PASS status line kept
+PASS errors parsing line kept
+PASS errorCode line kept
+PASS one event is one line (tab replaced)
+PASS 5 lines in the record
+PASS status parsed by the script's sed
+== case 2: line appears after 2 empty reads (ingestion lag) -> found on re-read 2
+    no line matching ?"load 0f1e-aa status" ?"errors parsing" yet; re-read 1 of 3 in 15 s
+    (fake sleep 15)
+    no line matching ?"load 0f1e-aa status" ?"errors parsing" yet; re-read 2 of 3 in 15 s
+    (fake sleep 15)
+PASS 3 filter-log-events calls
+PASS status line recorded
+== case 3: line never appears -> exit 1 after 3 re-reads, names group and stream
+    out:     no line matching "started load" yet; re-read 1 of 3 in 15 s
+    out:     (fake sleep 15)
+    out:     no line matching "started load" yet; re-read 2 of 3 in 15 s
+    out:     (fake sleep 15)
+    out:     no line matching "started load" yet; re-read 3 of 3 in 15 s
+    out:     (fake sleep 15)
+    out: ==> FAIL the task exited 0 but no line matches "started load" after 3 re-reads; CloudWatch /fixture/neptune-loader neptune-loader/neptune-loader/fixture-task (exit 1)
+PASS exit 1
+PASS 4 reads (1 + 3 re-reads)
+PASS names log group and stream
+== case 4: filter-log-events API error -> reported, exit 1, not an empty result
+    out: An error occurred (AccessDeniedException) when calling the FilterLogEvents operation
+    out: ==> FAIL filter-log-events failed (pattern "started load"); CloudWatch /fixture/neptune-loader neptune-loader/neptune-loader/fixture-task (exit 1)
+PASS exit 1
+PASS one call, no re-read
+PASS API error printed
+PASS FAIL names filter-log-events and the stream
+== case 5: the error read pattern is passed to the API unchanged
+PASS pattern passed
+fixture checks: 20 passed, 0 failed
+exit 0

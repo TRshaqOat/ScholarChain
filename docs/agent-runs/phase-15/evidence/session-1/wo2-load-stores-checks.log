@@ -1,0 +1,72 @@
+# GNU bash, version 3.2.57(1)-release (arm64-apple-darwin26)
+$ /bin/bash -n scripts/load-stores.sh
+exit 0
+$ bash -n scripts/load-stores.sh
+exit 0
+shellcheck: not installed (command -v shellcheck found nothing)
+$ /bin/bash scripts/load-stores.sh --store-run run-1d6a86491812ff94887270c1ab885e69 --vectors-run run-b28edbd40f932f0342c05d5b6f57b46c --dry-run
+==> STEP dry-run
+    no AWS, Terraform, or git call was made; steps that would run:
+    - skip: none
+    - refuse a dirty tree (the loaders run from this checkout); account and Region; terraform outputs
+    - s3: LoadS3Cli --live for runs/store-conversion/snapshot=2026-10-03/run=run-1d6a86491812ff94887270c1ab885e69/manifest.json (/Users/achyutpatel/Developer/Cloud/ScholarChain/scratch/stores/s3), runs/embed/snapshot=2026-10-03/run=run-b28edbd40f932f0342c05d5b6f57b46c/manifest.json (/Users/achyutpatel/Developer/Cloud/ScholarChain/scratch/stores/s3), runs/load-window-summary/snapshot=2026-10-03/run=run-6fbad498beb0d8f570df67665fb97544/manifest.json (/Users/achyutpatel/Developer/Cloud/ScholarChain/scratch/runtime/wo8/s3)
+    - neptune: ECS run-task scholarchain-course-neptune-loader (LoadNeptuneCli --live --stage-from-bucket, run run-1d6a86491812ff94887270c1ab885e69), then --status tasks until LOAD_COMPLETED (60 min)
+    - dynamodb: LoadDynamoCli --live --dir /Users/achyutpatel/Developer/Cloud/ScholarChain/scratch/stores/s3/curated/dynamodb/snapshot=2026-10-03/run=run-1d6a86491812ff94887270c1ab885e69 --concurrency 8
+    - vectors: LoadVectorsCli --live --input /Users/achyutpatel/Developer/Cloud/ScholarChain/scratch/stores/s3/vectors/backup/snapshot=2026-10-03/run=run-b28edbd40f932f0342c05d5b6f57b46c
+    - write /Users/achyutpatel/Developer/Cloud/ScholarChain/operations/pipeline-runs/store-load-<stamp>/run.json
+==> OK dry-run
+exit 0
+$ /bin/bash scripts/load-stores.sh --store-run run-1d6a86491812ff94887270c1ab885e69 --vectors-run run-b28edbd40f932f0342c05d5b6f57b46c --skip s3-store-conversion,s3-embed,s3-window-summary --dry-run
+==> STEP dry-run
+    no AWS, Terraform, or git call was made; steps that would run:
+    - skip: s3-store-conversion,s3-embed,s3-window-summary
+    - refuse a dirty tree (the loaders run from this checkout); account and Region; terraform outputs
+    - s3: LoadS3Cli --live for runs/store-conversion/snapshot=2026-10-03/run=run-1d6a86491812ff94887270c1ab885e69/manifest.json (/Users/achyutpatel/Developer/Cloud/ScholarChain/scratch/stores/s3), runs/embed/snapshot=2026-10-03/run=run-b28edbd40f932f0342c05d5b6f57b46c/manifest.json (/Users/achyutpatel/Developer/Cloud/ScholarChain/scratch/stores/s3), runs/load-window-summary/snapshot=2026-10-03/run=run-6fbad498beb0d8f570df67665fb97544/manifest.json (/Users/achyutpatel/Developer/Cloud/ScholarChain/scratch/runtime/wo8/s3)
+    - neptune: ECS run-task scholarchain-course-neptune-loader (LoadNeptuneCli --live --stage-from-bucket, run run-1d6a86491812ff94887270c1ab885e69), then --status tasks until LOAD_COMPLETED (60 min)
+    - dynamodb: LoadDynamoCli --live --dir /Users/achyutpatel/Developer/Cloud/ScholarChain/scratch/stores/s3/curated/dynamodb/snapshot=2026-10-03/run=run-1d6a86491812ff94887270c1ab885e69 --concurrency 8
+    - vectors: LoadVectorsCli --live --input /Users/achyutpatel/Developer/Cloud/ScholarChain/scratch/stores/s3/vectors/backup/snapshot=2026-10-03/run=run-b28edbd40f932f0342c05d5b6f57b46c
+    - write /Users/achyutpatel/Developer/Cloud/ScholarChain/operations/pipeline-runs/store-load-<stamp>/run.json
+==> OK dry-run
+exit 0
+$ /bin/bash scripts/load-stores.sh --store-run run-1d6a86491812ff94887270c1ab885e69 --vectors-run run-b28edbd40f932f0342c05d5b6f57b46c --skip neptune,dynamodb,vectors --dry-run
+==> STEP dry-run
+    no AWS, Terraform, or git call was made; steps that would run:
+    - skip: neptune,dynamodb,vectors
+    - refuse a dirty tree (the loaders run from this checkout); account and Region; terraform outputs
+    - s3: LoadS3Cli --live for runs/store-conversion/snapshot=2026-10-03/run=run-1d6a86491812ff94887270c1ab885e69/manifest.json (/Users/achyutpatel/Developer/Cloud/ScholarChain/scratch/stores/s3), runs/embed/snapshot=2026-10-03/run=run-b28edbd40f932f0342c05d5b6f57b46c/manifest.json (/Users/achyutpatel/Developer/Cloud/ScholarChain/scratch/stores/s3), runs/load-window-summary/snapshot=2026-10-03/run=run-6fbad498beb0d8f570df67665fb97544/manifest.json (/Users/achyutpatel/Developer/Cloud/ScholarChain/scratch/runtime/wo8/s3)
+    - neptune: ECS run-task scholarchain-course-neptune-loader (LoadNeptuneCli --live --stage-from-bucket, run run-1d6a86491812ff94887270c1ab885e69), then --status tasks until LOAD_COMPLETED (60 min)
+    - dynamodb: LoadDynamoCli --live --dir /Users/achyutpatel/Developer/Cloud/ScholarChain/scratch/stores/s3/curated/dynamodb/snapshot=2026-10-03/run=run-1d6a86491812ff94887270c1ab885e69 --concurrency 8
+    - vectors: LoadVectorsCli --live --input /Users/achyutpatel/Developer/Cloud/ScholarChain/scratch/stores/s3/vectors/backup/snapshot=2026-10-03/run=run-b28edbd40f932f0342c05d5b6f57b46c
+    - write /Users/achyutpatel/Developer/Cloud/ScholarChain/operations/pipeline-runs/store-load-<stamp>/run.json
+==> OK dry-run
+exit 0
+$ /bin/bash scripts/load-stores.sh --store-run run-1d6a86491812ff94887270c1ab885e69 --vectors-run run-b28edbd40f932f0342c05d5b6f57b46c --skip s3-store,neptune --dry-run
+==> FAIL unknown --skip step 's3-store' (steps: s3-store-conversion s3-embed s3-window-summary neptune dynamodb vectors) (exit 2)
+exit 2
+$ /bin/bash scripts/load-stores.sh --store-run run-1d6a86491812ff94887270c1ab885e69 --vectors-run run-b28edbd40f932f0342c05d5b6f57b46c --skip neptune,* --dry-run
+==> FAIL --skip takes comma-separated step names (steps: s3-store-conversion s3-embed s3-window-summary neptune dynamodb vectors) (exit 2)
+exit 2
+$ /bin/bash scripts/load-stores.sh --store-run run-1d6a86491812ff94887270c1ab885e69 --vectors-run run-b28edbd40f932f0342c05d5b6f57b46c --skip NEPTUNE --dry-run
+==> FAIL --skip takes comma-separated step names (steps: s3-store-conversion s3-embed s3-window-summary neptune dynamodb vectors) (exit 2)
+exit 2
+$ /bin/bash scripts/load-stores.sh --store-run run-1d6a86491812ff94887270c1ab885e69 --vectors-run run-b28edbd40f932f0342c05d5b6f57b46c --skip --dry-run --dry-run
+==> FAIL --skip needs a value (exit 2)
+exit 2
+$ check skipped() (extracted from scripts/load-stores.sh)
+s3-embed skipped
+neptune skipped
+s3 runs
+vectors runs
+s3-embed-x runs
+$ check run.json expression (extracted)
+jq: error: syntax error, unexpected INVALID_CHARACTER, expecting end of file (Unix shell quoting issues?) at <top-level>, line 5:
+counts: "printed by each loader; see the per-step logs in this directory"}' >"$REC/run.json"}                                                                          
+jq: 1 compile error
+jq: error: syntax error, unexpected INVALID_CHARACTER, expecting end of file (Unix shell quoting issues?) at <top-level>, line 5:
+counts: "printed by each loader; see the per-step logs in this directory"}' >"$REC/run.json"}                                                                          
+jq: 1 compile error
+$ check run.json expression, retry (extracted between the quotes of the jq program)
+{"neptuneLoadId":null,"skippedSteps":[],"steps":[{"step":"s3-embed","status":"skipped","seconds":0,"log":""}]}
+exit 0
+{"neptuneLoadId":"abc-123","skippedSteps":["s3-store-conversion","s3-embed","s3-window-summary"],"steps":[{"step":"s3-embed","status":"skipped","seconds":0,"log":""}]}
+exit 0

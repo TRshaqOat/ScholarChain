@@ -1,0 +1,2 @@
+$ terraform -chdir=infra/terraform fmt -check -recursive
+exit 0

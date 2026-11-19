@@ -1,0 +1,40 @@
+--- mutation a: no subprocess timeout for ecs_counts in D-scale ---
+==> FAIL unexpected AssertionError (exit 4)
+exit=4
+failing assertion:
+  File "/private/tmp/claude-501/-Users-achyutpatel-Developer-Cloud-ScholarChain/357bb839-b6d7-4ed2-9a8d-b9f85b7147b7/scratchpad/mut-a/load-tests/exp-d-query-load.py", line 320, in self_test_fakes
+    assert all(c[3] == POLL_CALL_TIMEOUT_S for c in cs if c[1] is None)  # m3: the 3 ecs_counts calls
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError
+--- mutation b: timeout also in v1 ---
+==> FAIL unexpected AssertionError (exit 4)
+exit=4
+failing assertion:
+  File "/private/tmp/claude-501/-Users-achyutpatel-Developer-Cloud-ScholarChain/357bb839-b6d7-4ed2-9a8d-b9f85b7147b7/scratchpad/mut-b/load-tests/exp-d-query-load.py", line 303, in self_test_fakes
+    assert all(c[3] is None for c in cs)  # v1: no subprocess timeout, as before (m3)
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError
+--- mutation c: ecs_counts timeout not caught ---
+==> FAIL unexpected AssertionError (exit 4)
+exit=4
+failing assertion:
+  File "/private/tmp/claude-501/-Users-achyutpatel-Developer-Cloud-ScholarChain/357bb839-b6d7-4ed2-9a8d-b9f85b7147b7/scratchpad/mut-c/load-tests/exp-d-query-load.py", line 355, in self_test_fakes
+    assert code == 0, code
+           ^^^^^^^^^
+AssertionError: 4
+--- mutation d: collect.json not written after each call ---
+==> FAIL unexpected AssertionError (exit 4)
+exit=4
+failing assertion:
+  File "/private/tmp/claude-501/-Users-achyutpatel-Developer-Cloud-ScholarChain/357bb839-b6d7-4ed2-9a8d-b9f85b7147b7/scratchpad/mut-d/load-tests/exp-d-query-load.py", line 323, in self_test_fakes
+    assert [c[4] for c in coll] == [None, 1, 2, 3, 4, 5, 6], [c[4] for c in coll]  # m3: index per call
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: [None, None, None, None, None, None, None]
+--- mutation e: collect.json not written after the no-alarm entry ---
+==> FAIL unexpected AssertionError (exit 4)
+exit=4
+failing assertion:
+  File "/private/tmp/claude-501/-Users-achyutpatel-Developer-Cloud-ScholarChain/357bb839-b6d7-4ed2-9a8d-b9f85b7147b7/scratchpad/mut-e/load-tests/exp-d-query-load.py", line 348, in self_test_fakes
+    assert cs[-1][0][2] == "get-metric-data" and cs[-1][4] == 4  # m3: includes the no-alarm entry
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

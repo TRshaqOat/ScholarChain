@@ -537,5 +537,8 @@ final case class AuditRecord(
     abstained: Boolean,
     abstentionReason: Option[AbstentionReason],
     answerHash: String,
-    provenance: Provenance
+    provenance: Provenance,
+    // The one defaulted field (experiment E): upickle omits it when FUSED, so a FUSED audit keeps
+    // the rag-audit-v3 bytes it had before the mode existed, and a v3 audit without it reads as FUSED.
+    retrievalMode: RetrievalMode = RetrievalMode.FUSED
 ) derives ReadWriter

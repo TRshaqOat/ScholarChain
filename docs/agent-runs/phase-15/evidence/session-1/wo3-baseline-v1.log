@@ -1,0 +1,23 @@
+$ python3 <scratch copy of the original harness> --dry-run --levels 1,2,4,8 --level-seconds 180 --pause-seconds 30 --post-observe-seconds 120 --abort-error-rate 0.05 --abort-window-seconds 10 --abort-min-requests 20 --abort-consecutive 10
+exit=0
+==> STEP dry-run (no terraform, AWS or HTTP call)
+    inputs: terraform output alb_dns_name, api_key_secret_arn, ecs_cluster_name, account_id, runtime_enabled; Secrets Manager API key (memory only)
+    ids from: /private/tmp/claude-501/-Users-achyutpatel-Developer-Cloud-ScholarChain/64427daa-1769-4afe-b474-f6d37cc222f3/scratchpad/root/operations/releases/smoke-20261118T061612Z.json
+    bounds: {"levels": [1, 2, 4, 8], "levelSeconds": 180, "pauseSeconds": 30, "postObserveSeconds": 120, "abortRule": {"scope": "per request kind (evidence, node, neighbors); sliding window within a level, whole level between levels; preflight GET of each path before the first level", "errorRateAbove": 0.05, "windowSeconds": 10.0, "minRequestsPerKind": 20, "consecutive5xxOrTransport": 10}, "maxRequestsPerLevel": 20000, "requestTimeoutSeconds": 10, "plannedSeconds": 930, "haikuCalls": 0, "service": "graph-evidence-api", "serviceMaxTasks": 2}
+    planned requests (round-robin per worker, GET, X-Api-Key header):
+      evidence  GET http://<alb_dns_name>/v1/evidence/ev-927665f3bbac87eb60685e50cfeb8f9b
+      evidence  GET http://<alb_dns_name>/v1/evidence/ev-9edfbd8136ecefa015ada3457f655f52
+      node      GET http://<alb_dns_name>/v1/graph/nodes/scr%3Acanon-v1.er-v2%3A6de4012bbe8608f1d49d18cf9a40a763
+      neighbors GET http://<alb_dns_name>/v1/graph/nodes/scr%3Acanon-v1.er-v2%3A6de4012bbe8608f1d49d18cf9a40a763/neighbors?direction=both&depth=1&limit=50&edgeTypes=COAUTHORED_WITH
+      node      GET http://<alb_dns_name>/v1/graph/nodes/scr%3Acanon-v1.er-v2%3Ada6e3bdff14745638f3f5425f0133388
+      neighbors GET http://<alb_dns_name>/v1/graph/nodes/scr%3Acanon-v1.er-v2%3Ada6e3bdff14745638f3f5425f0133388/neighbors?direction=both&depth=1&limit=50&edgeTypes=COAUTHORED_WITH
+    preflight: one GET of each path above, sequential; any non-2xx stops the run (exit 3)
+    level c=1: ecs describe-services graph-evidence-api; 180 s closed loop; ecs describe-services
+    level c=2: ecs describe-services graph-evidence-api; 180 s closed loop; ecs describe-services
+    level c=4: ecs describe-services graph-evidence-api; 180 s closed loop; ecs describe-services
+    level c=8: ecs describe-services graph-evidence-api; 180 s closed loop; ecs describe-services
+    then 120 s idle and a final ecs describe-services; write summary.json
+==> OK dry-run
+$ <original> --self-test
+==> OK self-test
+exit=0

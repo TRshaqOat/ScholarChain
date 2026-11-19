@@ -1,0 +1,1478 @@
+diff --git a/infra/terraform/README.md b/infra/terraform/README.md
+index 80b1a4b..65625f2 100644
+--- a/infra/terraform/README.md
++++ b/infra/terraform/README.md
+@@ -110,7 +110,8 @@ values are in `envs/course/course.tfvars`. The ones a human sets or changes:
+   `vectors/`, `reports/`, `logs/`, `runs/`) plus `artifacts/` (job jars under `artifacts/jobs/`, image
+   build contexts under `artifacts/codebuild/source/`). The work order's "rag" prefix is
+   `semantic-context/` plus `vectors/`.
+-- Versioning, SSE-S3, all four public access blocks, `BucketOwnerEnforced`, and a TLS-only policy.
++- Versioning, SSE-S3 with SSE-C blocked (`blocked_encryption_types`, the S3 default, declared so plans
++  show no drift; Phase 14 rulings 38 and 48), all four public access blocks, `BucketOwnerEnforced`, and a TLS-only policy.
+ - Lifecycle: incomplete multipart uploads abort after 1 day; `logs/` current objects expire after 30
+   days (the Phase 7 ruling 22 audit retention); `artifacts/` after 90 days; noncurrent versions of
+   both after 7 days. No rule touches the data prefixes.
+@@ -185,7 +186,8 @@ values are in `envs/course/course.tfvars`. The ones a human sets or changes:
+ - Sizes: 1 vCPU and 2 GiB per service task; 2 vCPU and 8 GiB for the loader.
+ - Services: desired 1, minimum healthy 100%, deployment circuit breaker with rollback, public IP in
+   the public subnets. Application Auto Scaling holds each service between 1 and its maximum; services
+-  with a maximum above 1 (graph-evidence-api by default) track 60% CPU.
++  with a maximum above 1 (graph-evidence-api by default) track `service_cpu_target_percent` average CPU
++  (default 60; course.tfvars sets 15 as the window 3 scale-out experiment setting, Phase 15 ruling 2).
+ - Haiku bound: each process throttles its own Haiku calls at `runtime.llm.requests-per-minute`, so
+   the combined rate is that value times the query-api plus worker task count. Defaults: query-api
+   maximum 1, worker maximum 1, 4 per minute each, 8 per minute in total. For the scale-out
+diff --git a/infra/terraform/envs/course/course.tfvars b/infra/terraform/envs/course/course.tfvars
+index 7beb640..794390b 100644
+--- a/infra/terraform/envs/course/course.tfvars
++++ b/infra/terraform/envs/course/course.tfvars
+@@ -58,3 +58,7 @@ service_max_counts = {
+ }
+ haiku_calls_per_minute_cap = 8
+ llm_requests_per_minute    = 4
++
++# Phase 15 ruling 2: an experiment setting for D-scale (window 3), not a tuned production value (the
++# variable default is 60). Window 2 showed graph-evidence-api at 20-27 percent CPU while Neptune saturated.
++service_cpu_target_percent = 15
+diff --git a/infra/terraform/envs/course/main.tf b/infra/terraform/envs/course/main.tf
+index ea2b233..d98e4b2 100644
+--- a/infra/terraform/envs/course/main.tf
++++ b/infra/terraform/envs/course/main.tf
+@@ -178,6 +178,7 @@ module "ecs" {
+   log_group_names     = module.observability.log_group_names
+   api_key_secret_arn  = module.apikey[0].api_key_secret_arn
+   window_summary_run  = var.window_summary_run
++  cpu_target_percent  = var.service_cpu_target_percent
+ 
+   runtime_args = {
+     snapshot    = var.runtime_snapshot
+diff --git a/infra/terraform/envs/course/variables.tf b/infra/terraform/envs/course/variables.tf
+index 2baee0c..fcdce10 100644
+--- a/infra/terraform/envs/course/variables.tf
++++ b/infra/terraform/envs/course/variables.tf
+@@ -398,6 +398,17 @@ variable "service_max_counts" {
+   }
+ }
+ 
++variable "service_cpu_target_percent" {
++  description = "Target-tracking average CPU percent for the ECS services whose maximum is above 1. 60 is the production value; course.tfvars may lower it for a scale-out experiment (Phase 15 ruling 2)."
++  type        = number
++  default     = 60
++
++  validation {
++    condition     = floor(var.service_cpu_target_percent) == var.service_cpu_target_percent && var.service_cpu_target_percent >= 10 && var.service_cpu_target_percent <= 90
++    error_message = "service_cpu_target_percent must be a whole number from 10 to 90."
++  }
++}
++
+ variable "haiku_calls_per_minute_cap" {
+   description = "Upper bound on live Haiku calls per minute from query-api and the worker together (work order 2: 8)."
+   type        = number
+diff --git a/infra/terraform/modules/data/main.tf b/infra/terraform/modules/data/main.tf
+index 0b3a62c..13b5d99 100644
+--- a/infra/terraform/modules/data/main.tf
++++ b/infra/terraform/modules/data/main.tf
+@@ -89,7 +89,12 @@ resource "aws_s3_bucket_versioning" "data" {
+ resource "aws_s3_bucket_server_side_encryption_configuration" "data" {
+   bucket = aws_s3_bucket.data.id
+ 
++  # S3 blocks SSE-C on the bucket by default; declaring it keeps plans from undoing the block
++  # (Phase 14 rulings 38 and 48). Bucket keys apply to SSE-KMS only.
+   rule {
++    blocked_encryption_types = ["SSE-C"]
++    bucket_key_enabled       = false
++
+     apply_server_side_encryption_by_default {
+       sse_algorithm = "AES256"
+     }
+diff --git a/infra/terraform/modules/ecs/main.tf b/infra/terraform/modules/ecs/main.tf
+index 356f7b1..aa8fe37 100644
+--- a/infra/terraform/modules/ecs/main.tf
++++ b/infra/terraform/modules/ecs/main.tf
+@@ -107,6 +107,11 @@ variable "window_summary_run" {
+   type = string
+ }
+ 
++variable "cpu_target_percent" {
++  description = "Target-tracking average CPU percent of the services with a maximum above 1."
++  type        = number
++}
++
+ locals {
+   image = "${var.repository_url}:${var.image_tag}"
+ 
+@@ -405,7 +410,7 @@ resource "aws_appautoscaling_policy" "cpu" {
+   scalable_dimension = aws_appautoscaling_target.this[each.key].scalable_dimension
+ 
+   target_tracking_scaling_policy_configuration {
+-    target_value       = 60
++    target_value       = var.cpu_target_percent
+     scale_in_cooldown  = 120
+     scale_out_cooldown = 60
+ 
+diff --git a/load-tests/exp-d-query-load.py b/load-tests/exp-d-query-load.py
+index b1cd707..67dcbe2 100755
+--- a/load-tests/exp-d-query-load.py
++++ b/load-tests/exp-d-query-load.py
+@@ -1,8 +1,8 @@
+ #!/usr/bin/env python3
+ """Experiment D: bounded closed-loop load on graph-evidence-api (no model calls).
+ 
+-Run only through scripts/run-experiment.sh with experiments/manifests/exp-d-query-load-v1.json.
+-Python 3 standard library only (D-09).
++Run only through scripts/run-experiment.sh with experiments/manifests/exp-d-query-load-v1.json or
++experiments/manifests/exp-d-scale-v1.json. Python 3 standard library only (D-09).
+ 
+ Inputs come from the same sources as scripts/smoke-test.sh: terraform output (local state, no
+ cloud call) for alb_dns_name, api_key_secret_arn and the ECS names, and Secrets Manager for the
+@@ -33,6 +33,16 @@ one starts. Flag bounds: rate at most 0.05, window 5 to 10 s, at most 20 request
+ consecutive (the reviewed rule; a longer window would dilute a burst, a shorter one would rarely
+ reach the request minimum).
+ 
++D-scale (Phase 15 ruling 2), only when --poll-seconds is above 0 (default 0: off, so
++exp-d-query-load-v1 runs exactly as before): a background thread samples graph-evidence-api's
++desired, running and pending counts every --poll-seconds from just before the preflight until the
++post-observation ends, into ecs-timeline.csv (UTC). After summary.json is written, read-only calls
++collect into collect-<name>.json: Application Auto Scaling scaling activities and policies, the ECS
++service events and load balancers, the target-tracking alarms and their history, and CloudWatch
++1-minute metrics (get-metric-data) from 5 minutes before the start to the collection time; index in
++collect.json. A failed or timed-out call is recorded in its file and never changes the exit code or
++summary.json. Collection stops after COLLECT_BUDGET_S seconds so the manifest's maxMinutes holds.
++
+ Exit: 0 every level ran; 1 the abort rule stopped the run (in a level or between levels);
+ 2 usage; 3 precondition (missing input or terraform output, runtime disabled, no PASS smoke
+ record, account mismatch, a non-2xx preflight GET); 4 unexpected error (only its type is printed;
+@@ -52,7 +62,7 @@ import sys
+ import threading
+ import time
+ import urllib.parse
+-from datetime import datetime, timezone
++from datetime import datetime, timedelta, timezone
+ 
+ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ TF_DIR = os.path.join(ROOT, "infra", "terraform", "envs", "course")
+@@ -64,9 +74,16 @@ AWS_TIMEOUTS = ["--cli-connect-timeout", "10", "--cli-read-timeout", "120"]
+ # Hard ceilings; the manifest's flags must stay inside them.
+ MAX_LEVEL = 8
+ MAX_LEVELS = 4
+-MAX_LEVEL_SECONDS = 300
+-MAX_REQUESTS_PER_LEVEL = 20000
++MAX_LEVEL_SECONDS = 600  # D-scale holds one level for 600 s; exp-d-query-load-v1 uses 180
++MAX_POST_OBSERVE_SECONDS = 1800  # D-scale observes scale-in (about 15 min below target) for 1,500 s
++MAX_REQUESTS_PER_LEVEL = 20000  # the default cap (--max-requests-per-level)
++MAX_REQUESTS_CEILING = 40000  # c=8 ran at about 36 requests/s in window 2: 600 s is about 21,500
+ REQUEST_TIMEOUT_S = 10
++COLLECT_BUDGET_S = 150  # all post-run collection calls; each call at most 60 s
++POLL_CALL_TIMEOUT_S = 20
++READ_ONLY_CALLS = {("ecs", "describe-services"), ("application-autoscaling", "describe-scaling-activities"),
++                   ("application-autoscaling", "describe-scaling-policies"), ("cloudwatch", "describe-alarms"),
++                   ("cloudwatch", "describe-alarm-history"), ("cloudwatch", "get-metric-data")}
+ # Abort-rule bounds: the flags cannot loosen the reviewed rule (code review 4 finding 1).
+ MAX_ABORT_ERROR_RATE = 0.05
+ MIN_ABORT_WINDOW_SECONDS = 5
+@@ -205,9 +222,141 @@ def self_test():
+     assert level_trip(dict(ev, node=stats(rows("node", [200] * 94 + [503] * 6))), 0.05, 20, 10)
+     assert level_trip(dict(ev, node=stats(rows("node", [503] * 9))), 0.05, 20, 10) is None
+     assert level_trip(dict(ev, node=stats(rows("node", [0] * 10))), 0.05, 20, 10)
++    self_test_fakes()
+     print("==> OK self-test")
+ 
+ 
++def self_test_fakes():
++    """execute() against a local HTTP server and a fake `aws` (subprocess.run replaced): the v1 path
++    is unchanged; the D-scale poller and collection are read-only, UTC, and failures stay recorded."""
++    import contextlib
++    import http.server
++    import io
++    import shutil
++    import tempfile
++
++    class H(http.server.BaseHTTPRequestHandler):
++        protocol_version = "HTTP/1.1"
++
++        def do_GET(self):
++            self.send_response(200)
++            self.send_header("Content-Length", "2")
++            self.end_headers()
++            self.wfile.write(b"{}")
++
++        def log_message(self, *args):
++            pass
++    srv = http.server.ThreadingHTTPServer(("127.0.0.1", 0), H)
++    threading.Thread(target=srv.serve_forever, daemon=True).start()
++    base = "http://127.0.0.1:%d" % srv.server_address[1]
++    tg = "arn:aws:elasticloadbalancing:us-east-2:111122223333:targetgroup/tg-x/abc"
++    canned = {"describe-services": {"desired": 1, "running": 1, "pending": 0, "events": [],
++                                    "loadBalancers": [{"targetGroupArn": tg}]},
++              "describe-scaling-activities": {"ScalingActivities": []},
++              "describe-scaling-policies": {"ScalingPolicies": [{"Alarms": [
++                  {"AlarmName": "TargetTracking-x-AlarmHigh-1"}, {"AlarmName": "TargetTracking-x-AlarmLow-2"}]}]},
++              "describe-alarms": {"MetricAlarms": []}, "describe-alarm-history": {"AlarmHistoryItems": []},
++              "get-metric-data": {"MetricDataResults": []}}
++    calls, fail, cur = [], {}, {}
++
++    def fake(args, **kw):
++        op = args[2]
++        calls.append((list(args), kw.get("env"), os.path.exists(os.path.join(cur["dir"], "summary.json"))))
++        if fail.get(op) == "timeout":
++            raise subprocess.TimeoutExpired(args, 1)
++        if fail.get(op):
++            return subprocess.CompletedProcess(args, 255, "", "boom")
++        return subprocess.CompletedProcess(args, 0, json.dumps(canned[op]), "")
++    tf = {"alb_arn_suffix": {"value": "app/alb/1"}, "neptune_cluster_id": {"value": "graph"}}
++
++    def go(poll, post=1):
++        cur["dir"] = tempfile.mkdtemp(prefix="exp-d-selftest-")
++        del calls[:]
++        a = argparse.Namespace(pause_seconds=0, level_seconds=1, post_observe_seconds=post,
++                               abort_error_rate=0.05, abort_window_seconds=10, abort_min_requests=20,
++                               abort_consecutive=10, max_requests_per_level=MAX_REQUESTS_PER_LEVEL,
++                               poll_seconds=poll)
++        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
++            code = execute(base, "k", request_list(["ev-1"], ["r-1"]), [1], a, "cl", tf, cur["dir"], {})
++        files = sorted(os.listdir(cur["dir"]))
++        data = {}
++        for fn in files:
++            with open(os.path.join(cur["dir"], fn)) as f:
++                data[fn] = f.read()
++        shutil.rmtree(cur["dir"])
++        return code, files, data, list(calls)
++
++    real = subprocess.run
++    subprocess.run = fake
++    try:
++        # v1 (--poll-seconds 0): the same files and the same three describe-services calls as before.
++        code, files, data, cs = go(0)
++        assert code == 0, code
++        assert files == ["ecs-after-c1.json", "ecs-before-c1.json", "ecs-post-observe.json", "preflight.json",
++                         "requests-c1.csv", "summary.json"], files
++        assert [c[0][1:3] for c in cs] == [["ecs", "describe-services"]] * 3 and all(c[1] is None for c in cs)
++        s = json.loads(data["summary.json"])
++        assert s["levels"][0]["requests"] > 0 and s["levels"][0]["errors"] == 0 and s["aborted"] is None
++
++        # D-scale: timeline plus collection, every call allowlisted, TZ=UTC, after summary.json.
++        code, files, data, cs = go(1, post=2)
++        assert code == 0, code
++        for fn in ["ecs-timeline.csv", "collect.json", "collect-scaling-activities.json",
++                   "collect-scaling-policies.json", "collect-ecs-service.json", "collect-alarms.json",
++                   "collect-alarm-history-0.json", "collect-alarm-history-1.json", "collect-metrics.json"]:
++            assert fn in files, fn
++        tl = list(csv.reader(data["ecs-timeline.csv"].splitlines()))
++        assert tl[0] == ["utc", "desired", "running", "pending", "error"] and len(tl) >= 3, tl
++        assert tl[1][0].endswith("Z") and tl[1][1:] == ["1", "1", "0", ""], tl[1]
++        assert all(tuple(c[0][1:3]) in READ_ONLY_CALLS for c in cs)
++        new = [c for c in cs if c[1] is not None]
++        assert len(cs) - len(new) == 3 and all(c[1]["TZ"] == "UTC" for c in new)
++        coll = [c for c in new if c[0][2] != "describe-services" or "events:events" in " ".join(c[0])]
++        assert len(coll) == 7 and all(c[2] for c in coll), [c[0][1:3] for c in coll]
++        m = json.loads(data["collect-metrics.json"])
++        q = json.loads(m["command"][m["command"].index("--metric-data-queries") + 1])
++        assert [x["Id"] for x in q] == ["ecs_cpu", "ecs_memory", "alb_healthy_min", "alb_healthy_max",
++                                        "alb_requests", "alb_trt_p50", "alb_trt_p95", "alb_target_5xx",
++                                        "neptune_cpu"]
++        assert {"Name": "TargetGroup", "Value": "targetgroup/tg-x/abc"} in q[2]["MetricStat"]["Metric"]["Dimensions"]
++        assert all(x["MetricStat"]["Period"] == 60 for x in q)
++        idx = json.loads(data["collect.json"])
++        assert all(c["error"] is None for c in idx["calls"]) and idx["skippedMetricQueries"] == []
++        assert idx["metricsStartUtc"].endswith(":00Z") and idx["metricsStartUtc"] < idx["metricsEndUtc"]
++
++        # Failed collection and polling: recorded; the load result and exit code stand.
++        fail.update({"describe-services": "exit", "describe-scaling-activities": "timeout",
++                     "describe-scaling-policies": "exit", "get-metric-data": "exit"})
++        code, files, data, cs = go(1)
++        assert code == 0 and json.loads(data["summary.json"])["levels"][0]["requests"] > 0
++        assert all(r[4].startswith("aws exit 255") for r in list(csv.reader(data["ecs-timeline.csv"].splitlines()))[1:])
++        idx = json.loads(data["collect.json"])
++        errs = {c["name"]: c["error"] for c in idx["calls"]}
++        assert errs["scaling-activities"] == "TimeoutExpired" and errs["metrics"].startswith("aws exit 255")
++        assert "no target-tracking alarm" in errs["alarms"] and idx["targetGroupArn"] is None
++        assert idx["skippedMetricQueries"] == ["alb_healthy_min", "alb_healthy_max", "alb_requests",
++                                               "alb_trt_p50", "alb_trt_p95", "alb_target_5xx"]
++        assert json.loads(data["collect-scaling-activities.json"])["data"] is None
++        fail.clear()
++
++        # Spent budget: every call is skipped without running aws.
++        cur["dir"] = tempfile.mkdtemp(prefix="exp-d-selftest-")
++        del calls[:]
++        with contextlib.redirect_stdout(io.StringIO()):
++            collect("cl", tf, datetime.now(timezone.utc), cur["dir"], budget_s=0)
++        with open(os.path.join(cur["dir"], "collect.json")) as f:
++            idx = json.load(f)
++        shutil.rmtree(cur["dir"])
++        assert calls == [] and all(c["error"].startswith(("skipped", "no target-tracking")) for c in idx["calls"])
++
++        # A mutating call is refused before any subprocess.
++        assert aws_read(["ecs", "update-service", "--desired-count", "2"], 5)[1].startswith("refused")
++        assert calls == []
++    finally:
++        subprocess.run = real
++        srv.shutdown()
++
++
+ def latest_pass_smoke():
+     """(record path, evidence IDs, researcher IDs) of the newest PASS smoke record, or None."""
+     for rec in sorted(glob.glob(os.path.join(SMOKE_DIR, "smoke-*.json")), reverse=True):
+@@ -286,6 +435,122 @@ def ecs_counts(cluster, label, out_dir):
+     return {k: d.get(k) for k in ("desired", "running", "pending")}
+ 
+ 
++def aws_read(args, timeout):
++    """One allowlisted read-only aws call with TZ=UTC (so the CLI prints UTC timestamps):
++    (data, None) or (None, error). Never raises."""
++    if tuple(args[:2]) not in READ_ONLY_CALLS:
++        return None, "refused: %s is not an allowlisted read-only call" % " ".join(args[:2])
++    try:
++        r = subprocess.run(["aws"] + list(args) + ["--output", "json"] + AWS_TIMEOUTS, capture_output=True,
++                           text=True, timeout=timeout, env=dict(os.environ, TZ="UTC"))
++    except Exception as e:  # TimeoutExpired or OSError
++        return None, type(e).__name__
++    if r.returncode != 0:
++        return None, "aws exit %d: %s" % (r.returncode, r.stderr.strip()[:300])
++    try:
++        return json.loads(r.stdout or "null"), None
++    except ValueError:
++        return None, "unparsable output"
++
++
++def start_poller(cluster, seconds, out_dir):
++    """Samples task counts every `seconds` into ecs-timeline.csv until the returned event is set."""
++    stop = threading.Event()
++
++    def loop():
++        with open(os.path.join(out_dir, "ecs-timeline.csv"), "w", newline="") as f:
++            w = csv.writer(f)
++            w.writerow(["utc", "desired", "running", "pending", "error"])
++            while True:
++                at = utc_now()
++                d, err = aws_read(["ecs", "describe-services", "--cluster", cluster, "--services", SERVICE,
++                                   "--query", "services[0].{desired:desiredCount,running:runningCount,"
++                                   "pending:pendingCount}"], POLL_CALL_TIMEOUT_S)
++                if err is None and not isinstance(d, dict):
++                    err, d = "service %s not found" % SERVICE, None
++                d = d or {}
++                w.writerow([at, d.get("desired"), d.get("running"), d.get("pending"), err or ""])
++                f.flush()
++                if stop.wait(seconds):
++                    return
++    t = threading.Thread(target=loop, daemon=True)
++    t.start()
++    return stop, t
++
++
++def metric_queries(cluster, alb, tg, neptune):
++    """get-metric-data queries (60 s period); queries whose dimension value is unknown are skipped."""
++    ecs = [{"Name": "ClusterName", "Value": cluster}, {"Name": "ServiceName", "Value": SERVICE}]
++    elb = [{"Name": "TargetGroup", "Value": tg}, {"Name": "LoadBalancer", "Value": alb}]
++    nep = [{"Name": "DBClusterIdentifier", "Value": neptune}]
++    spec = [("ecs_cpu", "AWS/ECS", "CPUUtilization", ecs, "Average"),
++            ("ecs_memory", "AWS/ECS", "MemoryUtilization", ecs, "Average"),
++            ("alb_healthy_min", "AWS/ApplicationELB", "HealthyHostCount", elb, "Minimum"),
++            ("alb_healthy_max", "AWS/ApplicationELB", "HealthyHostCount", elb, "Maximum"),
++            ("alb_requests", "AWS/ApplicationELB", "RequestCount", elb, "Sum"),
++            ("alb_trt_p50", "AWS/ApplicationELB", "TargetResponseTime", elb, "p50"),
++            ("alb_trt_p95", "AWS/ApplicationELB", "TargetResponseTime", elb, "p95"),
++            ("alb_target_5xx", "AWS/ApplicationELB", "HTTPCode_Target_5XX_Count", elb, "Sum"),
++            ("neptune_cpu", "AWS/Neptune", "CPUUtilization", nep, "Average")]
++    queries, skipped = [], []
++    for qid, ns, name, dims, stat in spec:
++        if any(not d["Value"] for d in dims):
++            skipped.append(qid)
++            continue
++        queries.append({"Id": qid, "ReturnData": True, "MetricStat": {
++            "Metric": {"Namespace": ns, "MetricName": name, "Dimensions": dims}, "Period": 60, "Stat": stat}})
++    return queries, skipped
++
++
++def collect(cluster, tf, started, out_dir, budget_s=COLLECT_BUDGET_S):
++    """Post-run read-only collection (D-scale). Every call's result or error goes to its own file."""
++    deadline = time.monotonic() + budget_s
++    index = []
++
++    def get(name, args):
++        left = deadline - time.monotonic()
++        at = utc_now()
++        d, err = aws_read(args, min(60, left)) if left > 1 else (None, "skipped: collection budget used")
++        fn = "collect-%s.json" % name
++        with open(os.path.join(out_dir, fn), "w") as f:
++            json.dump({"at": at, "command": ["aws"] + args, "data": d, "error": err}, f, indent=2)
++        index.append({"name": name, "file": fn, "at": at, "error": err})
++        print("    collect %-20s %s" % (name, "error=" + err if err else "ok"))
++        return d
++
++    scal = ["--service-namespace", "ecs", "--resource-id", "service/%s/%s" % (cluster, SERVICE),
++            "--scalable-dimension", "ecs:service:DesiredCount"]
++    get("scaling-activities", ["application-autoscaling", "describe-scaling-activities"] + scal)
++    pol = get("scaling-policies", ["application-autoscaling", "describe-scaling-policies"] + scal)
++    svc = get("ecs-service", ["ecs", "describe-services", "--cluster", cluster, "--services", SERVICE,
++                              "--query", "services[0].{events:events,loadBalancers:loadBalancers}"])
++    alarms = sorted({x["AlarmName"] for p in (pol or {}).get("ScalingPolicies") or []
++                     for x in p.get("Alarms") or [] if x.get("AlarmName")})
++    if alarms:
++        get("alarms", ["cloudwatch", "describe-alarms", "--alarm-names"] + alarms)
++    else:
++        index.append({"name": "alarms", "file": None, "at": utc_now(),
++                      "error": "no target-tracking alarm names in collect-scaling-policies.json"})
++    for i, n in enumerate(alarms):
++        get("alarm-history-%d" % i, ["cloudwatch", "describe-alarm-history", "--alarm-name", n])
++    tg = next((lb["targetGroupArn"] for lb in (svc if isinstance(svc, dict) else {}).get("loadBalancers") or []
++               if lb.get("targetGroupArn")), None)
++    queries, skipped = metric_queries(cluster, (tf.get("alb_arn_suffix") or {}).get("value"),
++                                      tg.split(":")[-1] if tg else None,
++                                      (tf.get("neptune_cluster_id") or {}).get("value"))
++    t0 = started.replace(second=0, microsecond=0) - timedelta(minutes=5)
++    t1 = datetime.now(timezone.utc).replace(second=0, microsecond=0) + timedelta(minutes=1)
++    fmt = "%Y-%m-%dT%H:%M:%SZ"
++    if queries:
++        get("metrics", ["cloudwatch", "get-metric-data", "--start-time", t0.strftime(fmt), "--end-time",
++                        t1.strftime(fmt), "--scan-by", "TimestampAscending",
++                        "--metric-data-queries", json.dumps(queries)])
++    with open(os.path.join(out_dir, "collect.json"), "w") as f:
++        json.dump({"schemaVersion": "exp-d-collect-v1", "metricsStartUtc": t0.strftime(fmt),
++                   "metricsEndUtc": t1.strftime(fmt), "targetGroupArn": tg, "skippedMetricQueries": skipped,
++                   "budgetSeconds": budget_s, "calls": index}, f, indent=2)
++
++
+ def timed_get(conn, host, port, path, headers):
+     """One GET on a keep-alive connection: (connection or None, status (0 on a transport error),
+     error type, latency ms). Errors are kept as their type only, never with headers."""
+@@ -309,13 +574,13 @@ def timed_get(conn, host, port, path, headers):
+     return conn, status, err, (time.perf_counter() - t0) * 1000.0
+ 
+ 
+-def worker(host, port, key, paths, offset, deadline, level, wid, rows, lock, stop, mon):
++def worker(host, port, key, paths, offset, deadline, level, wid, rows, lock, stop, mon, cap):
+     headers = {"X-Api-Key": key, "X-Request-Id": "exp-d-c%d-w%d" % (level, wid)}
+     conn = None
+     i = offset
+     while not stop.is_set() and time.monotonic() < deadline:
+         with lock:
+-            if len(rows) >= MAX_REQUESTS_PER_LEVEL:
++            if len(rows) >= cap:
+                 break
+         kind, path = paths[i % len(paths)]
+         i += 1
+@@ -348,7 +613,7 @@ def preflight(base, key, paths, out_dir):
+     return bad
+ 
+ 
+-def run_level(base, key, paths, level, seconds, out_dir, mon):
++def run_level(base, key, paths, level, seconds, out_dir, mon, cap=MAX_REQUESTS_PER_LEVEL):
+     u = urllib.parse.urlsplit(base)
+     rows, lock, stop = [], threading.Lock(), threading.Event()
+     started = utc_now()
+@@ -356,7 +621,7 @@ def run_level(base, key, paths, level, seconds, out_dir, mon):
+     deadline = t_start + seconds
+     ts = [threading.Thread(target=worker, args=(u.hostname, u.port or 80, key, paths,
+                                                 w * (len(paths) // level or 1), deadline,
+-                                                level, w, rows, lock, stop, mon))
++                                                level, w, rows, lock, stop, mon, cap))
+           for w in range(level)]
+     for t in ts:
+         t.start()
+@@ -371,7 +636,7 @@ def run_level(base, key, paths, level, seconds, out_dir, mon):
+     s = {"concurrency": level, "startedAt": started, "endedAt": ended, "seconds": seconds,
+          "elapsedSeconds": round(elapsed, 3),
+          "throughputPerSecond": round(len(rows) / elapsed, 2) if elapsed > 0 else None,
+-         "requestCapReached": len(rows) >= MAX_REQUESTS_PER_LEVEL,
++         "requestCapReached": len(rows) >= cap,
+          "stoppedByAbortRule": mon.tripped is not None}
+     s.update(stats(rows))
+     s["byKind"] = {k: stats([r for r in rows if r[3] == k]) for k in sorted({r[3] for r in rows})}
+@@ -400,7 +665,7 @@ def run_load(base, key, paths, levels, a, cluster, out_dir, summary):
+         before = ecs_counts(cluster, "before-c%d" % c, out_dir)
+         mon = AbortMonitor(a.abort_error_rate, a.abort_window_seconds, a.abort_min_requests,
+                            a.abort_consecutive)
+-        s = run_level(base, key, paths, c, a.level_seconds, out_dir, mon)
++        s = run_level(base, key, paths, c, a.level_seconds, out_dir, mon, a.max_requests_per_level)
+         s["ecsBefore"], s["ecsAfter"] = before, ecs_counts(cluster, "after-c%d" % c, out_dir)
+         summary["levels"].append(s)
+         trip, phase = mon.tripped, "level"
+@@ -429,6 +694,9 @@ def main():
+     ap.add_argument("--abort-window-seconds", type=float, default=MAX_ABORT_WINDOW_SECONDS)
+     ap.add_argument("--abort-min-requests", type=int, default=MAX_ABORT_MIN_REQUESTS)
+     ap.add_argument("--abort-consecutive", type=int, default=MAX_ABORT_CONSECUTIVE)
++    ap.add_argument("--max-requests-per-level", type=int, default=MAX_REQUESTS_PER_LEVEL)
++    ap.add_argument("--poll-seconds", type=int, default=0,
++                    help="0 (default) off; 10 to 60: ECS timeline and post-run collection (D-scale)")
+     ap.add_argument("--dry-run", action="store_true")
+     ap.add_argument("--self-test", action="store_true")
+     a = ap.parse_args()
+@@ -442,8 +710,10 @@ def main():
+     if not (1 <= len(levels) <= MAX_LEVELS and all(1 <= c <= MAX_LEVEL for c in levels)):
+         die("--levels: 1 to %d levels, each 1 to %d" % (MAX_LEVELS, MAX_LEVEL), 2)
+     if not (10 <= a.level_seconds <= MAX_LEVEL_SECONDS and 0 <= a.pause_seconds <= 120
+-            and 0 <= a.post_observe_seconds <= 300):
+-        die("a duration is out of bounds (see --help)", 2)
++            and 0 <= a.post_observe_seconds <= MAX_POST_OBSERVE_SECONDS
++            and (a.poll_seconds == 0 or 10 <= a.poll_seconds <= 60)
++            and 1 <= a.max_requests_per_level <= MAX_REQUESTS_CEILING):
++        die("a duration or the request cap is out of bounds (see --help)", 2)
+     if not (0 < a.abort_error_rate <= MAX_ABORT_ERROR_RATE
+             and MIN_ABORT_WINDOW_SECONDS <= a.abort_window_seconds <= MAX_ABORT_WINDOW_SECONDS
+             and 1 <= a.abort_min_requests <= MAX_ABORT_MIN_REQUESTS and 1 <= a.abort_consecutive <= MAX_ABORT_CONSECUTIVE):
+@@ -457,8 +727,10 @@ def main():
+                   "minRequestsPerKind": a.abort_min_requests, "consecutive5xxOrTransport": a.abort_consecutive}
+     bounds = {"levels": levels, "levelSeconds": a.level_seconds, "pauseSeconds": a.pause_seconds,
+               "postObserveSeconds": a.post_observe_seconds, "abortRule": abort_rule,
+-              "maxRequestsPerLevel": MAX_REQUESTS_PER_LEVEL, "requestTimeoutSeconds": REQUEST_TIMEOUT_S,
++              "maxRequestsPerLevel": a.max_requests_per_level, "requestTimeoutSeconds": REQUEST_TIMEOUT_S,
+               "plannedSeconds": planned_s, "haikuCalls": 0, "service": SERVICE, "serviceMaxTasks": 2}
++    if a.poll_seconds:  # absent when off, so exp-d-query-load-v1's records are unchanged
++        bounds.update(pollSeconds=a.poll_seconds, collectBudgetSeconds=COLLECT_BUDGET_S)
+ 
+     if a.dry_run:
+         smoke = latest_pass_smoke()
+@@ -475,6 +747,17 @@ def main():
+         for c in levels:
+             print("    level c=%d: ecs describe-services %s; %d s closed loop; ecs describe-services" % (c, SERVICE, a.level_seconds))
+         print("    then %d s idle and a final ecs describe-services; write summary.json" % a.post_observe_seconds)
++        if a.poll_seconds:
++            print("    poll: every %d s from before the preflight to the end of the post-observation, "
++                  "ecs describe-services %s -> ecs-timeline.csv (UTC)" % (a.poll_seconds, SERVICE))
++            print("    collect (read-only, TZ=UTC, at most %d s, failures recorded, exit code unchanged):" % COLLECT_BUDGET_S)
++            for svc, op in sorted(READ_ONLY_CALLS):
++                print("      aws %s %s" % (svc, op))
++            print("    metrics (60 s, from 5 min before the start to the collection time):")
++            for q in metric_queries("<ecs_cluster_name>", "<alb_arn_suffix>", "<targetgroup from describe-services>",
++                                    "<neptune_cluster_id>")[0]:
++                m = q["MetricStat"]
++                print("      %-16s %s %s %s" % (q["Id"], m["Metric"]["Namespace"], m["Metric"]["MetricName"], m["Stat"]))
+         print("==> OK dry-run")
+         return 0
+ 
+@@ -509,9 +792,18 @@ def main():
+     key = read_api_key(secret_arn)
+     print("==> OK API key read (not printed)")
+ 
++    code = execute(base, key, paths, levels, a, cluster, tf, out_dir, abort_rule)
++    key = None
++    return code
++
++
++def execute(base, key, paths, levels, a, cluster, tf, out_dir, abort_rule):
++    """The load (with the poller when --poll-seconds is set), summary.json, then the D-scale collection."""
++    started = datetime.now(timezone.utc)
+     summary = {"schemaVersion": "exp-d-summary-v1", "startedAt": utc_now(), "abortRule": abort_rule,
+                "preflight": None, "levels": [], "aborted": None, "abortedAt": None,
+                "abortWindowCounts": None, "error": None}
++    poll = start_poller(cluster, a.poll_seconds, out_dir) if a.poll_seconds else None
+     try:
+         code = run_load(base, key, paths, levels, a, cluster, out_dir, summary)
+     except Exception as e:  # type only: a message could quote a request
+@@ -520,11 +812,19 @@ def main():
+         code = 4
+     finally:
+         key = None
++        if poll:
++            poll[0].set()
++            poll[1].join()
+         summary["endedAt"] = utc_now()
+         with open(os.path.join(out_dir, "summary.json"), "w") as f:
+             json.dump(summary, f, indent=2)
+     print("==> EXP-D levels=%d aborted=%s error=%s exit=%d" % (
+         len(summary["levels"]), summary["aborted"], summary["error"], code))
++    if a.poll_seconds:
++        try:
++            collect(cluster, tf, started, out_dir)
++        except Exception as e:  # recorded; the load result and exit code stand
++            print("    collect failed: %s (exit code unchanged)" % type(e).__name__, file=sys.stderr)
+     return code
+ 
+ 
+diff --git a/modules/rag/RUNTIME.md b/modules/rag/RUNTIME.md
+index e0b959a..75469c2 100644
+--- a/modules/rag/RUNTIME.md
++++ b/modules/rag/RUNTIME.md
+@@ -2,7 +2,7 @@
+ 
+ Owner: rag-engineer. Records: `modules/rag/src/main/scala/scholarchain/rag/runtime/` (`Contracts.scala`, `Records.scala`; round-trip tests in `RuntimeRecordsSpec`). Prompts and output schemas: `prompts/**`. Store contracts: `modules/storage/STORAGE.md`. Rendering, model versions, semantic-context format: `modules/rag/RAG.md`. Selection: `modules/rag/SELECTION.md`. Name rule and rankings: `modules/spark/JOBS.md`.
+ 
+-Status: work order 1 defined the contract and records; work order 4 implemented stages 1 to 10 (`runtime/*.scala`), the prompts and schemas (`prompts/`), the live Haiku client (`live/BedrockHaikuClient.scala`), and the runtime CLI (`cli/AskCli.scala`). Work order 5 added the benchmark harness (`cli/Benchmark.scala`, `cli/BenchmarkCli.scala`; section 22). Repair-01 part B (rulings 17 to 23 and 27) rewrote verification (section 12), added `synthesis-v2` and `synthesis-output-v2`, the fence rule and failure recording for model output (section 3), request counting (section 15), the deadline and per-stage timing (section 2), and moved key-value reads to the storage `ItemFileReader` (section 17); code version `rag-runtime-v2`, benchmark `rag-benchmark-v2`. Repair-02 (ruling 29) added number words and asserted names to verification (section 12, `verifier-v3`, an input of the runtime run ID). Repair-02 (ruling 30) added `planner-v2` and failure messages that name what each planner rule allows (section 3). Phase 10 work order 1 (Phase 9 ruling 31) fixed the review 3 and review 2 verifier findings (section 12, `verifier-v4`), added `synthesis-v3` and `synthesis-output-v3` (section 11), the removal records of the audit (`rag-audit-v3`, section 14), and the service-facing API (section 23). Phase 10 work order 9 (follow-up F2, rulings 17 and 19) answers corpus-level component, community, and window questions from the stored window summaries (sections 3, 8, and 10; code version `rag-runtime-v3`), adds the cut-off retry rule (section 11), and fixes two live verifier defects (section 12, `verifier-v5`). Phase 10 repair-01 part B (code review 1 m4) records the configuration key `runtime.window-summary.load-run` (work order 10) and how the services use it (work order 11, repair-01 m3) in sections 3, 17, 19, 20, and 23; no code changed. Phase 11 work order 2 (Phase 10 ruling 25) classified the 15 removed claims of the live gate run and fixed the verifier defects among them (section 12, `verifier-v6`). Phase 11 repair-01 part B (code review 1 D1 to D4, finding 5) removes claims that state a number with a quantity word, a qualifier, or a negation (section 12, `verifier-v7`), and degrades a failed vector query to a missing-evidence note (section 9). Phase 11 repair-02 (D14) widens those comparison and negation lists ("short of", "lacks", and their families; section 12, `verifier-v8`). Where this file and the code constants disagree, that is a defect for rag-engineer. "Ruling n" means the Phase 9 human rulings in `docs/agent-runs/phase-09/prompt.md`.
++Status: work order 1 defined the contract and records; work order 4 implemented stages 1 to 10 (`runtime/*.scala`), the prompts and schemas (`prompts/`), the live Haiku client (`live/BedrockHaikuClient.scala`), and the runtime CLI (`cli/AskCli.scala`). Work order 5 added the benchmark harness (`cli/Benchmark.scala`, `cli/BenchmarkCli.scala`; section 22). Repair-01 part B (rulings 17 to 23 and 27) rewrote verification (section 12), added `synthesis-v2` and `synthesis-output-v2`, the fence rule and failure recording for model output (section 3), request counting (section 15), the deadline and per-stage timing (section 2), and moved key-value reads to the storage `ItemFileReader` (section 17); code version `rag-runtime-v2`, benchmark `rag-benchmark-v2`. Repair-02 (ruling 29) added number words and asserted names to verification (section 12, `verifier-v3`, an input of the runtime run ID). Repair-02 (ruling 30) added `planner-v2` and failure messages that name what each planner rule allows (section 3). Phase 10 work order 1 (Phase 9 ruling 31) fixed the review 3 and review 2 verifier findings (section 12, `verifier-v4`), added `synthesis-v3` and `synthesis-output-v3` (section 11), the removal records of the audit (`rag-audit-v3`, section 14), and the service-facing API (section 23). Phase 10 work order 9 (follow-up F2, rulings 17 and 19) answers corpus-level component, community, and window questions from the stored window summaries (sections 3, 8, and 10; code version `rag-runtime-v3`), adds the cut-off retry rule (section 11), and fixes two live verifier defects (section 12, `verifier-v5`). Phase 10 repair-01 part B (code review 1 m4) records the configuration key `runtime.window-summary.load-run` (work order 10) and how the services use it (work order 11, repair-01 m3) in sections 3, 17, 19, 20, and 23; no code changed. Phase 11 work order 2 (Phase 10 ruling 25) classified the 15 removed claims of the live gate run and fixed the verifier defects among them (section 12, `verifier-v6`). Phase 11 repair-01 part B (code review 1 D1 to D4, finding 5) removes claims that state a number with a quantity word, a qualifier, or a negation (section 12, `verifier-v7`), and degrades a failed vector query to a missing-evidence note (section 9). Phase 11 repair-02 (D14) widens those comparison and negation lists ("short of", "lacks", and their families; section 12, `verifier-v8`). Phase 15 work order 1 (experiment E, Phase 14 ruling 31) adds the retrieval modes FUSED (default, unchanged), GRAPH_ONLY, and VECTOR_ONLY, the audit field `retrievalMode`, and the benchmark's `--retrieval-mode` flag and ranked-list files (section 24; benchmark `rag-benchmark-v3`). Where this file and the code constants disagree, that is a defect for rag-engineer. "Ruling n" means the Phase 9 human rulings in `docs/agent-runs/phase-09/prompt.md`.
+ 
+ ## 1. Principles
+ 
+@@ -345,7 +345,7 @@ Abstention text is a fixed template filled from the resolution or missing-eviden
+ 
+ ## 14. Audit (stage 10; ruling 10)
+ 
+-- **Log object.** `AuditRecord` (`rag-audit-v3`; v2 adds `LlmCall.requests`, the Bedrock requests of the attempt including an expired-token retry, and `LlmCall.failure`, the short reason of a rejected or failed attempt, section 3; v3 adds `removedClaims` and `droppedLines`, the removal records of section 12, review 3 n7), written once with `ObjectLoadPort.putNew` at `logs/rag-runtime/snapshot=<graph snapshot>/run=<runtime run>/<queryId>.json`. It holds the QueryPlan, the resolution summaries, graph and semantic evidence IDs, metric versions, graph run ID, vector indexes and the embedding model version, prompt versions (with the prompt file sha256), model IDs, every LLM and embedding attempt (tokens where the response reports them, latency, throttle wait, outcome), template calls, per-stage timings, the bundle budget, verification counts, the abstention, and the answer hash (`StableIds.textHash` of the `AnswerResponse` JSON). It never holds the question text (only `questionHash` and `questionChars`), prompt text, raw model output, credentials, profile names, or endpoints. The one exception is the parsed text of removed claims and left-out lines (v3, ruling 31 n7), kept for review; `RuntimeApi.withoutModelText` blanks it for any service view (Phase 10 ruling 8).
++- **Log object.** `AuditRecord` (`rag-audit-v3`; v2 adds `LlmCall.requests`, the Bedrock requests of the attempt including an expired-token retry, and `LlmCall.failure`, the short reason of a rejected or failed attempt, section 3; v3 adds `removedClaims` and `droppedLines`, the removal records of section 12, review 3 n7; `retrievalMode`, written only when it is not FUSED, section 24), written once with `ObjectLoadPort.putNew` at `logs/rag-runtime/snapshot=<graph snapshot>/run=<runtime run>/<queryId>.json`. It holds the QueryPlan, the resolution summaries, graph and semantic evidence IDs, metric versions, graph run ID, vector indexes and the embedding model version, prompt versions (with the prompt file sha256), model IDs, every LLM and embedding attempt (tokens where the response reports them, latency, throttle wait, outcome), template calls, per-stage timings, the bundle budget, verification counts, the abstention, and the answer hash (`StableIds.textHash` of the `AnswerResponse` JSON). It never holds the question text (only `questionHash` and `questionChars`), prompt text, raw model output, credentials, profile names, or endpoints. The one exception is the parsed text of removed claims and left-out lines (v3, ruling 31 n7), kept for review; `RuntimeApi.withoutModelText` blanks it for any service view (Phase 10 ruling 8).
+ - **QuerySession item** (create-only). `sessionId`, `turnKey` = `<createdAt ISO-8601 UTC>#<queryId>`, `queryId`, `createdAt`, `expiresAt` = createdAt + `runtime.audit.ttl-days` days (epoch seconds), `schemaVersion` `rag-query-session-v1`, `questionHash`, `auditKey`, `answerHash`, `abstained`, and the verification counts.
+ - **EvidenceBundle items** (create-only, same TTL, `schemaVersion` `rag-evidence-bundle-item-v1`). `BUNDLE` holds the bundle header (everything except the items, plus the item ID lists). `EV#<evidenceId>` holds the core `EvidenceItem` JSON as `payload`, or, above the 32 KB item budget, `payloadRef` (`logs/rag-runtime/.../<queryId>/evidence/<evidenceId>.json`) and `payloadHash`.
+ - **IDs.** The runtime run ID is `StableIds.runId("rag-runtime", "rag-runtime-v3", configVersion, [graph run, metric item run, render run, vector store run, embedding model version, the window-summary store key when one is served (`window-summary=<key>`, work order 9), planner prompt version and sha256, synthesis prompt version and sha256, planner and synthesis model IDs, mode, verifier version (`verifier=verifier-v8`; ruling 29)], 1)`. The code version was `rag-runtime-v2` until Phase 10 work order 9 (corpus reads and the cut-off retry). A verifier rule change bumps `Verifier.Version`, so it gives new runtime and benchmark run IDs and a rerun never resumes results verified by older rules. The query ID is `qry-` + `StableIds.hash("query", runId, questionHash, request hash, n)`, where n is 1 plus the number of audits already written for that run, question, and request (so a write-once key never conflicts). Services may supply a query ID of the same shape (C2).
+@@ -524,8 +524,8 @@ Cross-key checks: the budget shares sum to at most `retrieval.context-token-budg
+ `cli/BenchmarkCli` loads the stores once (as `AskCli`, through `AskCli.open` and `LoadedRuntime`) and runs every row of the question CSV, in file order, through `Workflow.answer`. `cli/Benchmark` holds the pure parts: the CSV reader, the stored-path reference, the checks, and the summary.
+ 
+ - **Inputs.** `--questions` (`experiments/benchmark/benchmark-questions-v1.csv`, read-only; columns `question_id`, `category`, `question_text`, `researcher_a`, `researcher_b`, `window`, `answer_type`, `should_abstain`), `--path-evidence` (stored hops: `window,researcherX,researcherY,jointPublicationCount,firstCollaborationYear,lastCollaborationYear`), and the `AskCli` store, live, and `--out` flags. `--max n` answers at most n pending questions.
+-- **Run ID.** `StableIds.runId("rag-benchmark", "rag-benchmark-v2", configVersion, [runtime run ID, sha256 of the question file, sha256 of the path file], 1)`. The runtime run ID already covers the mode, the stores, the vectors, prompts, and models, so fake and live runs never share a directory.
+-- **Outputs** (file object store under `<out>/s3`, write-once): `reports/rag-benchmark/snapshot=<d>/run=<r>/questions/<question_id>.json` (`rag-benchmark-result-v1`); `.../summary-<nnn>.json` (`rag-benchmark-summary-v1`, nnn = results present); `runs/rag-benchmark/snapshot=<d>/run=<r>/manifest-<nnn>.json` (`store-run-manifest-v1`, every result and the summary). Each question's runtime audit, answer, records, and per-question manifest are written as in section 14. A result holds no question text.
++- **Run ID.** `StableIds.runId("rag-benchmark", "rag-benchmark-v3", configVersion, [runtime run ID, sha256 of the question file, sha256 of the path file], 1)`. The runtime run ID already covers the mode, the stores, the vectors, prompts, and models, so fake and live runs never share a directory.
++- **Outputs** (file object store under `<out>/s3`, write-once): `reports/rag-benchmark/snapshot=<d>/run=<r>/questions/<question_id>.json` (`rag-benchmark-result-v3`: v2 added the per-check details, v3 `retrievalMode` and `retrieved`, section 24); `.../summary-<nnn>.json` (`rag-benchmark-summary-v3`, with `retrievalMode`; nnn = results present); `.../retrieval/<question_id>-<mode>.csv` (the ranked retrieved list, section 24); `runs/rag-benchmark/snapshot=<d>/run=<r>/manifest-<nnn>.json` (`store-run-manifest-v1`, every result and the summary; a ranked-list file is a copy of its result's `retrieved` field and is not listed). Each question's runtime audit, answer, records, and per-question manifest are written as in section 14. A result holds no question text.
+ - **Resume.** A question with a result object is skipped, so rerunning the same command continues. The summary is rebuilt from all stored results; when nothing new was answered, its bytes are identical and the write is `Unchanged`.
+ - **Failures.** A runtime failure, or a question whose planner, synthesis, or embedding call never succeeded because of an error (`TRANSIENT_ERROR` or `FAILED`; not invalid output or a budget skip), gets no result. The run stops there with exit 1, and the next run retries it. This keeps a live run that cannot reach Bedrock from storing fallback answers as results.
+ - **Checks** (PASS, FAIL, or NOT_APPLICABLE; mechanical only, no rating, relevance score, or label):
+@@ -611,3 +611,22 @@ From repair-01: the 28 changes are the descriptive claims (semantic context), no
+ - The EvidenceBundle table is keyed by query ID and `EV#<evidenceId>`. A lookup by evidence ID alone needs a storage read with an index from evidence ID to the item (storage-engineer, Phase 10 work order 4); `evidenceOf` then decodes the item it returns.
+ - `records` is a read port over the runtime tables (locally `FileRuntimeRecords.reader`); `RuntimePorts.records` is the create-only writer.
+ - `RuntimePorts.windowSummaries: Option[WindowSummarySource] = None` (Phase 10 work order 9) is the last field, with a default, so existing callers compile unchanged and keep the corpus abstention. To serve corpus answers, a composition builds `WindowSummarySource(k, port)` with `k = S3Layout.windowSummary(snapshot, loadRun)` and `port` from `WindowSummaries.open(<object reader>, k, cfg.graph.windows)` (a `Left` should stop startup), and adds `window-summary=<k>` to the `Workflow.runIdFor` inputs. The services do this (Phase 10 work order 11, `Composition.windowSummaries`) when `runtime.window-summary.load-run` is set (section 20); graph-evidence-api adds the run ID input without opening the object (repair-01 m3).
++
++## 24. Retrieval modes (Phase 15 work order 1; experiment E, Phase 14 ruling 31)
++
++`RetrievalMode` (`Contracts.scala`) is `RuntimeSetup.retrievalMode`, a run-level setting (default `FUSED`). The services never set it, so the service runtime is always FUSED; `QueryRequest` and the HTTP contract are unchanged. `BenchmarkCli --retrieval-mode fused|graph-only|vector-only` (default `fused`) sets it for a local benchmark run; any other value is a usage error (exit 2) before any store is loaded.
++
++| Stage | FUSED (default) | GRAPH_ONLY | VECTOR_ONLY |
++|---|---|---|---|
++| 1 QUERY_PLANNING | as before | as before, then `Planner.forMode` empties `semanticIndexes` | as before |
++| 2 RESEARCHER_RESOLUTION | as before | as before | as before: the only store reads of the question (EntityLinkCache, `graph.authored-counts`, `graph.researcher-institutions`, `graph.coauthors` for candidate context) |
++| 3 to 5 graph stages | run | run | not run; recorded `SKIPPED`, empty `GraphFacts`; the unsupported-request and no-graph-evidence abstentions do not apply |
++| 6 SEMANTIC_CONTEXT | as section 9 | no index, so no embedding and no vector query (`SKIPPED`) | one embedding; researcher and path indexes filtered by the resolved IDs as in section 9; the community and paper-abstract indexes, whose filters come from graph facts, are queried by similarity within their window only (model version and window filters stay) |
++| 7 EVIDENCE_BUILDING | graph groups then semantic documents (section 10) | graph groups only | semantic documents only; not even the identity record of resolution is a bundle item |
++| 8 and 9 synthesis, verification | as before | as before | as before, on semantic items only: no material claim can verify (law 3), so the answer is expected to abstain `NO_VERIFIED_CLAIM` (fixture: it does). In live mode the synthesis call is still made |
++| 10 AUDIT | as before | as before | as before |
++
++- **FUSED is the old path.** Every branch above tests the mode; FUSED takes the code it took before. Its runtime run ID has the same inputs as before, and its audit has the same bytes (`rag-audit-v3`), because `AuditRecord.retrievalMode` is the last field with default FUSED and upickle leaves a default value out of the JSON. Test: `RetrievalModeSpec` "FUSED is the default...".
++- **Recording.** `AuditRecord.retrievalMode` is written for GRAPH_ONLY and VECTOR_ONLY (`"retrievalMode":"GRAPH_ONLY"`); an audit without the key (every v3 audit before this change, and every FUSED audit) reads as FUSED. The schema stays `rag-audit-v3`: the FUSED wire form is unchanged, and the service's `auditSchemaVersion` stays the same. A non-FUSED mode is an input of the runtime run ID (`retrieval=<MODE>`), so each mode gets its own runtime run and its own benchmark run, and the modes never resume into each other's results. The benchmark result and summary carry `retrievalMode` (`rag-benchmark-result-v3`, `rag-benchmark-summary-v3`).
++- **Ranked list.** For each question, `Benchmark.Result.retrieved` and the file `reports/rag-benchmark/snapshot=<d>/run=<r>/retrieval/<question_id>-<mode>.csv` hold the retrieved items in bundle order. Columns: `rank` (1 up), `source` (`graph`, `vector`, or `fused`: the mode's list), `origin` (`graph` or `vector`: the retriever that produced the item), `evidenceId` (the bundle evidence ID, section 10), and `elementId` (a vector item's vector key; a graph item's store pointer `sourceUri`, for example `neptune:<element id>` or `dynamodb:<table>/<pk>/<sk>`). Order: graph items in the section 10 order, then vector items best score first; fusion-v1 never merges them into one score, so a FUSED list is the graph list followed by the vector list as the bundle holds them. The files are rewritten from the stored results after every invocation (write-once; a resume writes the same bytes). Nothing computes recall, MRR, or any score against labels: relevance labels are the human's (Phase 15 ruling 1).
++- **Limitations.** (1) The list is the bundle, after the token and item budget; items the budget left out are counted (`omittedItems`) but not listed, so recall at K is bounded by the bundle size. (2) Locally the vector side is `FileVectorStore` over the file-backed export of the live vectors, not the S3 Vectors service (ruling 31): the index content is the same export, but the nearest-neighbour search is the local exact search, which may rank differently from the service's approximate search. (3) A VECTOR_ONLY question with no named researcher and no topic, path, community, or work operation selects no index and retrieves nothing.
+diff --git a/modules/rag/src/main/scala/scholarchain/rag/cli/AskCli.scala b/modules/rag/src/main/scala/scholarchain/rag/cli/AskCli.scala
+index 643616a..7d85d0f 100644
+--- a/modules/rag/src/main/scala/scholarchain/rag/cli/AskCli.scala
++++ b/modules/rag/src/main/scala/scholarchain/rag/cli/AskCli.scala
+@@ -139,7 +139,8 @@ object AskCli:
+       cfg: ScholarChainConfig,
+       out: String => Unit,
+       sleep: Long => Unit,
+-      nowMs: () => Long
++      nowMs: () => Long,
++      retrieval: RetrievalMode = RetrievalMode.FUSED
+   ): Either[String, Option[LoadedRuntime]] =
+     for
+       graphDir <- a.req("graph").map(Paths.get(_))
+@@ -177,9 +178,14 @@ object AskCli:
+           s"embedding=$version"
+         ) ++ summaryKey.map(k => s"window-summary=$k"),
+         prompts,
+-        mode
++        mode,
++        retrieval = retrieval
++      )
++      val retrievalNote =
++        if retrieval == RetrievalMode.FUSED then "" else s", ${retrieval.flag} retrieval"
++      out(
++        s"runtime run $runId (${mode.toString.toLowerCase} mode$retrievalNote), snapshot $snapshot"
+       )
+-      out(s"runtime run $runId (${mode.toString.toLowerCase} mode), snapshot $snapshot")
+       // Work order 9 (F2): the corpus window summaries, opened and validated once; any violation
+       // refuses them whole and stops (exit 1).
+       val opened = wsArgs.zip(summaryKey).map { case ((root, _), k) =>
+@@ -232,7 +238,8 @@ object AskCli:
+                   out,
+                   sleep,
+                   nowMs,
+-                  summaries
++                  summaries,
++                  retrieval
+                 )
+               )
+ 
+@@ -255,7 +262,8 @@ object AskCli:
+       out: String => Unit,
+       sleep: Long => Unit,
+       nowMs: () => Long,
+-      summaries: Option[WindowSummarySource]
++      summaries: Option[WindowSummarySource],
++      retrieval: RetrievalMode
+   ): LoadedRuntime =
+     val llmThrottle = Throttle(perMinute, nowMs, sleep)
+     val embedThrottle = Throttle(cfg.runtime.embedding.requestsPerMinute, nowMs, sleep)
+@@ -310,7 +318,8 @@ object AskCli:
+       snapshot,
+       runId,
+       nowMs,
+-      () => Instant.now
++      () => Instant.now,
++      retrieval
+     )
+     LoadedRuntime(setup, ports, audit, outRoot)
+ 
+diff --git a/modules/rag/src/main/scala/scholarchain/rag/cli/Benchmark.scala b/modules/rag/src/main/scala/scholarchain/rag/cli/Benchmark.scala
+index bc0eb07..fd8d007 100644
+--- a/modules/rag/src/main/scala/scholarchain/rag/cli/Benchmark.scala
++++ b/modules/rag/src/main/scala/scholarchain/rag/cli/Benchmark.scala
+@@ -13,9 +13,10 @@ import scala.collection.mutable
+   * scores relevance, or writes a label.
+   */
+ object Benchmark:
+-  val ResultSchema = "rag-benchmark-result-v2"
+-  val SummarySchema = "rag-benchmark-summary-v2"
+-  val CodeVersion = "rag-benchmark-v2"
++  // v3 (experiment E): retrievalMode and the ranked retrieved list (RUNTIME.md section 24).
++  val ResultSchema = "rag-benchmark-result-v3"
++  val SummarySchema = "rag-benchmark-summary-v3"
++  val CodeVersion = "rag-benchmark-v3"
+ 
+   /** Bedrock requests one model attempt may send: the request and one expired-token retry
+     * (LiveAws.guardedWith; review 1 m5).
+@@ -241,11 +242,52 @@ object Benchmark:
+       throttleWaitMs: Long
+   ) derives ReadWriter
+ 
++  /** One retrieved item in the bundle order. source: the list (graph, vector, or fused = the
++    * retrieval mode); origin: the retriever that produced the item (graph or vector); elementId:
++    * the vector key of a vector item, the store pointer (sourceUri) of a graph item.
++    */
++  final case class Retrieved(
++      rank: Int,
++      source: String,
++      origin: String,
++      evidenceId: String,
++      elementId: String
++  ) derives ReadWriter
++
++  /** The ranked list of what the question retrieved: graph items in bundle order, then vector items
++    * best score first (fusion-v1 keeps the two apart and never merges them into one score).
++    * shortcut: items the bundle budget left out are counted (omittedItems), not listed; list them
++    * if recall at K must reach past the bundle.
++    */
++  def retrieved(r: RuntimeResult): Vector[Retrieved] =
++    val source = r.audit.retrievalMode match
++      case RetrievalMode.FUSED       => "fused"
++      case RetrievalMode.GRAPH_ONLY  => "graph"
++      case RetrievalMode.VECTOR_ONLY => "vector"
++    r.bundle.toVector
++      .flatMap(b => b.graphEvidence.map("graph" -> _) ++ b.semanticEvidence.map("vector" -> _))
++      .zipWithIndex
++      .map { case ((origin, e), i) =>
++        Retrieved(i + 1, source, origin, e.evidenceId, e.chunkId.getOrElse(e.sourceUri))
++      }
++
++  private def cell(s: String) =
++    if s.exists(c => c == ',' || c == '"' || c == '\n' || c == '\r') then
++      "\"" + s.replace("\"", "\"\"") + "\""
++    else s
++
++  /** The ranked-list file of one question (CSV, header first). No score against any label. */
++  def retrievedCsv(xs: Vector[Retrieved]): String =
++    ("rank,source,origin,evidenceId,elementId" +: xs.map(x =>
++      Seq(x.rank.toString, x.source, x.origin, x.evidenceId, x.elementId).map(cell).mkString(",")
++    )).mkString("", "\n", "\n")
++
+   final case class Result(
+       schemaVersion: String,
+       questionId: String,
+       category: String,
+       mode: String,
++      retrievalMode: String,
+       runtimeRunId: String,
+       queryId: String,
+       planSource: String,
+@@ -263,7 +305,8 @@ object Benchmark:
+       latencyMs: Long,
+       stageLatencyMs: Map[String, Long],
+       checks: Vector[Check],
+-      answerHash: String
++      answerHash: String,
++      retrieved: Vector[Retrieved]
+   ) derives ReadWriter
+ 
+   private val GraphStages =
+@@ -286,6 +329,7 @@ object Benchmark:
+       q.id,
+       q.category,
+       au.mode.toString,
++      au.retrievalMode.toString,
+       au.runId,
+       a.response.queryId,
+       a.plan.source.toString,
+@@ -334,7 +378,8 @@ object Benchmark:
+       latencyMs,
+       stageMs,
+       checks(q, r, ref, cfg, latencyMs, expect),
+-      a.answerHash
++      a.answerHash,
++      retrieved(r)
+     )
+ 
+   /** A model or embedding call that never succeeded because of an error (not invalid output, not a
+@@ -657,6 +702,7 @@ object Benchmark:
+       benchmarkRunId: String,
+       runtimeRunId: String,
+       mode: String,
++      retrievalMode: String,
+       questionsTotal: Int,
+       questionsDone: Int,
+       notDone: Vector[String],
+@@ -689,6 +735,7 @@ object Benchmark:
+       benchmarkRunId: String,
+       runtimeRunId: String,
+       mode: String,
++      retrievalMode: String,
+       all: Vector[Question],
+       results: Vector[Result]
+   ): Summary =
+@@ -700,6 +747,7 @@ object Benchmark:
+       benchmarkRunId,
+       runtimeRunId,
+       mode,
++      retrievalMode,
+       all.size,
+       rs.size,
+       all.map(_.id).filterNot(byId.contains),
+diff --git a/modules/rag/src/main/scala/scholarchain/rag/cli/BenchmarkCli.scala b/modules/rag/src/main/scala/scholarchain/rag/cli/BenchmarkCli.scala
+index 6a596fd..293b5f4 100644
+--- a/modules/rag/src/main/scala/scholarchain/rag/cli/BenchmarkCli.scala
++++ b/modules/rag/src/main/scala/scholarchain/rag/cli/BenchmarkCli.scala
+@@ -1,7 +1,7 @@
+ package scholarchain.rag.cli
+ 
+ import scholarchain.core.StableIds
+-import scholarchain.rag.runtime.Audit
++import scholarchain.rag.runtime.{Audit, RetrievalMode}
+ import scholarchain.storage.cli.Cli
+ import scholarchain.storage.{FileObjectStore, Hashing, ManifestEntry, RunManifest, Throttle}
+ import upickle.default.{read, write}
+@@ -16,13 +16,16 @@ import java.nio.file.{Files, Paths}
+   * every invocation the summary of all results present and a run manifest are written (keyed by the
+   * number of results, write-once). A question whose runtime fails, or whose model or embedding call
+   * never succeeded because of an error (`Benchmark.callFailure`), gets no result; the run stops
+-  * there and the next run retries it. Exit 0 when no question failed in this invocation, 1
++  * there and the next run retries it. `--retrieval-mode fused|graph-only|vector-only` (default
++  * fused; RUNTIME.md section 24) picks the retrievers; each result's ranked retrieved list is also
++  * written as `.../retrieval/<id>-<mode>.csv`. Exit 0 when no question failed in this invocation, 1
+   * otherwise, 2 usage, 3 disk.
+   */
+ object BenchmarkCli:
+   val UsageText =
+     "rag/runMain scholarchain.rag.cli.BenchmarkCli --questions <benchmark CSV> " +
+-      s"--path-evidence <stored path hops CSV> [--max <n>] ${AskCli.StoreUsage}"
++      s"--path-evidence <stored path hops CSV> [--max <n>] " +
++      s"[--retrieval-mode fused|graph-only|vector-only] ${AskCli.StoreUsage}"
+ 
+   def main(args: Array[String]): Unit = Cli.main("BenchmarkCli", args)(run(_, _))
+ 
+@@ -36,7 +39,7 @@ object BenchmarkCli:
+     RagCli.withArgs(
+       args,
+       Cli.LiveFlags,
+-      AskCli.StoreOpts ++ Set("questions", "path-evidence", "max"),
++      AskCli.StoreOpts ++ Set("questions", "path-evidence", "max", "retrieval-mode"),
+       UsageText,
+       out,
+       env
+@@ -49,7 +52,11 @@ object BenchmarkCli:
+         qs <- Benchmark.questions(new String(qBytes, UTF_8)).left.map(e => s"$qPath: $e")
+         ref <- Benchmark.pathReference(new String(pBytes, UTF_8)).left.map(e => s"$pPath: $e")
+         max <- a.int("max", Some(qs.size)).filterOrElse(_ >= 1, "--max must be at least 1")
+-        loaded <- AskCli.open(a, cfg, out, sleep, nowMs)
++        retrieval <- a
++          .get("retrieval-mode")
++          .fold(Some(RetrievalMode.FUSED))(RetrievalMode.fromFlag)
++          .toRight("--retrieval-mode must be fused, graph-only, or vector-only")
++        loaded <- AskCli.open(a, cfg, out, sleep, nowMs, retrieval)
+       yield loaded.fold(1) { rt =>
+         val s = rt.setup
+         val benchRun = StableIds.runId(
+@@ -107,10 +114,28 @@ object BenchmarkCli:
+           }
+         val failed = if failure.isDefined then 1 else 0
+         val results = qs.flatMap(q => stored(q.id))
+-        val sum = Benchmark.summary(benchRun, s.runId, s.mode.toString, qs, results)
++        val sum = Benchmark.summary(
++          benchRun,
++          s.runId,
++          s.mode.toString,
++          s.retrievalMode.toString,
++          qs,
++          results
++        )
+         val summaryBytes = write(sum, indent = 2).getBytes(UTF_8)
+         val n = f"${results.size}%03d"
++        // Rebuilt from every stored result (resume-safe: same result, same bytes, Unchanged). Not in
++        // the manifest: each list is a copy of the `retrieved` field of a result that is.
++        val lists = results.map(r =>
++          Audit.putOnce(
++            store.loader,
++            s"$base/retrieval/${r.questionId}-${s.retrievalMode.flag}.csv",
++            Benchmark.retrievedCsv(r.retrieved).getBytes(UTF_8),
++            r.queryId
++          )
++        )
+         val written = for
++          _ <- lists.collectFirst { case Left(e) => e }.toLeft(())
+           se <- Audit.putOnce(store.loader, s"$base/summary-$n.json", summaryBytes, "summary")
+           entries = results.map(r =>
+             val b = store.reader.get(resultKey(r.questionId)).get
+@@ -151,7 +176,10 @@ object BenchmarkCli:
+   def printSummary(s: Benchmark.Summary, out: String => Unit): Unit =
+     def m(x: Map[String, Int]) = x.toVector.sorted.map((k, v) => s"$k $v").mkString(", ")
+     def l(x: Benchmark.Latency) = s"p50 ${x.p50Ms} ms, p95 ${x.p95Ms} ms, max ${x.maxMs} ms"
+-    out(s"done ${s.questionsDone} of ${s.questionsTotal} (${s.mode.toLowerCase} mode)")
++    out(
++      s"done ${s.questionsDone} of ${s.questionsTotal} (${s.mode.toLowerCase} mode, " +
++        s"${s.retrievalMode.toLowerCase.replace('_', '-')} retrieval)"
++    )
+     if s.notDone.nonEmpty then out(s"not done: ${s.notDone.mkString(" ")}")
+     s.checks.toVector.sortBy(_._1).foreach { (k, t) =>
+       out(s"  check $k: ${t.pass} pass, ${t.fail} fail, ${t.notApplicable} n/a")
+diff --git a/modules/rag/src/main/scala/scholarchain/rag/runtime/Contracts.scala b/modules/rag/src/main/scala/scholarchain/rag/runtime/Contracts.scala
+index 9977edb..afd2d96 100644
+--- a/modules/rag/src/main/scala/scholarchain/rag/runtime/Contracts.scala
++++ b/modules/rag/src/main/scala/scholarchain/rag/runtime/Contracts.scala
+@@ -140,6 +140,19 @@ enum RuntimeMode:
+ object RuntimeMode:
+   given ReadWriter[RuntimeMode] = enumRW(values)
+ 
++/** Which retrievers a run uses (experiment E, Phase 14 ruling 31; RUNTIME.md section 24). FUSED is
++  * the default and the behaviour before the mode existed; GRAPH_ONLY queries no vector index;
++  * VECTOR_ONLY reads no graph fact beyond researcher resolution.
++  */
++enum RetrievalMode:
++  case FUSED, GRAPH_ONLY, VECTOR_ONLY
++
++  /** The CLI form: fused, graph-only, vector-only. */
++  def flag: String = toString.toLowerCase.replace('_', '-')
++object RetrievalMode:
++  given ReadWriter[RetrievalMode] = enumRW(values)
++  def fromFlag(s: String): Option[RetrievalMode] = values.find(_.flag == s)
++
+ /** ResearcherMetricCache attribute of each core metric (WINDOW# items; CHANGE# prefixes `from` or
+   * `to` and capitalizes). Only the seven `ranked` metrics have stored RANKING# items.
+   */
+diff --git a/modules/rag/src/main/scala/scholarchain/rag/runtime/Evidence.scala b/modules/rag/src/main/scala/scholarchain/rag/runtime/Evidence.scala
+index 477c9fc..768282e 100644
+--- a/modules/rag/src/main/scala/scholarchain/rag/runtime/Evidence.scala
++++ b/modules/rag/src/main/scala/scholarchain/rag/runtime/Evidence.scala
+@@ -511,14 +511,20 @@ object EvidenceBuilder:
+       semantic: Vector[SemanticResult],
+       extraMissing: Vector[MissingEvidence],
+       cfg: ScholarChainConfig,
+-      runId: String
++      runId: String,
++      mode: RetrievalMode = RetrievalMode.FUSED
+   ): EvidenceBundle =
+     val b = cfg.runtime.budget
+     def tokens(s: String) = (s.length + b.charsPerToken - 1) / b.charsPerToken
+     var count = 0
+     var graphTokens = 0
+     var omittedGraph = Vector.empty[EvidenceItem]
+-    val graph = graphGroups(plan, resolutions, g, cfg).flatMap { group =>
++    // Section 24: VECTOR_ONLY keeps no graph item (not even the identity record of resolution);
++    // GRAPH_ONLY keeps no semantic item.
++    val groups =
++      if mode == RetrievalMode.VECTOR_ONLY then Vector.empty
++      else graphGroups(plan, resolutions, g, cfg)
++    val graph = groups.flatMap { group =>
+       val t = group.map(e => tokens(render(e))).sum
+       if graphTokens + t <= b.graphEvidenceTokens && count + group.size <= b.maxEvidenceItems then
+         graphTokens += t
+@@ -530,7 +536,7 @@ object EvidenceBuilder:
+     }
+     var semanticTokens = 0
+     var omittedSemantic = 0
+-    val ordered = semantic
++    val ordered = (if mode == RetrievalMode.GRAPH_ONLY then Vector.empty else semantic)
+       .flatMap(_.items)
+       .sortBy(e => (-e.score.getOrElse(0d), e.evidenceId))
+       .distinctBy(e => e.chunkId.getOrElse(e.evidenceId))
+diff --git a/modules/rag/src/main/scala/scholarchain/rag/runtime/Planner.scala b/modules/rag/src/main/scala/scholarchain/rag/runtime/Planner.scala
+index a1b2877..2538a0f 100644
+--- a/modules/rag/src/main/scala/scholarchain/rag/runtime/Planner.scala
++++ b/modules/rag/src/main/scala/scholarchain/rag/runtime/Planner.scala
+@@ -708,6 +708,10 @@ object Planner:
+       case (_, Left(why)) => Left((Abstention(AbstentionReason.NO_DATA_IN_WINDOW, why), plan))
+       case (_, Right(_))  => Right(plan)
+ 
++  /** The plan under a retrieval mode (section 24): GRAPH_ONLY selects no vector index. */
++  def forMode(p: QueryPlan, mode: RetrievalMode): QueryPlan =
++    if mode == RetrievalMode.GRAPH_ONLY then p.copy(semanticIndexes = Vector.empty) else p
++
+   /** Indexes chosen by code, in priority order, at most runtime.semantic.max-indexes (section 9).
+     */
+   def semanticIndexes(
+diff --git a/modules/rag/src/main/scala/scholarchain/rag/runtime/Records.scala b/modules/rag/src/main/scala/scholarchain/rag/runtime/Records.scala
+index 68d89d3..45e65d8 100644
+--- a/modules/rag/src/main/scala/scholarchain/rag/runtime/Records.scala
++++ b/modules/rag/src/main/scala/scholarchain/rag/runtime/Records.scala
+@@ -537,5 +537,8 @@ final case class AuditRecord(
+     abstained: Boolean,
+     abstentionReason: Option[AbstentionReason],
+     answerHash: String,
+-    provenance: Provenance
++    provenance: Provenance,
++    // The one defaulted field (experiment E): upickle omits it when FUSED, so a FUSED audit keeps
++    // the rag-audit-v3 bytes it had before the mode existed, and a v3 audit without it reads as FUSED.
++    retrievalMode: RetrievalMode = RetrievalMode.FUSED
+ ) derives ReadWriter
+diff --git a/modules/rag/src/main/scala/scholarchain/rag/runtime/Semantic.scala b/modules/rag/src/main/scala/scholarchain/rag/runtime/Semantic.scala
+index e1d8a3a..20a65c0 100644
+--- a/modules/rag/src/main/scala/scholarchain/rag/runtime/Semantic.scala
++++ b/modules/rag/src/main/scala/scholarchain/rag/runtime/Semantic.scala
+@@ -37,7 +37,8 @@ object SemanticStage:
+       modelVersion: String,
+       cfg: ScholarChainConfig,
+       nowMs: () => Long,
+-      checkDeadline: String => Unit = _ => ()
++      checkDeadline: String => Unit = _ => (),
++      mode: RetrievalMode = RetrievalMode.FUSED
+   ): Output =
+     val ix = cfg.s3Vectors.indexes
+     val corpus = Windows.corpusWindowName(cfg)
+@@ -51,6 +52,7 @@ object SemanticStage:
+         for x <- m.get(op.researchers(0)); y <- m.get(op.researchers(1)) yield (x, y)
+       }
+     val communities = facts.metrics.flatMap(_.metrics.communityId).distinct
++    val vectorOnly = mode == RetrievalMode.VECTOR_ONLY
+     val workIds = facts.works.map(_.workId).distinct.take(VectorContract.MaxFilterConstraints - 2)
+     val queries: Vector[(String, String, Option[VectorFilter])] = plan.semanticIndexes.flatMap {
+       index =>
+@@ -75,6 +77,11 @@ object SemanticStage:
+               )
+             )
+           )
++        // VECTOR_ONLY has no graph facts, so the community and work filters (taken from them) are
++        // dropped: those indexes are queried by similarity within the window alone (section 24).
++        else if vectorOnly && ix.get("communities").contains(index) then
++          Some((index, plan.window.window, None))
++        else if vectorOnly && ix.get("abstracts").contains(index) then Some((index, corpus, None))
+         else if ix.get("communities").contains(index) then
+           Option.when(communities.nonEmpty)(
+             (index, plan.window.window, Some(VectorFilter.In("communityId", str(communities))))
+diff --git a/modules/rag/src/main/scala/scholarchain/rag/runtime/Workflow.scala b/modules/rag/src/main/scala/scholarchain/rag/runtime/Workflow.scala
+index 2d0f38e..e6a0c7c 100644
+--- a/modules/rag/src/main/scala/scholarchain/rag/runtime/Workflow.scala
++++ b/modules/rag/src/main/scala/scholarchain/rag/runtime/Workflow.scala
+@@ -51,7 +51,7 @@ final case class RuntimePorts(
+ )
+ 
+ /** Everything fixed for a runtime run. llm None is fake mode: the rule planner and the template
+-  * synthesizer, no model call.
++  * synthesizer, no model call. retrievalMode: section 24 (experiment E); services leave it FUSED.
+   */
+ final case class RuntimeSetup(
+     cfg: ScholarChainConfig,
+@@ -65,7 +65,8 @@ final case class RuntimeSetup(
+     snapshot: String,
+     runId: String,
+     nowMs: () => Long,
+-    now: () => Instant
++    now: () => Instant,
++    retrievalMode: RetrievalMode = RetrievalMode.FUSED
+ )
+ 
+ /** A stage that failed (a store error after the storage retry policy, or a refused write). It is
+@@ -89,14 +90,16 @@ object Workflow:
+ 
+   /** The runtime run ID (RUNTIME.md section 14): timestamp-free, over the served store runs, the
+     * vector store content, the embedding model version, prompt versions and hashes, model IDs, and
+-    * the mode.
++    * the mode. A retrieval mode other than FUSED is an input too (section 24), so FUSED keeps the
++    * run ID it had before the mode existed and each mode gets its own run.
+     */
+   def runIdFor(
+       cfg: ScholarChainConfig,
+       inputs: Seq[String],
+       prompts: PromptSet,
+       mode: RuntimeMode,
+-      verifier: String = Verifier.Version
++      verifier: String = Verifier.Version,
++      retrieval: RetrievalMode = RetrievalMode.FUSED
+   ): String =
+     StableIds.runId(
+       "rag-runtime",
+@@ -108,7 +111,7 @@ object Workflow:
+           s"synthesis-model=${cfg.models.synthesisModel}",
+           s"mode=$mode",
+           s"verifier=$verifier"
+-        ),
++        ) ++ Option.when(retrieval != RetrievalMode.FUSED)(s"retrieval=$retrieval"),
+       1
+     )
+ 
+@@ -390,7 +393,8 @@ object Workflow:
+         abstention.isDefined,
+         abstention.map(_.reason),
+         answerHash,
+-        prov
++        prov,
++        setup.retrievalMode
+       )
+       // The audit's own stage time is the time to build it; the write happens after.
+       val record = audit(stages :+ StageTiming(Stage.AUDIT, StageOutcome.OK, setup.nowMs() - t0))
+@@ -458,7 +462,8 @@ object Workflow:
+               )
+ 
+     private def run(): Either[RuntimeFailure, RuntimeResult] =
+-      timed(Stage.QUERY_PLANNING)(plan())(r =>
++      def forMode(q: QueryPlan) = Planner.forMode(q, setup.retrievalMode)
++      timed(Stage.QUERY_PLANNING)(plan().map(forMode).left.map((a, q) => (a, forMode(q))))(r =>
+         if r.isLeft then StageOutcome.ABSTAINED else StageOutcome.OK
+       ) match
+         case Left((a, p)) => abstain(p, Vector.empty, a, Stage.RESEARCHER_RESOLUTION)
+@@ -505,22 +510,48 @@ object Workflow:
+         rs: Vector[ResearcherResolution]
+     ): Either[RuntimeFailure, RuntimeResult] =
+       val resolved = rs.zipWithIndex.flatMap((r, i) => r.researcherId.map(Resolved(i, _, r.name)))
+-      val g = timed(Stage.COLLABORATION_METRICS)(
+-        GraphStages(
+-          p,
+-          resolved,
+-          ports.graph,
+-          ports.kv,
+-          ports.objects,
+-          cfg,
+-          log,
+-          setup.graphRunId,
+-          ports.windowSummaries
+-        ).run(queryId)
+-      )(_ => StageOutcome.OK)
++      val vectorOnly = setup.retrievalMode == RetrievalMode.VECTOR_ONLY
++      // Section 24: VECTOR_ONLY reads no graph fact; stages 3 to 5 are recorded SKIPPED.
++      val g = if vectorOnly then
++        val none = Vector.empty
++        GraphStageResult(
++          GraphFacts(
++            RuntimeSchemas.GraphFacts,
++            queryId,
++            setup.graphRunId,
++            none,
++            none,
++            none,
++            none,
++            none,
++            none,
++            none,
++            none,
++            none,
++            none
++          ),
++          Map.empty,
++          none,
++          none,
++          Map.empty
++        )
++      else
++        timed(Stage.COLLABORATION_METRICS)(
++          GraphStages(
++            p,
++            resolved,
++            ports.graph,
++            ports.kv,
++            ports.objects,
++            cfg,
++            log,
++            setup.graphRunId,
++            ports.windowSummaries
++          ).run(queryId)
++        )(_ => StageOutcome.OK)
+       // Stages 3 to 5 run as one pass over the plan; each is recorded with its own time, or SKIPPED
+       // when the plan gave it nothing to do (review 1 m1).
+-      stages = stages.dropRight(1) ++
++      stages = (if vectorOnly then stages else stages.dropRight(1)) ++
+         Vector(Stage.COLLABORATION_METRICS, Stage.PATH_FINDING, Stage.COMMUNITY_ANALYSIS).map(s =>
+           g.stageMs
+             .get(s)
+@@ -533,7 +564,7 @@ object Workflow:
+       val onlyUnsupported =
+         p.operations.nonEmpty && p.operations.forall(o => g.unsupported.contains(o.operation)) &&
+           (p.metrics.isEmpty || f.metrics.isEmpty)
+-      if onlyUnsupported then
++      if !vectorOnly && onlyUnsupported then
+         abstain(
+           p,
+           rs,
+@@ -547,7 +578,7 @@ object Workflow:
+           Stage.SEMANTIC_CONTEXT,
+           f.missing
+         )
+-      else if empty then
++      else if !vectorOnly && empty then
+         abstain(
+           p,
+           rs,
+@@ -575,11 +606,21 @@ object Workflow:
+             setup.embeddingModelVersion,
+             cfg,
+             setup.nowMs,
+-            log.checkDeadline
++            log.checkDeadline,
++            setup.retrievalMode
+           )
+         )(o => if o.call.isEmpty then StageOutcome.SKIPPED else StageOutcome.OK)
+         val bundle = timed(Stage.EVIDENCE_BUILDING)(
+-          EvidenceBuilder.build(p, rs, g, sem.results, sem.missing, cfg, setup.runId)
++          EvidenceBuilder.build(
++            p,
++            rs,
++            g,
++            sem.results,
++            sem.missing,
++            cfg,
++            setup.runId,
++            setup.retrievalMode
++          )
+         )(_ => StageOutcome.OK)
+         // The limitations the corpus rows carry (node basis, convergence, window lengths) are stated.
+         val lines = (notes(p, rs, bundle.missing) ++ g.limitations).distinct
+diff --git a/scripts/README.md b/scripts/README.md
+index 7b3322b..812c095 100644
+--- a/scripts/README.md
++++ b/scripts/README.md
+@@ -59,11 +59,17 @@ Cloud window 1 (runtime_enabled = false)
+   deploy-engineer:  scripts/deploy.sh --plan-file <plan> --approved-plan-sha256 <sha>
+   deploy-engineer:  scripts/package.sh                                                   -> package record
+   deploy-engineer:  scripts/run-bounded-pipeline.sh --fraction 100 --package-record <rec> (then 50, 25)
+-Cloud window 2 (runtime_enabled = true; image_tag and the three runs committed in course.tfvars)
++Cloud windows 2 and 3 (runtime_enabled = true; image_tag and the three runs committed in course.tfvars).
++Order: apply, secret, loads, then deploy.sh --resume (Phase 14 ruling 39): query-api and the worker exit
++at startup until load-stores.sh has uploaded the window-summary object.
+   human:            scripts/plan.sh --runtime-enabled true                               -> sign the sha256
+   deploy-engineer:  scripts/deploy.sh --plan-file <plan> --approved-plan-sha256 <sha> --package-record <rec>
+-                    -> exit 5 until the human sets the API key secret value; then the same command + --resume
+-  human:            scripts/load-stores.sh --store-run <run> --vectors-run <run>
++                    -> applies, then exit 5 until the human sets the API key secret value
++  human:            sets the API key secret value; backs up the state
++  human:            scripts/load-stores.sh --store-run <run> --vectors-run <run> [--skip <steps>]
++                    (window 3: --skip s3-store-conversion,s3-embed,s3-window-summary, because the window 2
++                    S3 objects are still in the data bucket; Phase 15 ruling 3)
++  deploy-engineer:  the same deploy.sh command + --resume
+   deploy-engineer:  scripts/smoke-test.sh
+   experiment-engineer: scripts/run-experiment.sh --manifest experiments/<m>.json
+   human or deploy-engineer: scripts/archive-evidence.sh --out-dir <dir> [--metrics-from/--metrics-to]
+@@ -249,8 +255,13 @@ After the evidence is archived: cleanup.sh --stage infra; after the instructor a
+ 
+ ## load-stores.sh
+ 
+-- **Purpose:** the cloud window 2 store loads, in order: S3, Neptune, DynamoDB, S3 Vectors.
+-- **Command:** `scripts/load-stores.sh --store-run run-<32 hex> --vectors-run run-<32 hex> [--root scratch/stores/s3] [--vectors-root <root>] [--window-summary-run run-6fbad498beb0d8f570df67665fb97544] [--window-summary-root scratch/runtime/wo8/s3] [--dynamo-concurrency 8] [--neptune-timeout-minutes 60] [--record-dir operations/pipeline-runs] [--profile p] [--region us-east-2] [--dry-run]`
++- **Purpose:** the cloud window store loads (windows 2 and 3), in order: S3, Neptune, DynamoDB, S3 Vectors.
++  Runs after the apply and the API key secret, before `deploy.sh --resume` (Phase 14 ruling 39).
++- **Command:** `scripts/load-stores.sh --store-run run-<32 hex> --vectors-run run-<32 hex> [--root scratch/stores/s3] [--vectors-root <root>] [--window-summary-run run-6fbad498beb0d8f570df67665fb97544] [--window-summary-root scratch/runtime/wo8/s3] [--dynamo-concurrency 8] [--neptune-timeout-minutes 60] [--record-dir operations/pipeline-runs] [--profile p] [--region us-east-2] [--skip <step,...>] [--dry-run]`
++- **`--skip`:** comma-separated names of steps already completed in this environment:
++  `s3-store-conversion`, `s3-embed`, `s3-window-summary`, `neptune`, `dynamodb`, `vectors`. An unknown
++  name is a usage error (exit 2). Each skipped step is in `run.json` with status `skipped`, and
++  `skippedSteps` lists them. Window 3 skips the three S3 steps (Phase 15 ruling 3).
+ - **Steps:** clean tree; account and Region; runtime outputs present; the laptop loaders get exactly the
+   tasks' `SCHOLARCHAIN_*` variables from the `runtime_environment` output.
+   1. `LoadS3Cli --manifest <m> --root <root> --live --profile <p> --region <r>` for the store-conversion
+@@ -259,15 +270,19 @@ After the evidence is archived: cleanup.sh --stage infra; after the instructor a
+      the command `-main scholarchain.storage.cli.LoadNeptuneCli --live --stage-from-bucket --dir
+      /tmp/stores/s3/graph/neptune/snapshot=2026-10-03/run=<store-run> --out /tmp/stores` (task role, no
+      profile; the loader role ARN comes from `SCHOLARCHAIN_NEPTUNE_LOADER_ROLE_ARN`), the load ID from the
+-     task log, then a `--live --status <loadId>` task every 2 minutes until `LOAD_COMPLETED` (bounded).
++     task's `started load <id>` line, then a `--live --status <loadId>` task every 2 minutes until
++     `LOAD_COMPLETED` (bounded). Task log lines are read with `aws logs filter-log-events` and a filter
++     pattern (`"started load"`, `"load <id> status"`); the CLI follows every page, unlike the first page
++     of `get-log-events` (Phase 14 ruling 41), and the container's DEBUG SDK lines (with the task's
++     session token) stay in CloudWatch, out of the record.
+   3. `LoadDynamoCli --dir <root>/curated/dynamodb/snapshot=2026-10-03/run=<store-run> --live --profile <p> --region <r> --concurrency <n>` (about 876k conditional puts).
+   4. `LoadVectorsCli --input <vectors-root>/vectors/backup/snapshot=2026-10-03/run=<vectors-run> --live --profile <p> --region <r>`.
+ - **Environment:** `AWS_PROFILE` (LiveAws reads the named profile). **Runs it:** the human (the storage
+-  live loaders are human-run, storage rulings 1 and 26). **Approval points:** the applied window 2 plan.
++  live loaders are human-run, storage rulings 1 and 26). **Approval points:** the applied runtime plan.
+ - **Evidence:** `operations/pipeline-runs/store-load-<stamp>/`: one log per loader as `<step>.txt`
+-  (each prints its counts), the Neptune task logs as `neptune-<start|status>-<task>.txt`, `run.json` (runs, Neptune load ID, per-step status and seconds).
++  (each prints its counts), the Neptune task result lines as `neptune-<start|status>-<task>.txt`, `run.json` (runs, Neptune load ID or null when skipped, per-step status and seconds, `skippedSteps`).
+ - **Rollback:** none automatic: every load is write-once and a rerun skips loaded data. Removing loaded
+-  data is a human-gated destructive action; ending window 2 destroys the stores.
++  data is a human-gated destructive action; the runtime cleanup stage destroys the stores.
+ 
+ ## run-experiment.sh
+ 
+diff --git a/scripts/load-stores.sh b/scripts/load-stores.sh
+index 4478897..82ee372 100755
+--- a/scripts/load-stores.sh
++++ b/scripts/load-stores.sh
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env bash
+-# Cloud window 2 store loads (D-13), in the order the storage contracts need: S3 objects first
++# Cloud window store loads (D-13), in the order the storage contracts need: S3 objects first
+ # (the Neptune bulk loader and the runtime read them), then Neptune, DynamoDB, S3 Vectors.
+ set -euo pipefail
+ # shellcheck source=lib/common.sh
+@@ -11,7 +11,7 @@ Usage: scripts/load-stores.sh --store-run <run-..> --vectors-run <run-..>
+            [--root scratch/stores/s3] [--vectors-root <root>] [--window-summary-run <run-..>]
+            [--window-summary-root scratch/runtime/wo8/s3] [--dynamo-concurrency 8]
+            [--neptune-timeout-minutes 60] [--profile <name>] [--region us-east-2]
+-           [--record-dir <dir>] [--dry-run]
++           [--record-dir <dir>] [--skip <step,...>] [--dry-run]
+ 
+ Order (each step stops the script on failure; every loader is write-once and idempotent, so a
+ rerun skips what is already loaded):
+@@ -29,21 +29,27 @@ rerun skips what is already loaded):
+   3. dynamodb LoadDynamoCli --live --profile --dir <root>/curated/dynamodb/snapshot=.../run=<store-run>
+               (about 876k conditional puts) --concurrency <n>
+   4. vectors  LoadVectorsCli --live --profile --input <vectors-root>/vectors/backup/snapshot=.../run=<vectors-run>
++Step names for --skip (comma-separated; an unknown name is a usage error, exit 2): s3-store-conversion,
++s3-embed, s3-window-summary, neptune, dynamodb, vectors. Skip only steps already completed in this
++environment (for example the S3 steps when the objects survived a runtime cleanup); run.json records
++each skipped step with status "skipped" and lists them in skippedSteps.
+ The laptop loaders get exactly the tasks' SCHOLARCHAIN_* variables (terraform output
+ runtime_environment), so SCHOLARCHAIN_ENVIRONMENT is non-local and the names are the deployed ones.
+ 
+ Defaults: --root scratch/stores/s3, --vectors-root = --root, --window-summary-run
+ run-6fbad498beb0d8f570df67665fb97544, --record-dir operations/pipeline-runs (writes
+-store-load-<stamp>/ with every loader log as <step>.txt, the Neptune task logs as
+-neptune-<start|status>-<task>.txt, and run.json; .txt, not .log, so that Git does not ignore them).
++store-load-<stamp>/ with every loader log as <step>.txt, the Neptune task result lines (read with
++filter-log-events) as neptune-<start|status>-<task>.txt, and run.json; .txt, not .log, so that Git
++does not ignore them).
+ --dry-run validates flags and local manifests, prints the steps, no AWS/Terraform/git/sbt call.
+ 
+ Environment: AWS_PROFILE (or --profile), used by the laptop loaders through LiveAws.
+-Run by: the human (the storage live loaders are human-run, storage rulings 1 and 26), after deploy.sh
+-applied cloud window 2. sbt runs with SPARK_LOCAL_IP=127.0.0.1 and -J-Xmx6g, one process at a time.
++Run by: the human (the storage live loaders are human-run, storage rulings 1 and 26), after the runtime
++apply and the API key secret, before deploy.sh --resume (Phase 14 ruling 39). sbt runs with
++SPARK_LOCAL_IP=127.0.0.1 and -J-Xmx6g, one process at a time.
+ Step 2 uses LoadNeptuneCli --live without --profile and --stage-from-bucket (Phase 12 work order 5).
+ Rollback: none automatic; loads are write-once. Removing loaded data is a human-gated destructive
+-action (docs/agents.md escalation 2); ending window 2 destroys the stores.
++action (docs/agents.md escalation 2); the runtime cleanup stage destroys the stores.
+ Exit: 0 all loads done; 1 a loader failed; 3 precondition; 6 timeout.
+ EOF
+ }
+@@ -57,6 +63,8 @@ WS_ROOT="$SC_ROOT/scratch/runtime/wo8/s3"
+ CONCURRENCY=8
+ NEPTUNE_MIN=60
+ RECORD_DIR="$SC_ROOT/operations/pipeline-runs"
++STEP_NAMES="s3-store-conversion s3-embed s3-window-summary neptune dynamodb vectors"
++SKIP=""
+ while [ $# -gt 0 ]; do
+   case "$1" in
+     --store-run) STORE_RUN="$(flag_val "$1" "${2-}")"; shift 2 ;;
+@@ -70,12 +78,18 @@ while [ $# -gt 0 ]; do
+     --profile) PROFILE="$(flag_val "$1" "${2-}")"; shift 2 ;;
+     --region) REGION="$(flag_val "$1" "${2-}")"; shift 2 ;;
+     --record-dir) RECORD_DIR="$(flag_val "$1" "${2-}")"; shift 2 ;;
++    --skip) SKIP="$(flag_val "$1" "${2-}")"; shift 2 ;;
+     --dry-run) DRY_RUN=1; shift ;;
+     --help | -h) usage; exit 0 ;;
+     *) usage >&2; die "unknown argument: $1" 2 ;;
+   esac
+ done
+ VROOT="${VROOT:-$ROOT}"
++case "$SKIP" in *[!a-z0-9,-]*) die "--skip takes comma-separated step names (steps: $STEP_NAMES)" 2 ;; esac
++for s in $(printf '%s' "$SKIP" | tr ',' ' '); do
++  case " $STEP_NAMES " in *" $s "*) ;; *) die "unknown --skip step '$s' (steps: $STEP_NAMES)" 2 ;; esac
++done
++skipped() { case ",$SKIP," in *",$1,"*) return 0 ;; esac; return 1; }
+ for r in "$STORE_RUN" "$VECTORS_RUN" "$WS_RUN"; do is_run_id "$r" || die "run IDs must be run-<32 hex> (--store-run and --vectors-run are required)" 2; done
+ printf '%s' "$CONCURRENCY" | grep -Eq '^([1-9]|[12][0-9]|3[0-2])$' || die "--dynamo-concurrency must be 1 to 32" 2
+ printf '%s' "$NEPTUNE_MIN" | grep -Eq '^[0-9]+$' && [ "$NEPTUNE_MIN" -ge 5 ] && [ "$NEPTUNE_MIN" -le 180 ] || die "--neptune-timeout-minutes must be 5 to 180" 2
+@@ -91,6 +105,7 @@ for f in "$ROOT/$M_STORE" "$VROOT/$M_EMBED" "$WS_ROOT/$M_WS"; do [ -f "$f" ] ||
+ need sbt jq git aws terraform
+ 
+ dry_run_exit \
++  "skip: ${SKIP:-none}" \
+   "refuse a dirty tree (the loaders run from this checkout); account and Region; terraform outputs" \
+   "s3: LoadS3Cli --live for $M_STORE ($ROOT), $M_EMBED ($VROOT), $M_WS ($WS_ROOT)" \
+   "neptune: ECS run-task scholarchain-course-neptune-loader (LoadNeptuneCli --live --stage-from-bucket, run $STORE_RUN), then --status tasks until LOAD_COMPLETED (${NEPTUNE_MIN} min)" \
+@@ -122,6 +137,11 @@ note() { STEPS="$(jq -c --arg n "$1" --arg s "$2" --arg t "$3" --arg l "$4" '. +
+ loader() { # name sbt-command-line
+   local name="$1" t0=$SECONDS
+   step "$name"
++  if skipped "$name"; then
++    note "$name" skipped 0 ""
++    ok "$name skipped (--skip)"
++    return 0
++  fi
+   if sbt_run "$2" 2>&1 | tee "$REC/$name.txt"; then
+     note "$name" ok "$((SECONDS - t0))" "$name.txt"
+     ok "$name"
+@@ -143,10 +163,11 @@ SUBNETS="$(jq -r '.public_subnet_ids.value | join(",")' "$TF_OUT")"
+ SG="$(tfo '.security_group_ids.value.loader')"
+ LOG_GROUP="$(tfo '.log_group_names.value["neptune-loader"]')"
+ 
+-# run_loader_task <label> <LoadNeptuneCli args...>: one Fargate task (no retry), waits, saves its log.
++# run_loader_task <label> <filter-pattern> <LoadNeptuneCli args...>: one Fargate task (no retry),
++# waits, saves the log lines that match the CloudWatch filter pattern.
+ run_loader_task() {
+-  local label="$1" overrides task id code
+-  shift
++  local label="$1" pattern="$2" overrides task id code stream
++  shift 2
+   overrides="$(printf '%s\n' "$@" | jq -cRn '[inputs] as $a | {containerOverrides: [{name: "neptune-loader",
+     command: (["-main", "scholarchain.storage.cli.LoadNeptuneCli"] + $a)}]}')"
+   task="$(aws_once ecs run-task --cluster "$CLUSTER" --task-definition "$FAMILY" --launch-type FARGATE --count 1 \
+@@ -159,33 +180,45 @@ run_loader_task() {
+   _stopped() { [ "$(aws_retry ecs describe-tasks --cluster "$CLUSTER" --tasks "$task" --query 'tasks[0].lastStatus' --output text)" = STOPPED ]; }
+   wait_until "loader task $id" 1800 15 _stopped
+   code="$(aws_retry ecs describe-tasks --cluster "$CLUSTER" --tasks "$task" --query 'tasks[0].containers[0].exitCode' --output text)"
+-  aws_retry logs get-log-events --log-group-name "$LOG_GROUP" --log-stream-name "neptune-loader/neptune-loader/$id" \
+-    --start-from-head --query 'events[].message' --output text | tr '\t' '\n' >"$REC/neptune-$label-$id.txt" || true
++  stream="neptune-loader/neptune-loader/$id"
++  # filter-log-events, not the first page of get-log-events: the CLI follows every nextToken page
++  # (Phase 14 ruling 41). The pattern keeps the container's DEBUG SDK lines, which carry the task's
++  # session token, out of the record; the full stream stays in CloudWatch.
++  aws_retry logs filter-log-events --log-group-name "$LOG_GROUP" --log-stream-names "$stream" \
++    --filter-pattern "$pattern" --query 'events[].message' --output text | tr '\t' '\n' >"$REC/neptune-$label-$id.txt" || true
+   cat "$REC/neptune-$label-$id.txt"
+-  [ "$code" = 0 ] || die "loader task $id exited $code ($(aws_retry ecs describe-tasks --cluster "$CLUSTER" --tasks "$task" --query 'tasks[0].stoppedReason' --output text)); log $REC/neptune-$label-$id.txt" 1
++  [ "$code" = 0 ] || die "loader task $id exited $code ($(aws_retry ecs describe-tasks --cluster "$CLUSTER" --tasks "$task" --query 'tasks[0].stoppedReason' --output text)); full log: CloudWatch $LOG_GROUP $stream" 1
+   LAST_LOG="$REC/neptune-$label-$id.txt"
++  LAST_STREAM="$stream"
+ }
+ 
+ step "neptune"
+ T0=$SECONDS
+-run_loader_task start --live --stage-from-bucket --dir "/tmp/stores/s3/graph/neptune/snapshot=$D/run=$STORE_RUN" --out /tmp/stores
+-LOAD_ID="$(sed -n 's/.*started load \([^ ;]*\).*/\1/p' "$LAST_LOG" | head -1)"
+-[ -n "$LOAD_ID" ] || die "no 'started load <id>' line in $LAST_LOG" 1
+-printf '==> NEPTUNE load=%s\n' "$LOAD_ID"
+-NEPTUNE_STATUS=""
+-_load_done() {
+-  run_loader_task status --live --status "$LOAD_ID"
+-  NEPTUNE_STATUS="$(sed -n 's/^load [^ ]* status \([A-Z_]*\).*/\1/p' "$LAST_LOG" | head -1)"
+-  info "load $LOAD_ID $NEPTUNE_STATUS"
+-  case "$NEPTUNE_STATUS" in
+-    LOAD_COMPLETED) return 0 ;;
+-    LOAD_NOT_STARTED | LOAD_IN_PROGRESS | LOAD_IN_QUEUE | "") sleep 120; return 1 ;;
+-    *) die "Neptune load $LOAD_ID ended $NEPTUNE_STATUS; log $LAST_LOG" 1 ;;
+-  esac
+-}
+-wait_until "Neptune load $LOAD_ID" $((NEPTUNE_MIN * 60)) 1 _load_done
+-note neptune "$NEPTUNE_STATUS" "$((SECONDS - T0))" "$(basename "$LAST_LOG")"
+-ok "neptune load $LOAD_ID completed"
++LOAD_ID=""
++if skipped neptune; then
++  note neptune skipped 0 ""
++  ok "neptune skipped (--skip)"
++else
++  run_loader_task start '"started load"' \
++    --live --stage-from-bucket --dir "/tmp/stores/s3/graph/neptune/snapshot=$D/run=$STORE_RUN" --out /tmp/stores
++  LOAD_ID="$(sed -n 's/.*started load \([^ ;]*\).*/\1/p' "$LAST_LOG" | head -1)"
++  [ -n "$LOAD_ID" ] || die "no 'started load <id>' line in $LAST_LOG (full log: CloudWatch $LOG_GROUP $LAST_STREAM)" 1
++  printf '==> NEPTUNE load=%s\n' "$LOAD_ID"
++  NEPTUNE_STATUS=""
++  _load_done() {
++    run_loader_task status "\"load $LOAD_ID status\"" --live --status "$LOAD_ID"
++    NEPTUNE_STATUS="$(sed -n 's/^load [^ ]* status \([A-Z_]*\).*/\1/p' "$LAST_LOG" | head -1)"
++    info "load $LOAD_ID $NEPTUNE_STATUS"
++    case "$NEPTUNE_STATUS" in
++      LOAD_COMPLETED) return 0 ;;
++      LOAD_NOT_STARTED | LOAD_IN_PROGRESS | LOAD_IN_QUEUE | "") sleep 120; return 1 ;;
++      *) die "Neptune load $LOAD_ID ended $NEPTUNE_STATUS; log $LAST_LOG (full log: CloudWatch $LOG_GROUP $LAST_STREAM)" 1 ;;
++    esac
++  }
++  wait_until "Neptune load $LOAD_ID" $((NEPTUNE_MIN * 60)) 1 _load_done
++  note neptune "$NEPTUNE_STATUS" "$((SECONDS - T0))" "$(basename "$LAST_LOG")"
++  ok "neptune load $LOAD_ID completed"
++fi
+ 
+ loader dynamodb "storage/runMain scholarchain.storage.cli.LoadDynamoCli --dir $DYNAMO_DIR $LIVE --concurrency $CONCURRENCY"
+ loader vectors "storage/runMain scholarchain.storage.cli.LoadVectorsCli --input $VECTORS_DIR $LIVE"
+@@ -193,10 +226,11 @@ loader vectors "storage/runMain scholarchain.storage.cli.LoadVectorsCli --input
+ step "record"
+ jq -n --arg at "$(utc_now)" --arg account "$ACCOUNT" --arg region "$REGION" --arg commit "$(git_head)" \
+   --arg storeRun "$STORE_RUN" --arg vectorsRun "$VECTORS_RUN" --arg wsRun "$WS_RUN" --arg loadId "$LOAD_ID" \
+-  --argjson steps "$STEPS" \
++  --arg skip "$SKIP" --argjson steps "$STEPS" \
+   '{schemaVersion: "store-load-record-v1", finishedAt: $at, account: $account, region: $region, commit: $commit,
+     snapshot: "2026-10-03", storeRun: $storeRun, vectorsRun: $vectorsRun, windowSummaryRun: $wsRun,
+-    neptuneLoadId: $loadId, steps: $steps,
++    neptuneLoadId: (if $loadId == "" then null else $loadId end), steps: $steps,
++    skippedSteps: ($skip | split(",") | map(select(. != ""))),
+     counts: "printed by each loader; see the per-step logs in this directory"}' >"$REC/run.json"
+ printf '==> STORES record=%s\n' "$REC/run.json"
+ ok "store loads complete"

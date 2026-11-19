@@ -1,0 +1,20 @@
+ infra/terraform/README.md                          |   6 +-
+ infra/terraform/envs/course/course.tfvars          |   4 +
+ infra/terraform/envs/course/main.tf                |   1 +
+ infra/terraform/envs/course/variables.tf           |  11 +
+ infra/terraform/modules/data/main.tf               |   5 +
+ infra/terraform/modules/ecs/main.tf                |   7 +-
+ load-tests/exp-d-query-load.py                     | 383 +++++++++++++++++++--
+ modules/rag/RUNTIME.md                             |  29 +-
+ .../main/scala/scholarchain/rag/cli/AskCli.scala   |  21 +-
+ .../scala/scholarchain/rag/cli/Benchmark.scala     |  58 +++-
+ .../scala/scholarchain/rag/cli/BenchmarkCli.scala  |  42 ++-
+ .../scala/scholarchain/rag/runtime/Contracts.scala |  13 +
+ .../scala/scholarchain/rag/runtime/Evidence.scala  |  12 +-
+ .../scala/scholarchain/rag/runtime/Planner.scala   |   4 +
+ .../scala/scholarchain/rag/runtime/Records.scala   |   5 +-
+ .../scala/scholarchain/rag/runtime/Semantic.scala  |   9 +-
+ .../scala/scholarchain/rag/runtime/Workflow.scala  |  91 +++--
+ scripts/README.md                                  |  60 +++-
+ scripts/load-stores.sh                             | 149 ++++++--
+ 19 files changed, 784 insertions(+), 126 deletions(-)

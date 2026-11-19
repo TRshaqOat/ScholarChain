@@ -139,7 +139,8 @@ object AskCli:
       cfg: ScholarChainConfig,
       out: String => Unit,
       sleep: Long => Unit,
-      nowMs: () => Long
+      nowMs: () => Long,
+      retrieval: RetrievalMode = RetrievalMode.FUSED
   ): Either[String, Option[LoadedRuntime]] =
     for
       graphDir <- a.req("graph").map(Paths.get(_))
@@ -177,9 +178,14 @@ object AskCli:
           s"embedding=$version"
         ) ++ summaryKey.map(k => s"window-summary=$k"),
         prompts,
-        mode
+        mode,
+        retrieval = retrieval
       )
-      out(s"runtime run $runId (${mode.toString.toLowerCase} mode), snapshot $snapshot")
+      val retrievalNote =
+        if retrieval == RetrievalMode.FUSED then "" else s", ${retrieval.flag} retrieval"
+      out(
+        s"runtime run $runId (${mode.toString.toLowerCase} mode$retrievalNote), snapshot $snapshot"
+      )
       // Work order 9 (F2): the corpus window summaries, opened and validated once; any violation
       // refuses them whole and stops (exit 1).
       val opened = wsArgs.zip(summaryKey).map { case ((root, _), k) =>
@@ -232,7 +238,8 @@ object AskCli:
                   out,
                   sleep,
                   nowMs,
-                  summaries
+                  summaries,
+                  retrieval
                 )
               )
 
@@ -255,7 +262,8 @@ object AskCli:
       out: String => Unit,
       sleep: Long => Unit,
       nowMs: () => Long,
-      summaries: Option[WindowSummarySource]
+      summaries: Option[WindowSummarySource],
+      retrieval: RetrievalMode
   ): LoadedRuntime =
     val llmThrottle = Throttle(perMinute, nowMs, sleep)
     val embedThrottle = Throttle(cfg.runtime.embedding.requestsPerMinute, nowMs, sleep)
@@ -310,7 +318,8 @@ object AskCli:
       snapshot,
       runId,
       nowMs,
-      () => Instant.now
+      () => Instant.now,
+      retrieval
     )
     LoadedRuntime(setup, ports, audit, outRoot)
 

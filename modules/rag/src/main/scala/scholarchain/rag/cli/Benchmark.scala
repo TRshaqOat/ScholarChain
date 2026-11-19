@@ -13,9 +13,10 @@ import scala.collection.mutable
   * scores relevance, or writes a label.
   */
 object Benchmark:
-  val ResultSchema = "rag-benchmark-result-v2"
-  val SummarySchema = "rag-benchmark-summary-v2"
-  val CodeVersion = "rag-benchmark-v2"
+  // v3 (experiment E): retrievalMode and the ranked retrieved list (RUNTIME.md section 24).
+  val ResultSchema = "rag-benchmark-result-v3"
+  val SummarySchema = "rag-benchmark-summary-v3"
+  val CodeVersion = "rag-benchmark-v3"
 
   /** Bedrock requests one model attempt may send: the request and one expired-token retry
     * (LiveAws.guardedWith; review 1 m5).
@@ -241,11 +242,52 @@ object Benchmark:
       throttleWaitMs: Long
   ) derives ReadWriter
 
+  /** One retrieved item in the bundle order. source: the list (graph, vector, or fused = the
+    * retrieval mode); origin: the retriever that produced the item (graph or vector); elementId:
+    * the vector key of a vector item, the store pointer (sourceUri) of a graph item.
+    */
+  final case class Retrieved(
+      rank: Int,
+      source: String,
+      origin: String,
+      evidenceId: String,
+      elementId: String
+  ) derives ReadWriter
+
+  /** The ranked list of what the question retrieved: graph items in bundle order, then vector items
+    * best score first (fusion-v1 keeps the two apart and never merges them into one score).
+    * shortcut: items the bundle budget left out are counted (omittedItems), not listed; list them
+    * if recall at K must reach past the bundle.
+    */
+  def retrieved(r: RuntimeResult): Vector[Retrieved] =
+    val source = r.audit.retrievalMode match
+      case RetrievalMode.FUSED       => "fused"
+      case RetrievalMode.GRAPH_ONLY  => "graph"
+      case RetrievalMode.VECTOR_ONLY => "vector"
+    r.bundle.toVector
+      .flatMap(b => b.graphEvidence.map("graph" -> _) ++ b.semanticEvidence.map("vector" -> _))
+      .zipWithIndex
+      .map { case ((origin, e), i) =>
+        Retrieved(i + 1, source, origin, e.evidenceId, e.chunkId.getOrElse(e.sourceUri))
+      }
+
+  private def cell(s: String) =
+    if s.exists(c => c == ',' || c == '"' || c == '\n' || c == '\r') then
+      "\"" + s.replace("\"", "\"\"") + "\""
+    else s
+
+  /** The ranked-list file of one question (CSV, header first). No score against any label. */
+  def retrievedCsv(xs: Vector[Retrieved]): String =
+    ("rank,source,origin,evidenceId,elementId" +: xs.map(x =>
+      Seq(x.rank.toString, x.source, x.origin, x.evidenceId, x.elementId).map(cell).mkString(",")
+    )).mkString("", "\n", "\n")
+
   final case class Result(
       schemaVersion: String,
       questionId: String,
       category: String,
       mode: String,
+      retrievalMode: String,
       runtimeRunId: String,
       queryId: String,
       planSource: String,
@@ -263,7 +305,8 @@ object Benchmark:
       latencyMs: Long,
       stageLatencyMs: Map[String, Long],
       checks: Vector[Check],
-      answerHash: String
+      answerHash: String,
+      retrieved: Vector[Retrieved]
   ) derives ReadWriter
 
   private val GraphStages =
@@ -286,6 +329,7 @@ object Benchmark:
       q.id,
       q.category,
       au.mode.toString,
+      au.retrievalMode.toString,
       au.runId,
       a.response.queryId,
       a.plan.source.toString,
@@ -334,7 +378,8 @@ object Benchmark:
       latencyMs,
       stageMs,
       checks(q, r, ref, cfg, latencyMs, expect),
-      a.answerHash
+      a.answerHash,
+      retrieved(r)
     )
 
   /** A model or embedding call that never succeeded because of an error (not invalid output, not a
@@ -657,6 +702,7 @@ object Benchmark:
       benchmarkRunId: String,
       runtimeRunId: String,
       mode: String,
+      retrievalMode: String,
       questionsTotal: Int,
       questionsDone: Int,
       notDone: Vector[String],
@@ -689,6 +735,7 @@ object Benchmark:
       benchmarkRunId: String,
       runtimeRunId: String,
       mode: String,
+      retrievalMode: String,
       all: Vector[Question],
       results: Vector[Result]
   ): Summary =
@@ -700,6 +747,7 @@ object Benchmark:
       benchmarkRunId,
       runtimeRunId,
       mode,
+      retrievalMode,
       all.size,
       rs.size,
       all.map(_.id).filterNot(byId.contains),

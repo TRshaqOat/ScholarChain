@@ -59,15 +59,37 @@ Cloud window 1 (runtime_enabled = false)
   deploy-engineer:  scripts/deploy.sh --plan-file <plan> --approved-plan-sha256 <sha>
   deploy-engineer:  scripts/package.sh                                                   -> package record
   deploy-engineer:  scripts/run-bounded-pipeline.sh --fraction 100 --package-record <rec> (then 50, 25)
-Cloud window 2 (runtime_enabled = true; image_tag and the three runs committed in course.tfvars)
+Cloud window 2 (runtime_enabled = true; image_tag and the three runs committed in course.tfvars).
+Order: apply, secret, loads, then deploy.sh --resume (Phase 14 ruling 39): query-api and the worker exit
+at startup until load-stores.sh has uploaded the window-summary object.
   human:            scripts/plan.sh --runtime-enabled true                               -> sign the sha256
-  deploy-engineer:  scripts/deploy.sh --plan-file <plan> --approved-plan-sha256 <sha> --package-record <rec>
-                    -> exit 5 until the human sets the API key secret value; then the same command + --resume
-  human:            scripts/load-stores.sh --store-run <run> --vectors-run <run>
+  human:            scripts/deploy.sh --plan-file <plan> --approved-plan-sha256 <sha> --package-record <rec>
+                    -> applies, then exit 5 until the human sets the API key secret value (the apply can
+                    outlast an agent's Bash limit, so the window 2 deploy is human-run, Phase 14 ruling 36)
+  human:            sets the API key secret value; backs up the state
+  human:            scripts/load-stores.sh --store-run <run> --vectors-run <run> [--skip <steps>]
+  human:            the same deploy.sh command + --resume
   deploy-engineer:  scripts/smoke-test.sh
   experiment-engineer: scripts/run-experiment.sh --manifest experiments/<m>.json
   human or deploy-engineer: scripts/archive-evidence.sh --out-dir <dir> [--metrics-from/--metrics-to]
   human:            scripts/cleanup.sh --stage runtime   (then --plan-file ... --confirm <sha>)
+Cloud window 3 (Phase 15 ruling 3): the same order, but every script is human-run, with aws login
+immediately before each long script. No agent runs any of these steps.
+  human:  scripts/plan.sh --runtime-enabled true                                         -> sign the sha256
+  human:  scripts/deploy.sh --plan-file <plan> --approved-plan-sha256 <sha> --package-record <rec>
+  human:  sets the API key secret value; backs up the state
+  human:  Neptune scholarchain-course-graph-1 to db.r6g.large (--apply-immediately; temporary drift from
+          Terraform, Phase 14 rulings 42 and 43: the bulk load needs more than db.t4g.medium's memory)
+  human:  scripts/load-stores.sh --store-run <run> --vectors-run <run>
+            --skip s3-store-conversion,s3-embed,s3-window-summary --neptune-timeout-minutes 180
+          (the window 2 S3 objects are still in the data bucket; the window 2 load on db.r6g.large took
+          up to 108 minutes, Phase 14 ruling 43, so 180 minutes, Phase 15 ruling 6)
+  human:  Neptune back to db.t4g.medium, waits until available (Terraform and the instance agree again)
+  human:  the same deploy.sh command + --resume
+  human:  Neptune warm-up (Phase 14 rulings 46 and 47: three sequential neighbors GETs for each of the two
+          researchers, API key on standard input), then scripts/smoke-test.sh
+  human:  demonstration recording; scripts/run-experiment.sh --manifest experiments/manifests/exp-d-scale-v1.json
+  human:  scripts/archive-evidence.sh; scripts/cleanup.sh --stage runtime; backs up the state
 After the evidence is archived: cleanup.sh --stage infra; after the instructor approves the archive: --stage final
 ```
 
@@ -249,8 +271,13 @@ After the evidence is archived: cleanup.sh --stage infra; after the instructor a
 
 ## load-stores.sh
 
-- **Purpose:** the cloud window 2 store loads, in order: S3, Neptune, DynamoDB, S3 Vectors.
-- **Command:** `scripts/load-stores.sh --store-run run-<32 hex> --vectors-run run-<32 hex> [--root scratch/stores/s3] [--vectors-root <root>] [--window-summary-run run-6fbad498beb0d8f570df67665fb97544] [--window-summary-root scratch/runtime/wo8/s3] [--dynamo-concurrency 8] [--neptune-timeout-minutes 60] [--record-dir operations/pipeline-runs] [--profile p] [--region us-east-2] [--dry-run]`
+- **Purpose:** the cloud window store loads (windows 2 and 3), in order: S3, Neptune, DynamoDB, S3 Vectors.
+  Runs after the apply and the API key secret, before `deploy.sh --resume` (Phase 14 ruling 39).
+- **Command:** `scripts/load-stores.sh --store-run run-<32 hex> --vectors-run run-<32 hex> [--root scratch/stores/s3] [--vectors-root <root>] [--window-summary-run run-6fbad498beb0d8f570df67665fb97544] [--window-summary-root scratch/runtime/wo8/s3] [--dynamo-concurrency 8] [--neptune-timeout-minutes 60] [--record-dir operations/pipeline-runs] [--profile p] [--region us-east-2] [--skip <step,...>] [--dry-run]`
+- **`--skip`:** comma-separated names of steps already completed in this environment:
+  `s3-store-conversion`, `s3-embed`, `s3-window-summary`, `neptune`, `dynamodb`, `vectors`. An unknown
+  name is a usage error (exit 2). Each skipped step is in `run.json` with status `skipped`, and
+  `skippedSteps` lists them. Window 3 skips the three S3 steps (Phase 15 ruling 3).
 - **Steps:** clean tree; account and Region; runtime outputs present; the laptop loaders get exactly the
   tasks' `SCHOLARCHAIN_*` variables from the `runtime_environment` output.
   1. `LoadS3Cli --manifest <m> --root <root> --live --profile <p> --region <r>` for the store-conversion
@@ -259,15 +286,28 @@ After the evidence is archived: cleanup.sh --stage infra; after the instructor a
      the command `-main scholarchain.storage.cli.LoadNeptuneCli --live --stage-from-bucket --dir
      /tmp/stores/s3/graph/neptune/snapshot=2026-10-03/run=<store-run> --out /tmp/stores` (task role, no
      profile; the loader role ARN comes from `SCHOLARCHAIN_NEPTUNE_LOADER_ROLE_ARN`), the load ID from the
-     task log, then a `--live --status <loadId>` task every 2 minutes until `LOAD_COMPLETED` (bounded).
+     task's `started load <id>` line, then a `--live --status <loadId>` task every 2 minutes until
+     `LOAD_COMPLETED` (bounded by `--neptune-timeout-minutes`, default 60, at most 180; window 3 uses
+     180). Task log lines are read with `aws logs filter-log-events` and a filter pattern
+     (`"started load"`; `?"load <id> status" ?"errors parsing"`); the CLI follows every page, unlike the
+     first page of `get-log-events` (Phase 14 ruling 41). After a task exits 0 its result line must be
+     there: a miss gets up to 3 re-reads 15 s apart (ingestion lag), then exit 1 naming the log group
+     and stream; it is never taken as "still running". A filter-log-events API error is printed and
+     exits 1. After a non-zero exit, a second read (`?"error:" ?"errors parsing" ?"errorCode"
+     ?"failed" ?"refused" ?"pre-load" ?"violations" ?"nothing loaded" ?"Exception"`) saves the error
+     lines, then exit 1. Every recorded line is checked: a line matching `x-amz-security-token`,
+     `aws_session_token`, `SessionToken`, `Authorization:` or `Credential=` (any letter case) is
+     dropped, never written, and counted in the record and a `==> WARN` line; the container's DEBUG
+     SDK lines (with the task's session token) stay in CloudWatch.
   3. `LoadDynamoCli --dir <root>/curated/dynamodb/snapshot=2026-10-03/run=<store-run> --live --profile <p> --region <r> --concurrency <n>` (about 876k conditional puts).
   4. `LoadVectorsCli --input <vectors-root>/vectors/backup/snapshot=2026-10-03/run=<vectors-run> --live --profile <p> --region <r>`.
 - **Environment:** `AWS_PROFILE` (LiveAws reads the named profile). **Runs it:** the human (the storage
-  live loaders are human-run, storage rulings 1 and 26). **Approval points:** the applied window 2 plan.
+  live loaders are human-run, storage rulings 1 and 26). **Approval points:** the applied runtime plan.
 - **Evidence:** `operations/pipeline-runs/store-load-<stamp>/`: one log per loader as `<step>.txt`
-  (each prints its counts), the Neptune task logs as `neptune-<start|status>-<task>.txt`, `run.json` (runs, Neptune load ID, per-step status and seconds).
+  (each prints its counts), the Neptune task result lines as `neptune-<start|status>-<task>.txt`, after a
+  failed task its error lines as `neptune-<start|status>-<task>-errors.txt`, `run.json` (runs, Neptune load ID or null when skipped, per-step status and seconds, `skippedSteps`).
 - **Rollback:** none automatic: every load is write-once and a rerun skips loaded data. Removing loaded
-  data is a human-gated destructive action; ending window 2 destroys the stores.
+  data is a human-gated destructive action; the runtime cleanup stage destroys the stores.
 
 ## run-experiment.sh
 

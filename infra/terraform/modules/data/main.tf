@@ -89,7 +89,12 @@ resource "aws_s3_bucket_versioning" "data" {
 resource "aws_s3_bucket_server_side_encryption_configuration" "data" {
   bucket = aws_s3_bucket.data.id
 
+  # S3 blocks SSE-C on the bucket by default; declaring it keeps plans from undoing the block
+  # (Phase 14 rulings 38 and 48). Bucket keys apply to SSE-KMS only.
   rule {
+    blocked_encryption_types = ["SSE-C"]
+    bucket_key_enabled       = false
+
     apply_server_side_encryption_by_default {
       sse_algorithm = "AES256"
     }

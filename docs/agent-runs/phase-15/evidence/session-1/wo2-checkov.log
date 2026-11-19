@@ -1,0 +1,18 @@
+status success summary {'passed': 386, 'failed': 45, 'skipped': 0, 'parsing_errors': 0, 'resource_count': 113, 'checkov_version': '3.4.5'}
+first vuln keys ['description', 'file_path', 'fix_details', 'fixed', 'guideline', 'id', 'line', 'resource', 'severity', 'type']
+failed checks in modules/data and modules/ecs:
+  CKV_AWS_65 aws_ecs_cluster.this /ecs/main.tf Ensure container insights are enabled on ECS cluster
+  CKV_AWS_336 aws_ecs_task_definition.neptune_loader /ecs/main.tf Ensure ECS containers are limited to read-only access to root filesystems
+  CKV_AWS_150 aws_lb.this /ecs/main.tf Ensure that Load Balancer has deletion protection enabled
+  CKV_AWS_91 aws_lb.this /ecs/main.tf Ensure the ELBv2 (Application/Network) has access logging enabled
+  CKV_AWS_2 aws_lb_listener.http /ecs/main.tf Ensure ALB protocol is HTTPS
+  CKV_AWS_333 aws_ecs_service.this /ecs/main.tf Ensure ECS services do not have public IP addresses assigned to them automatically
+  CKV2_AWS_20 aws_lb.this /ecs/main.tf Ensure that ALB redirects HTTP requests into HTTPS ones
+  CKV2_AWS_62 aws_s3_bucket.data /data/main.tf Ensure S3 buckets should have event notifications enabled
+  CKV_AWS_18 aws_s3_bucket.data /data/main.tf Ensure the S3 bucket has access logging enabled
+  CKV_AWS_144 aws_s3_bucket.data /data/main.tf Ensure that S3 bucket has cross-region replication enabled
+  CKV_AWS_103 aws_lb_listener.http /ecs/main.tf Ensure that load balancer is using at least TLS 1.2
+  CKV2_AWS_28 aws_lb.this /ecs/main.tf Ensure public facing ALB are protected by WAF
+  CKV_AWS_378 aws_lb_target_group.service /ecs/main.tf Ensure AWS Load Balancer doesn't use HTTP protocol
+  CKV_AWS_145 aws_s3_bucket.data /data/main.tf Ensure that S3 buckets are encrypted with KMS by default
+all failed check ids: [('CKV2_AWS_11', 1), ('CKV2_AWS_20', 1), ('CKV2_AWS_28', 1), ('CKV2_AWS_5', 8), ('CKV2_AWS_57', 1), ('CKV2_AWS_62', 1), ('CKV_AWS_101', 1), ('CKV_AWS_103', 1), ('CKV_AWS_119', 7), ('CKV_AWS_130', 2), ('CKV_AWS_136', 1), ('CKV_AWS_144', 1), ('CKV_AWS_145', 1), ('CKV_AWS_149', 1), ('CKV_AWS_150', 1), ('CKV_AWS_158', 5), ('CKV_AWS_18', 1), ('CKV_AWS_2', 1), ('CKV_AWS_26', 1), ('CKV_AWS_316', 1), ('CKV_AWS_333', 1), ('CKV_AWS_336', 1), ('CKV_AWS_347', 1), ('CKV_AWS_361', 1), ('CKV_AWS_378', 1), ('CKV_AWS_65', 1), ('CKV_AWS_91', 1)]

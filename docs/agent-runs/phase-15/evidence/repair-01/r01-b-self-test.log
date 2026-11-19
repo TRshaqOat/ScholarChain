@@ -1,0 +1,9 @@
+$ sha256 load-tests/exp-d-query-load.py
+f71b900567a6f743c3214d3975d9c2bac1736e333eec2484a90859c4d6f3faa7
+$ time python3 -I load-tests/exp-d-query-load.py --self-test
+==> OK self-test
+
+real	0m9.673s
+user	0m2.776s
+sys	0m1.405s
+exit=0
