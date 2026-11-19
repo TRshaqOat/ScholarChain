@@ -62,3 +62,5 @@ Not in scope: scripts/cleanup.sh (Phase 12 ruling 10), any plan, apply or aws ca
 4. Self-tests with fakes and --dry-run. No aws call by the agent.
 
 Not in scope: Terraform, scripts/, the services, experiments/benchmark/ and labels/.
+
+5. Session 1 (work orders 1 to 3): all COMPLETE (agent-report.md). Accepted read-only deviations, recorded and not to be repeated: rag-engineer ran git status --porcelain once; experiment-engineer ran aws --version once (no API call). Guard false positives in work order 2 ([cleanup-script] on the text "cleanup.sh" in a heredoc; [protected-path-write] on a jq read under ~/.claude with tee) were not worked around. The human removed load-tests/__pycache__ (left by py_compile); a .gitignore rule for it is a build-engineer follow-up and a Phase 17 note. Code review 1 (session 2) reviews work orders 1 to 3 from the change set in evidence/code-review-1/ and the working tree; one repair round follows only if it requests changes.
