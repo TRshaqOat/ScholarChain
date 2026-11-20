@@ -59,6 +59,6 @@ service_max_counts = {
 haiku_calls_per_minute_cap = 8
 llm_requests_per_minute    = 4
 
-# Phase 15 ruling 2: an experiment setting for D-scale (window 3), not a tuned production value (the
-# variable default is 60). Window 2 showed graph-evidence-api at 20-27 percent CPU while Neptune saturated.
-service_cpu_target_percent = 15
+# Phase 15 ruling 6: reverted to the variable default of 60. Window 3 ran with 15 as a declared
+# D-scale experiment setting (Phase 15 ruling 2), not a tuned production value.
+service_cpu_target_percent = 60

@@ -1,0 +1,11 @@
+N from manifest command: 10
+dry-run invocations (max, mode): [(2, 'fused'), (8, 'fused'), (10, 'graph-only'), (10, 'vector-only')]
+questions per mode (sum of --max): {'fused': 10, 'graph-only': 10, 'vector-only': 10}
+questionsTotal: 2 + 8 + 10 + 10 = 30 (manifest questionsPerMode 10 x 3 = 30)
+worst case: 4 invocations x 300 s + 30 questions x 210 s = 1200 + 6300 = 7500 s = 125.0 min
+maxMinutes 135: margin 10.0 min (A2 needs >= 10)
+haikuRequestsMax: 30 x 2 calls x 2 attempts x 2 requests = 240 (manifest: 240)
+embeddingCallsMax: fused 10 + vector-only 10 (graph-only none) = 20 (manifest: 20)
+cost bound: 30 x (40,000 x 1 USD/M + 9,600 x 5 USD/M) = 30 x 0.088 = 2.64 USD (budgetUsd 3)
+ARITHMETIC OK
+arithmetic check exit 0

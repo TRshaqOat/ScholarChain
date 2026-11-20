@@ -1,0 +1,26 @@
+wrote /var/folders/s4/bckpjsjs77bbl17cf5_h4fjw0000gn/T/tmpnk_mbmd_/s1/exp-e-summary.csv and .md
+    PASS fused counts
+    PASS vector-only abstentions by reason
+    PASS latency nearest rank p50, p95, max
+    PASS graph-only makes no embedding call
+    PASS unlabelled: says not labelled yet and writes no quality file
+    PASS cap stated
+wrote /var/folders/s4/bckpjsjs77bbl17cf5_h4fjw0000gn/T/tmpnk_mbmd_/s2/exp-e-summary.csv and .md and exp-e-quality.csv
+    PASS fused recall@5, recall@10, MRR
+    PASS graph-only recall@5, MRR
+    PASS vector-only recall@5, MRR (empty list counts 0)
+    PASS ratings means; an empty rating is not counted
+wrote /var/folders/s4/bckpjsjs77bbl17cf5_h4fjw0000gn/T/tmpnk_mbmd_/s3/exp-e-summary.csv and .md and exp-e-quality.csv
+    PASS an unlabelled item leaves its question unscored
+    PASS a label other than 1, 0 or empty is refused
+    PASS refuses --out under the raw results
+    PASS same question sets: no 'differ' line, nothing excluded
+wrote /var/folders/s4/bckpjsjs77bbl17cf5_h4fjw0000gn/T/tmpnk_mbmd_/s5/exp-e-summary.csv and .md and exp-e-quality.csv
+    PASS question sets differ: the Markdown says so and names the excluded IDs
+    PASS question sets differ: excluded IDs per mode in the quality rows
+    PASS question sets differ: recall and MRR over the shared question only
+    PASS question sets differ: ratings over the shared question only
+wrote /var/folders/s4/bckpjsjs77bbl17cf5_h4fjw0000gn/T/tmpnk_mbmd_/s6/exp-e-summary.csv and .md and exp-e-quality.csv
+    PASS a question with no pooled item is questions_without_items, not incompletely labelled
+==> OK self-test
+summarize self-test exit 0

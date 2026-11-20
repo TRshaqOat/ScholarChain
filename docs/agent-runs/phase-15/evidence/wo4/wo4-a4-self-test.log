@@ -1,0 +1,22 @@
+questions 2, pooled items 8, answers 6; sheets in /var/folders/s4/bckpjsjs77bbl17cf5_h4fjw0000gn/T/tmpz7nrdjt3/sheets; keys in /var/folders/s4/bckpjsjs77bbl17cf5_h4fjw0000gn/T/tmpz7nrdjt3/keys
+    PASS no gap in the complete fixture
+    PASS relevance-template.csv: header and no filled label or rating
+    PASS ratings-template.csv: header and no filled label or rating
+    PASS relevance sheet shows no mode, score, evidence ID or source: []
+    PASS relevance sheet shows no rank label
+    PASS answers sheet shows no mode, score, evidence ID or source: []
+    PASS answers sheet shows no rank label
+    PASS relevance sheet shows no verification status
+    PASS relevance sheet shows content (facts and text)
+    PASS item stored by payloadRef is rendered
+    PASS pooled and deduplicated: B01 has 10 list positions in 3 lists, 7 unique items
+    PASS keys map every list position
+    PASS sheet order is not the fused rank order
+    PASS three answers per question under blind keys
+questions 2, pooled items 8, answers 6; sheets in /var/folders/s4/bckpjsjs77bbl17cf5_h4fjw0000gn/T/tmpz7nrdjt3/sheets2; keys in /var/folders/s4/bckpjsjs77bbl17cf5_h4fjw0000gn/T/tmpz7nrdjt3/keys2
+    PASS fixed seed: a second build is byte-identical
+    PASS refuses --out under labels/
+    PASS refuses keys inside --out
+    PASS refuses to overwrite filled sheets
+==> OK self-test
+exit=0

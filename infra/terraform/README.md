@@ -187,7 +187,8 @@ values are in `envs/course/course.tfvars`. The ones a human sets or changes:
 - Services: desired 1, minimum healthy 100%, deployment circuit breaker with rollback, public IP in
   the public subnets. Application Auto Scaling holds each service between 1 and its maximum; services
   with a maximum above 1 (graph-evidence-api by default) track `service_cpu_target_percent` average CPU
-  (default 60; course.tfvars sets 15 as the window 3 scale-out experiment setting, Phase 15 ruling 2).
+  (default 60, which course.tfvars uses; window 3 ran with 15 as a declared experiment setting,
+  Phase 15 rulings 2 and 6).
 - Haiku bound: each process throttles its own Haiku calls at `runtime.llm.requests-per-minute`, so
   the combined rate is that value times the query-api plus worker task count. Defaults: query-api
   maximum 1, worker maximum 1, 4 per minute each, 8 per minute in total. For the scale-out

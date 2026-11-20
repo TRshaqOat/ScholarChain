@@ -1,0 +1,9 @@
+run,check,result,detail
+20261118T062000Z,submit,PASS,202 job-c03f4e524f0f99b0199fcdc4cf35e788
+20261118T062000Z,replay-while-queued,PASS,"202 same jobId, Idempotent-Replay true, state QUEUED"
+20261118T062000Z,job,PASS,SUCCEEDED
+20261118T062000Z,result,PASS,200 qry-57be24c8990bea22a55002efceabf377
+20261118T062000Z,replay-after-final,PASS,"202 same jobId, Idempotent-Replay true, state SUCCEEDED"
+20261118T062000Z,dlq,PASS,DLQ holds the message at 2026-11-18T06:35:31Z (sent 2026-11-18T06:20:03Z)
+20261118T062000Z,poison-retried,PASS,"receiveCount [1,2,3]"
+20261118T062000Z,one-job-run,PASS,"job-queued 1, job-finished 1"

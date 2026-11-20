@@ -1,0 +1,2 @@
+run,commit,startedAt,endedAt,exitCode,timedOut,levels,preflightNon2xx,aborted
+20261120T001853Z,c542806,2026-11-20T00:18:53Z,2026-11-20T00:54:13Z,0,False,1,0,

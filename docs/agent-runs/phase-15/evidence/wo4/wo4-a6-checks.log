@@ -1,0 +1,48 @@
+== 2026-11-20T06:17:58Z bash -n
+bash -n ok
+== executables
+x experiments/harness/exp-e-retrieval-modes.sh
+x experiments/analysis/summarize-exp-e.py
+x experiments/analysis/e-label-sheets.py
+x experiments/analysis/derive-tables.py
+== harness --self-test
+==> OK self-test
+exit=
+== harness --dry-run
+==> OK dry-run
+exit=
+== summarize-exp-e --self-test
+==> OK self-test
+exit=
+== e-label-sheets --self-test
+==> OK self-test
+exit=
+== derive-tables --self-test
+==> OK self-test
+exit=
+== run-experiment.sh --dry-run
+==> STEP dry-run
+    no AWS, Terraform, or git call was made; steps that would run:
+    - manifest experiments/manifests/exp-e-retrieval-modes-v1.json tracked and unchanged from HEAD; clean tree; experiments/harness/exp-e-retrieval-modes.sh tracked
+    - aws sts get-caller-identity; print account and Region
+    - run experiments/harness/exp-e-retrieval-modes.sh --max 10 for at most 135 min
+    - write /Users/achyutpatel/Developer/Cloud/ScholarChain/experiments/results/exp-e-retrieval-modes-v1/<stamp>/run-record.json; make the directory read-only
+==> OK dry-run
+exit=0
+== manifest fields
+{"experimentId":"exp-e-retrieval-modes-v1","command":["experiments/harness/exp-e-retrieval-modes.sh","--max","10"],"maxMinutes":135,"perMinute":8,"q":10,"modes":["fused","graph-only","vector-only"],"metrics":[]}
+== __pycache__ under experiments/ and load-tests/
+       0
+== sha256
+300e3419b0f42ec1a29849fbcbb4b83a399f2c93ec5ae79280f628624c2cd097  experiments/harness/exp-e-retrieval-modes.sh
+7ed20d330ddca6d51d503f3728984c8a5664149ae7c284724ffbdf719a604c25  experiments/manifests/exp-e-retrieval-modes-v1.json
+99df7200ffde0a4e8e1f09ca7414def38ccea9f860eb174c5acccc8d8e96e7f8  experiments/analysis/derive-tables.py
+46df99c60d1d63def3c2d22cf773e94a29878f3274896e49b4cccd91e0b557a3  experiments/analysis/e-label-sheets.py
+3164bc2a26f262a8221b06e0ab7591fde10b0587e853e2866731c1cf26634711  experiments/analysis/summarize-exp-e.py
+== exit codes (rerun without pipes; the lines above came from zsh, which has no PIPESTATUS)
+harness --self-test exit=0
+harness --dry-run exit=0
+summarize-exp-e --self-test exit=0
+e-label-sheets --self-test exit=0
+derive-tables --self-test exit=0
+__pycache__ count: 0

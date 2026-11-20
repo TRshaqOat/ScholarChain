@@ -169,3 +169,13 @@ B1. Ruling 6 revert: `service_cpu_target_percent = 60` in `infra/terraform/envs/
    (h) The answers sheet may show each claim's verification status and the abstention reason: that is the answer as the API delivers it, which is what is rated. The blinding limit (vector-only abstentions are recognisable) is stated in the Phase 16 write-up.
    (i) The guard false positive (a write verb plus the text `labels/` in file content) is a Phase 17 note for factory-engineer; no change now.
    (j) Next: code review 4 (the repair only, one round). Then the human commits work order 4 and repair-02 (with `git add -f` for the evidence logs) and runs E.
+
+## Human ruling 13 (Nov 20, 2026): code review 4, work order 4 accepted, E run
+
+13. Code review 4 (repair-02): APPROVE, 0/0/3. Work order 4 (Parts A and B) and repair-02 are accepted; no further agent round.
+   (a) C4-m1: the manifest's failingModeRule and repair-02's RISKS wrongly say a rerun resumes. The governing rule: BenchmarkCli resumes only within one --out; a rerun through run-experiment.sh writes a new <stamp> and repeats every mode, and the earlier stamp stays read-only. The manifest text stays as committed; this ruling governs.
+   (b) C4-m2: blind labelling sheets are built only when the E run record's exitCode is 0 and the summarizer prints "Question sets: the same 10 question(s) in every mode." If any mode ended early, no sheets are built and a new ruling decides between a fresh full run and a guard in e-label-sheets.py.
+   (c) C4-m3: the Phase 16 write-up states that the ALB request rate kept rising through the two-task minutes while Neptune stayed at about 97 percent CPU, so neither the phase averages nor the steady-state rows attribute the throughput difference to the second task.
+   (d) To stop E early, send TERM to the harness process; Ctrl-C does not stop it (run-experiment.sh has no INT trap; Phase 17 note for infra-engineer). TERM against the real sbt runner is unverified.
+   (e) Part B (CPU target back to 60) is accepted; check.sh on the committed tree covers terraform fmt and validate.
+   (f) E runs locally after this commit and a passing check.sh, with the cost checked first, VS Code quit, and no other sbt or Haiku run.

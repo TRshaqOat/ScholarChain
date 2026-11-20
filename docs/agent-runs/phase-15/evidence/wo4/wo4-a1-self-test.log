@@ -1,0 +1,25 @@
+bash -n ok
+==> STEP self-test
+    PASS ok exit 0
+    PASS ok: invocations fused(2), fused(4), graph-only(4), vector-only(4), embedding model set
+    PASS ok: harness.json decision, exit codes, run IDs
+    PASS ok: the recorded command is the work order text
+    PASS ok: per-step stdout and stderr .txt kept
+    PASS ok: no .log file written
+    PASS fallback exit 3
+    PASS fallback: only the check ran
+    PASS fallback: decision recorded, outputs kept
+    PASS fallback: check stdout kept
+    PASS rules exit 3
+    PASS budget exit 3
+    PASS exception exit 3
+    PASS exception: stop reason names it
+    PASS check-fails exit 3
+    PASS graph-fails exit 1
+    PASS graph-fails: vector-only still ran after the failing mode
+    PASS graph-fails: exit codes recorded
+    PASS other-sbt exit 3
+    PASS other-sbt: refused before any sbt call
+    PASS other-sbt: refusal names the process
+==> OK self-test
+exit=0

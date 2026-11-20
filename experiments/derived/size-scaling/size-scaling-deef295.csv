@@ -1,0 +1,4 @@
+record,fraction,commit,shufflePartitions,instances,finalState,stateChangeReason,hadoopState,hadoopMinutes,j01AcceptedWorks,acceptedWorksPerHadoopMinute,sparkState,sparkMinutes,sparkFailure,clusterMinutes,normalizedInstanceHours,hadoopRun,note
+20261117T010927Z-fraction50,50,deef295,40,1+2 m6g.xlarge,TERMINATED_WITH_ERRORS,STEP_FAILURE,COMPLETED,27.6,55598,2014,FAILED,18.9,OOM TemporalSummaryExportJob:442,52.2,24,run-a307c9fe6f218ae7a6dd87c7189256e8,
+20261117T045335Z-fraction25,25,deef295,40,1+2 m6g.xlarge,TERMINATED,ALL_STEPS_COMPLETED,COMPLETED,17.2,27993,1628,COMPLETED,13.3,-,36.3,24,run-aa940ec80cef96879f88d1f2407a0fc7,
+20261117T053043Z-fraction100,100,deef295,40,1+2 m6g.xlarge,TERMINATED_WITH_ERRORS,STEP_FAILURE,COMPLETED,53.3,110867,2080,FAILED,36.3,OOM TemporalSummaryExportJob:442,95.6,48,run-503520c5975c7bd5c73bf45b14f17749,

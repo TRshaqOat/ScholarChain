@@ -1,0 +1,45 @@
+==> STEP self-test
+    PASS ok exit 0
+    PASS ok: invocations fused(2), fused(N-2=2), graph-only(4), vector-only(4), embedding model set
+    PASS ok: fused resumed (2 already done, answering 2)
+    PASS ok: every mode has exactly N=4 results, the same question IDs B01-B04
+    PASS ok: harness.json decision, exit codes, maxima, run IDs
+    PASS ok: the recorded commands are the ruling 12(a) text (fused --max N-2, graph-only --max N)
+    PASS ok: raw layout <dir>/<mode>/ and <dir>/harness.json (no <dir>/raw/)
+    PASS ok: per-step stdout and stderr .txt kept
+    PASS ok: no .log file written
+    PASS n3 exit 0
+    PASS n3: fused --max 1 after the check; each mode exactly 3 results, same IDs
+    PASS n10 exit 0
+    PASS n10: fused 2 + 8; each mode exactly 10 results, same IDs
+    PASS n-2 exit 2
+    PASS n-2: refused before any sbt call
+    PASS n-11 exit 2
+    PASS n-11: refused before any sbt call
+    PASS n-0 exit 2
+    PASS n-0: refused before any sbt call
+    PASS n-x exit 2
+    PASS n-x: refused before any sbt call
+    PASS fallback exit 3
+    PASS fallback: only the check ran
+    PASS fallback: decision recorded, outputs kept
+    PASS fallback: check stdout kept
+    PASS rules exit 3
+    PASS budget exit 3
+    PASS exception exit 3
+    PASS exception: stop reason names it
+    PASS check-fails exit 3
+    PASS graph-fails exit 1
+    PASS graph-fails: vector-only still ran after the failing mode
+    PASS graph-fails: exit codes recorded
+    PASS other-sbt exit 3
+    PASS other-sbt: refused before any sbt call
+    PASS other-sbt: refusal names the process
+    PASS term: the stub (sbt runner) and its child are running before TERM
+    PASS term: the stub's child is running before TERM
+    PASS term: harness exit 143 (stopped in 0 s)
+    PASS term: the stub (sbt runner) is gone after TERM
+    PASS term: its child (the JVM's stand-in) is gone after TERM
+    PASS term: harness.json kept with exitCode 143 and terminated
+==> OK self-test
+self-test exit 0

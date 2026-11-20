@@ -1,0 +1,5 @@
+run,concurrency,startedAt,seconds,requests,throughputPerSecond,errors,errorRate,p50Ms,p95Ms,p99Ms,desiredBefore,desiredAfter,runningAfter,requestCapReached,stoppedByAbortRule
+20261118T063904Z,1,2026-11-18T06:39:09.480Z,180,1475,8.19,0,0.0,87.5,281.0,427.9,1,1,1,False,False
+20261118T063904Z,2,2026-11-18T06:42:42.203Z,180,2972,16.5,0,0.0,84.9,295.5,462.9,1,1,1,False,False
+20261118T063904Z,4,2026-11-18T06:46:14.465Z,180,4610,25.6,0,0.0,92.7,446.5,590.6,1,1,1,False,False
+20261118T063904Z,8,2026-11-18T06:49:46.583Z,180,6439,35.72,0,0.0,119.8,673.5,914.3,1,1,1,False,False

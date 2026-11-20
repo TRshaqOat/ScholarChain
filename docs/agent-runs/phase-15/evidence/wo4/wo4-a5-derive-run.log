@@ -1,0 +1,5 @@
+wrote /Users/achyutpatel/Developer/Cloud/ScholarChain/experiments/derived; 3 gap(s)
+GAP size_scaling: missing source: operations/pipeline-runs/20261116T063500Z-fraction25/run.json
+GAP size_scaling: no raw results under experiments/results/exp-a*; experiment A's run is the deef295 25 percent pipeline record in size-scaling (operations/pipeline-runs/20261117T045335Z-fraction25), not an experiments/results run
+GAP exp_d_scale: metric alb_target_5xx: no datapoints in the interval
+exit=0

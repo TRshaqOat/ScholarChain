@@ -1,0 +1,4 @@
+interval,from,to,seconds
+level start to scale-out activity start,2026-11-20T00:19:00.723Z,2026-11-20T00:24:01.287Z,300.6
+level start to second target registered,2026-11-20T00:19:00.723Z,2026-11-20T00:24:32.269Z,331.5
+level end to scale-in activity start,2026-11-20T00:29:00.975Z,2026-11-20T00:46:39.066Z,1058.1

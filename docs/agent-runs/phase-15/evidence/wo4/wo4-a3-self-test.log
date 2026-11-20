@@ -1,0 +1,18 @@
+wrote /var/folders/s4/bckpjsjs77bbl17cf5_h4fjw0000gn/T/tmpgmqs5415/s1/exp-e-summary.csv and .md
+    PASS fused counts
+    PASS vector-only abstentions by reason
+    PASS latency nearest rank p50, p95, max
+    PASS graph-only makes no embedding call
+    PASS unlabelled: says not labelled yet and writes no quality file
+    PASS cap stated
+wrote /var/folders/s4/bckpjsjs77bbl17cf5_h4fjw0000gn/T/tmpgmqs5415/s2/exp-e-summary.csv and .md and exp-e-quality.csv
+    PASS fused recall@5, recall@10, MRR
+    PASS graph-only recall@5, MRR
+    PASS vector-only recall@5, MRR (empty list counts 0)
+    PASS ratings means; an empty rating is not counted
+wrote /var/folders/s4/bckpjsjs77bbl17cf5_h4fjw0000gn/T/tmpgmqs5415/s3/exp-e-summary.csv and .md and exp-e-quality.csv
+    PASS an unlabelled item leaves its question unscored
+    PASS a label other than 1, 0 or empty is refused
+    PASS refuses --out under the raw results
+==> OK self-test
+exit=0

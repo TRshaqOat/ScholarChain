@@ -1,0 +1,21 @@
+# mutation (scratch copy): no process group (set -m removed), TERM to the sbt PID only (the work-order-4 behaviour)
+252c252
+<     kill -TERM -- "-$CHILD" 2>/dev/null || true
+---
+>     kill -TERM "$CHILD" 2>/dev/null || true
+269c269
+<   set -m # monitor mode only for this fork: the background job gets its own process group
+---
+>   :
+273c273
+<   set +m
+---
+>   :
+mutated self-test exit 1
+    PASS term: the stub (sbt runner) and its child are running before TERM
+    PASS term: the stub's child is running before TERM
+    PASS term: harness exit 143 (stopped in 1 s)
+    PASS term: the stub (sbt runner) is gone after TERM
+    FAIL term: its child (the JVM's stand-in) is gone after TERM
+    PASS term: harness.json kept with exitCode 143 and terminated
+==> FAIL self-test: 1 failure(s) (exit 1)

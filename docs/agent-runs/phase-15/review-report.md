@@ -522,3 +522,589 @@ MANUAL ACTION REQUIRED:
 BLOCKED-ON OWNER: none
 BLOCKED-ON EVIDENCE: none
 NEXT GATE: human acceptance of repair-01 with N1 to N5 as residual risks (no further repair round, ruling 4), the commit, then the window 3 plan pins HEAD.
+
+## Code review 3 (work order 4)
+
+### Summary
+
+STATUS: COMPLETE
+OWNER: code-reviewer
+WORK ORDER: Phase 15+16, session 6, code review 3 (work order 4). This is a read-only review of the Part A changes (experiment-engineer) and the Part B change (infra-engineer), checked against Phase 15 ruling 11 and the "Work order 4" section of prompt.md.
+VERDICT: REQUEST_CHANGES
+
+I found one MAJOR finding and no CRITICAL ones. With the real BenchmarkCli, the harness makes fused answer 12 questions (B01 to B12) while the other two modes answer 10 (B01 to B10). That is 32 runs in total, not 30. The resulting problems:
+- It breaks Phase 14 ruling 31 ("at most 10 benchmark questions x 3 modes").
+- The maxMinutes margin falls to 3 minutes, but A2 requires 10.
+- The three modes no longer answer the same questions.
+- For the two fused-only questions, the blind sheets reveal which mode produced what.
+
+The stub self-test cannot catch this, because the stub does not model resume.
+
+There are six MINOR findings. One of them (E-m1) is UNVERIFIED. Part B is correct.
+
+SCOPE REVIEWED:
+- The change set: `evidence/code-review-3/diff.txt`, `untracked-diff.txt`, `diffstat.txt` and `untracked.txt`. I read every new file in full in the working tree:
+  - `experiments/harness/exp-e-retrieval-modes.sh`
+  - `experiments/manifests/exp-e-retrieval-modes-v1.json`
+  - `experiments/analysis/summarize-exp-e.py`, `e-label-sheets.py` and `derive-tables.py`
+  - `experiments/derived/README.md`, `exp-d/README.md`, `exp-d-scale/README.md` and `size-scaling/README.md`
+- The Part B edits in context: `infra/terraform/envs/course/course.tfvars:62-64`, `variables.tf:401-410` and `infra/terraform/README.md:187-191`.
+- The real code the harness drives:
+  - `modules/rag/.../cli/BenchmarkCli.scala` (all), `Benchmark.scala` (all) and `AskCli.scala` (all)
+  - `Workflow.scala:96-116`, `Audit.scala` and `Records.scala:426-544`
+  - `SemanticContext.scala:35-74`, `StableIds.scala` (runId and evidenceId) and `RUNTIME.md` sections on evidence IDs and deadlines
+  - `storage/cli/Cli.scala:126-138` and `Dynamo.scala` (FileRuntimeRecords, item file format)
+- The scripts and build: `scripts/run-experiment.sh` and `scripts/lib/common.sh` (all), `build.sbt:100-160` and `.gitignore`.
+- Earlier evidence:
+  - Phase 10 `gate-live-benchmark-step1.txt` and `-step2.txt` (real BenchmarkCli output)
+  - Phase 14 ruling 31 (`phase-14/prompt.md:259`)
+  - The D and F raw layouts under `experiments/results/`
+  - `load-tests/exp-d-query-load.py:797`
+- Every log under `evidence/wo4/`.
+
+### Findings (ranked)
+
+No CRITICAL.
+
+**E-M1 (MAJOR). With the real BenchmarkCli, fused answers N + 2 questions. Ruling 31 is broken, the A2 margin is broken, the modes answer different questions, and the sheets lose their blinding.**
+
+- Location:
+  - `experiments/harness/exp-e-retrieval-modes.sh:208` (check: fused `--max 2`) and `:227-228` (fused again with `--max $N`).
+  - The stub at `:69` always prints "0 already done, answering $max now", so it never models resume.
+  - `BenchmarkCli.scala:78-81` and `:104-106`: `--max` is applied as `pending.take(max)`, so it limits the number of new pending questions, not the total.
+  - Observed in Phase 10: `gate-live-benchmark-step2.txt:7` uses `--max 30` and line 16 prints "2 already done, answering 28 now".
+  - Manifest `:11`, `:16`, `:29`, `:30` and `:36` all assume 30 questions ("check 2, fused 8 more").
+- Mechanics:
+  - The check step and the fused step share one benchmark run. `Workflow.runIdFor` adds `retrieval=` only for non-FUSED modes (`Workflow.scala:114`), and `--max`, `--out` and `--per-minute` are not run-ID inputs (`AskCli.scala:172-183`). Resume therefore works.
+  - Step 2 then answers 10 more pending questions, B03 to B12.
+  - graph-only and vector-only each answer B01 to B10.
+- Failure scenario and impact:
+  1. **Ruling 31 is broken.** There are 32 Bedrock question runs, and fused has 12 questions.
+  2. **The time margin is too small.** The worst case is 4 x 300 s + 32 x 210 s = 7,920 s = 132 min, which leaves 3 minutes of margin under `maxMinutes` 135. A2 requires at least 10. The manifest's `questionsTotal`, `haikuRequestsMax` (256, not 240) and `embeddingCallsMax` (22, not 20) are also wrong. The budget still holds: 32 x 0.088 = 2.82 USD, under 3.
+  3. **The summarizer compares different questions.** It compares fused over 12 questions with the other modes over 10 (`summarize-exp-e.py:124`, `mode_row`), and it scores fused on B11 and B12 too.
+  4. **The blinding breaks for B11 and B12.** `e-label-sheets.py:170` takes the union of question IDs, and `:212-219` keeps only the modes present. So B11 and B12 each show a single answer (key `-A`), which can only be fused. Every pooled item for those questions is also fused-only, which reveals "which modes retrieved it". Ruling 11 and A4 forbid this.
+- Fix:
+  - In step 2, run fused with `--max $((N - 2))` so that fused totals N (fused "resumes" the check's 2 questions, as A1 says). Require N >= 3, or skip fused step 2 when N = 2, because BenchmarkCli rejects `--max 0` (`BenchmarkCli.scala:54`).
+  - Make the stub emulate resume: count `questions/*.json` under `--out` and answer at most `--max` pending questions. Assert that each mode ends with exactly N results.
+  - Update the dry-run lines and the "recorded command equals the work-order text" assertion.
+  - Because this departs from the literal "each with `--max <N>`" text, the human records it in a ruling.
+  - The manifest numbers then become correct as written.
+- Owner: experiment-engineer, with a human ruling on the command text.
+- Must fix before E run: **yes**.
+
+**E-m1 (MINOR, UNVERIFIED). TERM at maxMinutes may not reach the JVM, and the reported "forked JVM" risk is misdescribed.**
+
+- Location: `exp-e-retrieval-modes.sh:179-186` and `:193-197`, plus `run-experiment.sh:108-110`.
+- What I checked: rag's `runMain` is not forked. The rag project (`build.sbt:126-127`) has no `run / fork`, unlike `sparkAnalytics` (`:117`) and `services` (`:146`). The Phase 10 log prints `[info] running`, which is the in-process form. So the agent's RISK "if sbt forks one for runMain" does not apply.
+- The real dependency: `$!` is the PID of the `sbt` runner script, and `kill -TERM` reaches only that PID. Whether the java child dies depends on how the installed sbt runner handles TERM; the upstream runner runs java without `exec`.
+- Why UNVERIFIED: the runner script is outside the repository and not readable here.
+- Failure scenario: maxMinutes fires. The harness exits 143 and run-experiment.sh makes the directory read-only. An orphaned JVM keeps calling Bedrock for the rest of the current mode (at most 10 questions) and then fails on the read-only directory.
+- Fix: start sbt in its own process group and signal the group, or send TERM to the children too (`pkill -TERM -P "$CHILD"`) and then wait. Add a stub that spawns a child, and test that both die.
+- Owner: experiment-engineer.
+- Must fix before E run: no. The damage is bounded by `--max` per mode, but the fix is cheap enough for the same repair round.
+
+**E-m2 (MINOR). Raw files land in `<stamp>/raw/raw/<mode>/`, unlike D and F.**
+
+- Location: `exp-e-retrieval-modes.sh:163` (`RAW="$SCHOLARCHAIN_EXPERIMENT_DIR/raw"`) and `run-experiment.sh:99` (`SCHOLARCHAIN_EXPERIMENT_DIR="$DIR/raw"`).
+- What I checked: the doubled path is real. D writes directly into the variable (`load-tests/exp-d-query-load.py:797`, giving `exp-d-scale-v1/20261120T001853Z/raw/summary.json`), and so does F (`exp-f-failure-recovery-v1/20261118T062000Z/raw/summary.json`). The run record says `rawResults: "raw/"` (`run-experiment.sh:126`).
+- Impact: functionally harmless, because every tool takes `--raw` and the manifest documents the layout (`:49`). But it is inconsistent with the earlier experiments and with run-record.json, and it will be immutable once E runs.
+- Fix (recommended): `RAW="$SCHOLARCHAIN_EXPERIMENT_DIR"`, then update the manifest `outputLayout`, `rawOutputs` and `analysis` fields and the documented commands (`--raw <stamp>/raw`). This departs from the literal "`$SCHOLARCHAIN_EXPERIMENT_DIR/raw/<mode>/`" text, so the human decides. Keeping the current layout is acceptable if ruled.
+- Owner: experiment-engineer, with a human ruling.
+- Must fix before E run: no, but decide before E.
+
+**E-m3 (MINOR). The summarizer does not restrict to the questions all modes share, and it mislabels questions that have nothing to label.**
+
+- Location: `summarize-exp-e.py:119-128` and `:193`.
+- What I checked:
+  - Per-mode rows and quality metrics use whatever questions each mode has.
+  - The Markdown table drops `questions_ids` (`:193`), so a difference in question sets is invisible there.
+  - A question with no pooled item, for example one that every mode abstains on before the bundle stage (B09, AMBIGUOUS_RESEARCHER, in Phase 10), is not in `pool`. It is therefore counted under `questions_incompletely_labelled`, although there is nothing to label.
+- Failure scenario: a mode stops at a failed question (BenchmarkCli stops at the first failure). Its recall and MRR then come from fewer or different questions, with no warning in the Markdown, and the "incompletely labelled" count invites the human to look for labels that cannot exist.
+- Fix:
+  - Compute the quality metrics over the intersection of question IDs present in all three modes, and list the excluded IDs.
+  - Add a `questions_without_items` category.
+  - Print a "question sets differ" line in the Markdown when they do.
+- Owner: experiment-engineer.
+- Must fix before E run: no (fix before the summary is used).
+
+**E-m4 (MINOR). The D-scale throughput-by-task-count table is computed correctly but needs more caveats.**
+
+- Location: `derive-tables.py:302-305`; `experiments/derived/exp-d-scale/README.md:5`, `:51-52` and `:72-81`; `agent-report.md:421`.
+- What I checked:
+  - The arithmetic is correct: the two phases sum to 21,962 requests (11,229 + 10,733), which matches the level total.
+- Missing caveats:
+  - The one-task phase includes the level's warm-up. ALB requests per minute rise from 1,546 to 2,241 before scale-out (lines 72-76), and then run from 2,324 to 2,472 (lines 77-81), so the trend began before the second task.
+  - A warmed single task at concurrency 8 already served 35.72 requests per second in window 2 (`exp-d/README.md:19`).
+  - Neptune CPU stays at about 97 percent in both phases.
+  - "Registered" is not the same as "healthy": the split uses the registration event.
+- Impact: the report's "this goes against the manifest's expected finding" overstates the evidence, and the durable derived README gives none of these caveats.
+- Fix: add the caveats to the D-scale note. Optionally add a steady-state comparison (the last full one-task minute against the two-task minutes), labelled as such.
+- Owner: experiment-engineer.
+- Must fix before E run: no.
+
+**E-m5 (MINOR). The summarizer self-test count is overstated.**
+
+- Location: `agent-report.md:386` says "14 pass". `wo4-a3-self-test.log` shows 13 PASS lines, and `summarize-exp-e.py:241-292` makes exactly 13 `check(...)` calls.
+- Fix: correct the count in the record.
+- Owner: experiment-engineer (the report).
+- Must fix before E run: no.
+
+**E-m6 (MINOR, process). The agent repeated a forbidden read-only git command.**
+
+- Location: `agent-report.md:375` (`git -C . status --porcelain ... | head -0`).
+- What I checked: ruling 11 forbids git, and ruling 5 (`prompt.md:66`) recorded a session 1 git status deviation as "not to be repeated". The agent reported it honestly, and its output was discarded. No artifact depends on it.
+- Fix: human decision (accept as recorded).
+- Owner: experiment-engineer.
+- Must fix before E run: no.
+
+### Must fix before the E run
+
+- E-M1 (fused total = N, a stub that models resume, and a human ruling on the deviation from the literal command text).
+- Decide E-m2 (the output layout) before E, because raw results are immutable afterwards.
+
+### Per-check answers
+
+#### Check 1: A1 to A6 and B1
+
+- **A1 (harness): conforms except E-M1.**
+  - Environment and preconditions: it reads SCHOLARCHAIN_EXPERIMENT_DIR and AWS_PROFILE (`:153-158`) and refuses with exit 3 if another sbt is running (`:159-160`).
+  - Step 1 gate (`:208-223`) is stricter than the text. It also requires sbt exit 0, and it scans all of stdout and stderr. Being stricter can only stop the run more often, so I accept it.
+  - Mode order (`:10`, `:227`): correct, `--per-minute 8`, each mode in its own directory.
+  - Command text (`:54-56`): matches the work order. I compared it with the dry-run log, lines 4-8.
+  - Records: the `.txt` outputs and `harness.json` (`:171-177`, `:199-202`) are as required.
+  - Self-tests: `--dry-run` and `--self-test` exist. The self-test covers the check stop and a failing mode, but not resume (E-M1).
+- **A2 (manifest):** the fields match the work order. `metrics` is empty. The run-experiment.sh dry-run passed (exit 0, per `wo4-a2-run-experiment-dry-run.log`). The worst case is wrong under E-M1.
+- **A3 (summarizer):** every listed per-mode field is present. It writes CSV and Markdown, and "not labelled yet" when there are no labels. Recall at 5 and 10 states the cap (`:37-39`). MRR and the rating means are computed. It never infers relevance. The self-test uses fixtures. See E-m3.
+- **A4 (sheets):** conforms; see check 2.
+- **A5 (derived tables):** sources carry sha256 values, gaps are reported, and the tables were run once. The three reported gaps are real. For example, the run.json of `operations/pipeline-runs/20261116T063500Z-fraction25/` is genuinely absent: that folder has `steps.json` and other files but no `run.json`. See E-m4.
+- **A6 (checks):** `bash -n`, all four self-tests, the dry-runs and the run-experiment dry-run are logged with exit 0. I found no `__pycache__` under `experiments/` or `load-tests/` (Glob). No sbt check was needed, because no Scala or sbt source changed.
+- **B1:** conforms; see check 7.
+
+#### Check 2: labelling safety (ruling 11)
+
+- **Templates:** the `relevant`, `usefulness` and `clarity` columns are written empty (`e-label-sheets.py:210`, `:218`).
+- **Relevance sheet:**
+  - It renders only the evidence type, the sorted facts and the text (`:118-127`). It never shows the evidence ID, sourceUri, chunkId, score, rank, mode or verification status.
+  - Items are deduplicated by evidence ID, sorted by ID and then shuffled with a seed per question (`:195-196`). Item keys are numbered after the shuffle.
+  - Deduplicating across modes is valid: evidence IDs come from data run IDs, not the runtime run (`SemanticContext.scala:45,58`; RUNTIME.md "Evidence IDs").
+  - The evidence type (and, for semantic items, the `index` fact) shows whether the graph or vector side produced an item. A1 requires the evidence type, so this is inherent, not a defect.
+- **Keys:** keys go to a required, separate `--keys-out` directory. The tool refuses nesting in either direction, refuses paths under labels/ or the raw results, and refuses to overwrite (`:158-167`).
+- **Summarizer:** metrics come only from the human's relevance and ratings files plus the key files. Values other than 1, 0 or empty are refused. A question with any unlabelled item is not scored (`:110-120`). The fixture labels in the self-test are synthetic and stay in a temporary directory.
+- **Open item for the human (not a defect):** the answers sheet shows each claim's verification status and the abstention reason and detail (`:136`, `:141`). These are part of the answer as the API delivers it (assumption 4), but they may influence ratings. Vector-only answers will be recognisable anyway from their NO_VERIFIED_CLAIM abstentions. The human should confirm this is acceptable under ruling 11.
+- **Blinding leak:** E-M1 reveals the mode for B11 and B12, and any failed mode reveals the mode through the answer count per question (`:212-219`).
+
+#### Check 3: the harness against the real code
+
+- **"plan sources:" line:** the real line is `plan sources: MODEL 2; outcomes: ANSWERED 2` (`BenchmarkCli.scala:188`; Phase 10 step 1 line 33). The harness keeps the last such line with `grep | tail -1` and matches MODEL as a whole word (`:209`, `:213`). FALLBACK_RULES and BUDGET_EXHAUSTED appear in that line as plan-source and outcome keys (`Benchmark.scala:770-771`), so the scan catches them.
+- **"Exception":** CLI output goes to stdout (`Cli.scala:127`), and the harness scans stdout and stderr. A harmless "Exception" string from the SDK on stderr would stop the run. That is a safe failure costing 2 questions, and Phase 10 output contained none.
+- **Benchmark run ID:** the real text is `benchmark run run-<32 hex>: ...` (`BenchmarkCli.scala:80`). The harness regex at `:198` matches it and does not match the `runtime run run-...` line.
+- **Output files:** the summarizer and sheet paths match the real keys:
+  - `questions/<id>.json` (`BenchmarkCli.scala:75`)
+  - audit `logs/rag-runtime/snapshot=/run=/<qry>.json` and answer `reports/rag-runtime/.../<qry>.answer.json` (`Audit.scala:27-30`)
+  - `dynamodb/snapshot=/run=/EvidenceBundle.jsonl` with `{"Item":...}` lines (`AskCli.scala:294`, `Dynamo.scala:502-505,769`)
+  - `payloadRef` objects relative to `s3/` (`Audit.scala:109-116`)
+  - Options serialize as null or the value (Phase 9 audits show `"abstentionReason": null`), and `removedClaims` exists (`Records.scala:535`).
+- **Step 1 gate and mode order:** both correct. The fused resume works mechanically but yields N + 2 questions (E-M1).
+- **`--profile` and AWS_PROFILE:** run-experiment.sh exports AWS_PROFILE and AWS_REGION (`common.sh:83-87`). The harness validates the profile name (`:158`) and passes `--profile $AWS_PROFILE --region us-east-2`. Consistent.
+- **TERM:** see E-m1. The JVM is not forked; reaching it through the sbt runner script is UNVERIFIED.
+- **Other-process check (`:133-136`):** it does not match itself. awk's own command line holds the bracketed forms (`[s]bt-launch` and so on), which do not match the pattern. The harness, run-experiment.sh and `ps` command lines contain no matching token. It does refuse when an sbt server is running (sbtn, `sbt --client`, or Metals/BSP through `sbt-launch.jar`), and when any process has "runMain" or a standalone "sbt" word in its command line. That is the intended "one sbt process" rule (Phase 12 ruling 8), and the refusal lists the processes. It checks only at start, as the work order asks.
+
+#### Check 4: the output path
+
+Verified: `run-experiment.sh:99` sets the variable to `<stamp>/raw`, and harness `:163` appends `/raw`, giving `<stamp>/raw/raw/<mode>/` and `<stamp>/raw/raw/harness.json`. I recommend changing it to `<stamp>/raw/<mode>/` to match D, F and `rawResults: "raw/"`, with a human ruling (E-m2). Keeping it is functionally safe if documented, as the manifest already does.
+
+#### Check 5: the manifest
+
+- **run-experiment.sh validation (`:64-69`, `:73-75`):**
+  - `schemaVersion` is correct.
+  - `experimentId` matches `^[a-z0-9][a-z0-9-]{2,63}$`.
+  - `command` is an array of strings.
+  - maxMinutes 135 is within 1 to 240.
+  - `metrics` is an array.
+  - `command[0]` is under `experiments/`, contains no `..`, and is executable (a6 log).
+  - After commit it also passes the tracked, unchanged-from-HEAD and clean-tree gates (`:84-87`). This needs every new file, including `experiments/derived/**`, committed.
+- **Arithmetic as written (30 questions):** 1,200 + 6,300 = 7,500 s = 125 min (correct); 30 x 0.088 = 2.64 USD (correct); 240 Haiku requests (correct). Per question, 210 s is a defensible worst case, because the deadline is cooperative and one call can overrun it by `llm.timeout-ms` (RUNTIME.md lines 608-609).
+- **Under E-M1 (32 questions):** 132 min, so the margin is too small.
+
+#### Check 6: the summarizer and derive-tables
+
+- **Recall at K:** |relevant ∩ top min(K, list)| / |relevant pooled| per question, averaged per mode, with the cap stated.
+- **MRR:** the first relevant item over the full list, with 0 when none is found. An empty list gives recall 0 and MRR 0, as stated. Questions with no relevant item are excluded from every mode alike. The self-test values check out: for fused B01, R@5 = 0.5, so the mean with B02 is 0.75.
+- **Abstention reasons:** from `abstentionReason`.
+- **Latency:** nearest rank, the same as `Benchmark.latency` (`Benchmark.scala:722-727`).
+- **Real formats:** both tools read the real formats (check 3).
+- **derive-tables:** sha256 values cover every file read, and missing sources become gaps. The D-scale table is computed correctly but is under-caveated (E-m4). The question-set issues are in E-m3.
+
+#### Check 7: Part B
+
+- `course.tfvars:64` is `service_cpu_target_percent = 60`. That passes the validation (whole number, 10 to 90; `variables.tf:406-408`) and equals the default (`:404`). The comment cites rulings 6 and 2.
+- `README.md:189-191` is one note saying window 3 ran with 15 as a declared experiment setting, and the default 60 is in use.
+- No other occurrence of 15 remains outside records.
+- fmt and validate were not run (deferred to the human's check.sh).
+
+#### Check 8: scope and deviations
+
+- Paths: every new file is under `experiments/**`, and the Part B edits are under `infra/**`. `agent-report.md` was appended by the orchestrator, which is permitted. Nothing was written under `labels/`, `scratch/stores-live/`, `scratch/er/adjudication-live/` or `experiments/benchmark/`. The tools only reference those paths, for the human's later run.
+- The stray `git status`: see E-m6.
+- The guard false positive: consistent with the documented `guard-dangerous.sh` behaviour, where a write verb (`chmod`) plus the text `labels/` is blocked (docs/agents.md, Hook limitations). The agent did not work around it in Bash. Using the Edit tool on its own `experiments/**` file is the normal path, not a bypass. Optional factory-engineer follow-up.
+
+### OWNERSHIP CHECK
+
+| Changed path | Owner | Author matches |
+|---|---|---|
+| `experiments/harness/exp-e-retrieval-modes.sh` | experiment-engineer | yes |
+| `experiments/manifests/exp-e-retrieval-modes-v1.json` | experiment-engineer | yes |
+| `experiments/analysis/{summarize-exp-e,e-label-sheets,derive-tables}.py` | experiment-engineer | yes |
+| `experiments/derived/**` (30 files) | experiment-engineer | yes |
+| `infra/terraform/envs/course/course.tfvars` | infra-engineer | yes |
+| `infra/terraform/README.md` | infra-engineer | yes |
+| `docs/agent-runs/phase-15/agent-report.md` | human (orchestrator assembles reports) | yes (orchestrator append) |
+
+### FLOOR AND FENCE CHECK
+
+- No change to `.claude/**`, `CLAUDE.md`, `docs/agents.md`, `.mcp.json`, `build.sbt`, `project/**`, `markTestRun` or the reviewer fence. Nothing is widened or weakened.
+- `EXP_E_SBT` and `EXP_E_PS_FIXTURE` are self-test hooks that only the caller's own environment can set. They are not a fence change.
+
+### EVIDENCE GAPS
+
+- The summarizer self-test is reported as 14 passes; 13 are observed (E-m5).
+- The harness has run only against the stub. The real parsing was checked statically here (check 3), but resume was never exercised (E-M1).
+- TERM handling against the real sbt runner is unobserved (E-m1).
+- Part B: terraform fmt and validate were not observed (stated as such by the agent).
+- "Committed raw data" for A5 was not verified with git (stated by the agent). The sources are outside `.gitignore` patterns and do not appear as untracked.
+- Possible evidence-retention issue (UNVERIFIED, human-owned): the `evidence/wo4/*.log` files match `.gitignore` `*.log` and do not appear as untracked at session start, so they will not be committed unless force-added.
+
+FILES CREATED: none
+FILES MODIFIED: none
+COMMANDS RUN: none (no Bash tool)
+TEST RESULTS (as supplied by the orchestrator, quoted):
+- `wo4-a1-self-test.log`: "bash -n ok ... 21 PASS lines ... ==> OK self-test exit=0"
+- `wo4-a3-self-test.log`: 13 PASS lines, "==> OK self-test exit=0"
+- `wo4-a4-self-test.log`: 18 PASS lines, "==> OK self-test exit=0"
+- `wo4-a5-self-test.log`: 5 PASS lines, "==> OK self-test exit=0"
+- `wo4-a6-checks.log`: "harness --self-test exit=0; harness --dry-run exit=0; summarize-exp-e --self-test exit=0; e-label-sheets --self-test exit=0; derive-tables --self-test exit=0; __pycache__ count: 0"
+
+VALIDATION RESULTS:
+- `wo4-a2-run-experiment-dry-run.log`: "run experiments/harness/exp-e-retrieval-modes.sh --max 10 for at most 135 min ... exit=0"
+- `wo4-a1-dry-run.log`: "verbatim match with the work order text" for all four commands, and "--max must be 2 to 10 (exit 2)" for `--max 11`.
+- `wo4-a5-derive-run.log`: "3 gap(s) ... exit=0"
+
+ASSUMPTIONS:
+- The installed `sbt` is the standard bash runner. This matches the self-test fixture path and the Phase 10 "[info] welcome to sbt 1.13.0" output.
+- Per ruling 11, I did not read `experiments/benchmark/`. The figure of 30 questions in the file comes from the Phase 10 output ("30 questions").
+
+RISKS:
+- If E-M1 is fixed by any route other than fused `--max N-2`, the manifest arithmetic must be recomputed.
+- The answers sheet shows verification statuses and abstention reasons. The human should confirm this is acceptable under ruling 11.
+- First live use: a benign "Exception" string on stderr would stop the check step. That is a safe failure costing 2 questions.
+
+MANUAL ACTION REQUIRED:
+- The human rules on the E-M1 fix (it departs from the literal command text) and on the E-m2 layout.
+- After the repair, the human commits all new `experiments/**` files before running E, because run-experiment.sh refuses an uncommitted manifest, command or tree.
+
+BLOCKED-ON OWNER: none
+BLOCKED-ON EVIDENCE: none
+NEXT GATE: Route E-M1 (and, if the human chooses, E-m1 to E-m5) to experiment-engineer and get human rulings on E-M1 and E-m2. Then re-review the harness, the manifest and the self-test before the human runs E. Part B is ready for the human's check.sh and commit.
+
+## Code review 4 (repair-02)
+
+### Summary
+
+STATUS: COMPLETE
+OWNER: code-reviewer
+WORK ORDER: Phase 15+16, session 8, code review 4. This is the one-round re-review of repair-02 of work order 4, checked against Phase 15 ruling 12 (a) to (f) and ruling 11. Read-only.
+VERDICT: APPROVE
+
+There are no CRITICAL or MAJOR findings. Ruling 12 (a) to (f) are each implemented, and I checked each against the real code:
+- `BenchmarkCli.scala`
+- `run-experiment.sh`
+- the derived sources
+
+I found nothing that code review 3 accepted as correct and that has since regressed.
+
+I have three MINOR findings. **None must be fixed before the E run.**
+- **C4-m1** corrects the recovery step the agent proposed for a partial mode: a rerun through `run-experiment.sh` does not resume.
+- **C4-m2** is the open blinding risk the agent reported. The procedure rule is enough only if its recovery branch is corrected. A small code guard is better, and it is needed only if a mode ends early.
+- **C4-m3** is a missing caveat in the D-scale README.
+
+SCOPE REVIEWED:
+- The change set:
+  - `evidence/code-review-4/{diff.txt, untracked-diff.txt, diffstat.txt, untracked.txt}`, compared with `evidence/code-review-3/` (same four files).
+  - Every log under `evidence/repair-02/` (r02-a-* to r02-f-*).
+  - `repair-02.md`.
+- Files I read in full in the working tree:
+  - `experiments/harness/exp-e-retrieval-modes.sh`
+  - `experiments/manifests/exp-e-retrieval-modes-v1.json`
+  - `experiments/analysis/summarize-exp-e.py`
+  - `experiments/analysis/e-label-sheets.py`
+  - `experiments/derived/exp-d-scale/{README.md, throughput-steady-state.csv, sources.csv}`
+- Files I read in the relevant parts:
+  - `experiments/analysis/derive-tables.py` (lines 1-110 and 205-365)
+  - every `experiments/derived/*/sources.csv`
+- Real code:
+  - `modules/rag/src/main/scala/scholarchain/rag/cli/BenchmarkCli.scala` (all)
+  - `scripts/run-experiment.sh` (all)
+  - `scripts/lib/common.sh` (SC_ROOT, DRY_RUN, `dry_run_exit`, the git helpers)
+
+### Findings (ranked)
+
+There are no CRITICAL or MAJOR findings.
+
+**C4-m1 (MINOR). The recovery path "rerun the same command, which resumes" is wrong for a run made through `run-experiment.sh`.**
+
+- Location:
+  - `experiments/manifests/exp-e-retrieval-modes-v1.json:19` (`failingModeRule`: "so a rerun of the same command resumes"). This text was already there at code review 3 (`code-review-3/untracked-diff.txt:2118`), and code review 3 missed it.
+  - `docs/agent-runs/phase-15/repair-02.md:169` (RISKS: "The mitigation is to rerun the same command, which resumes, before making the sheets").
+- Why it is wrong:
+  - BenchmarkCli resumes only within the same `--out` (`BenchmarkCli.scala:73-78`).
+  - `run-experiment.sh` creates a new `<stamp>` on every run (`:92`) and makes the previous stamp read-only (`:128`).
+- Failure input: one mode stops at a failed question (`BenchmarkCli.scala:102-115`, exit 1), and the human follows the documented mitigation. Two things can happen:
+  - A rerun through `/experiment` starts a fresh E under a new stamp: the check plus 30 questions again, up to another 2.64 USD and 135 minutes. The first stamp stays as an immutable partial record. Nothing resumes.
+  - Running BenchmarkCli by hand against the old stamp would bypass the gated command, and it would fail anyway on the read-only directory.
+- Impact: there is no safety or data impact. It is a wrong operating instruction in a manifest whose sha256 is frozen into the run record, and it could lead to an unplanned second Bedrock spend.
+- Fix: replace the sentence in `failingModeRule` with: "BenchmarkCli resumes only within one `--out`; a rerun through run-experiment.sh writes a new `<stamp>` and repeats every mode (the earlier stamp is read-only)". Make the same correction to the RISKS text in the record.
+- Owner: experiment-engineer.
+- Must fix before E: no. It is preferred before the commit, because the manifest is immutable afterwards. Ruling 12(j) makes this the last round, so if the human does not grant a text-only exception, the correction goes into a ruling or the Phase 16 write-up instead.
+
+**C4-m2 (MINOR). `e-label-sheets.py` still builds blind sheets from a partial run. Its only signal is GAP lines, and it exits 0.**
+
+- Location:
+  - `experiments/analysis/e-label-sheets.py:170` (`qids` is the union of the question IDs of all modes)
+  - `:185-189` (a missing mode becomes a gap only)
+  - `:212-219` (only the modes present get answer keys)
+  - `:230-233` (it prints GAP lines and exits 0)
+- Failure input: graph-only stops at B07 with exit 1, and the human runs the sheets tool.
+  - For B07 to B10, the answers sheet shows two answers (A and B) instead of three.
+  - The pooled items come from two modes only.
+  - The labeller can see that a mode is missing. Together with the recognisable vector-only abstentions (ruling 12(h)), that narrows which answer belongs to which mode. Ruling 11 and A4 forbid this.
+- Ruling 12(d) changed only the summarizer, so this is unchanged since code review 3 (check 2: "any failed mode reveals the mode through the answer count per question").
+- Fix (small, self-tested):
+  - Make `build()` refuse with exit 1 when the three modes' question-ID sets differ, naming the excluded IDs.
+  - Optionally add `--common-only`, which pools only the intersection, the same set the summarizer scores. Add a self-test for the refusal and for the intersection.
+  - The alternative is the procedure rule in check 4, if its recovery branch is corrected as in C4-m1.
+- Owner: experiment-engineer.
+- Must fix before E: no. The tool reads the raw results only after the run, and the raw layout does not depend on it. It must be in place, or the procedure rule must be ruled, before sheets are built from a run in which any mode did not exit 0.
+
+**C4-m3 (MINOR). The D-scale README sends readers to the steady-state rows, but those rows are still affected by the same rising request rate.**
+
+- Location:
+  - `experiments/analysis/derive-tables.py:339-342`, which generates `experiments/derived/exp-d-scale/README.md:9`: "compare the steady-state rows instead".
+  - Line 5 also says "Compare the steady-state rows".
+- Evidence (from the README itself):
+  - ALB requests per minute keep rising after registration: 2241 at 00:23, then 2324, 2364, 2398, 2422 and 2472 at 00:28.
+  - Neptune CPU stays between 96.97 and 97.65 percent throughout.
+  - So the steady-state difference, 37.32 against 40.23 requests per second (`throughput-steady-state.csv:2-3`), is confounded by the same trend.
+- The agent says this in `repair-02.md:170` ("the difference cannot be attributed to the second task"), but the durable README does not. That repeats the pattern of E-m4.
+- The four caveats that ruling 12(e) requires are all present and correct.
+- Fix: add one generated caveat saying the ALB rate kept rising through the two-task minutes while Neptune stayed at about 97 percent, so the steady-state difference is not attributable to the second task either. Then rerun `derive-tables.py`. Alternatively, carry this in the Phase 16 write-up.
+- Owner: experiment-engineer (generator), or documentation-engineer (write-up only).
+- Must fix before E: no.
+
+### Must fix before the E run
+
+None. Before the commit, the human decides whether to allow a text-only fix for C4-m1. Before any sheets are built, the human decides between the C4-m2 code guard and the corrected procedure rule.
+
+### Per-check answers
+
+#### Check 1: ruling 12 (a) to (f)
+
+**(a) E-M1 is fixed.**
+- `:59` accepts only digits and N from 3 to 10.
+- `:60` `mode_max` gives fused N-2 and the other modes N.
+- `:286` runs the check with fused `--max 2`.
+- `:305-306` run fused `--max N-2`, graph-only `--max N` and vector-only `--max N`.
+- Against the real code:
+  - `BenchmarkCli.scala:78` (`pending = qs.filter(not stored)`) and `:104-105` (`pending.take(max)`): `--max` limits the new pending questions. `:54` refuses `--max 0`, so N >= 3 is the right floor.
+  - The fused check and the fused mode share one benchmark run: `--max` is not an input to the run ID (`:62-72`), as code review 3 verified.
+  - The check passes only on exit 0, which means it answered 2. A fused mode that exits 0 then answers exactly N-2 more. **Harness exit 0 therefore guarantees exactly the first N question IDs in every mode.** Results are written in file order, and a run stops at its first failure (`:102-114`), so the stored set is always a prefix of the file.
+- The stub's resume model matches BenchmarkCli:
+  - Stub `:84-86` counts `questions/*.json` under `--out` and answers min(max, 30 - done).
+  - Its line format is identical to `BenchmarkCli.scala:80-81` ("N questions, D already done, answering M now").
+- Self-test evidence (`r02-a-self-test.log`, 42 PASS, exit 0):
+  - Invocations `fused|2 fused|2 graph-only|4 vector-only|4`, and the "2 already done, answering 2" line.
+  - B01 to B04 in every mode, and maxima `[2,2,4,4]`.
+  - The recorded commands equal `command_text`.
+  - n3 and n10 with the same IDs.
+  - 2, 11, 0 and x are refused before any sbt call.
+- Dry-run (`r02-a-dry-run.log:4-8`) shows `--max 2`, `--max 8`, `--max 10` and `--max 10`. `--max 2` gives "must be 3 to 10" with exit 2.
+
+**(b) E-m2 is fixed.**
+- `:232` `RAW="$SCHOLARCHAIN_EXPERIMENT_DIR"`, and the dry-run placeholder `<stamp>/raw` (`:207`).
+- Manifest `outputLayout`, `rawOutputs` and `analysis` (`:49-51`), and the docstrings at `summarize-exp-e.py:24` and `e-label-sheets.py:22`.
+- Grep: no `raw/raw` remains, except the negative assertion at harness `:138`.
+
+**(c) E-m1 is fixed, and the stub test tells the old and new behaviour apart.**
+- `set -m` at `:269-273` puts the sbt job in its own process group.
+- `on_term` (`:248-261`):
+  1. ignores further TERM and INT;
+  2. sends TERM to `-$CHILD`;
+  3. polls for up to 20 s;
+  4. sends KILL to the group, then waits;
+  5. writes harness.json with 143.
+- The self-test stub spawns `sleep 300` (`:88-91`), and the term case (`:171-192`) asserts that both processes are alive before TERM and gone after it.
+- `r02-a-self-test.log:38-43` passes, "stopped in 0 s". That shows `kill -0` on a group whose only member is a zombie fails on this macOS, so the loop does not burn the 20 s.
+- `r02-a-term-mutation.log`: with the work order 4 behaviour restored, only "its child ... is gone" fails, with exit 1.
+- The whole path stays inside `run-experiment.sh`'s 30 s grace (`:108-110`).
+- Remaining limit: this was proven with a stub, not with the installed sbt runner (see RISKS).
+
+**(d) E-m3 is fixed.**
+- `question_sets` (`:109-113`).
+- Relevance restricted to the intersection (`:138`).
+- `questions_without_items` (`:140-142`, `:156`).
+- Ratings restricted to the intersection (`:172`).
+- `questions_excluded` in the quality rows (`:219`).
+- The "Question sets differ ... excluded: ..." line or the "same N" line (`:211-217`).
+- The new column (`:225`).
+- The self-test expectations check out by hand. With graph-only missing B02:
+  - fused B01: R@5 0.5, R@10 1, RR 1;
+  - vector-only RR 0.5;
+  - excluded `["B02","","B02"]`.
+- Per-mode operational rows still cover each mode's own questions. Ruling 12(d) asks this only of the quality metrics, and the "differ" line flags the difference.
+
+**(e) E-m4 is fixed, with C4-m3 above.**
+- All four required caveats are generated from data (`derive-tables.py:331-351`).
+- The steady-state table is labelled as such (`:305-312`, `:328-330`).
+- Spot checks:
+  - one-task minute: 2239/60 = 37.32; ALB 2241;
+  - two-task minutes: 9655/240 = 40.23; ALB sum 9656;
+  - CPU 97.0 to 98.7 over 00:20 to 00:28;
+  - reference row 35.72 from `20261118T063904Z/raw/summary.json`.
+- `r02-c-derive-match.log`: a fresh build compared with `diff -r` against `experiments/derived` exits 0. The self-test passes 5 of 5, including the byte-identical rebuild.
+
+**(f) E-m5 is fixed.**
+- `repair-02.md:122-123` states 13 for work order 4 and 19 now.
+- I counted 19 `check(...)` calls in `summarize-exp-e.py:266-358` and 19 PASS lines in `r02-b-summarize-self-test.log`.
+- `agent-report.md` is unchanged: the diffstat shows +199 at both code review 3 and code review 4.
+
+#### Check 2: manifest arithmetic and the `run-experiment.sh` gates
+
+**Arithmetic at 30 questions:**
+
+| Quantity | Calculation | Result |
+|---|---|---|
+| Worst case | 4 × 300 s + (2 + 8 + 10 + 10) × 210 s = 7,500 s | 125 min |
+| Margin under maxMinutes 135 | 135 − 125 | 10 min (meets A2's "at least 10" exactly) |
+| Haiku requests | 30 × 2 × 2 × 2 | 240 |
+| Embedding calls | fused 10 + vector-only 10 | 20 |
+| Cost | 30 × (0.040 + 0.048) | 2.64 USD, under the 3 USD budget |
+
+All agree with the manifest (`:11`, `:16`, `:29`, `:30`, `:36`) and with `r02-e-manifest-arithmetic.log`, which takes the maxima from the dry-run.
+
+**`run-experiment.sh` acceptance:**
+- Path `experiments/*.json`, not under results (`:62`).
+- `schemaVersion`, `experimentId` regex (24 characters), command array of strings, maxMinutes 135 within 1 to 240, and `metrics` an array (`:64-68`).
+- `command[0]` under `experiments/`, with no `..` (`:73-74`), and executable (`:75`, passed before `dry_run_exit` at `:77`; `r02-d-run-experiment-dry-run.log` exit 0).
+- After the commit it must also pass:
+  - the manifest tracked and unchanged from HEAD, and `CMD0` tracked (`:84-86`);
+  - `require_clean_tree` (`common.sh:74`, which excludes only `operations/` and `experiments/results/`). So every untracked file under `docs/agent-runs/phase-15/` and `experiments/**` must be committed first, including this review's append.
+
+#### Check 3: no regression since code review 3
+
+- **Labelling safety:**
+  - `e-label-sheets.py` has a docstring-only change. The diff length is identical (416 lines in both untracked diffs), and only `:22` changed.
+  - The templates are still written empty, and the self-test passes 18 of 18 (`r02-b-label-sheets-self-test.log`).
+  - The summarizer still reads only the human's files plus the keys, still refuses label values other than 1, 0 or empty, and keeps its fixture labels in a temporary directory.
+- **Step 1 gate:** unchanged (`:286-301`). It requires exit 0, a "plan sources:" line with MODEL as a whole word, and a scan of the check's stdout and stderr for FALLBACK_RULES, BUDGET_EXHAUSTED and Exception.
+- **Output-format parsing:** unchanged.
+  - The run-ID regex (`:276`) matches `BenchmarkCli.scala:80`.
+  - The "plan sources" line matches `:188`.
+  - The summarizer and sheets paths are as code review 3 verified.
+- **Derived sources and sha256:** every row in `exp-d/`, `exp-f/`, `size-scaling/` and `exp-d-scale/sources.csv` matches code review 3's `untracked-diff.txt` (lines 1473-1482, 1600-1603, 1753-1755 and 1845-1852). The only additions are the two window 2 `summary.json` rows in `exp-d-scale/sources.csv`, read for the reference row, with the same hashes as in `exp-d/`. The three gaps are unchanged (`r02-c-derive-run.log`).
+
+#### Check 4: blinding when a mode stops early
+
+The risk is real; see C4-m2.
+
+The proposed procedure rule has two parts:
+- **"Build the sheets only after the summarizer reports the same N questions in every mode."** This is sufficient to prevent a leak if it is followed, because sheets are then never built from a partial run.
+- **"Otherwise rerun the same command, which resumes."** This is wrong (C4-m1). Through `run-experiment.sh` a rerun is a whole new E under a new stamp, not a resume.
+
+Because harness exit 0 guarantees identical question sets (check 1(a)), the rule can be stated precisely: "build sheets only when run-record `exitCode` is 0 and the summarizer prints 'Question sets: the same 10 question(s) in every mode.'" If a mode ended early, the human has two choices:
+1. Approve a fresh full E run, up to another 2.64 USD.
+2. Have the C4-m2 guard (refuse, or `--common-only`) added, then build sheets over the intersection.
+
+A code change is therefore not needed before the E run. It is needed only if the run is partial and the human wants to label it. I recommend the guard anyway, so that the blinding rule is enforced by the tool rather than by memory.
+
+#### Check 5: scope, commands, and the guard false positive
+
+- **Paths:**
+  - The only new path since code review 3 is `experiments/derived/exp-d-scale/throughput-steady-state.csv`. Everything else that changed is a work order 4 file under `experiments/**` (compare the two `untracked.txt` files).
+  - Tracked diffs outside `experiments/**` are the orchestrator's code review 3 append to `review-report.md` and the unchanged Part B (`infra/` diffstat 3 and 6, the same as at code review 3).
+  - `repair-02.md` is the orchestrator-assembled report.
+  - No `__pycache__` exists under `experiments/` or `load-tests/` (Glob).
+- **Commands:**
+  - COMMANDS RUN (`repair-02.md:129-143`) lists no git, aws, terraform or sbt.
+  - The only script that could call git or aws is `run-experiment.sh --dry-run`. It exits in `dry_run_exit` (`:77`) before `need git aws` (`:83`), and `common.sh` runs no git when it is sourced (SC_ROOT comes from `cd` and `pwd`, `:16`). The log confirms "no AWS, Terraform, or git call was made".
+  - I cannot see the session transcript, so "no git at all" rests on the report and the logs.
+- **Guard false positive:**
+  - The account is accurate. The self-test text contains both `jq` (the `hj` helper) and `env` (`env SCHOLARCHAIN_EMBEDDING_MODEL_ID`). docs/agents.md (Hook limitations) documents that `guard-dangerous.sh` blocks any command that runs jq and contains the word `env`, and says to write such content with the file tools.
+  - The workaround is safe in effect:
+    - the Write tool targeted the session scratchpad, outside the repository;
+    - the splice target was the agent's own `experiments/**` file;
+    - no protected path was involved;
+    - the Bash `python3 -I` step reached the permission prompt, because no allow rule covers it.
+  - It does not follow the documented route literally: Edit on the owned file directly would have kept the write visible to `guard-paths.sh`. This is not a finding. Note it for ruling 12(i)'s Phase 17 item.
+
+### OWNERSHIP CHECK
+
+| Changed path | Owner | Author matches |
+|---|---|---|
+| `experiments/harness/exp-e-retrieval-modes.sh` | experiment-engineer | yes |
+| `experiments/manifests/exp-e-retrieval-modes-v1.json` | experiment-engineer | yes |
+| `experiments/analysis/{summarize-exp-e,e-label-sheets,derive-tables}.py` | experiment-engineer | yes |
+| `experiments/derived/**` (including the new `throughput-steady-state.csv`) | experiment-engineer | yes (generated by `derive-tables.py`) |
+| `docs/agent-runs/phase-15/repair-02.md`, `review-report.md` append | human (orchestrator assembles reports) | yes |
+| `infra/terraform/**` (Part B, unchanged since code review 3) | infra-engineer | yes |
+
+### FLOOR AND FENCE CHECK
+
+- There is no change to `.claude/**`, `CLAUDE.md`, `docs/agents.md`, `.mcp.json`, `build.sbt`, `project/**`, `markTestRun`, the hooks or the reviewer fence.
+- `EXP_E_SBT`, `EXP_E_PS_FIXTURE` and `EXP_E_STUB_*` are self-test seams that only the caller's own environment can set.
+- `set -m` is scoped to one fork.
+- Nothing is widened or weakened.
+
+### EVIDENCE GAPS
+
+- TERM handling has been observed only against a stub. Its effect on the installed sbt runner and its JVM is unobserved.
+- The harness has not yet run against the real BenchmarkCli. I verified the resume semantics statically (check 1(a)).
+- `derive-tables.py`'s self-test has no assertion for the new steady-state or caveat code. Its correctness rests on my spot checks and on the `diff -r` match of a fresh build.
+- "No git" rests on the report and the logs, not on a transcript.
+- The `evidence/repair-02/*.log` files match `.gitignore` `*.log`. They are kept only if the human force-adds them (ruling 12(j)).
+
+FILES CREATED: none
+FILES MODIFIED: none
+COMMANDS RUN: none (no Bash tool)
+
+TEST RESULTS (as supplied, quoted from the logs):
+- `r02-a-self-test.log`: 42 PASS lines, "==> OK self-test", "self-test exit 0"
+- `r02-a-term-mutation.log`: "FAIL term: its child (the JVM's stand-in) is gone after TERM", "mutated self-test exit 1"
+- `r02-b-summarize-self-test.log`: 19 PASS, "summarize self-test exit 0"
+- `r02-b-label-sheets-self-test.log`: 18 PASS, "label-sheets self-test exit 0"
+- `r02-c-derive-self-test.log`: 5 PASS, "derive self-test exit 0"
+
+VALIDATION RESULTS:
+- `r02-a-bash-n.log`: "bash -n exit 0"
+- `r02-a-dry-run.log`: "dry-run exit 0"; "--max must be 3 to 10 (exit 2)"
+- `r02-d-run-experiment-dry-run.log`: "run experiments/harness/exp-e-retrieval-modes.sh --max 10 for at most 135 min", "run-experiment dry-run exit 0"
+- `r02-e-manifest-arithmetic.log`: "ARITHMETIC OK", exit 0
+- `r02-c-derive-run.log`: "3 gap(s)", exit 0
+- `r02-c-derive-match.log`: "diff -r fresh vs experiments/derived exit 0"
+- `r02-f-pycache.log`: "(no paths above = none)"
+
+ASSUMPTIONS:
+- The installed `sbt` is the standard bash runner, which does not `setsid` its JVM. That is the same assumption code review 3 made.
+- Per ruling 11, I did not read `experiments/benchmark/`. "30 questions" comes from the Phase 10 output.
+
+RISKS:
+- **Background process group under a terminal (unverified).** With `set -m`, sbt now runs in a background process group of the human's terminal. stdin is `/dev/null` and stdout and stderr go to files. If the runner or JVM nevertheless touches `/dev/tty`, it would stop on SIGTTIN or SIGTTOU and hang until maxMinutes, without Bedrock spend; TERM and then KILL to the group would still end it. The check step would show this within minutes. The self-test ran without a terminal, so it cannot show it.
+- **Ctrl-C does not stop E.** This is not a regression. `run-experiment.sh` starts the harness with `&`, so the harness inherits SIGINT as ignored, and the script has no INT trap. Ctrl-C ends `run-experiment.sh` but leaves the harness and sbt running without the maxMinutes watchdog, bounded by `--max`. To abort, send TERM to the harness PID. An INT trap in `run-experiment.sh` would be an infra-engineer change for Phase 17.
+- The time margin is exactly 10 minutes, the A2 floor.
+
+MANUAL ACTION REQUIRED:
+- Decide whether C4-m1 gets a text-only fix before the commit, or is recorded in a ruling.
+- Decide between the C4-m2 guard and the corrected procedure rule before any sheets are built from a run that did not exit 0.
+- Commit everything under `experiments/**` and `docs/agent-runs/phase-15/` before E. `require_clean_tree` refuses otherwise.
+
+BLOCKED-ON OWNER: none
+BLOCKED-ON EVIDENCE: none
+NEXT GATE: The human accepts code review 4 and rules on C4-m1 to C4-m3, then commits work order 4 and repair-02 (with `git add -f` for the r02 logs). After a passing check.sh, the human runs E through `scripts/run-experiment.sh --manifest experiments/manifests/exp-e-retrieval-modes-v1.json`. Sheets are built only after the condition in check 4 holds.

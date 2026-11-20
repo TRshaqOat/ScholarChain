@@ -1,0 +1,9 @@
+json ok
+==> STEP dry-run
+    no AWS, Terraform, or git call was made; steps that would run:
+    - manifest experiments/manifests/exp-e-retrieval-modes-v1.json tracked and unchanged from HEAD; clean tree; experiments/harness/exp-e-retrieval-modes.sh tracked
+    - aws sts get-caller-identity; print account and Region
+    - run experiments/harness/exp-e-retrieval-modes.sh --max 10 for at most 135 min
+    - write /Users/achyutpatel/Developer/Cloud/ScholarChain/experiments/results/exp-e-retrieval-modes-v1/<stamp>/run-record.json; make the directory read-only
+==> OK dry-run
+exit=0

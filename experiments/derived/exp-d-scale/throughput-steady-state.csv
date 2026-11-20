@@ -1,0 +1,4 @@
+phase,from,to,seconds,requests,requestsPerSecond,non2xx,p50Ms,p95Ms,p99Ms,neptuneCpuMin,neptuneCpuMax
+steady state: last full one-task minute,2026-11-20T00:23:00.000Z,2026-11-20T00:24:00.000Z,60.0,2239,37.32,0,115.0,645.2,837.3,96.971,96.971
+steady state: full two-task minutes,2026-11-20T00:25:00.000Z,2026-11-20T00:29:00.000Z,240.0,9655,40.23,0,101.7,620.7,793.2,96.988,97.649
+"reference: window 2 run 20261118T063904Z, c=8 level, one warmed task (different run)",2026-11-18T06:49:46.583Z,2026-11-18T06:52:46.846Z,180,6439,35.72,0,119.8,673.5,914.3,,

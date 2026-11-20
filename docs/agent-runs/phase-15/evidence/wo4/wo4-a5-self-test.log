@@ -1,0 +1,15 @@
+wrote /var/folders/s4/bckpjsjs77bbl17cf5_h4fjw0000gn/T/tmpsy1n4jqr/a; 3 gap(s)
+GAP size_scaling: missing source: operations/pipeline-runs/20261116T063500Z-fraction25/run.json
+GAP size_scaling: no raw results under experiments/results/exp-a*; experiment A's run is the deef295 25 percent pipeline record in size-scaling (operations/pipeline-runs/20261117T045335Z-fraction25), not an experiments/results run
+GAP exp_d_scale: metric alb_target_5xx: no datapoints in the interval
+wrote /var/folders/s4/bckpjsjs77bbl17cf5_h4fjw0000gn/T/tmpsy1n4jqr/b; 3 gap(s)
+GAP size_scaling: missing source: operations/pipeline-runs/20261116T063500Z-fraction25/run.json
+GAP size_scaling: no raw results under experiments/results/exp-a*; experiment A's run is the deef295 25 percent pipeline record in size-scaling (operations/pipeline-runs/20261117T045335Z-fraction25), not an experiments/results run
+GAP exp_d_scale: metric alb_target_5xx: no datapoints in the interval
+    PASS two builds are byte-identical
+    PASS every table directory has README.md, sources.csv and gaps.csv
+    PASS every source row has a 64-hex sha256
+    PASS experiment A is reported as a gap
+    PASS a missing source is a gap
+==> OK self-test
+exit=0
