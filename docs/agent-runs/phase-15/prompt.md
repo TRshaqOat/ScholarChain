@@ -119,3 +119,39 @@ The same rules as ruling 4 apply. Each part's report is appended verbatim to doc
    (f) Demonstration items 4, 11 to 15 and 19 to 22 recorded. A9 probes: guard-dangerous.sh blocked all three (recursive S3 delete, EMR terminate, ECS desired count 100) before AWS.
    (g) Evidence archive: scratch/evidence-archive/window-3 (530 files, 12 metric series), uploaded to reports/evidence/window-3/. Cleanup runtime: plan 3352beee, 89 destroyed, 43 kept with reasons (operations/cleanup/cleanup-20261120T041658Z-runtime/); state backup window3-cleanup.
    (h) Open for Phase 16 and 17: explain the Neptune record count (34,052,689 now, 29,054,998 in window 2's second load); service_cpu_target_percent back to 60 (ruling 6); Claude Code CLI updated from 2.1.178 to 2.1.329 on Nov 19 to run the course autograder (tool only, not a project dependency).
+
+## Human ruling 11 and work order 4 (Nov 20, 2026)
+
+11. Work order 4 runs before experiment E (Phase 14 ruling 31; Phase 15 rulings 1 and 6). Session 5 runs Part A, then Part B. Agents make no live call (no aws, no Bedrock or Haiku call, no `--live` run), run no git and no terraform, and never read or write `labels/`, `scratch/stores-live/`, `scratch/er/adjudication-live/` or `experiments/benchmark/`. Python is stdlib only and runs as `python3 -I`; no `py_compile`; no `__pycache__` may be left under `experiments/` or `load-tests/`. Logs go to `scratch/phase-15-logs/wo4-*.log`. Reports are appended verbatim to `docs/agent-runs/phase-15/agent-report.md` under "## Work order 4". Relevance labels and answer ratings are the human's: no tool may produce, suggest, pre-fill or hint at a label or rating. Code review 3 (one round) follows in a separate session; then the human runs E.
+
+## Work order 4
+
+### Part A (experiment-engineer; `experiments/**` only)
+
+A1. Harness `experiments/harness/exp-e-retrieval-modes.sh` (tracked, executable), run through `scripts/run-experiment.sh`:
+- Uses SCHOLARCHAIN_EXPERIMENT_DIR and AWS_PROFILE from run-experiment.sh. Refuses to start (exit 3) if any other sbt or runMain process is running.
+- Step 1 (check): FUSED with `--max 2` into raw/fused/. It continues only if the step 1 output has a "plan sources:" line that includes MODEL and contains none of FALLBACK_RULES, BUDGET_EXHAUSTED or Exception; otherwise it stops with exit 3 and keeps the outputs.
+- Step 2: the modes fused, graph-only and vector-only in that order, one at a time, each with `--max N` (default 10) and `--per-minute 8`, each in its own directory `$SCHOLARCHAIN_EXPERIMENT_DIR/raw/<mode>/` (fused resumes step 1's two questions).
+- The command per mode is exactly this, with `<dir>`, `<N>` and `<mode>` filled in:
+  `env SCHOLARCHAIN_EMBEDDING_MODEL_ID=amazon.titan-embed-text-v2:0 sbt -batch -J-Xmx6g "rag/runMain scholarchain.rag.cli.BenchmarkCli --questions experiments/benchmark/benchmark-questions-v1.csv --path-evidence scratch/stores/work/neptune-check/snapshot=2026-10-03/run=run-ee4ffd21aa20dbe4c078a4be96fe8c9f/expect-benchmark.csv --graph scratch/stores/s3/graph/neptune/snapshot=2026-10-03/run=run-1d6a86491812ff94887270c1ab885e69 --items scratch/stores/s3/curated/dynamodb/snapshot=2026-10-03/run=run-1d6a86491812ff94887270c1ab885e69 --objects scratch/stores/s3 --vectors scratch/stores-live/s3vectors --out <dir> --window-summary-root scratch/runtime/wo8/s3 --window-summary-run run-6fbad498beb0d8f570df67665fb97544 --live --profile $AWS_PROFILE --region us-east-2 --per-minute 8 --max <N> --retrieval-mode <mode>"`
+- Per mode it saves sbt stdout and stderr as .txt (never .log), and writes `raw/harness.json` (start and end times, modes, N, exit codes, benchmark run IDs, the step 1 decision).
+- `--dry-run` prints every command without running sbt. `--self-test` runs the whole flow against a stub runner (an environment variable that replaces sbt) with fixture outputs, including a step 1 stop and a failing mode.
+
+A2. Manifest `experiments/manifests/exp-e-retrieval-modes-v1.json` (experiment-manifest-v1): the harness with N = 10; `limits.maxMinutes` from a worst-case sum with at least 10 minutes of margin, stated in `limits.maxMinutesReason`; limits also record per-minute 8, 10 questions x 3 modes, the local runtime against live Bedrock, and the file-backed vectors (Phase 14 ruling 31); `metrics` empty (local run). It must pass `scripts/run-experiment.sh --manifest ... --dry-run`.
+
+A3. Summarizer `experiments/analysis/summarize-exp-e.py`, read-only on results: per mode, questions, answered, abstained by reason, VERIFIED, PARTIALLY_SUPPORTED and removed claims, latency p50, p95 and max, LLM calls and tokens, embedding calls; CSV and Markdown into `--out`. With `--relevance <csv> --ratings <csv> --keys <dir>` (human files) it adds recall at 5 and 10 (capped at the bundle size; the cap is stated) and MRR per mode, and mean usefulness and clarity per mode; without them it writes "not labelled yet". It never infers relevance. `--self-test` with fixtures.
+
+A4. Labelling sheets `experiments/analysis/e-label-sheets.py`: from the E raw outputs, into an `--out` directory that must not be under `labels/` (the human uses `scratch/e-labelling/`):
+- a relevance sheet: per question, the question and the pooled retrieved items of all three modes, deduplicated and shuffled with a fixed seed, each shown by its readable content (evidence type, facts or text), never by mode, rank, score, verification status or which modes retrieved it;
+- `relevance-template.csv`: question_id, item_key, relevant (left empty; the human writes 1 or 0 and saves it as `labels/relevance-e-v1.csv`);
+- an answers sheet: per question, the three answers under blind keys in shuffled order; `ratings-template.csv`: question_id, answer_key, usefulness, clarity (left empty; 1 to 5);
+- key files (item_key and answer_key to mode, rank and evidence ID) written separately, for the summarizer only.
+- `--self-test` asserts that no template has a filled label or rating and no sheet shows mode, rank or score.
+
+A5. Derived tables `experiments/analysis/derive-tables.py`: from committed raw data only, reproducible CSV and Markdown tables under `experiments/derived/<name>/` for size scaling (`operations/pipeline-runs/*-fraction25|50|100/run.json` and `docs/agent-runs/phase-14/evidence/window-1/p14-window1-results.tsv`), experiment A if its raw results exist under `experiments/results/`, D (`experiments/results/exp-d-query-load-v1/`), D-scale (`experiments/results/exp-d-scale-v1/20261120T001853Z/`, including the scaling timeline) and F (`experiments/results/exp-f-failure-recovery-v1/`). Every table names its source files and their sha256. Missing data is reported as a gap, never filled in. Run it once; its outputs stay under `experiments/derived/`.
+
+A6. Checks: `bash -n`; every `--self-test`; the dry-runs; `scripts/run-experiment.sh --manifest experiments/manifests/exp-e-retrieval-modes-v1.json --dry-run`; no `__pycache__` under `experiments/` or `load-tests/`. If the test-stop hook requires it, one `sbt check` at the end (SPARK_LOCAL_IP=127.0.0.1; never two sbt processes).
+
+### Part B (infra-engineer)
+
+B1. Ruling 6 revert: `service_cpu_target_percent = 60` in `infra/terraform/envs/course/course.tfvars`, and one note in `infra/terraform/README.md` that window 3 ran with 15 as a declared experiment setting (Phase 15 rulings 2 and 6) and the default is 60. No other change and no terraform command; the human's check.sh covers fmt and validate.
