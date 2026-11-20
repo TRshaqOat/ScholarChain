@@ -1,0 +1,7 @@
+rank,source,origin,evidenceId,elementId
+1,fused,graph,ev-2a930931a5777ce36c0d467bfbab6ad3,dynamodb:ResearcherMetricCache/RANKING#maximumCoauthorsOnOnePaper/TOP#all-years
+2,fused,vector,ev-ff36f45e1678c3b9349f424a773ebc05,chunk-80e4aa6911cf711ff183ed85d1fc1310
+3,fused,vector,ev-031542639188e691e72c9070758345e1,chunk-a25952d0f16c6693a96e89ea51d3a342
+4,fused,vector,ev-e679066e01cfdd761e634aae58994f04,chunk-e14bfc21b1b929a62e1a5c6956d091e2
+5,fused,vector,ev-50a73ba6e1700f91bbd589885d23c1cf,chunk-2562e152bb08dd577647292751e02363
+6,fused,vector,ev-50c429ed84ce3c5bb3614941189e1089,chunk-aadaf624577600ea0eb351477733b57b

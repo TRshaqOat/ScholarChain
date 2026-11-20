@@ -1,0 +1,182 @@
+{
+  "schemaVersion": "rag-benchmark-result-v3",
+  "questionId": "B10",
+  "category": "shortest_path",
+  "mode": "LIVE",
+  "retrievalMode": "VECTOR_ONLY",
+  "runtimeRunId": "run-b9ec0cd5d6d58f881177bc70d85308ac",
+  "queryId": "qry-aa7031faa170437b4884fc46edf21a0c",
+  "planSource": "MODEL",
+  "operations": [
+    "SHORTEST_PATH/PAIR"
+  ],
+  "metrics": [],
+  "window": "all-years",
+  "resolutions": [
+    {
+      "name": "Rajkumar Buyya",
+      "decision": "RESOLVED_DOMINANT",
+      "researcherId": "scr:canon-v1.er-v2:bede83f65bedfab8f7fc802f295ee293",
+      "topShare": 0.964516129032258,
+      "candidateCount": 11
+    },
+    {
+      "name": "Rachid Guerraoui",
+      "decision": "RESOLVED_DOMINANT",
+      "researcherId": "scr:canon-v1.er-v2:ba10a85f922c075c3cfdbf5a040332b8",
+      "topShare": 0.9615384615384616,
+      "candidateCount": 11
+    }
+  ],
+  "abstained": true,
+  "abstentionReason": "NO_VERIFIED_CLAIM",
+  "verification": {
+    "verified": 0,
+    "partiallySupported": 0,
+    "unsupported": 0,
+    "conflicting": 4
+  },
+  "claims": 0,
+  "graph": {
+    "reads": 33,
+    "readsByTemplate": {
+      "kv.entity-link": 7,
+      "graph.researcher-institutions": 2,
+      "graph.coauthors": 22,
+      "graph.authored-counts": 2
+    },
+    "rows": 79,
+    "truncatedReads": 2,
+    "evidenceItems": 0,
+    "tokens": 0,
+    "omittedItems": 0,
+    "latencyMs": 0,
+    "pathStatuses": []
+  },
+  "semantic": {
+    "embeddingCalls": 1,
+    "embeddingInputTokens": 0,
+    "indexes": [
+      "researcher-profile-v1",
+      "collaboration-path-v1"
+    ],
+    "hits": 3,
+    "tokens": 1561,
+    "omittedItems": 0,
+    "latencyMs": 198,
+    "outcome": "OK"
+  },
+  "llm": {
+    "attempts": 2,
+    "requests": 2,
+    "attemptsByStage": {
+      "QUERY_PLANNING": 1,
+      "ANSWER_SYNTHESIS": 1
+    },
+    "outcomes": {
+      "OK": 2
+    },
+    "inputTokens": 6175,
+    "outputTokens": 1545,
+    "throttleWaitMs": 12453
+  },
+  "latencyMs": 19435,
+  "stageLatencyMs": {
+    "COLLABORATION_METRICS": 0,
+    "PATH_FINDING": 0,
+    "EVIDENCE_BUILDING": 1,
+    "AUDIT": 0,
+    "QUERY_PLANNING": 7361,
+    "SEMANTIC_CONTEXT": 198,
+    "COMMUNITY_ANALYSIS": 0,
+    "CLAIM_VERIFICATION": 20,
+    "RESEARCHER_RESOLUTION": 24,
+    "ANSWER_SYNTHESIS": 11823
+  },
+  "checks": [
+    {
+      "name": "plan-operations",
+      "outcome": "PASS",
+      "detail": "needs SHORTEST_PATH; plan [SHORTEST_PATH/PAIR]"
+    },
+    {
+      "name": "researcher-names",
+      "outcome": "PASS",
+      "detail": "expected [Rajkumar Buyya; Rachid Guerraoui], extracted [Rachid Guerraoui; Rajkumar Buyya]"
+    },
+    {
+      "name": "resolution",
+      "outcome": "PASS",
+      "detail": "Rajkumar Buyya: expected RESOLVED_DOMINANT, got RESOLVED_DOMINANT; Rachid Guerraoui: expected RESOLVED_DOMINANT, got RESOLVED_DOMINANT"
+    },
+    {
+      "name": "abstention",
+      "outcome": "FAIL",
+      "detail": "expected answer, got abstain (NO_VERIFIED_CLAIM)"
+    },
+    {
+      "name": "claim-evidence",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no claim"
+    },
+    {
+      "name": "verification",
+      "outcome": "PASS",
+      "detail": "abstained with no verified claim kept; counts 0/0/0/4; final claims 0 verified of 0"
+    },
+    {
+      "name": "bundle-budget",
+      "outcome": "PASS",
+      "detail": "graph 0/8000 tokens, semantic 1561/3000, items 3/300"
+    },
+    {
+      "name": "llm-budget",
+      "outcome": "PASS",
+      "detail": "2 attempts, 2 requests (ANSWER_SYNTHESIS 1, QUERY_PLANNING 1), tokens in 6175 out 1545"
+    },
+    {
+      "name": "embedding-budget",
+      "outcome": "PASS",
+      "detail": "1 embedding calls for 2 indexes queried"
+    },
+    {
+      "name": "path-hops",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no path evidence in the bundle"
+    },
+    {
+      "name": "pair-edges",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no bundle edge has stored path evidence"
+    },
+    {
+      "name": "deadline",
+      "outcome": "PASS",
+      "detail": "19435 ms of 180000"
+    }
+  ],
+  "answerHash": "sha256:4703b11fea953728d62c1cb1e2bee1ecf3c2cc4a460fcd57d7e7c4222b736aff",
+  "retrieved": [
+    {
+      "rank": 1,
+      "source": "vector",
+      "origin": "vector",
+      "evidenceId": "ev-a95bdaf45d521d3ebf9d541f24638f37",
+      "elementId": "chunk-ae25f1c807e14bb69764b435bdbaaabf"
+    },
+    {
+      "rank": 2,
+      "source": "vector",
+      "origin": "vector",
+      "evidenceId": "ev-7eeb734c7b746f1ba5b6c0c28ec6a61b",
+      "elementId": "chunk-7dd6e038c70bdd012d1be77adf90bf71"
+    },
+    {
+      "rank": 3,
+      "source": "vector",
+      "origin": "vector",
+      "evidenceId": "ev-2659ac775df17ff2ffcf9a34fe5c6299",
+      "elementId": "chunk-27ce8d60d1ef12d89516fc767d223b31"
+    }
+  ]
+}

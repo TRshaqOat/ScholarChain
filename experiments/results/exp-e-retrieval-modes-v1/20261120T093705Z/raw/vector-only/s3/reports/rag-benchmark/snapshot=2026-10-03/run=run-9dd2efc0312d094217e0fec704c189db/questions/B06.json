@@ -1,0 +1,196 @@
+{
+  "schemaVersion": "rag-benchmark-result-v3",
+  "questionId": "B06",
+  "category": "max_team_size",
+  "mode": "LIVE",
+  "retrievalMode": "VECTOR_ONLY",
+  "runtimeRunId": "run-b9ec0cd5d6d58f881177bc70d85308ac",
+  "queryId": "qry-ef2b29126feee289d0f46a4faa5e93f7",
+  "planSource": "MODEL",
+  "operations": [
+    "MAXIMUM_TEAM_SIZE/RESEARCHER"
+  ],
+  "metrics": [],
+  "window": "2000-2014",
+  "resolutions": [
+    {
+      "name": "Franck Cappello",
+      "decision": "RESOLVED_DOMINANT",
+      "researcherId": "scr:canon-v1.er-v2:84a0a600f9fc8efeb0a87b085e316bfd",
+      "topShare": 0.9391634980988594,
+      "candidateCount": 17
+    }
+  ],
+  "abstained": true,
+  "abstentionReason": "NO_VERIFIED_CLAIM",
+  "verification": {
+    "verified": 0,
+    "partiallySupported": 0,
+    "unsupported": 1,
+    "conflicting": 0
+  },
+  "claims": 0,
+  "graph": {
+    "reads": 20,
+    "readsByTemplate": {
+      "kv.entity-link": 1,
+      "graph.researcher-institutions": 1,
+      "graph.coauthors": 17,
+      "graph.authored-counts": 1
+    },
+    "rows": 63,
+    "truncatedReads": 2,
+    "evidenceItems": 0,
+    "tokens": 0,
+    "omittedItems": 0,
+    "latencyMs": 0,
+    "pathStatuses": []
+  },
+  "semantic": {
+    "embeddingCalls": 1,
+    "embeddingInputTokens": 0,
+    "indexes": [
+      "researcher-profile-v1",
+      "paper-abstract-v1"
+    ],
+    "hits": 6,
+    "tokens": 1680,
+    "omittedItems": 0,
+    "latencyMs": 128,
+    "outcome": "OK"
+  },
+  "llm": {
+    "attempts": 2,
+    "requests": 2,
+    "attemptsByStage": {
+      "QUERY_PLANNING": 1,
+      "ANSWER_SYNTHESIS": 1
+    },
+    "outcomes": {
+      "OK": 2
+    },
+    "inputTokens": 5997,
+    "outputTokens": 564,
+    "throttleWaitMs": 10696
+  },
+  "latencyMs": 14735,
+  "stageLatencyMs": {
+    "COLLABORATION_METRICS": 0,
+    "PATH_FINDING": 0,
+    "EVIDENCE_BUILDING": 1,
+    "AUDIT": 0,
+    "QUERY_PLANNING": 5519,
+    "SEMANTIC_CONTEXT": 128,
+    "COMMUNITY_ANALYSIS": 0,
+    "CLAIM_VERIFICATION": 9,
+    "RESEARCHER_RESOLUTION": 29,
+    "ANSWER_SYNTHESIS": 9038
+  },
+  "checks": [
+    {
+      "name": "plan-operations",
+      "outcome": "PASS",
+      "detail": "needs MAXIMUM_TEAM_SIZE; plan [MAXIMUM_TEAM_SIZE/RESEARCHER]"
+    },
+    {
+      "name": "researcher-names",
+      "outcome": "PASS",
+      "detail": "expected [Franck Cappello], extracted [Franck Cappello]"
+    },
+    {
+      "name": "resolution",
+      "outcome": "PASS",
+      "detail": "Franck Cappello: expected RESOLVED_DOMINANT, got RESOLVED_DOMINANT"
+    },
+    {
+      "name": "abstention",
+      "outcome": "FAIL",
+      "detail": "expected answer, got abstain (NO_VERIFIED_CLAIM)"
+    },
+    {
+      "name": "claim-evidence",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no claim"
+    },
+    {
+      "name": "verification",
+      "outcome": "PASS",
+      "detail": "abstained with no verified claim kept; counts 0/0/1/0; final claims 0 verified of 0"
+    },
+    {
+      "name": "bundle-budget",
+      "outcome": "PASS",
+      "detail": "graph 0/8000 tokens, semantic 1680/3000, items 6/300"
+    },
+    {
+      "name": "llm-budget",
+      "outcome": "PASS",
+      "detail": "2 attempts, 2 requests (ANSWER_SYNTHESIS 1, QUERY_PLANNING 1), tokens in 5997 out 564"
+    },
+    {
+      "name": "embedding-budget",
+      "outcome": "PASS",
+      "detail": "1 embedding calls for 2 indexes queried"
+    },
+    {
+      "name": "path-hops",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no path evidence in the bundle"
+    },
+    {
+      "name": "pair-edges",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no bundle edge has stored path evidence"
+    },
+    {
+      "name": "deadline",
+      "outcome": "PASS",
+      "detail": "14735 ms of 180000"
+    }
+  ],
+  "answerHash": "sha256:ffd1617d5aec226d02e6c34f4416144b71f4b39d263bcfb4d2ea4e952694d70b",
+  "retrieved": [
+    {
+      "rank": 1,
+      "source": "vector",
+      "origin": "vector",
+      "evidenceId": "ev-7751a6496901e13105cec85e28464970",
+      "elementId": "chunk-f2314ca1d0645470a3aae5f8a2629cd3"
+    },
+    {
+      "rank": 2,
+      "source": "vector",
+      "origin": "vector",
+      "evidenceId": "ev-15d7d69c1b1b2f904c352cef4082d17a",
+      "elementId": "chunk-74ca9c123ef6b3c7f0ac3454585ba762"
+    },
+    {
+      "rank": 3,
+      "source": "vector",
+      "origin": "vector",
+      "evidenceId": "ev-e6d819f3d88a8e0fbe24bcb53694f56f",
+      "elementId": "chunk-23db18b85084d6f227d8a1ebfe2c3e19"
+    },
+    {
+      "rank": 4,
+      "source": "vector",
+      "origin": "vector",
+      "evidenceId": "ev-6a894d3e8f1b15ee8aef761908e514c3",
+      "elementId": "chunk-0d6b70af6076ea2d204461e2d78dc2a9"
+    },
+    {
+      "rank": 5,
+      "source": "vector",
+      "origin": "vector",
+      "evidenceId": "ev-6f6de0b546780cd6b3d949e583f4cf9a",
+      "elementId": "chunk-cb5a8c4c1ea80770c5b33e22c8088425"
+    },
+    {
+      "rank": 6,
+      "source": "vector",
+      "origin": "vector",
+      "evidenceId": "ev-431bee4ad76a1d44d6e0396c6f7824b1",
+      "elementId": "chunk-9acd1a8e09e3d1c2c647a0d5f14f203a"
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+rank,source,origin,evidenceId,elementId
+1,graph,graph,ev-6128f267040ccebc39d52a341f6a706a,dynamodb:EntityLinkCache/name-v1:ian t foster/scr:canon-v1.er-v2:8c41e7402418b6a74ad89d1b987f6f44
+2,graph,graph,ev-5f5a0e33242cc34e8a1bf7b3014839e2,dynamodb:ResearcherMetricCache/scr:canon-v1.er-v2:8c41e7402418b6a74ad89d1b987f6f44/WINDOW#all-years
+3,graph,graph,ev-c8640230cb1a9e85af018d36173645c5,neptune:dblp:journals/concurrency/MoreauLA08

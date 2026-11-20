@@ -1,0 +1,357 @@
+{
+  "schemaVersion": "rag-benchmark-result-v3",
+  "questionId": "B07",
+  "category": "direct_collaboration",
+  "mode": "LIVE",
+  "retrievalMode": "GRAPH_ONLY",
+  "runtimeRunId": "run-b390fb8b729c40c5b9cb9b9f86c0aeac",
+  "queryId": "qry-b881568100f14e002044b0cf45930801",
+  "planSource": "MODEL",
+  "operations": [
+    "DIRECT_COAUTHORS/PAIR"
+  ],
+  "metrics": [],
+  "window": "all-years",
+  "resolutions": [
+    {
+      "name": "Jack J. Dongarra",
+      "decision": "RESOLVED_DOMINANT",
+      "researcherId": "scr:canon-v1.er-v2:6de4012bbe8608f1d49d18cf9a40a763",
+      "topShare": 0.9575596816976127,
+      "candidateCount": 17
+    },
+    {
+      "name": "Yves Robert",
+      "decision": "RESOLVED_DOMINANT",
+      "researcherId": "scr:canon-v1.er-v2:da6e3bdff14745638f3f5425f0133388",
+      "topShare": 0.9774774774774775,
+      "candidateCount": 6
+    }
+  ],
+  "abstained": false,
+  "abstentionReason": null,
+  "verification": {
+    "verified": 1,
+    "partiallySupported": 0,
+    "unsupported": 0,
+    "conflicting": 0
+  },
+  "claims": 1,
+  "graph": {
+    "reads": 33,
+    "readsByTemplate": {
+      "graph.coauthor-edge": 1,
+      "kv.metrics.window": 2,
+      "graph.vertices": 1,
+      "graph.authored-counts": 2,
+      "graph.coauthors": 23,
+      "kv.entity-link": 2,
+      "graph.researcher-institutions": 2
+    },
+    "rows": 104,
+    "truncatedReads": 2,
+    "evidenceItems": 28,
+    "tokens": 2913,
+    "omittedItems": 0,
+    "latencyMs": 8,
+    "pathStatuses": []
+  },
+  "semantic": {
+    "embeddingCalls": 0,
+    "embeddingInputTokens": 0,
+    "indexes": [],
+    "hits": 0,
+    "tokens": 0,
+    "omittedItems": 0,
+    "latencyMs": 0,
+    "outcome": "SKIPPED"
+  },
+  "llm": {
+    "attempts": 2,
+    "requests": 2,
+    "attemptsByStage": {
+      "QUERY_PLANNING": 1,
+      "ANSWER_SYNTHESIS": 1
+    },
+    "outcomes": {
+      "OK": 2
+    },
+    "inputTokens": 8627,
+    "outputTokens": 620,
+    "throttleWaitMs": 11317
+  },
+  "latencyMs": 14903,
+  "stageLatencyMs": {
+    "COLLABORATION_METRICS": 2,
+    "PATH_FINDING": 6,
+    "EVIDENCE_BUILDING": 2,
+    "AUDIT": 0,
+    "QUERY_PLANNING": 5926,
+    "SEMANTIC_CONTEXT": 0,
+    "COMMUNITY_ANALYSIS": 0,
+    "CLAIM_VERIFICATION": 14,
+    "RESEARCHER_RESOLUTION": 25,
+    "ANSWER_SYNTHESIS": 8912
+  },
+  "checks": [
+    {
+      "name": "plan-operations",
+      "outcome": "PASS",
+      "detail": "needs DIRECT_COAUTHORS/PAIR; plan [DIRECT_COAUTHORS/PAIR]"
+    },
+    {
+      "name": "researcher-names",
+      "outcome": "PASS",
+      "detail": "expected [Jack J. Dongarra; Yves Robert], extracted [Jack J. Dongarra; Yves Robert]"
+    },
+    {
+      "name": "resolution",
+      "outcome": "PASS",
+      "detail": "Jack J. Dongarra: expected RESOLVED_DOMINANT, got RESOLVED_DOMINANT; Yves Robert: expected RESOLVED_DOMINANT, got RESOLVED_DOMINANT"
+    },
+    {
+      "name": "abstention",
+      "outcome": "PASS",
+      "detail": "expected answer, got answer"
+    },
+    {
+      "name": "claim-evidence",
+      "outcome": "PASS",
+      "detail": "1 claims cite bundle IDs; 1 material claims each cite a graph item; 0 descriptive"
+    },
+    {
+      "name": "verification",
+      "outcome": "PASS",
+      "detail": "answer has a verified claim; counts 1/0/0/0; final claims 1 verified of 1"
+    },
+    {
+      "name": "bundle-budget",
+      "outcome": "PASS",
+      "detail": "graph 2913/8000 tokens, semantic 0/3000, items 28/300"
+    },
+    {
+      "name": "llm-budget",
+      "outcome": "PASS",
+      "detail": "2 attempts, 2 requests (ANSWER_SYNTHESIS 1, QUERY_PLANNING 1), tokens in 8627 out 620"
+    },
+    {
+      "name": "embedding-budget",
+      "outcome": "PASS",
+      "detail": "0 embedding calls for 0 indexes queried"
+    },
+    {
+      "name": "path-hops",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no path evidence in the bundle"
+    },
+    {
+      "name": "pair-edges",
+      "outcome": "PASS",
+      "detail": "1 of 1 edges equal the stored hop"
+    },
+    {
+      "name": "deadline",
+      "outcome": "PASS",
+      "detail": "14903 ms of 180000"
+    }
+  ],
+  "answerHash": "sha256:b5e01ff0bc2daee77583107cc0fc54f989808789b3b9a11ef4eb9aabca6f32b7",
+  "retrieved": [
+    {
+      "rank": 1,
+      "source": "graph",
+      "origin": "graph",
+      "evidenceId": "ev-f77b0f57600fbe72e769edddb227902e",
+      "elementId": "dynamodb:EntityLinkCache/name-v1:jack j dongarra/scr:canon-v1.er-v2:6de4012bbe8608f1d49d18cf9a40a763"
+    },
+    {
+      "rank": 2,
+      "source": "graph",
+      "origin": "graph",
+      "evidenceId": "ev-c6affb275b51502c8c5032dd61502c75",
+      "elementId": "dynamodb:EntityLinkCache/name-v1:yves robert/scr:canon-v1.er-v2:da6e3bdff14745638f3f5425f0133388"
+    },
+    {
+      "rank": 3,
+      "source": "graph",
+      "origin": "graph",
+      "evidenceId": "ev-4c23f4fcc44cc84b992719b9758dae7d",
+      "elementId": "dynamodb:ResearcherMetricCache/scr:canon-v1.er-v2:6de4012bbe8608f1d49d18cf9a40a763/WINDOW#all-years"
+    },
+    {
+      "rank": 4,
+      "source": "graph",
+      "origin": "graph",
+      "evidenceId": "ev-24b7c9d74d0da36271ade2533a1336d2",
+      "elementId": "dynamodb:ResearcherMetricCache/scr:canon-v1.er-v2:da6e3bdff14745638f3f5425f0133388/WINDOW#all-years"
+    },
+    {
+      "rank": 5,
+      "source": "graph",
+      "origin": "graph",
+      "evidenceId": "ev-927665f3bbac87eb60685e50cfeb8f9b",
+      "elementId": "neptune:cae-94049b45586a9d41217209d71135c559"
+    },
+    {
+      "rank": 6,
+      "source": "graph",
+      "origin": "graph",
+      "evidenceId": "ev-9db9fdae9969369ab8b7c85e418e697e",
+      "elementId": "neptune:dblp:conf/ipps/RobertDDMSSV11"
+    },
+    {
+      "rank": 7,
+      "source": "graph",
+      "origin": "graph",
+      "evidenceId": "ev-9edfbd8136ecefa015ada3457f655f52",
+      "elementId": "neptune:dblp:journals/jpdc/FavergeHLLRD15"
+    },
+    {
+      "rank": 8,
+      "source": "graph",
+      "origin": "graph",
+      "evidenceId": "ev-481dea864a37257a39b80f710b81ce72",
+      "elementId": "neptune:dblp:conf/ipps/HeraultRBAFBD18"
+    },
+    {
+      "rank": 9,
+      "source": "graph",
+      "origin": "graph",
+      "evidenceId": "ev-413a0b4516f445ef97c5d12561733b61",
+      "elementId": "neptune:dblp:conf/europar/AupyFRKLD13"
+    },
+    {
+      "rank": 10,
+      "source": "graph",
+      "origin": "graph",
+      "evidenceId": "ev-bc6e0fba0974fea5640f422e54d9446d",
+      "elementId": "neptune:dblp:conf/ipps/BosilcaBHFRD21"
+    },
+    {
+      "rank": 11,
+      "source": "graph",
+      "origin": "graph",
+      "evidenceId": "ev-28351f4156cf3b1e54e7ca693c537a11",
+      "elementId": "neptune:dblp:conf/ppopp/DongarraPRV08"
+    },
+    {
+      "rank": 12,
+      "source": "graph",
+      "origin": "graph",
+      "evidenceId": "ev-818204c8036d66e8c5ae3c06d3eb7cd9",
+      "elementId": "neptune:dblp:conf/ipps/BosilcaBHRD14"
+    },
+    {
+      "rank": 13,
+      "source": "graph",
+      "origin": "graph",
+      "evidenceId": "ev-5174bf9b80ba18ebd3e4d3ca6ae7aec8",
+      "elementId": "neptune:dblp:conf/ipps/FavergeHLLRD14"
+    },
+    {
+      "rank": 14,
+      "source": "graph",
+      "origin": "graph",
+      "evidenceId": "ev-4336ab0042ebd62203b4b2382c81ac60",
+      "elementId": "neptune:dblp:conf/sc/HeraultRBD19"
+    },
+    {
+      "rank": 15,
+      "source": "graph",
+      "origin": "graph",
+      "evidenceId": "ev-1fd8c12e8eec6d457a75d559dea2bd08",
+      "elementId": "neptune:dblp:conf/ipps/DongarraHR13"
+    },
+    {
+      "rank": 16,
+      "source": "graph",
+      "origin": "graph",
+      "evidenceId": "ev-e133105bcfb780604e0a66ea1559e7f6",
+      "elementId": "neptune:dblp:conf/ipps/DongarraPRSV07"
+    },
+    {
+      "rank": 17,
+      "source": "graph",
+      "origin": "graph",
+      "evidenceId": "ev-643bbd0c16b71d37c57e7b3182f0633d",
+      "elementId": "neptune:dblp:conf/ipps/FavergeLRD17"
+    },
+    {
+      "rank": 18,
+      "source": "graph",
+      "origin": "graph",
+      "evidenceId": "ev-a610be714ddb39547bf66e66c1cd1cbf",
+      "elementId": "neptune:dblp:journals/pc/FevreHRBHBD19"
+    },
+    {
+      "rank": 19,
+      "source": "graph",
+      "origin": "graph",
+      "evidenceId": "ev-2e7b5dd641f01764bb5b57c0d854a865",
+      "elementId": "neptune:dblp:journals/concurrency/BosilcaBBCDGHRVZ14"
+    },
+    {
+      "rank": 20,
+      "source": "graph",
+      "origin": "graph",
+      "evidenceId": "ev-4f5c8e06ae5c7cf06c203717b1549a0f",
+      "elementId": "neptune:dblp:journals/pc/HerrmannBHMRD16"
+    },
+    {
+      "rank": 21,
+      "source": "graph",
+      "origin": "graph",
+      "evidenceId": "ev-058824e1589734ad5b1e75d55d273724",
+      "elementId": "neptune:dblp:conf/ipps/HeraultRBHLVD21"
+    },
+    {
+      "rank": 22,
+      "source": "graph",
+      "origin": "graph",
+      "evidenceId": "ev-b035975c206dee309b303a281d54dff4",
+      "elementId": "neptune:dblp:conf/europar/FevreBBHHRD18"
+    },
+    {
+      "rank": 23,
+      "source": "graph",
+      "origin": "graph",
+      "evidenceId": "ev-ea24ee741fa9cbd80e2f7f56e32649d1",
+      "elementId": "neptune:dblp:conf/sc/BosilcaBGHRSD16"
+    },
+    {
+      "rank": 24,
+      "source": "graph",
+      "origin": "graph",
+      "evidenceId": "ev-17899f5018f6c560493489a5c4325822",
+      "elementId": "neptune:dblp:conf/ipps/DongarraFHLR12"
+    },
+    {
+      "rank": 25,
+      "source": "graph",
+      "origin": "graph",
+      "evidenceId": "ev-b9566bd5159dce6e3806370162846e19",
+      "elementId": "neptune:dblp:journals/ijhpca/BosilcaBGHRSD18"
+    },
+    {
+      "rank": 26,
+      "source": "graph",
+      "origin": "graph",
+      "evidenceId": "ev-dfc3f8faa9d65f7e8bf6d69c8c096a9b",
+      "elementId": "neptune:dblp:conf/europar/BouteillerCDGHR13"
+    },
+    {
+      "rank": 27,
+      "source": "graph",
+      "origin": "graph",
+      "evidenceId": "ev-1f3af39608934514ef615be4739a9e80",
+      "elementId": "neptune:dblp:conf/sc/AupyBHRD13"
+    },
+    {
+      "rank": 28,
+      "source": "graph",
+      "origin": "graph",
+      "evidenceId": "ev-b413504597b07d9dfef0c605e3fb688c",
+      "elementId": "neptune:dblp:journals/pc/DongarraFHJLR13"
+    }
+  ]
+}

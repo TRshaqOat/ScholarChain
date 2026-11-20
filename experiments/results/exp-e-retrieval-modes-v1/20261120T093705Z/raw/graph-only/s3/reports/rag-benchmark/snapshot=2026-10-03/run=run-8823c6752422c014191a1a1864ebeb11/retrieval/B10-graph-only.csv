@@ -1,0 +1,14 @@
+rank,source,origin,evidenceId,elementId
+1,graph,graph,ev-436bf9ecc38d5b21aa16fa7b8b3a97ed,dynamodb:EntityLinkCache/name-v1:rajkumar buyya/scr:canon-v1.er-v2:bede83f65bedfab8f7fc802f295ee293
+2,graph,graph,ev-e99f17432559f4dc52f420553c1c4291,dynamodb:EntityLinkCache/name-v1:rachid guerraoui/scr:canon-v1.er-v2:ba10a85f922c075c3cfdbf5a040332b8
+3,graph,graph,ev-6f7925e0193b944e31b5c50bdc18b53c,dynamodb:ResearcherMetricCache/scr:canon-v1.er-v2:bede83f65bedfab8f7fc802f295ee293/WINDOW#all-years
+4,graph,graph,ev-7fc78380c0448f323fe1e6f8870fee49,dynamodb:ResearcherMetricCache/scr:canon-v1.er-v2:ba10a85f922c075c3cfdbf5a040332b8/WINDOW#all-years
+5,graph,graph,ev-674f276aa89a5708c9793e59e3673817,runtime:graph.shortest-path
+6,graph,graph,ev-35e25066aeb0e50250c1f06b1e10e6a4,neptune:cae-d9861ae25d8627ccb7de118f6d3228b6
+7,graph,graph,ev-51ddd540fc0f574b0e5cc4ea6751a813,neptune:cae-05ac04e43d13eeb9fcdf2dffc24c67f8
+8,graph,graph,ev-2806f063f2fb94bcd79f8afe919e3c78,neptune:cae-79a866678d54d577129a2dcafc1433a8
+9,graph,graph,ev-99f7e5de2bb7886d47d2afd42aaa7d54,neptune:dblp:journals/fgcs/BrandicB12
+10,graph,graph,ev-c29261543dacc6e04c54913ac915d771,neptune:dblp:journals/fgcs/BuyyaYVBB09
+11,graph,graph,ev-db7645fd213c9d9b922cd23781771508,neptune:dblp:journals/fgcs/EmeakarohaNCBBR12
+12,graph,graph,ev-7107b7effb8b0b831fb750650d56666c,neptune:dblp:conf/europar/ElmrothFABDR12
+13,graph,graph,ev-4878cd9dc68a323aba0ee4a0f1a3e021,neptune:dblp:conf/asplos/DidonaDKGNR16

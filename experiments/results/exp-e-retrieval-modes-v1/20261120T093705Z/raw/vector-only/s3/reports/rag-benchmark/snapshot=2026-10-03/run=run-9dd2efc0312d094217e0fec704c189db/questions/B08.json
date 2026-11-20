@@ -1,0 +1,182 @@
+{
+  "schemaVersion": "rag-benchmark-result-v3",
+  "questionId": "B08",
+  "category": "direct_collaboration",
+  "mode": "LIVE",
+  "retrievalMode": "VECTOR_ONLY",
+  "runtimeRunId": "run-b9ec0cd5d6d58f881177bc70d85308ac",
+  "queryId": "qry-ade5ae163eec58958cd912b7db2113bd",
+  "planSource": "MODEL",
+  "operations": [
+    "SHORTEST_PATH/PAIR"
+  ],
+  "metrics": [],
+  "window": "all-years",
+  "resolutions": [
+    {
+      "name": "Rajkumar Buyya",
+      "decision": "RESOLVED_DOMINANT",
+      "researcherId": "scr:canon-v1.er-v2:bede83f65bedfab8f7fc802f295ee293",
+      "topShare": 0.964516129032258,
+      "candidateCount": 11
+    },
+    {
+      "name": "Albert Y. Zomaya",
+      "decision": "RESOLVED_DOMINANT",
+      "researcherId": "scr:canon-v1.er-v2:9c35232fa374c48fdc67309bfedd5f7c",
+      "topShare": 0.9901639344262295,
+      "candidateCount": 4
+    }
+  ],
+  "abstained": true,
+  "abstentionReason": "NO_VERIFIED_CLAIM",
+  "verification": {
+    "verified": 0,
+    "partiallySupported": 0,
+    "unsupported": 0,
+    "conflicting": 1
+  },
+  "claims": 0,
+  "graph": {
+    "reads": 21,
+    "readsByTemplate": {
+      "kv.entity-link": 2,
+      "graph.researcher-institutions": 2,
+      "graph.coauthors": 15,
+      "graph.authored-counts": 2
+    },
+    "rows": 55,
+    "truncatedReads": 2,
+    "evidenceItems": 0,
+    "tokens": 0,
+    "omittedItems": 0,
+    "latencyMs": 0,
+    "pathStatuses": []
+  },
+  "semantic": {
+    "embeddingCalls": 1,
+    "embeddingInputTokens": 0,
+    "indexes": [
+      "researcher-profile-v1",
+      "collaboration-path-v1"
+    ],
+    "hits": 3,
+    "tokens": 1548,
+    "omittedItems": 0,
+    "latencyMs": 271,
+    "outcome": "OK"
+  },
+  "llm": {
+    "attempts": 2,
+    "requests": 2,
+    "attemptsByStage": {
+      "QUERY_PLANNING": 1,
+      "ANSWER_SYNTHESIS": 1
+    },
+    "outcomes": {
+      "OK": 2
+    },
+    "inputTokens": 6068,
+    "outputTokens": 576,
+    "throttleWaitMs": 10112
+  },
+  "latencyMs": 13846,
+  "stageLatencyMs": {
+    "COLLABORATION_METRICS": 0,
+    "PATH_FINDING": 0,
+    "EVIDENCE_BUILDING": 0,
+    "AUDIT": 0,
+    "QUERY_PLANNING": 5168,
+    "SEMANTIC_CONTEXT": 271,
+    "COMMUNITY_ANALYSIS": 0,
+    "CLAIM_VERIFICATION": 6,
+    "RESEARCHER_RESOLUTION": 43,
+    "ANSWER_SYNTHESIS": 8350
+  },
+  "checks": [
+    {
+      "name": "plan-operations",
+      "outcome": "FAIL",
+      "detail": "needs DIRECT_COAUTHORS/PAIR; plan [SHORTEST_PATH/PAIR]"
+    },
+    {
+      "name": "researcher-names",
+      "outcome": "PASS",
+      "detail": "expected [Rajkumar Buyya; Albert Y. Zomaya], extracted [Albert Y. Zomaya; Rajkumar Buyya]"
+    },
+    {
+      "name": "resolution",
+      "outcome": "PASS",
+      "detail": "Rajkumar Buyya: expected RESOLVED_DOMINANT, got RESOLVED_DOMINANT; Albert Y. Zomaya: expected RESOLVED_DOMINANT, got RESOLVED_DOMINANT"
+    },
+    {
+      "name": "abstention",
+      "outcome": "FAIL",
+      "detail": "expected answer, got abstain (NO_VERIFIED_CLAIM)"
+    },
+    {
+      "name": "claim-evidence",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no claim"
+    },
+    {
+      "name": "verification",
+      "outcome": "PASS",
+      "detail": "abstained with no verified claim kept; counts 0/0/0/1; final claims 0 verified of 0"
+    },
+    {
+      "name": "bundle-budget",
+      "outcome": "PASS",
+      "detail": "graph 0/8000 tokens, semantic 1548/3000, items 3/300"
+    },
+    {
+      "name": "llm-budget",
+      "outcome": "PASS",
+      "detail": "2 attempts, 2 requests (ANSWER_SYNTHESIS 1, QUERY_PLANNING 1), tokens in 6068 out 576"
+    },
+    {
+      "name": "embedding-budget",
+      "outcome": "PASS",
+      "detail": "1 embedding calls for 2 indexes queried"
+    },
+    {
+      "name": "path-hops",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no path evidence in the bundle"
+    },
+    {
+      "name": "pair-edges",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no bundle edge has stored path evidence"
+    },
+    {
+      "name": "deadline",
+      "outcome": "PASS",
+      "detail": "13846 ms of 180000"
+    }
+  ],
+  "answerHash": "sha256:db26d9dc84715188623a41ca51ba64f2b22ca74b863a2203d05b4334487ee996",
+  "retrieved": [
+    {
+      "rank": 1,
+      "source": "vector",
+      "origin": "vector",
+      "evidenceId": "ev-06ec98d44a52848c71ece2eae58333cf",
+      "elementId": "chunk-a1d5cc667381fb19e19395de420a0692"
+    },
+    {
+      "rank": 2,
+      "source": "vector",
+      "origin": "vector",
+      "evidenceId": "ev-07200489ef33808b1da4d09941de45e3",
+      "elementId": "chunk-afc28e5d0c31d66e7bbe2b01fb7efc57"
+    },
+    {
+      "rank": 3,
+      "source": "vector",
+      "origin": "vector",
+      "evidenceId": "ev-7eeb734c7b746f1ba5b6c0c28ec6a61b",
+      "elementId": "chunk-7dd6e038c70bdd012d1be77adf90bf71"
+    }
+  ]
+}

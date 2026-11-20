@@ -1,0 +1,573 @@
+{
+  "schemaVersion": "rag-answer-v1",
+  "response": {
+    "schemaVersion": "answer-response-v1",
+    "queryId": "qry-400a1ec019a1d206874ff3362f78ba0d",
+    "summary": "Rajkumar Buyya and Albert Y. Zomaya have 3 joint publications. They first collaborated in 2020.",
+    "claims": [
+      {
+        "schemaVersion": "answer-claim-v1",
+        "claimId": "claim-1",
+        "text": "Rajkumar Buyya and Albert Y. Zomaya have 3 joint publications.",
+        "evidenceIds": [
+          "ev-4e0786f34c891f5d61c8a005339b10d5"
+        ],
+        "verificationStatus": "VERIFIED",
+        "uncertainty": null,
+        "provenance": {
+          "schemaVersion": "provenance-v1",
+          "sourceDataset": "RUNTIME",
+          "sourceRecordId": "qry-400a1ec019a1d206874ff3362f78ba0d",
+          "snapshot": "2026-10-03",
+          "runId": "run-b390fb8b729c40c5b9cb9b9f86c0aeac",
+          "policyVersion": null,
+          "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+        }
+      },
+      {
+        "schemaVersion": "answer-claim-v1",
+        "claimId": "claim-2",
+        "text": "Rajkumar Buyya and Albert Y. Zomaya first collaborated in 2020.",
+        "evidenceIds": [
+          "ev-4e0786f34c891f5d61c8a005339b10d5"
+        ],
+        "verificationStatus": "VERIFIED",
+        "uncertainty": null,
+        "provenance": {
+          "schemaVersion": "provenance-v1",
+          "sourceDataset": "RUNTIME",
+          "sourceRecordId": "qry-400a1ec019a1d206874ff3362f78ba0d",
+          "snapshot": "2026-10-03",
+          "runId": "run-b390fb8b729c40c5b9cb9b9f86c0aeac",
+          "policyVersion": null,
+          "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+        }
+      }
+    ],
+    "abstained": false,
+    "uncertainty": "Rajkumar Buyya was linked to scr:canon-v1.er-v2:bede83f65bedfab8f7fc802f295ee293 by dominant-name-v1: 0.9645 of 310 works among 11 researchers with this display name. Albert Y. Zomaya was linked to scr:canon-v1.er-v2:9c35232fa374c48fdc67309bfedd5f7c by dominant-name-v1: 0.9902 of 305 works among 4 researchers with this display name. Rajkumar Buyya identity resolved with 0.9645 confidence among 11 researchers with this display name. Albert Y. Zomaya identity resolved with 0.9902 confidence among 4 researchers with this display name.",
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "RUNTIME",
+      "sourceRecordId": "qry-400a1ec019a1d206874ff3362f78ba0d",
+      "snapshot": "2026-10-03",
+      "runId": "run-b390fb8b729c40c5b9cb9b9f86c0aeac",
+      "policyVersion": "fusion-v1",
+      "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+    }
+  },
+  "plan": {
+    "schemaVersion": "rag-query-plan-v1",
+    "queryId": "qry-400a1ec019a1d206874ff3362f78ba0d",
+    "operations": [
+      {
+        "operation": "SHORTEST_PATH",
+        "scope": "PAIR",
+        "researchers": [
+          0,
+          1
+        ],
+        "metric": null,
+        "topN": null
+      }
+    ],
+    "researcherNames": [
+      {
+        "name": "Rajkumar Buyya",
+        "offset": 25
+      },
+      {
+        "name": "Albert Y. Zomaya",
+        "offset": 44
+      }
+    ],
+    "metrics": [],
+    "window": {
+      "requested": {
+        "kind": "DEFAULT",
+        "name": null,
+        "yearFrom": null,
+        "yearTo": null
+      },
+      "window": "all-years",
+      "startYear": 2000,
+      "endYear": 2026,
+      "exact": true,
+      "note": null
+    },
+    "comparison": null,
+    "topics": [],
+    "venues": [],
+    "institutions": [],
+    "semanticIndexes": [],
+    "limits": {
+      "graphLimit": 100,
+      "vectorLimit": 50,
+      "maxPathDepth": 6,
+      "topK": 5
+    },
+    "source": "MODEL",
+    "overriddenFields": [],
+    "rejectedItems": [],
+    "promptVersion": "planner-v2",
+    "modelId": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "RUNTIME",
+      "sourceRecordId": "qry-400a1ec019a1d206874ff3362f78ba0d",
+      "snapshot": "2026-10-03",
+      "runId": "run-b390fb8b729c40c5b9cb9b9f86c0aeac",
+      "policyVersion": null,
+      "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+    }
+  },
+  "resolutions": [
+    {
+      "schemaVersion": "researcher-resolution-v1",
+      "name": "Rajkumar Buyya",
+      "nameKey": "name-v1:rajkumar buyya",
+      "policyVersion": "dominant-name-v1",
+      "dominantShare": 0.9,
+      "minWorks": 5,
+      "decision": "RESOLVED_DOMINANT",
+      "researcherId": "scr:canon-v1.er-v2:bede83f65bedfab8f7fc802f295ee293",
+      "topShare": 0.964516129032258,
+      "totalWorks": 310,
+      "candidateCount": 11,
+      "candidates": [
+        {
+          "researcherId": "scr:canon-v1.er-v2:bede83f65bedfab8f7fc802f295ee293",
+          "displayName": "Rajkumar Buyya",
+          "matchedName": "Rajkumar Buyya",
+          "works": 299,
+          "share": 0.964516129032258,
+          "identityConfidence": 0.9300527553067827,
+          "mentionCount": 879,
+          "dblpAnchored": true,
+          "orcid": "0000-0001-9754-6496",
+          "institutions": [
+            {
+              "id": "ringgold:2281",
+              "name": "University of Melbourne",
+              "count": null
+            },
+            {
+              "id": "ror:01ej9dk98",
+              "name": "The University of Melbourne",
+              "count": null
+            },
+            {
+              "id": "ror:02bfwt286",
+              "name": "Monash University",
+              "count": null
+            }
+          ],
+          "topCoauthors": [
+            {
+              "id": "scr:canon-v1.er-v2:02db5d5eec978cfa13cb84323e03a65b",
+              "name": "Rajiv Ranjan 0001",
+              "count": 20
+            },
+            {
+              "id": "scr:canon-v1.er-v2:d14eeb7426138e1c728aad8ea3c8bc5c",
+              "name": "Rodrigo N. Calheiros",
+              "count": 20
+            },
+            {
+              "id": "scr:canon-v1.er-v2:de7dcf5224032c505f1a112beb2f1981",
+              "name": "Dawei Sun 0001",
+              "count": 17
+            }
+          ],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:123e4fdbece2f6388afe5ef635ec566c",
+          "displayName": "Rajkumar Buyya",
+          "matchedName": "Rajkumar Buyya",
+          "works": 2,
+          "share": 0.0064516129032258064,
+          "identityConfidence": 0.9999988200059715,
+          "mentionCount": 2,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [
+            {
+              "id": "scr:canon-v1.er-v2:167be8717578bcfc33014b7c1e447720",
+              "name": "Péter Kacsuk",
+              "count": 2
+            }
+          ],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:2f2b6a3387b537f49717ba2bc2a72db0",
+          "displayName": "Rajkumar Buyya",
+          "matchedName": "Rajkumar Buyya",
+          "works": 1,
+          "share": 0.0032258064516129032,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:3463e9be3a35b8da6a8f341f3dfa8468",
+          "displayName": "Rajkumar Buyya",
+          "matchedName": "Rajkumar Buyya",
+          "works": 1,
+          "share": 0.0032258064516129032,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:9c7b5af5238d4821facb51bf2f75c124",
+          "displayName": "Rajkumar Buyya",
+          "matchedName": "Rajkumar Buyya",
+          "works": 1,
+          "share": 0.0032258064516129032,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [
+            {
+              "id": "scr:canon-v1.er-v2:da7a6916df57fc4bd3087689e66efc5e",
+              "name": "Sudharshan Vazhkudai",
+              "count": 1
+            }
+          ],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:bace0d3ca66609da3793424d42984219",
+          "displayName": "Rajkumar Buyya",
+          "matchedName": "Rajkumar Buyya",
+          "works": 1,
+          "share": 0.0032258064516129032,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [
+            {
+              "id": "scr:canon-v1.er-v2:18457396eee0baeaf80bff3a1bb9c3fe",
+              "name": "Alexander Barmouta",
+              "count": 1
+            }
+          ],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:d2e36ddc9afb3ddad2d25626ed0fcebb",
+          "displayName": "Rajkumar Buyya",
+          "matchedName": "Rajkumar Buyya",
+          "works": 1,
+          "share": 0.0032258064516129032,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:e7b1825e4fc396bd00ed93b3b8b0bfa5",
+          "displayName": "Rajkumar Buyya",
+          "matchedName": "Rajkumar Buyya",
+          "works": 1,
+          "share": 0.0032258064516129032,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:eecdf880a6608a86ee0ef862a2536578",
+          "displayName": "Rajkumar Buyya",
+          "matchedName": "Rajkumar Buyya",
+          "works": 1,
+          "share": 0.0032258064516129032,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": false,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:effd8a455ffa53b4333c2fe22179bacd",
+          "displayName": "Rajkumar Buyya",
+          "matchedName": "Rajkumar Buyya",
+          "works": 1,
+          "share": 0.0032258064516129032,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": false,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:f089948daf7e10d05a0f02c3150c008d",
+          "displayName": "Rajkumar Buyya",
+          "matchedName": "Rajkumar Buyya",
+          "works": 1,
+          "share": 0.0032258064516129032,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": false,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        }
+      ],
+      "otherNameMatches": [],
+      "truncated": false,
+      "evidenceId": "ev-436bf9ecc38d5b21aa16fa7b8b3a97ed"
+    },
+    {
+      "schemaVersion": "researcher-resolution-v1",
+      "name": "Albert Y. Zomaya",
+      "nameKey": "name-v1:albert y zomaya",
+      "policyVersion": "dominant-name-v1",
+      "dominantShare": 0.9,
+      "minWorks": 5,
+      "decision": "RESOLVED_DOMINANT",
+      "researcherId": "scr:canon-v1.er-v2:9c35232fa374c48fdc67309bfedd5f7c",
+      "topShare": 0.9901639344262295,
+      "totalWorks": 305,
+      "candidateCount": 4,
+      "candidates": [
+        {
+          "researcherId": "scr:canon-v1.er-v2:9c35232fa374c48fdc67309bfedd5f7c",
+          "displayName": "Albert Y. Zomaya",
+          "matchedName": "Albert Y. Zomaya",
+          "works": 302,
+          "share": 0.9901639344262295,
+          "identityConfidence": 0.9300527553067827,
+          "mentionCount": 892,
+          "dblpAnchored": true,
+          "orcid": "0000-0002-3090-1059",
+          "institutions": [
+            {
+              "id": "ror:00y4zzh67",
+              "name": "George Washington University",
+              "count": null
+            },
+            {
+              "id": "ror:01n002310",
+              "name": "Institute of Electrical and Electronics Engineers",
+              "count": null
+            },
+            {
+              "id": "ror:024c2fq17",
+              "name": "Sharif University of Technology",
+              "count": null
+            }
+          ],
+          "topCoauthors": [
+            {
+              "id": "scr:canon-v1.er-v2:ae39befdc1e23cc6f2de90d46d2a9250",
+              "name": "Young Choon Lee",
+              "count": 43
+            },
+            {
+              "id": "scr:canon-v1.er-v2:02db5d5eec978cfa13cb84323e03a65b",
+              "name": "Rajiv Ranjan 0001",
+              "count": 28
+            },
+            {
+              "id": "scr:canon-v1.er-v2:595a2e34c105d5650ff479e9aaa86698",
+              "name": "Zahir Tari",
+              "count": 27
+            }
+          ],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:14c9eba733345ec548d8af14581ef618",
+          "displayName": "Albert Y. Zomaya",
+          "matchedName": "Albert Y. Zomaya",
+          "works": 1,
+          "share": 0.003278688524590164,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [
+            {
+              "id": "scr:canon-v1.er-v2:47b76c9fb889145c50966142c556e4ae",
+              "name": "Gerard Chan",
+              "count": 1
+            }
+          ],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:89c974fae39fa4ab79a13c67cea21412",
+          "displayName": "Albert Y. Zomaya",
+          "matchedName": "Albert Y. Zomaya",
+          "works": 1,
+          "share": 0.003278688524590164,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": false,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:90d4318dd139a291afaab8ffe7ee74ce",
+          "displayName": "Albert Y. Zomaya",
+          "matchedName": "Albert Y. Zomaya",
+          "works": 1,
+          "share": 0.003278688524590164,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        }
+      ],
+      "otherNameMatches": [],
+      "truncated": false,
+      "evidenceId": "ev-2ec1cb5fc28b243020e34a6711ea0ae5"
+    }
+  ],
+  "verification": {
+    "schemaVersion": "claim-verification-v1",
+    "queryId": "qry-400a1ec019a1d206874ff3362f78ba0d",
+    "checks": [
+      {
+        "claimId": "claim-1",
+        "status": "VERIFIED",
+        "checks": [
+          {
+            "rule": "evidence-exists",
+            "outcome": "PASS",
+            "detail": "all cited items are in the bundle"
+          },
+          {
+            "rule": "graph-evidence-required",
+            "outcome": "PASS",
+            "detail": "1 graph item(s) cited"
+          },
+          {
+            "rule": "kind-matches-type",
+            "outcome": "PASS",
+            "detail": "COAUTHORSHIP needs COAUTHOR_EDGE"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "jointPublicationCount"
+          },
+          {
+            "rule": "numbers-in-text",
+            "outcome": "PASS",
+            "detail": "every number is an asserted, named fact"
+          },
+          {
+            "rule": "window",
+            "outcome": "PASS",
+            "detail": "all-years"
+          },
+          {
+            "rule": "identity",
+            "outcome": "PASS",
+            "detail": "every subject and name is resolved or cited"
+          }
+        ],
+        "action": "KEPT"
+      },
+      {
+        "claimId": "claim-2",
+        "status": "VERIFIED",
+        "checks": [
+          {
+            "rule": "evidence-exists",
+            "outcome": "PASS",
+            "detail": "all cited items are in the bundle"
+          },
+          {
+            "rule": "graph-evidence-required",
+            "outcome": "PASS",
+            "detail": "1 graph item(s) cited"
+          },
+          {
+            "rule": "kind-matches-type",
+            "outcome": "PASS",
+            "detail": "COAUTHORSHIP needs COAUTHOR_EDGE"
+          },
+          {
+            "rule": "asserted-values",
+            "outcome": "PASS",
+            "detail": "firstCollaborationYear"
+          },
+          {
+            "rule": "numbers-in-text",
+            "outcome": "PASS",
+            "detail": "every number is an asserted, named fact"
+          },
+          {
+            "rule": "window",
+            "outcome": "PASS",
+            "detail": "all-years"
+          },
+          {
+            "rule": "identity",
+            "outcome": "PASS",
+            "detail": "every subject and name is resolved or cited"
+          }
+        ],
+        "action": "KEPT"
+      }
+    ],
+    "counts": {
+      "verified": 2,
+      "partiallySupported": 0,
+      "unsupported": 0,
+      "conflicting": 0
+    }
+  },
+  "abstention": null,
+  "answerHash": "sha256:98e9c6b5da65d900349f6f31ab44c63969f625c216963fe56e0ea1584de78889"
+}

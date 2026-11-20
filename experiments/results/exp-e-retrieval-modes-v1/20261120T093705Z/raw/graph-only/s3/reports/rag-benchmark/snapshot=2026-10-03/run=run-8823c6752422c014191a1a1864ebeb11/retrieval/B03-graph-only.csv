@@ -1,0 +1,2 @@
+rank,source,origin,evidenceId,elementId
+1,graph,graph,ev-a59faf5dc73b6aaff3d27d53f4fbad57,dynamodb:ResearcherMetricCache/RANKING#distinctCoauthorCount/TOP#2000-2014

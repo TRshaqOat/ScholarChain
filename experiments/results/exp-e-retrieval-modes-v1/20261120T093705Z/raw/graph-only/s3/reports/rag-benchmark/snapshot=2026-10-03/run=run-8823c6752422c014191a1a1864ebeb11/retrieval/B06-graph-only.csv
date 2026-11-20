@@ -1,0 +1,4 @@
+rank,source,origin,evidenceId,elementId
+1,graph,graph,ev-4c3d00e0be397c3199c63cc553d803a2,dynamodb:EntityLinkCache/name-v1:franck cappello/scr:canon-v1.er-v2:84a0a600f9fc8efeb0a87b085e316bfd
+2,graph,graph,ev-df4c427223e966a7dda906c3b04468cf,dynamodb:ResearcherMetricCache/scr:canon-v1.er-v2:84a0a600f9fc8efeb0a87b085e316bfd/WINDOW#2000-2014
+3,graph,graph,ev-1b0c0ee3e6e1806336db87a53b84dc5d,neptune:dblp:journals/ijhpca/DongarraBM11

@@ -1,0 +1,250 @@
+{
+  "schemaVersion": "rag-benchmark-result-v3",
+  "questionId": "B08",
+  "category": "direct_collaboration",
+  "mode": "LIVE",
+  "retrievalMode": "FUSED",
+  "runtimeRunId": "run-da948201a77e0fe136727d99a55c2b89",
+  "queryId": "qry-2371f5b956807d9e649756984da75978",
+  "planSource": "MODEL",
+  "operations": [
+    "SHORTEST_PATH/PAIR"
+  ],
+  "metrics": [],
+  "window": "all-years",
+  "resolutions": [
+    {
+      "name": "Rajkumar Buyya",
+      "decision": "RESOLVED_DOMINANT",
+      "researcherId": "scr:canon-v1.er-v2:bede83f65bedfab8f7fc802f295ee293",
+      "topShare": 0.964516129032258,
+      "candidateCount": 11
+    },
+    {
+      "name": "Albert Y. Zomaya",
+      "decision": "RESOLVED_DOMINANT",
+      "researcherId": "scr:canon-v1.er-v2:9c35232fa374c48fdc67309bfedd5f7c",
+      "topShare": 0.9901639344262295,
+      "candidateCount": 4
+    }
+  ],
+  "abstained": false,
+  "abstentionReason": null,
+  "verification": {
+    "verified": 1,
+    "partiallySupported": 0,
+    "unsupported": 0,
+    "conflicting": 0
+  },
+  "claims": 1,
+  "graph": {
+    "reads": 26,
+    "readsByTemplate": {
+      "kv.metrics.window": 2,
+      "graph.shortest-path": 1,
+      "graph.vertices": 2,
+      "graph.authored-counts": 2,
+      "graph.coauthors": 15,
+      "kv.entity-link": 2,
+      "graph.researcher-institutions": 2
+    },
+    "rows": 64,
+    "truncatedReads": 2,
+    "evidenceItems": 9,
+    "tokens": 1618,
+    "omittedItems": 0,
+    "latencyMs": 17,
+    "pathStatuses": [
+      "FOUND"
+    ]
+  },
+  "semantic": {
+    "embeddingCalls": 1,
+    "embeddingInputTokens": 0,
+    "indexes": [
+      "researcher-profile-v1",
+      "collaboration-path-v1"
+    ],
+    "hits": 3,
+    "tokens": 1548,
+    "omittedItems": 0,
+    "latencyMs": 222,
+    "outcome": "OK"
+  },
+  "llm": {
+    "attempts": 2,
+    "requests": 2,
+    "attemptsByStage": {
+      "QUERY_PLANNING": 1,
+      "ANSWER_SYNTHESIS": 1
+    },
+    "outcomes": {
+      "OK": 2
+    },
+    "inputTokens": 8283,
+    "outputTokens": 589,
+    "throttleWaitMs": 6107
+  },
+  "latencyMs": 9887,
+  "stageLatencyMs": {
+    "COLLABORATION_METRICS": 2,
+    "PATH_FINDING": 15,
+    "EVIDENCE_BUILDING": 3,
+    "AUDIT": 0,
+    "QUERY_PLANNING": 1121,
+    "SEMANTIC_CONTEXT": 222,
+    "COMMUNITY_ANALYSIS": 0,
+    "CLAIM_VERIFICATION": 16,
+    "RESEARCHER_RESOLUTION": 35,
+    "ANSWER_SYNTHESIS": 8462
+  },
+  "checks": [
+    {
+      "name": "plan-operations",
+      "outcome": "FAIL",
+      "detail": "needs DIRECT_COAUTHORS/PAIR; plan [SHORTEST_PATH/PAIR]"
+    },
+    {
+      "name": "researcher-names",
+      "outcome": "PASS",
+      "detail": "expected [Rajkumar Buyya; Albert Y. Zomaya], extracted [Albert Y. Zomaya; Rajkumar Buyya]"
+    },
+    {
+      "name": "resolution",
+      "outcome": "PASS",
+      "detail": "Rajkumar Buyya: expected RESOLVED_DOMINANT, got RESOLVED_DOMINANT; Albert Y. Zomaya: expected RESOLVED_DOMINANT, got RESOLVED_DOMINANT"
+    },
+    {
+      "name": "abstention",
+      "outcome": "PASS",
+      "detail": "expected answer, got answer"
+    },
+    {
+      "name": "claim-evidence",
+      "outcome": "PASS",
+      "detail": "1 claims cite bundle IDs; 1 material claims each cite a graph item; 0 descriptive"
+    },
+    {
+      "name": "verification",
+      "outcome": "PASS",
+      "detail": "answer has a verified claim; counts 1/0/0/0; final claims 1 verified of 1"
+    },
+    {
+      "name": "bundle-budget",
+      "outcome": "PASS",
+      "detail": "graph 1618/8000 tokens, semantic 1548/3000, items 12/300"
+    },
+    {
+      "name": "llm-budget",
+      "outcome": "PASS",
+      "detail": "2 attempts, 2 requests (ANSWER_SYNTHESIS 1, QUERY_PLANNING 1), tokens in 8283 out 589"
+    },
+    {
+      "name": "embedding-budget",
+      "outcome": "PASS",
+      "detail": "1 embedding calls for 2 indexes queried"
+    },
+    {
+      "name": "path-hops",
+      "outcome": "FAIL",
+      "detail": "scr:canon-v1.er-v2:bede83f65bedfab8f7fc802f295ee293-scr:canon-v1.er-v2:9c35232fa374c48fdc67309bfedd5f7c: runtime FOUND 1 hops, stored 1 hops, same researchers; no claim cites the path"
+    },
+    {
+      "name": "pair-edges",
+      "outcome": "PASS",
+      "detail": "1 of 1 edges equal the stored hop"
+    },
+    {
+      "name": "deadline",
+      "outcome": "PASS",
+      "detail": "9887 ms of 180000"
+    }
+  ],
+  "answerHash": "sha256:a8ed9080facc88882c057024a96cc76844daef973a7c72d1337b7a365ee84459",
+  "retrieved": [
+    {
+      "rank": 1,
+      "source": "fused",
+      "origin": "graph",
+      "evidenceId": "ev-436bf9ecc38d5b21aa16fa7b8b3a97ed",
+      "elementId": "dynamodb:EntityLinkCache/name-v1:rajkumar buyya/scr:canon-v1.er-v2:bede83f65bedfab8f7fc802f295ee293"
+    },
+    {
+      "rank": 2,
+      "source": "fused",
+      "origin": "graph",
+      "evidenceId": "ev-2ec1cb5fc28b243020e34a6711ea0ae5",
+      "elementId": "dynamodb:EntityLinkCache/name-v1:albert y zomaya/scr:canon-v1.er-v2:9c35232fa374c48fdc67309bfedd5f7c"
+    },
+    {
+      "rank": 3,
+      "source": "fused",
+      "origin": "graph",
+      "evidenceId": "ev-6f7925e0193b944e31b5c50bdc18b53c",
+      "elementId": "dynamodb:ResearcherMetricCache/scr:canon-v1.er-v2:bede83f65bedfab8f7fc802f295ee293/WINDOW#all-years"
+    },
+    {
+      "rank": 4,
+      "source": "fused",
+      "origin": "graph",
+      "evidenceId": "ev-09c8ea2b95180900facf86a17e180f00",
+      "elementId": "dynamodb:ResearcherMetricCache/scr:canon-v1.er-v2:9c35232fa374c48fdc67309bfedd5f7c/WINDOW#all-years"
+    },
+    {
+      "rank": 5,
+      "source": "fused",
+      "origin": "graph",
+      "evidenceId": "ev-479e94275c30463deacf52ec4dab2f9e",
+      "elementId": "runtime:graph.shortest-path"
+    },
+    {
+      "rank": 6,
+      "source": "fused",
+      "origin": "graph",
+      "evidenceId": "ev-4e0786f34c891f5d61c8a005339b10d5",
+      "elementId": "neptune:cae-d65f27c5a5fd6a6257e31f81d3eabf7b"
+    },
+    {
+      "rank": 7,
+      "source": "fused",
+      "origin": "graph",
+      "evidenceId": "ev-90cc2b6789b7e8a4e671d2bcf82cfe13",
+      "elementId": "neptune:dblp:journals/jpdc/HsiehLBZ20"
+    },
+    {
+      "rank": 8,
+      "source": "fused",
+      "origin": "graph",
+      "evidenceId": "ev-7c76322d2f73e93c812dfdccd7117f2b",
+      "elementId": "neptune:dblp:journals/tcc/ChenHHBZ20"
+    },
+    {
+      "rank": 9,
+      "source": "fused",
+      "origin": "graph",
+      "evidenceId": "ev-0a2a118a696ca2842ab118d4c432bc11",
+      "elementId": "neptune:dblp:journals/tcc/ChungLKHZB23"
+    },
+    {
+      "rank": 10,
+      "source": "fused",
+      "origin": "vector",
+      "evidenceId": "ev-06ec98d44a52848c71ece2eae58333cf",
+      "elementId": "chunk-a1d5cc667381fb19e19395de420a0692"
+    },
+    {
+      "rank": 11,
+      "source": "fused",
+      "origin": "vector",
+      "evidenceId": "ev-07200489ef33808b1da4d09941de45e3",
+      "elementId": "chunk-afc28e5d0c31d66e7bbe2b01fb7efc57"
+    },
+    {
+      "rank": 12,
+      "source": "fused",
+      "origin": "vector",
+      "evidenceId": "ev-7eeb734c7b746f1ba5b6c0c28ec6a61b",
+      "elementId": "chunk-7dd6e038c70bdd012d1be77adf90bf71"
+    }
+  ]
+}

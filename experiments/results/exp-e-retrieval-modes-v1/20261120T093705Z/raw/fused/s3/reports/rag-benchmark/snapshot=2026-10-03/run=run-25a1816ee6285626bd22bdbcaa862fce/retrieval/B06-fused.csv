@@ -1,0 +1,6 @@
+rank,source,origin,evidenceId,elementId
+1,fused,graph,ev-4c3d00e0be397c3199c63cc553d803a2,dynamodb:EntityLinkCache/name-v1:franck cappello/scr:canon-v1.er-v2:84a0a600f9fc8efeb0a87b085e316bfd
+2,fused,graph,ev-df4c427223e966a7dda906c3b04468cf,dynamodb:ResearcherMetricCache/scr:canon-v1.er-v2:84a0a600f9fc8efeb0a87b085e316bfd/WINDOW#2000-2014
+3,fused,graph,ev-1b0c0ee3e6e1806336db87a53b84dc5d,neptune:dblp:journals/ijhpca/DongarraBM11
+4,fused,vector,ev-7751a6496901e13105cec85e28464970,chunk-f2314ca1d0645470a3aae5f8a2629cd3
+5,fused,vector,ev-516f8e26c3db6d4e8d412deb47f68529,chunk-654a77e699cd2d129bfb0efc096817dc

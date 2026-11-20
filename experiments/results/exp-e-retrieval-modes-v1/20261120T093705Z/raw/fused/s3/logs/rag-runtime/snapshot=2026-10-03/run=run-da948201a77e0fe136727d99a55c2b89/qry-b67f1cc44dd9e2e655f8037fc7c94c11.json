@@ -1,0 +1,241 @@
+{
+  "schemaVersion": "rag-audit-v3",
+  "queryId": "qry-b67f1cc44dd9e2e655f8037fc7c94c11",
+  "sessionId": null,
+  "runId": "run-da948201a77e0fe136727d99a55c2b89",
+  "createdAt": "2026-11-20T09:39:28.104065Z",
+  "mode": "LIVE",
+  "questionHash": "sha256:9aa7b9ff85a4fa9dd27c3a490bc132452018b1bd304ec2793143b4c2e798fb72",
+  "questionChars": 70,
+  "plan": {
+    "schemaVersion": "rag-query-plan-v1",
+    "queryId": "qry-b67f1cc44dd9e2e655f8037fc7c94c11",
+    "operations": [
+      {
+        "operation": "RESEARCHER_RANKING",
+        "scope": "CORPUS",
+        "researchers": [],
+        "metric": "MAXIMUM_COAUTHORS_ON_ONE_PAPER",
+        "topN": 1
+      }
+    ],
+    "researcherNames": [],
+    "metrics": [],
+    "window": {
+      "requested": {
+        "kind": "DEFAULT",
+        "name": null,
+        "yearFrom": null,
+        "yearTo": null
+      },
+      "window": "all-years",
+      "startYear": 2000,
+      "endYear": 2026,
+      "exact": true,
+      "note": null
+    },
+    "comparison": null,
+    "topics": [],
+    "venues": [],
+    "institutions": [],
+    "semanticIndexes": [
+      "topic-institution-summary-v1"
+    ],
+    "limits": {
+      "graphLimit": 100,
+      "vectorLimit": 50,
+      "maxPathDepth": 6,
+      "topK": 5
+    },
+    "source": "MODEL",
+    "overriddenFields": [],
+    "rejectedItems": [],
+    "promptVersion": "planner-v2",
+    "modelId": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "RUNTIME",
+      "sourceRecordId": "qry-b67f1cc44dd9e2e655f8037fc7c94c11",
+      "snapshot": "2026-10-03",
+      "runId": "run-da948201a77e0fe136727d99a55c2b89",
+      "policyVersion": null,
+      "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+    }
+  },
+  "resolutions": [],
+  "graphEvidenceIds": [
+    "ev-2a930931a5777ce36c0d467bfbab6ad3"
+  ],
+  "semanticEvidenceIds": [
+    "ev-ff36f45e1678c3b9349f424a773ebc05",
+    "ev-031542639188e691e72c9070758345e1",
+    "ev-e679066e01cfdd761e634aae58994f04",
+    "ev-50a73ba6e1700f91bbd589885d23c1cf",
+    "ev-50c429ed84ce3c5bb3614941189e1089"
+  ],
+  "metricVersions": [
+    "researcher-ranking-v1@run-1d6a86491812ff94887270c1ab885e69"
+  ],
+  "graphRunId": "run-1d6a86491812ff94887270c1ab885e69",
+  "vectorIndexes": [
+    "topic-institution-summary-v1"
+  ],
+  "embeddingModelVersion": "amazon.titan-embed-text-v2:0|1024|normalized|rendering-v1",
+  "promptVersions": {
+    "planner.schema": "planner-output-v1",
+    "synthesis.schema": "synthesis-output-v3",
+    "synthesis": "synthesis-v3",
+    "planner.schema.sha256": "sha256:3ff40901f3f625204eaaa3ddc525b844c96178ad36629666ebc96f9fe91c1368",
+    "synthesis.schema.sha256": "sha256:44eb22cc2e428a1e90884bcd115b6aac031c9c95f199efd4c42729fada880d02",
+    "planner.sha256": "sha256:c7354f86ece47e7aa01481f6c893a9721a9f13e3d24716bc73942ef49e81e655",
+    "planner": "planner-v2",
+    "synthesis.sha256": "sha256:5755fb97ab563ed8bbe19cded139818194bef346e1718d2ed5df4cc8c4953e2e"
+  },
+  "modelIds": {
+    "planner": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "synthesis": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "embedding": "amazon.titan-embed-text-v2:0|1024|normalized|rendering-v1"
+  },
+  "llmCalls": [
+    {
+      "stage": "QUERY_PLANNING",
+      "modelId": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+      "promptVersion": "planner-v2",
+      "schemaVersion": "planner-output-v1",
+      "attempt": 1,
+      "outcome": "OK",
+      "requests": 1,
+      "inputTokens": 2519,
+      "outputTokens": 177,
+      "latencyMs": 1171,
+      "throttleWaitMs": 4661,
+      "failure": null
+    },
+    {
+      "stage": "ANSWER_SYNTHESIS",
+      "modelId": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+      "promptVersion": "synthesis-v3",
+      "schemaVersion": "synthesis-output-v3",
+      "attempt": 1,
+      "outcome": "OK",
+      "requests": 1,
+      "inputTokens": 3310,
+      "outputTokens": 300,
+      "latencyMs": 2481,
+      "throttleWaitMs": 6133,
+      "failure": null
+    }
+  ],
+  "embeddingCalls": [
+    {
+      "index": "topic-institution-summary-v1",
+      "modelVersion": "amazon.titan-embed-text-v2:0|1024|normalized|rendering-v1",
+      "attempt": 1,
+      "outcome": "OK",
+      "inputTokens": null,
+      "latencyMs": 168,
+      "throttleWaitMs": 0
+    }
+  ],
+  "templateCalls": [
+    {
+      "templateId": "kv.ranking",
+      "latencyMs": 2,
+      "resultCount": 1,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.vertices",
+      "latencyMs": 0,
+      "resultCount": 1,
+      "truncated": false
+    }
+  ],
+  "stages": [
+    {
+      "stage": "QUERY_PLANNING",
+      "outcome": "OK",
+      "latencyMs": 5833
+    },
+    {
+      "stage": "RESEARCHER_RESOLUTION",
+      "outcome": "OK",
+      "latencyMs": 0
+    },
+    {
+      "stage": "COLLABORATION_METRICS",
+      "outcome": "OK",
+      "latencyMs": 3
+    },
+    {
+      "stage": "PATH_FINDING",
+      "outcome": "SKIPPED",
+      "latencyMs": 0
+    },
+    {
+      "stage": "COMMUNITY_ANALYSIS",
+      "outcome": "SKIPPED",
+      "latencyMs": 0
+    },
+    {
+      "stage": "SEMANTIC_CONTEXT",
+      "outcome": "OK",
+      "latencyMs": 187
+    },
+    {
+      "stage": "EVIDENCE_BUILDING",
+      "outcome": "OK",
+      "latencyMs": 1
+    },
+    {
+      "stage": "ANSWER_SYNTHESIS",
+      "outcome": "OK",
+      "latencyMs": 8615
+    },
+    {
+      "stage": "CLAIM_VERIFICATION",
+      "outcome": "OK",
+      "latencyMs": 14
+    },
+    {
+      "stage": "AUDIT",
+      "outcome": "OK",
+      "latencyMs": 0
+    }
+  ],
+  "budget": {
+    "tokenBudget": 11000,
+    "graphTokens": 168,
+    "semanticTokens": 1267,
+    "omittedGraphItems": 0,
+    "omittedSemanticItems": 0
+  },
+  "verification": {
+    "verified": 1,
+    "partiallySupported": 0,
+    "unsupported": 0,
+    "conflicting": 0
+  },
+  "removedClaims": [],
+  "droppedLines": [
+    {
+      "part": "SUMMARY",
+      "text": "The largest number of authors on a single paper in the corpus is 286, achieved by Matthew Dunkman in the all-years window (2000–2026).",
+      "reasons": [
+        "286 is not written next to the name of rank.1.value"
+      ]
+    }
+  ],
+  "abstained": false,
+  "abstentionReason": null,
+  "answerHash": "sha256:9e4bc126b9c409343e80c0f30dee857a0a3b971bb77ddafc3d3584b6de36032c",
+  "provenance": {
+    "schemaVersion": "provenance-v1",
+    "sourceDataset": "RUNTIME",
+    "sourceRecordId": "qry-b67f1cc44dd9e2e655f8037fc7c94c11",
+    "snapshot": "2026-10-03",
+    "runId": "run-da948201a77e0fe136727d99a55c2b89",
+    "policyVersion": "fusion-v1",
+    "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+  }
+}

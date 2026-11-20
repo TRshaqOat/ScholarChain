@@ -1,0 +1,79 @@
+{
+  "schemaVersion": "exp-e-harness-v1",
+  "startedAt": "2026-11-20T09:37:05Z",
+  "endedAt": "2026-11-20T09:47:41Z",
+  "updatedAt": "2026-11-20T09:47:41Z",
+  "modes": [
+    "fused",
+    "graph-only",
+    "vector-only"
+  ],
+  "n": 10,
+  "checkMax": 2,
+  "perMinute": 8,
+  "region": "us-east-2",
+  "check": {
+    "planSourcesLine": "plan sources: MODEL 2; outcomes: ANSWERED 2",
+    "continue": true,
+    "stopReason": null
+  },
+  "invocations": [
+    {
+      "step": "check",
+      "mode": "fused",
+      "max": 2,
+      "command": "env SCHOLARCHAIN_EMBEDDING_MODEL_ID=amazon.titan-embed-text-v2:0 sbt -batch -J-Xmx6g \"rag/runMain scholarchain.rag.cli.BenchmarkCli --questions experiments/benchmark/benchmark-questions-v1.csv --path-evidence scratch/stores/work/neptune-check/snapshot=2026-10-03/run=run-ee4ffd21aa20dbe4c078a4be96fe8c9f/expect-benchmark.csv --graph scratch/stores/s3/graph/neptune/snapshot=2026-10-03/run=run-1d6a86491812ff94887270c1ab885e69 --items scratch/stores/s3/curated/dynamodb/snapshot=2026-10-03/run=run-1d6a86491812ff94887270c1ab885e69 --objects scratch/stores/s3 --vectors scratch/stores-live/s3vectors --out /Users/achyutpatel/Developer/Cloud/ScholarChain/experiments/results/exp-e-retrieval-modes-v1/20261120T093705Z/raw/fused --window-summary-root scratch/runtime/wo8/s3 --window-summary-run run-6fbad498beb0d8f570df67665fb97544 --live --profile scholarchain-sdk --region us-east-2 --per-minute 8 --max 2 --retrieval-mode fused\"",
+      "startedAt": "2026-11-20T09:37:05Z",
+      "endedAt": "2026-11-20T09:38:28Z",
+      "exitCode": 0,
+      "benchmarkRunIds": [
+        "run-25a1816ee6285626bd22bdbcaa862fce"
+      ],
+      "stdout": "fused/check-stdout.txt",
+      "stderr": "fused/check-stderr.txt"
+    },
+    {
+      "step": "modes",
+      "mode": "fused",
+      "max": 8,
+      "command": "env SCHOLARCHAIN_EMBEDDING_MODEL_ID=amazon.titan-embed-text-v2:0 sbt -batch -J-Xmx6g \"rag/runMain scholarchain.rag.cli.BenchmarkCli --questions experiments/benchmark/benchmark-questions-v1.csv --path-evidence scratch/stores/work/neptune-check/snapshot=2026-10-03/run=run-ee4ffd21aa20dbe4c078a4be96fe8c9f/expect-benchmark.csv --graph scratch/stores/s3/graph/neptune/snapshot=2026-10-03/run=run-1d6a86491812ff94887270c1ab885e69 --items scratch/stores/s3/curated/dynamodb/snapshot=2026-10-03/run=run-1d6a86491812ff94887270c1ab885e69 --objects scratch/stores/s3 --vectors scratch/stores-live/s3vectors --out /Users/achyutpatel/Developer/Cloud/ScholarChain/experiments/results/exp-e-retrieval-modes-v1/20261120T093705Z/raw/fused --window-summary-root scratch/runtime/wo8/s3 --window-summary-run run-6fbad498beb0d8f570df67665fb97544 --live --profile scholarchain-sdk --region us-east-2 --per-minute 8 --max 8 --retrieval-mode fused\"",
+      "startedAt": "2026-11-20T09:38:28Z",
+      "endedAt": "2026-11-20T09:41:09Z",
+      "exitCode": 0,
+      "benchmarkRunIds": [
+        "run-25a1816ee6285626bd22bdbcaa862fce"
+      ],
+      "stdout": "fused/modes-stdout.txt",
+      "stderr": "fused/modes-stderr.txt"
+    },
+    {
+      "step": "modes",
+      "mode": "graph-only",
+      "max": 10,
+      "command": "env SCHOLARCHAIN_EMBEDDING_MODEL_ID=amazon.titan-embed-text-v2:0 sbt -batch -J-Xmx6g \"rag/runMain scholarchain.rag.cli.BenchmarkCli --questions experiments/benchmark/benchmark-questions-v1.csv --path-evidence scratch/stores/work/neptune-check/snapshot=2026-10-03/run=run-ee4ffd21aa20dbe4c078a4be96fe8c9f/expect-benchmark.csv --graph scratch/stores/s3/graph/neptune/snapshot=2026-10-03/run=run-1d6a86491812ff94887270c1ab885e69 --items scratch/stores/s3/curated/dynamodb/snapshot=2026-10-03/run=run-1d6a86491812ff94887270c1ab885e69 --objects scratch/stores/s3 --vectors scratch/stores-live/s3vectors --out /Users/achyutpatel/Developer/Cloud/ScholarChain/experiments/results/exp-e-retrieval-modes-v1/20261120T093705Z/raw/graph-only --window-summary-root scratch/runtime/wo8/s3 --window-summary-run run-6fbad498beb0d8f570df67665fb97544 --live --profile scholarchain-sdk --region us-east-2 --per-minute 8 --max 10 --retrieval-mode graph-only\"",
+      "startedAt": "2026-11-20T09:41:09Z",
+      "endedAt": "2026-11-20T09:44:20Z",
+      "exitCode": 0,
+      "benchmarkRunIds": [
+        "run-8823c6752422c014191a1a1864ebeb11"
+      ],
+      "stdout": "graph-only/modes-stdout.txt",
+      "stderr": "graph-only/modes-stderr.txt"
+    },
+    {
+      "step": "modes",
+      "mode": "vector-only",
+      "max": 10,
+      "command": "env SCHOLARCHAIN_EMBEDDING_MODEL_ID=amazon.titan-embed-text-v2:0 sbt -batch -J-Xmx6g \"rag/runMain scholarchain.rag.cli.BenchmarkCli --questions experiments/benchmark/benchmark-questions-v1.csv --path-evidence scratch/stores/work/neptune-check/snapshot=2026-10-03/run=run-ee4ffd21aa20dbe4c078a4be96fe8c9f/expect-benchmark.csv --graph scratch/stores/s3/graph/neptune/snapshot=2026-10-03/run=run-1d6a86491812ff94887270c1ab885e69 --items scratch/stores/s3/curated/dynamodb/snapshot=2026-10-03/run=run-1d6a86491812ff94887270c1ab885e69 --objects scratch/stores/s3 --vectors scratch/stores-live/s3vectors --out /Users/achyutpatel/Developer/Cloud/ScholarChain/experiments/results/exp-e-retrieval-modes-v1/20261120T093705Z/raw/vector-only --window-summary-root scratch/runtime/wo8/s3 --window-summary-run run-6fbad498beb0d8f570df67665fb97544 --live --profile scholarchain-sdk --region us-east-2 --per-minute 8 --max 10 --retrieval-mode vector-only\"",
+      "startedAt": "2026-11-20T09:44:20Z",
+      "endedAt": "2026-11-20T09:47:41Z",
+      "exitCode": 0,
+      "benchmarkRunIds": [
+        "run-9dd2efc0312d094217e0fec704c189db"
+      ],
+      "stdout": "vector-only/modes-stdout.txt",
+      "stderr": "vector-only/modes-stderr.txt"
+    }
+  ],
+  "exitCode": 0
+}

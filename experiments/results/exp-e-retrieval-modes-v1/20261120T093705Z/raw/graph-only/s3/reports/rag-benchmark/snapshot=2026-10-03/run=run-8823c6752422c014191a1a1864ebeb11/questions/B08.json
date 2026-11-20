@@ -1,0 +1,226 @@
+{
+  "schemaVersion": "rag-benchmark-result-v3",
+  "questionId": "B08",
+  "category": "direct_collaboration",
+  "mode": "LIVE",
+  "retrievalMode": "GRAPH_ONLY",
+  "runtimeRunId": "run-b390fb8b729c40c5b9cb9b9f86c0aeac",
+  "queryId": "qry-400a1ec019a1d206874ff3362f78ba0d",
+  "planSource": "MODEL",
+  "operations": [
+    "SHORTEST_PATH/PAIR"
+  ],
+  "metrics": [],
+  "window": "all-years",
+  "resolutions": [
+    {
+      "name": "Rajkumar Buyya",
+      "decision": "RESOLVED_DOMINANT",
+      "researcherId": "scr:canon-v1.er-v2:bede83f65bedfab8f7fc802f295ee293",
+      "topShare": 0.964516129032258,
+      "candidateCount": 11
+    },
+    {
+      "name": "Albert Y. Zomaya",
+      "decision": "RESOLVED_DOMINANT",
+      "researcherId": "scr:canon-v1.er-v2:9c35232fa374c48fdc67309bfedd5f7c",
+      "topShare": 0.9901639344262295,
+      "candidateCount": 4
+    }
+  ],
+  "abstained": false,
+  "abstentionReason": null,
+  "verification": {
+    "verified": 2,
+    "partiallySupported": 0,
+    "unsupported": 0,
+    "conflicting": 0
+  },
+  "claims": 2,
+  "graph": {
+    "reads": 26,
+    "readsByTemplate": {
+      "kv.metrics.window": 2,
+      "graph.shortest-path": 1,
+      "graph.vertices": 2,
+      "graph.authored-counts": 2,
+      "graph.coauthors": 15,
+      "kv.entity-link": 2,
+      "graph.researcher-institutions": 2
+    },
+    "rows": 64,
+    "truncatedReads": 2,
+    "evidenceItems": 9,
+    "tokens": 1618,
+    "omittedItems": 0,
+    "latencyMs": 14,
+    "pathStatuses": [
+      "FOUND"
+    ]
+  },
+  "semantic": {
+    "embeddingCalls": 0,
+    "embeddingInputTokens": 0,
+    "indexes": [],
+    "hits": 0,
+    "tokens": 0,
+    "omittedItems": 0,
+    "latencyMs": 1,
+    "outcome": "SKIPPED"
+  },
+  "llm": {
+    "attempts": 2,
+    "requests": 2,
+    "attemptsByStage": {
+      "QUERY_PLANNING": 1,
+      "ANSWER_SYNTHESIS": 1
+    },
+    "outcomes": {
+      "OK": 2
+    },
+    "inputTokens": 6989,
+    "outputTokens": 751,
+    "throttleWaitMs": 11052
+  },
+  "latencyMs": 15024,
+  "stageLatencyMs": {
+    "COLLABORATION_METRICS": 2,
+    "PATH_FINDING": 12,
+    "EVIDENCE_BUILDING": 1,
+    "AUDIT": 0,
+    "QUERY_PLANNING": 6365,
+    "SEMANTIC_CONTEXT": 1,
+    "COMMUNITY_ANALYSIS": 0,
+    "CLAIM_VERIFICATION": 10,
+    "RESEARCHER_RESOLUTION": 30,
+    "ANSWER_SYNTHESIS": 8593
+  },
+  "checks": [
+    {
+      "name": "plan-operations",
+      "outcome": "FAIL",
+      "detail": "needs DIRECT_COAUTHORS/PAIR; plan [SHORTEST_PATH/PAIR]"
+    },
+    {
+      "name": "researcher-names",
+      "outcome": "PASS",
+      "detail": "expected [Rajkumar Buyya; Albert Y. Zomaya], extracted [Albert Y. Zomaya; Rajkumar Buyya]"
+    },
+    {
+      "name": "resolution",
+      "outcome": "PASS",
+      "detail": "Rajkumar Buyya: expected RESOLVED_DOMINANT, got RESOLVED_DOMINANT; Albert Y. Zomaya: expected RESOLVED_DOMINANT, got RESOLVED_DOMINANT"
+    },
+    {
+      "name": "abstention",
+      "outcome": "PASS",
+      "detail": "expected answer, got answer"
+    },
+    {
+      "name": "claim-evidence",
+      "outcome": "PASS",
+      "detail": "2 claims cite bundle IDs; 2 material claims each cite a graph item; 0 descriptive"
+    },
+    {
+      "name": "verification",
+      "outcome": "PASS",
+      "detail": "answer has a verified claim; counts 2/0/0/0; final claims 2 verified of 2"
+    },
+    {
+      "name": "bundle-budget",
+      "outcome": "PASS",
+      "detail": "graph 1618/8000 tokens, semantic 0/3000, items 9/300"
+    },
+    {
+      "name": "llm-budget",
+      "outcome": "PASS",
+      "detail": "2 attempts, 2 requests (ANSWER_SYNTHESIS 1, QUERY_PLANNING 1), tokens in 6989 out 751"
+    },
+    {
+      "name": "embedding-budget",
+      "outcome": "PASS",
+      "detail": "0 embedding calls for 0 indexes queried"
+    },
+    {
+      "name": "path-hops",
+      "outcome": "FAIL",
+      "detail": "scr:canon-v1.er-v2:bede83f65bedfab8f7fc802f295ee293-scr:canon-v1.er-v2:9c35232fa374c48fdc67309bfedd5f7c: runtime FOUND 1 hops, stored 1 hops, same researchers; no claim cites the path"
+    },
+    {
+      "name": "pair-edges",
+      "outcome": "PASS",
+      "detail": "1 of 1 edges equal the stored hop"
+    },
+    {
+      "name": "deadline",
+      "outcome": "PASS",
+      "detail": "15024 ms of 180000"
+    }
+  ],
+  "answerHash": "sha256:98e9c6b5da65d900349f6f31ab44c63969f625c216963fe56e0ea1584de78889",
+  "retrieved": [
+    {
+      "rank": 1,
+      "source": "graph",
+      "origin": "graph",
+      "evidenceId": "ev-436bf9ecc38d5b21aa16fa7b8b3a97ed",
+      "elementId": "dynamodb:EntityLinkCache/name-v1:rajkumar buyya/scr:canon-v1.er-v2:bede83f65bedfab8f7fc802f295ee293"
+    },
+    {
+      "rank": 2,
+      "source": "graph",
+      "origin": "graph",
+      "evidenceId": "ev-2ec1cb5fc28b243020e34a6711ea0ae5",
+      "elementId": "dynamodb:EntityLinkCache/name-v1:albert y zomaya/scr:canon-v1.er-v2:9c35232fa374c48fdc67309bfedd5f7c"
+    },
+    {
+      "rank": 3,
+      "source": "graph",
+      "origin": "graph",
+      "evidenceId": "ev-6f7925e0193b944e31b5c50bdc18b53c",
+      "elementId": "dynamodb:ResearcherMetricCache/scr:canon-v1.er-v2:bede83f65bedfab8f7fc802f295ee293/WINDOW#all-years"
+    },
+    {
+      "rank": 4,
+      "source": "graph",
+      "origin": "graph",
+      "evidenceId": "ev-09c8ea2b95180900facf86a17e180f00",
+      "elementId": "dynamodb:ResearcherMetricCache/scr:canon-v1.er-v2:9c35232fa374c48fdc67309bfedd5f7c/WINDOW#all-years"
+    },
+    {
+      "rank": 5,
+      "source": "graph",
+      "origin": "graph",
+      "evidenceId": "ev-479e94275c30463deacf52ec4dab2f9e",
+      "elementId": "runtime:graph.shortest-path"
+    },
+    {
+      "rank": 6,
+      "source": "graph",
+      "origin": "graph",
+      "evidenceId": "ev-4e0786f34c891f5d61c8a005339b10d5",
+      "elementId": "neptune:cae-d65f27c5a5fd6a6257e31f81d3eabf7b"
+    },
+    {
+      "rank": 7,
+      "source": "graph",
+      "origin": "graph",
+      "evidenceId": "ev-90cc2b6789b7e8a4e671d2bcf82cfe13",
+      "elementId": "neptune:dblp:journals/jpdc/HsiehLBZ20"
+    },
+    {
+      "rank": 8,
+      "source": "graph",
+      "origin": "graph",
+      "evidenceId": "ev-7c76322d2f73e93c812dfdccd7117f2b",
+      "elementId": "neptune:dblp:journals/tcc/ChenHHBZ20"
+    },
+    {
+      "rank": 9,
+      "source": "graph",
+      "origin": "graph",
+      "evidenceId": "ev-0a2a118a696ca2842ab118d4c432bc11",
+      "elementId": "neptune:dblp:journals/tcc/ChungLKHZB23"
+    }
+  ]
+}

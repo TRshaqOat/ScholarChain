@@ -1,0 +1,74 @@
+{
+  "schemaVersion": "store-run-manifest-v1",
+  "stage": "rag-benchmark",
+  "runId": "run-9dd2efc0312d094217e0fec704c189db",
+  "snapshot": "2026-10-03",
+  "entries": [
+    {
+      "key": "reports/rag-benchmark/snapshot=2026-10-03/run=run-9dd2efc0312d094217e0fec704c189db/questions/B01.json",
+      "sha256": "sha256:416d82799fd04ba49591b985627d78d66ea22de523c383fe2118d2aff9e53bf2",
+      "bytes": 3962,
+      "sourceRef": "qry-9a55d7d8ff3e36bc431fb35e9b7a92f5"
+    },
+    {
+      "key": "reports/rag-benchmark/snapshot=2026-10-03/run=run-9dd2efc0312d094217e0fec704c189db/questions/B02.json",
+      "sha256": "sha256:d5e81436266f7edcb6aff811a6f64cf0ed6bc5034ef5cda2a4f3df8cd8ef73f3",
+      "bytes": 3952,
+      "sourceRef": "qry-edd40f5b84664456e4f1ca514d2b030c"
+    },
+    {
+      "key": "reports/rag-benchmark/snapshot=2026-10-03/run=run-9dd2efc0312d094217e0fec704c189db/questions/B03.json",
+      "sha256": "sha256:90f4c3eea86b3a20a33fb89fc1f6a65635218d3f77c00397692358c0b7659b61",
+      "bytes": 4396,
+      "sourceRef": "qry-03857bff0646837c4841915cf4af5ab7"
+    },
+    {
+      "key": "reports/rag-benchmark/snapshot=2026-10-03/run=run-9dd2efc0312d094217e0fec704c189db/questions/B04.json",
+      "sha256": "sha256:faa42036eed1de81e3cef7f65a0d68ddd19363d8366de91a0103e9c106687b71",
+      "bytes": 4392,
+      "sourceRef": "qry-b6afa9038948325a624574f242e6e2b1"
+    },
+    {
+      "key": "reports/rag-benchmark/snapshot=2026-10-03/run=run-9dd2efc0312d094217e0fec704c189db/questions/B05.json",
+      "sha256": "sha256:30fe82e02cf6f71f88263612961cc9d0596233d556c47d3176ed2a0d196995e4",
+      "bytes": 5007,
+      "sourceRef": "qry-c6373d7c9bd6d2bbb0ebe76a8cadd668"
+    },
+    {
+      "key": "reports/rag-benchmark/snapshot=2026-10-03/run=run-9dd2efc0312d094217e0fec704c189db/questions/B06.json",
+      "sha256": "sha256:1e524f5575fc4f1cba1260201e3a3a16a978990c779814b82f22aa183b3bfdb7",
+      "bytes": 5014,
+      "sourceRef": "qry-ef2b29126feee289d0f46a4faa5e93f7"
+    },
+    {
+      "key": "reports/rag-benchmark/snapshot=2026-10-03/run=run-9dd2efc0312d094217e0fec704c189db/questions/B07.json",
+      "sha256": "sha256:3019385f38e0556159c542bb5ddfa64bcffef7604fef303237f56d524687ee2d",
+      "bytes": 5528,
+      "sourceRef": "qry-550451479eed4a326062c60671d6b509"
+    },
+    {
+      "key": "reports/rag-benchmark/snapshot=2026-10-03/run=run-9dd2efc0312d094217e0fec704c189db/questions/B08.json",
+      "sha256": "sha256:22fe563960114c5d7d2e51c4422b285b5bce3577216230e957018cb5b5f64b98",
+      "bytes": 4733,
+      "sourceRef": "qry-ade5ae163eec58958cd912b7db2113bd"
+    },
+    {
+      "key": "reports/rag-benchmark/snapshot=2026-10-03/run=run-9dd2efc0312d094217e0fec704c189db/questions/B09.json",
+      "sha256": "sha256:b43dc74c63515ba712d5560634b24e0a3a115bf425594ff2371a1d99c8e36799",
+      "bytes": 3822,
+      "sourceRef": "qry-5015e3bd83b0f98fb10f2c7df8a07574"
+    },
+    {
+      "key": "reports/rag-benchmark/snapshot=2026-10-03/run=run-9dd2efc0312d094217e0fec704c189db/questions/B10.json",
+      "sha256": "sha256:5db96fc5d3cdff0aae9bc383018e46895f6856b7987825b6848b88b2f70f164b",
+      "bytes": 4723,
+      "sourceRef": "qry-aa7031faa170437b4884fc46edf21a0c"
+    },
+    {
+      "key": "reports/rag-benchmark/snapshot=2026-10-03/run=run-9dd2efc0312d094217e0fec704c189db/summary-010.json",
+      "sha256": "sha256:f46cb30b08cca45c3dbbd8cdc8c4569333cf9467187812fc18b1dd890a356e69",
+      "bytes": 3712,
+      "sourceRef": "summary"
+    }
+  ]
+}

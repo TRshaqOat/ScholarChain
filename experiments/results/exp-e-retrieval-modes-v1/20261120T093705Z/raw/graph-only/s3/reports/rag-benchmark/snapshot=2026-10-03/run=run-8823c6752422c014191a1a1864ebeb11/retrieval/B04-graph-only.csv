@@ -1,0 +1,2 @@
+rank,source,origin,evidenceId,elementId
+1,graph,graph,ev-2a930931a5777ce36c0d467bfbab6ad3,dynamodb:ResearcherMetricCache/RANKING#maximumCoauthorsOnOnePaper/TOP#all-years

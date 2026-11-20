@@ -1,0 +1,160 @@
+{
+  "schemaVersion": "rag-benchmark-result-v3",
+  "questionId": "B01",
+  "category": "coauthor_breadth",
+  "mode": "LIVE",
+  "retrievalMode": "VECTOR_ONLY",
+  "runtimeRunId": "run-b9ec0cd5d6d58f881177bc70d85308ac",
+  "queryId": "qry-9a55d7d8ff3e36bc431fb35e9b7a92f5",
+  "planSource": "MODEL",
+  "operations": [],
+  "metrics": [
+    "DISTINCT_COAUTHOR_COUNT"
+  ],
+  "window": "all-years",
+  "resolutions": [
+    {
+      "name": "Jack J. Dongarra",
+      "decision": "RESOLVED_DOMINANT",
+      "researcherId": "scr:canon-v1.er-v2:6de4012bbe8608f1d49d18cf9a40a763",
+      "topShare": 0.9575596816976127,
+      "candidateCount": 17
+    }
+  ],
+  "abstained": true,
+  "abstentionReason": "NO_VERIFIED_CLAIM",
+  "verification": {
+    "verified": 0,
+    "partiallySupported": 0,
+    "unsupported": 2,
+    "conflicting": 0
+  },
+  "claims": 0,
+  "graph": {
+    "reads": 20,
+    "readsByTemplate": {
+      "kv.entity-link": 1,
+      "graph.researcher-institutions": 1,
+      "graph.coauthors": 17,
+      "graph.authored-counts": 1
+    },
+    "rows": 57,
+    "truncatedReads": 1,
+    "evidenceItems": 0,
+    "tokens": 0,
+    "omittedItems": 0,
+    "latencyMs": 0,
+    "pathStatuses": []
+  },
+  "semantic": {
+    "embeddingCalls": 1,
+    "embeddingInputTokens": 0,
+    "indexes": [
+      "researcher-profile-v1"
+    ],
+    "hits": 1,
+    "tokens": 589,
+    "omittedItems": 0,
+    "latencyMs": 2061,
+    "outcome": "OK"
+  },
+  "llm": {
+    "attempts": 2,
+    "requests": 2,
+    "attemptsByStage": {
+      "QUERY_PLANNING": 1,
+      "ANSWER_SYNTHESIS": 1
+    },
+    "outcomes": {
+      "OK": 2
+    },
+    "inputTokens": 5153,
+    "outputTokens": 633,
+    "throttleWaitMs": 3801
+  },
+  "latencyMs": 10008,
+  "stageLatencyMs": {
+    "COLLABORATION_METRICS": 0,
+    "PATH_FINDING": 0,
+    "EVIDENCE_BUILDING": 5,
+    "AUDIT": 0,
+    "QUERY_PLANNING": 1586,
+    "SEMANTIC_CONTEXT": 2061,
+    "COMMUNITY_ANALYSIS": 0,
+    "CLAIM_VERIFICATION": 36,
+    "RESEARCHER_RESOLUTION": 47,
+    "ANSWER_SYNTHESIS": 6228
+  },
+  "checks": [
+    {
+      "name": "plan-operations",
+      "outcome": "PASS",
+      "detail": "needs DISTINCT_COAUTHOR_COUNT; plan []"
+    },
+    {
+      "name": "researcher-names",
+      "outcome": "PASS",
+      "detail": "expected [Jack J. Dongarra], extracted [Jack J. Dongarra]"
+    },
+    {
+      "name": "resolution",
+      "outcome": "PASS",
+      "detail": "Jack J. Dongarra: expected RESOLVED_DOMINANT, got RESOLVED_DOMINANT"
+    },
+    {
+      "name": "abstention",
+      "outcome": "FAIL",
+      "detail": "expected answer, got abstain (NO_VERIFIED_CLAIM)"
+    },
+    {
+      "name": "claim-evidence",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no claim"
+    },
+    {
+      "name": "verification",
+      "outcome": "PASS",
+      "detail": "abstained with no verified claim kept; counts 0/0/2/0; final claims 0 verified of 0"
+    },
+    {
+      "name": "bundle-budget",
+      "outcome": "PASS",
+      "detail": "graph 0/8000 tokens, semantic 589/3000, items 1/300"
+    },
+    {
+      "name": "llm-budget",
+      "outcome": "PASS",
+      "detail": "2 attempts, 2 requests (ANSWER_SYNTHESIS 1, QUERY_PLANNING 1), tokens in 5153 out 633"
+    },
+    {
+      "name": "embedding-budget",
+      "outcome": "PASS",
+      "detail": "1 embedding calls for 1 indexes queried"
+    },
+    {
+      "name": "path-hops",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no path evidence in the bundle"
+    },
+    {
+      "name": "pair-edges",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no bundle edge has stored path evidence"
+    },
+    {
+      "name": "deadline",
+      "outcome": "PASS",
+      "detail": "10008 ms of 180000"
+    }
+  ],
+  "answerHash": "sha256:0d8556a5aa98e45ac5d38af7dbd21ef2576cc5a8715387790a5db97e44a443c3",
+  "retrieved": [
+    {
+      "rank": 1,
+      "source": "vector",
+      "origin": "vector",
+      "evidenceId": "ev-7a6bfc434c09dcc756d43b65708120b5",
+      "elementId": "chunk-a467b0166fb25caf1894ebffe5f41413"
+    }
+  ]
+}

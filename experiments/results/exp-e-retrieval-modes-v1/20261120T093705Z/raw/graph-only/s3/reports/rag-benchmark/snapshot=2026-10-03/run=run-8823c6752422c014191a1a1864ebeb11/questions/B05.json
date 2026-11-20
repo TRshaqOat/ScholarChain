@@ -1,0 +1,174 @@
+{
+  "schemaVersion": "rag-benchmark-result-v3",
+  "questionId": "B05",
+  "category": "max_team_size",
+  "mode": "LIVE",
+  "retrievalMode": "GRAPH_ONLY",
+  "runtimeRunId": "run-b390fb8b729c40c5b9cb9b9f86c0aeac",
+  "queryId": "qry-984d8b365d18c07d9501667ffb9611bd",
+  "planSource": "MODEL",
+  "operations": [
+    "MAXIMUM_TEAM_SIZE/RESEARCHER"
+  ],
+  "metrics": [],
+  "window": "all-years",
+  "resolutions": [
+    {
+      "name": "Ian T. Foster",
+      "decision": "RESOLVED_DOMINANT",
+      "researcherId": "scr:canon-v1.er-v2:8c41e7402418b6a74ad89d1b987f6f44",
+      "topShare": 0.9679715302491103,
+      "candidateCount": 10
+    }
+  ],
+  "abstained": false,
+  "abstentionReason": null,
+  "verification": {
+    "verified": 1,
+    "partiallySupported": 0,
+    "unsupported": 1,
+    "conflicting": 0
+  },
+  "claims": 1,
+  "graph": {
+    "reads": 16,
+    "readsByTemplate": {
+      "kv.metrics.window": 1,
+      "graph.vertices": 1,
+      "graph.authored-counts": 1,
+      "graph.coauthors": 10,
+      "kv.entity-link": 2,
+      "graph.researcher-institutions": 1
+    },
+    "rows": 42,
+    "truncatedReads": 3,
+    "evidenceItems": 3,
+    "tokens": 502,
+    "omittedItems": 0,
+    "latencyMs": 4,
+    "pathStatuses": []
+  },
+  "semantic": {
+    "embeddingCalls": 0,
+    "embeddingInputTokens": 0,
+    "indexes": [],
+    "hits": 0,
+    "tokens": 0,
+    "omittedItems": 0,
+    "latencyMs": 0,
+    "outcome": "SKIPPED"
+  },
+  "llm": {
+    "attempts": 2,
+    "requests": 2,
+    "attemptsByStage": {
+      "QUERY_PLANNING": 1,
+      "ANSWER_SYNTHESIS": 1
+    },
+    "outcomes": {
+      "OK": 2
+    },
+    "inputTokens": 5307,
+    "outputTokens": 650,
+    "throttleWaitMs": 12076
+  },
+  "latencyMs": 15832,
+  "stageLatencyMs": {
+    "COLLABORATION_METRICS": 4,
+    "PATH_FINDING": 0,
+    "EVIDENCE_BUILDING": 1,
+    "AUDIT": 0,
+    "QUERY_PLANNING": 6742,
+    "SEMANTIC_CONTEXT": 0,
+    "COMMUNITY_ANALYSIS": 0,
+    "CLAIM_VERIFICATION": 15,
+    "RESEARCHER_RESOLUTION": 26,
+    "ANSWER_SYNTHESIS": 9036
+  },
+  "checks": [
+    {
+      "name": "plan-operations",
+      "outcome": "PASS",
+      "detail": "needs MAXIMUM_TEAM_SIZE; plan [MAXIMUM_TEAM_SIZE/RESEARCHER]"
+    },
+    {
+      "name": "researcher-names",
+      "outcome": "PASS",
+      "detail": "expected [Ian T. Foster], extracted [Ian T. Foster]"
+    },
+    {
+      "name": "resolution",
+      "outcome": "PASS",
+      "detail": "Ian T. Foster: expected RESOLVED_DOMINANT, got RESOLVED_DOMINANT"
+    },
+    {
+      "name": "abstention",
+      "outcome": "PASS",
+      "detail": "expected answer, got answer"
+    },
+    {
+      "name": "claim-evidence",
+      "outcome": "PASS",
+      "detail": "1 claims cite bundle IDs; 1 material claims each cite a graph item; 0 descriptive"
+    },
+    {
+      "name": "verification",
+      "outcome": "PASS",
+      "detail": "answer has a verified claim; counts 1/0/1/0; final claims 1 verified of 1"
+    },
+    {
+      "name": "bundle-budget",
+      "outcome": "PASS",
+      "detail": "graph 502/8000 tokens, semantic 0/3000, items 3/300"
+    },
+    {
+      "name": "llm-budget",
+      "outcome": "PASS",
+      "detail": "2 attempts, 2 requests (ANSWER_SYNTHESIS 1, QUERY_PLANNING 1), tokens in 5307 out 650"
+    },
+    {
+      "name": "embedding-budget",
+      "outcome": "PASS",
+      "detail": "0 embedding calls for 0 indexes queried"
+    },
+    {
+      "name": "path-hops",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no path evidence in the bundle"
+    },
+    {
+      "name": "pair-edges",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no bundle edge has stored path evidence"
+    },
+    {
+      "name": "deadline",
+      "outcome": "PASS",
+      "detail": "15832 ms of 180000"
+    }
+  ],
+  "answerHash": "sha256:2eb1a33444d15d3b31f481e611042e41880327ebda59d4bffc767feba0d6368a",
+  "retrieved": [
+    {
+      "rank": 1,
+      "source": "graph",
+      "origin": "graph",
+      "evidenceId": "ev-6128f267040ccebc39d52a341f6a706a",
+      "elementId": "dynamodb:EntityLinkCache/name-v1:ian t foster/scr:canon-v1.er-v2:8c41e7402418b6a74ad89d1b987f6f44"
+    },
+    {
+      "rank": 2,
+      "source": "graph",
+      "origin": "graph",
+      "evidenceId": "ev-5f5a0e33242cc34e8a1bf7b3014839e2",
+      "elementId": "dynamodb:ResearcherMetricCache/scr:canon-v1.er-v2:8c41e7402418b6a74ad89d1b987f6f44/WINDOW#all-years"
+    },
+    {
+      "rank": 3,
+      "source": "graph",
+      "origin": "graph",
+      "evidenceId": "ev-c8640230cb1a9e85af018d36173645c5",
+      "elementId": "neptune:dblp:journals/concurrency/MoreauLA08"
+    }
+  ]
+}

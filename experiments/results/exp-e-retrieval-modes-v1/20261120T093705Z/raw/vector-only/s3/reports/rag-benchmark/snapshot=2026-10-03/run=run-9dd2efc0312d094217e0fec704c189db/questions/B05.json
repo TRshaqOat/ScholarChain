@@ -1,0 +1,196 @@
+{
+  "schemaVersion": "rag-benchmark-result-v3",
+  "questionId": "B05",
+  "category": "max_team_size",
+  "mode": "LIVE",
+  "retrievalMode": "VECTOR_ONLY",
+  "runtimeRunId": "run-b9ec0cd5d6d58f881177bc70d85308ac",
+  "queryId": "qry-c6373d7c9bd6d2bbb0ebe76a8cadd668",
+  "planSource": "MODEL",
+  "operations": [
+    "MAXIMUM_TEAM_SIZE/RESEARCHER"
+  ],
+  "metrics": [],
+  "window": "all-years",
+  "resolutions": [
+    {
+      "name": "Ian T. Foster",
+      "decision": "RESOLVED_DOMINANT",
+      "researcherId": "scr:canon-v1.er-v2:8c41e7402418b6a74ad89d1b987f6f44",
+      "topShare": 0.9679715302491103,
+      "candidateCount": 10
+    }
+  ],
+  "abstained": true,
+  "abstentionReason": "NO_VERIFIED_CLAIM",
+  "verification": {
+    "verified": 0,
+    "partiallySupported": 0,
+    "unsupported": 1,
+    "conflicting": 0
+  },
+  "claims": 0,
+  "graph": {
+    "reads": 13,
+    "readsByTemplate": {
+      "kv.entity-link": 1,
+      "graph.researcher-institutions": 1,
+      "graph.coauthors": 10,
+      "graph.authored-counts": 1
+    },
+    "rows": 40,
+    "truncatedReads": 3,
+    "evidenceItems": 0,
+    "tokens": 0,
+    "omittedItems": 0,
+    "latencyMs": 0,
+    "pathStatuses": []
+  },
+  "semantic": {
+    "embeddingCalls": 1,
+    "embeddingInputTokens": 0,
+    "indexes": [
+      "researcher-profile-v1",
+      "paper-abstract-v1"
+    ],
+    "hits": 6,
+    "tokens": 1809,
+    "omittedItems": 0,
+    "latencyMs": 559,
+    "outcome": "OK"
+  },
+  "llm": {
+    "attempts": 2,
+    "requests": 2,
+    "attemptsByStage": {
+      "QUERY_PLANNING": 1,
+      "ANSWER_SYNTHESIS": 1
+    },
+    "outcomes": {
+      "OK": 2
+    },
+    "inputTokens": 6116,
+    "outputTokens": 570,
+    "throttleWaitMs": 11785
+  },
+  "latencyMs": 16572,
+  "stageLatencyMs": {
+    "COLLABORATION_METRICS": 0,
+    "PATH_FINDING": 0,
+    "EVIDENCE_BUILDING": 0,
+    "AUDIT": 0,
+    "QUERY_PLANNING": 7138,
+    "SEMANTIC_CONTEXT": 559,
+    "COMMUNITY_ANALYSIS": 0,
+    "CLAIM_VERIFICATION": 14,
+    "RESEARCHER_RESOLUTION": 38,
+    "ANSWER_SYNTHESIS": 8812
+  },
+  "checks": [
+    {
+      "name": "plan-operations",
+      "outcome": "PASS",
+      "detail": "needs MAXIMUM_TEAM_SIZE; plan [MAXIMUM_TEAM_SIZE/RESEARCHER]"
+    },
+    {
+      "name": "researcher-names",
+      "outcome": "PASS",
+      "detail": "expected [Ian T. Foster], extracted [Ian T. Foster]"
+    },
+    {
+      "name": "resolution",
+      "outcome": "PASS",
+      "detail": "Ian T. Foster: expected RESOLVED_DOMINANT, got RESOLVED_DOMINANT"
+    },
+    {
+      "name": "abstention",
+      "outcome": "FAIL",
+      "detail": "expected answer, got abstain (NO_VERIFIED_CLAIM)"
+    },
+    {
+      "name": "claim-evidence",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no claim"
+    },
+    {
+      "name": "verification",
+      "outcome": "PASS",
+      "detail": "abstained with no verified claim kept; counts 0/0/1/0; final claims 0 verified of 0"
+    },
+    {
+      "name": "bundle-budget",
+      "outcome": "PASS",
+      "detail": "graph 0/8000 tokens, semantic 1809/3000, items 6/300"
+    },
+    {
+      "name": "llm-budget",
+      "outcome": "PASS",
+      "detail": "2 attempts, 2 requests (ANSWER_SYNTHESIS 1, QUERY_PLANNING 1), tokens in 6116 out 570"
+    },
+    {
+      "name": "embedding-budget",
+      "outcome": "PASS",
+      "detail": "1 embedding calls for 2 indexes queried"
+    },
+    {
+      "name": "path-hops",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no path evidence in the bundle"
+    },
+    {
+      "name": "pair-edges",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no bundle edge has stored path evidence"
+    },
+    {
+      "name": "deadline",
+      "outcome": "PASS",
+      "detail": "16572 ms of 180000"
+    }
+  ],
+  "answerHash": "sha256:e238e979bc474aafdef8b92990aa4c0b996f9c1c8a6e7eaf2aa536fda9f5d752",
+  "retrieved": [
+    {
+      "rank": 1,
+      "source": "vector",
+      "origin": "vector",
+      "evidenceId": "ev-e7f6b0e72f6256da592ac5eb85f2b765",
+      "elementId": "chunk-f6a0b5343d4e179da60729e6244d4c09"
+    },
+    {
+      "rank": 2,
+      "source": "vector",
+      "origin": "vector",
+      "evidenceId": "ev-0425676e3563e091a0d1de67eedf96fd",
+      "elementId": "chunk-09d2adcf3021d9ac400dd880e60d5d50"
+    },
+    {
+      "rank": 3,
+      "source": "vector",
+      "origin": "vector",
+      "evidenceId": "ev-ad245c500bc84812ddbe355abbdbf505",
+      "elementId": "chunk-8f656a5f9aabfc590f1da25d24fb8041"
+    },
+    {
+      "rank": 4,
+      "source": "vector",
+      "origin": "vector",
+      "evidenceId": "ev-e81698329c5afb4dfc67ef9dbbc41879",
+      "elementId": "chunk-68b7d005480b9c3acfe0fa44f8001d5b"
+    },
+    {
+      "rank": 5,
+      "source": "vector",
+      "origin": "vector",
+      "evidenceId": "ev-3e5c30959ddf8c9b8bad0f204a82cc9e",
+      "elementId": "chunk-ff79a27827b359a06ca232d1bed0986b"
+    },
+    {
+      "rank": 6,
+      "source": "vector",
+      "origin": "vector",
+      "evidenceId": "ev-516f8e26c3db6d4e8d412deb47f68529",
+      "elementId": "chunk-654a77e699cd2d129bfb0efc096817dc"
+    }
+  ]
+}

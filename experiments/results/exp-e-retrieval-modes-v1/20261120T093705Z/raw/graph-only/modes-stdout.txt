@@ -1,0 +1,48 @@
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] running scholarchain.rag.cli.BenchmarkCli --questions experiments/benchmark/benchmark-questions-v1.csv --path-evidence scratch/stores/work/neptune-check/snapshot=2026-10-03/run=run-ee4ffd21aa20dbe4c078a4be96fe8c9f/expect-benchmark.csv --graph scratch/stores/s3/graph/neptune/snapshot=2026-10-03/run=run-1d6a86491812ff94887270c1ab885e69 --items scratch/stores/s3/curated/dynamodb/snapshot=2026-10-03/run=run-1d6a86491812ff94887270c1ab885e69 --objects scratch/stores/s3 --vectors scratch/stores-live/s3vectors --out /Users/achyutpatel/Developer/Cloud/ScholarChain/experiments/results/exp-e-retrieval-modes-v1/20261120T093705Z/raw/graph-only --window-summary-root scratch/runtime/wo8/s3 --window-summary-run run-6fbad498beb0d8f570df67665fb97544 --live --profile scholarchain-sdk --region us-east-2 --per-minute 8 --max 10 --retrieval-mode graph-only
+runtime run run-b390fb8b729c40c5b9cb9b9f86c0aeac (live mode, graph-only retrieval), snapshot 2026-10-03
+window summaries: curated/window-summary/snapshot=2026-10-03/run=run-6fbad498beb0d8f570df67665fb97544/part-00000.jsonl
+graph loaded: 511920 vertices, 3123311 edges in 30388 ms; heap in use 3770 MiB
+items indexed: 876228 in 12557 ms; heap in use 3912 MiB
+LIVE: Bedrock us.anthropic.claude-haiku-4-5-20251001-v1:0 (at most 8 requests per minute) and amazon.titan-embed-text-v2:0 in us-east-2, profile scholarchain-sdk
+benchmark run run-8823c6752422c014191a1a1864ebeb11: 30 questions, 0 already done, answering 10 now
+B01 answered; 1 verified; graph 21 reads, 2 items; semantic 0 hits; llm 2 attempts 2 requests; 9177 ms; checks pass
+B02 answered; 1 verified; graph 15 reads, 2 items; semantic 0 hits; llm 2 attempts 2 requests; 15310 ms; checks pass
+B03 answered; 1 verified; graph 2 reads, 1 items; semantic 0 hits; llm 2 attempts 2 requests; 14483 ms; checks pass
+B04 answered; 1 verified; graph 2 reads, 1 items; semantic 0 hits; llm 2 attempts 2 requests; 15347 ms; checks pass
+B05 answered; 1 verified; graph 16 reads, 3 items; semantic 0 hits; llm 2 attempts 2 requests; 15832 ms; checks pass
+B06 answered; 2 verified; graph 22 reads, 3 items; semantic 0 hits; llm 2 attempts 2 requests; 14945 ms; checks pass
+B07 answered; 1 verified; graph 33 reads, 28 items; semantic 0 hits; llm 2 attempts 2 requests; 14903 ms; checks pass
+B08 answered; 2 verified; graph 26 reads, 9 items; semantic 0 hits; llm 2 attempts 2 requests; 15024 ms; FAIL plan-operations,path-hops
+B09 abstained AMBIGUOUS_RESEARCHER; 0 verified; graph 572 reads, 0 items; semantic 0 hits; llm 1 attempts 1 requests; 6081 ms; checks pass
+B10 answered; 4 verified; graph 35 reads, 13 items; semantic 0 hits; llm 2 attempts 2 requests; 20300 ms; checks pass
+done 10 of 30 (live mode, graph-only retrieval)
+not done: B11 B12 B13 B14 B15 B16 B17 B18 B19 B20 B21 B22 B23 B24 B25 B26 B27 B28 B29 B30
+  check abstention: 10 pass, 0 fail, 0 n/a
+  check bundle-budget: 9 pass, 0 fail, 1 n/a
+  check claim-evidence: 9 pass, 0 fail, 1 n/a
+  check deadline: 10 pass, 0 fail, 0 n/a
+  check embedding-budget: 10 pass, 0 fail, 0 n/a
+  check llm-budget: 10 pass, 0 fail, 0 n/a
+  check pair-edges: 3 pass, 0 fail, 7 n/a
+  check path-hops: 1 pass, 1 fail, 8 n/a
+  check plan-operations: 9 pass, 1 fail, 0 n/a
+  check researcher-names: 10 pass, 0 fail, 0 n/a
+  check resolution: 8 pass, 0 fail, 2 n/a
+  check verification: 10 pass, 0 fail, 0 n/a
+  FAIL B08 plan-operations: needs DIRECT_COAUTHORS/PAIR; plan [SHORTEST_PATH/PAIR]
+  FAIL B08 path-hops: scr:canon-v1.er-v2:bede83f65bedfab8f7fc802f295ee293-scr:canon-v1.er-v2:9c35232fa374c48fdc67309bfedd5f7c: runtime FOUND 1 hops, stored 1 hops, same researchers; no claim cites the path
+plan sources: MODEL 10; outcomes: AMBIGUOUS_RESEARCHER 1, ANSWERED 9
+resolutions: AMBIGUOUS 2, RESOLVED_DOMINANT 10
+verification: 14 verified, 0 partial, 2 unsupported, 0 conflicting; 14 final claims
+graph retrieval: 744 reads in 10 questions, 2720 rows, 148 truncated, 62 evidence items, 9077 tokens; paths FOUND 2; p50 4 ms, p95 53 ms, max 53 ms
+semantic retrieval: 0 embedding calls in 0 questions, 0 hits in 0 questions, 0 tokens; indexes ; p50 0 ms, p95 2 ms, max 2 ms
+llm: 19 attempts, 19 requests (ANSWER_SYNTHESIS 9, QUERY_PLANNING 10), outcomes OK 19, tokens in 57030 out 6705, throttle wait 105734 ms
+question latency: p50 14945 ms, p95 20300 ms, max 20300 ms, total 141402 ms
+summary: /Users/achyutpatel/Developer/Cloud/ScholarChain/experiments/results/exp-e-retrieval-modes-v1/20261120T093705Z/raw/graph-only/s3/reports/rag-benchmark/snapshot=2026-10-03/run=run-8823c6752422c014191a1a1864ebeb11/summary-010.json
+[success] Total time: 188 s (0:03:08.0), completed Nov 20, 2026, 3:44:19 AM

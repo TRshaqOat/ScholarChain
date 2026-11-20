@@ -1,0 +1,32 @@
+rank,source,origin,evidenceId,elementId
+1,fused,graph,ev-f77b0f57600fbe72e769edddb227902e,dynamodb:EntityLinkCache/name-v1:jack j dongarra/scr:canon-v1.er-v2:6de4012bbe8608f1d49d18cf9a40a763
+2,fused,graph,ev-c6affb275b51502c8c5032dd61502c75,dynamodb:EntityLinkCache/name-v1:yves robert/scr:canon-v1.er-v2:da6e3bdff14745638f3f5425f0133388
+3,fused,graph,ev-4c23f4fcc44cc84b992719b9758dae7d,dynamodb:ResearcherMetricCache/scr:canon-v1.er-v2:6de4012bbe8608f1d49d18cf9a40a763/WINDOW#all-years
+4,fused,graph,ev-24b7c9d74d0da36271ade2533a1336d2,dynamodb:ResearcherMetricCache/scr:canon-v1.er-v2:da6e3bdff14745638f3f5425f0133388/WINDOW#all-years
+5,fused,graph,ev-927665f3bbac87eb60685e50cfeb8f9b,neptune:cae-94049b45586a9d41217209d71135c559
+6,fused,graph,ev-9db9fdae9969369ab8b7c85e418e697e,neptune:dblp:conf/ipps/RobertDDMSSV11
+7,fused,graph,ev-9edfbd8136ecefa015ada3457f655f52,neptune:dblp:journals/jpdc/FavergeHLLRD15
+8,fused,graph,ev-481dea864a37257a39b80f710b81ce72,neptune:dblp:conf/ipps/HeraultRBAFBD18
+9,fused,graph,ev-413a0b4516f445ef97c5d12561733b61,neptune:dblp:conf/europar/AupyFRKLD13
+10,fused,graph,ev-bc6e0fba0974fea5640f422e54d9446d,neptune:dblp:conf/ipps/BosilcaBHFRD21
+11,fused,graph,ev-28351f4156cf3b1e54e7ca693c537a11,neptune:dblp:conf/ppopp/DongarraPRV08
+12,fused,graph,ev-818204c8036d66e8c5ae3c06d3eb7cd9,neptune:dblp:conf/ipps/BosilcaBHRD14
+13,fused,graph,ev-5174bf9b80ba18ebd3e4d3ca6ae7aec8,neptune:dblp:conf/ipps/FavergeHLLRD14
+14,fused,graph,ev-4336ab0042ebd62203b4b2382c81ac60,neptune:dblp:conf/sc/HeraultRBD19
+15,fused,graph,ev-1fd8c12e8eec6d457a75d559dea2bd08,neptune:dblp:conf/ipps/DongarraHR13
+16,fused,graph,ev-e133105bcfb780604e0a66ea1559e7f6,neptune:dblp:conf/ipps/DongarraPRSV07
+17,fused,graph,ev-643bbd0c16b71d37c57e7b3182f0633d,neptune:dblp:conf/ipps/FavergeLRD17
+18,fused,graph,ev-a610be714ddb39547bf66e66c1cd1cbf,neptune:dblp:journals/pc/FevreHRBHBD19
+19,fused,graph,ev-2e7b5dd641f01764bb5b57c0d854a865,neptune:dblp:journals/concurrency/BosilcaBBCDGHRVZ14
+20,fused,graph,ev-4f5c8e06ae5c7cf06c203717b1549a0f,neptune:dblp:journals/pc/HerrmannBHMRD16
+21,fused,graph,ev-058824e1589734ad5b1e75d55d273724,neptune:dblp:conf/ipps/HeraultRBHLVD21
+22,fused,graph,ev-b035975c206dee309b303a281d54dff4,neptune:dblp:conf/europar/FevreBBHHRD18
+23,fused,graph,ev-ea24ee741fa9cbd80e2f7f56e32649d1,neptune:dblp:conf/sc/BosilcaBGHRSD16
+24,fused,graph,ev-17899f5018f6c560493489a5c4325822,neptune:dblp:conf/ipps/DongarraFHLR12
+25,fused,graph,ev-b9566bd5159dce6e3806370162846e19,neptune:dblp:journals/ijhpca/BosilcaBGHRSD18
+26,fused,graph,ev-dfc3f8faa9d65f7e8bf6d69c8c096a9b,neptune:dblp:conf/europar/BouteillerCDGHR13
+27,fused,graph,ev-1f3af39608934514ef615be4739a9e80,neptune:dblp:conf/sc/AupyBHRD13
+28,fused,graph,ev-b413504597b07d9dfef0c605e3fb688c,neptune:dblp:journals/pc/DongarraFHJLR13
+29,fused,vector,ev-7a6bfc434c09dcc756d43b65708120b5,chunk-a467b0166fb25caf1894ebffe5f41413
+30,fused,vector,ev-0e24fe7fc0e5a1f4d230e33a6cbbd7c7,chunk-fe2b39567ddf5437bee4f994b8612e51
+31,fused,vector,ev-21c44830ca4799e8ff832741b771e7ca,chunk-64e890b763f06b191c57693517934251

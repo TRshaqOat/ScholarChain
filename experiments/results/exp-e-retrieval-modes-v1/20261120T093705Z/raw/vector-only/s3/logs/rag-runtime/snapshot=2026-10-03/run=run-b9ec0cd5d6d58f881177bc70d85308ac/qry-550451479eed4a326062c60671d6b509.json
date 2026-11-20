@@ -1,0 +1,487 @@
+{
+  "schemaVersion": "rag-audit-v3",
+  "queryId": "qry-550451479eed4a326062c60671d6b509",
+  "sessionId": null,
+  "runId": "run-b9ec0cd5d6d58f881177bc70d85308ac",
+  "createdAt": "2026-11-20T09:46:45.579594Z",
+  "mode": "LIVE",
+  "questionHash": "sha256:c763a8040d8fd04790fc7fbc11b7411c711f254f40b353057b84fa32c97d5892",
+  "questionChars": 57,
+  "plan": {
+    "schemaVersion": "rag-query-plan-v1",
+    "queryId": "qry-550451479eed4a326062c60671d6b509",
+    "operations": [
+      {
+        "operation": "DIRECT_COAUTHORS",
+        "scope": "PAIR",
+        "researchers": [
+          0,
+          1
+        ],
+        "metric": null,
+        "topN": null
+      }
+    ],
+    "researcherNames": [
+      {
+        "name": "Jack J. Dongarra",
+        "offset": 5
+      },
+      {
+        "name": "Yves Robert",
+        "offset": 26
+      }
+    ],
+    "metrics": [],
+    "window": {
+      "requested": {
+        "kind": "DEFAULT",
+        "name": null,
+        "yearFrom": null,
+        "yearTo": null
+      },
+      "window": "all-years",
+      "startYear": 2000,
+      "endYear": 2026,
+      "exact": true,
+      "note": null
+    },
+    "comparison": null,
+    "topics": [],
+    "venues": [],
+    "institutions": [],
+    "semanticIndexes": [
+      "researcher-profile-v1",
+      "paper-abstract-v1"
+    ],
+    "limits": {
+      "graphLimit": 100,
+      "vectorLimit": 50,
+      "maxPathDepth": 6,
+      "topK": 5
+    },
+    "source": "MODEL",
+    "overriddenFields": [],
+    "rejectedItems": [],
+    "promptVersion": "planner-v2",
+    "modelId": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "RUNTIME",
+      "sourceRecordId": "qry-550451479eed4a326062c60671d6b509",
+      "snapshot": "2026-10-03",
+      "runId": "run-b9ec0cd5d6d58f881177bc70d85308ac",
+      "policyVersion": null,
+      "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+    }
+  },
+  "resolutions": [
+    {
+      "name": "Jack J. Dongarra",
+      "decision": "RESOLVED_DOMINANT",
+      "researcherId": "scr:canon-v1.er-v2:6de4012bbe8608f1d49d18cf9a40a763",
+      "topShare": 0.9575596816976127,
+      "candidateCount": 17
+    },
+    {
+      "name": "Yves Robert",
+      "decision": "RESOLVED_DOMINANT",
+      "researcherId": "scr:canon-v1.er-v2:da6e3bdff14745638f3f5425f0133388",
+      "topShare": 0.9774774774774775,
+      "candidateCount": 6
+    }
+  ],
+  "graphEvidenceIds": [],
+  "semanticEvidenceIds": [
+    "ev-7a6bfc434c09dcc756d43b65708120b5",
+    "ev-0e24fe7fc0e5a1f4d230e33a6cbbd7c7",
+    "ev-d1fc7006f60bad90f06ffe1c6fdd6189",
+    "ev-cea3aa5180afa00c79607937c53541b7",
+    "ev-0be33fe21d81340e7bf308f840ba364c",
+    "ev-8c2a13ae825c41f926e75436cfaaaa81",
+    "ev-2fa215a943df4e32e72f81ecef15874f"
+  ],
+  "metricVersions": [],
+  "graphRunId": "run-1d6a86491812ff94887270c1ab885e69",
+  "vectorIndexes": [
+    "researcher-profile-v1",
+    "paper-abstract-v1"
+  ],
+  "embeddingModelVersion": "amazon.titan-embed-text-v2:0|1024|normalized|rendering-v1",
+  "promptVersions": {
+    "planner.schema": "planner-output-v1",
+    "synthesis.schema": "synthesis-output-v3",
+    "synthesis": "synthesis-v3",
+    "planner.schema.sha256": "sha256:3ff40901f3f625204eaaa3ddc525b844c96178ad36629666ebc96f9fe91c1368",
+    "synthesis.schema.sha256": "sha256:44eb22cc2e428a1e90884bcd115b6aac031c9c95f199efd4c42729fada880d02",
+    "planner.sha256": "sha256:c7354f86ece47e7aa01481f6c893a9721a9f13e3d24716bc73942ef49e81e655",
+    "planner": "planner-v2",
+    "synthesis.sha256": "sha256:5755fb97ab563ed8bbe19cded139818194bef346e1718d2ed5df4cc8c4953e2e"
+  },
+  "modelIds": {
+    "planner": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "synthesis": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "embedding": "amazon.titan-embed-text-v2:0|1024|normalized|rendering-v1"
+  },
+  "llmCalls": [
+    {
+      "stage": "QUERY_PLANNING",
+      "modelId": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+      "promptVersion": "planner-v2",
+      "schemaVersion": "planner-output-v1",
+      "attempt": 1,
+      "outcome": "OK",
+      "requests": 1,
+      "inputTokens": 2522,
+      "outputTokens": 190,
+      "latencyMs": 1162,
+      "throttleWaitMs": 4695,
+      "failure": null
+    },
+    {
+      "stage": "ANSWER_SYNTHESIS",
+      "modelId": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+      "promptVersion": "synthesis-v3",
+      "schemaVersion": "synthesis-output-v3",
+      "attempt": 1,
+      "outcome": "OK",
+      "requests": 1,
+      "inputTokens": 4019,
+      "outputTokens": 557,
+      "latencyMs": 3428,
+      "throttleWaitMs": 6130,
+      "failure": null
+    }
+  ],
+  "embeddingCalls": [
+    {
+      "index": "researcher-profile-v1,paper-abstract-v1",
+      "modelVersion": "amazon.titan-embed-text-v2:0|1024|normalized|rendering-v1",
+      "attempt": 1,
+      "outcome": "OK",
+      "inputTokens": null,
+      "latencyMs": 154,
+      "throttleWaitMs": 0
+    }
+  ],
+  "templateCalls": [
+    {
+      "templateId": "kv.entity-link",
+      "latencyMs": 8,
+      "resultCount": 17,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.authored-counts",
+      "latencyMs": 10,
+      "resultCount": 17,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.researcher-institutions",
+      "latencyMs": 2,
+      "resultCount": 17,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 1,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 1,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 6,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 1,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "kv.entity-link",
+      "latencyMs": 2,
+      "resultCount": 6,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.authored-counts",
+      "latencyMs": 4,
+      "resultCount": 6,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.researcher-institutions",
+      "latencyMs": 2,
+      "resultCount": 6,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 4,
+      "resultCount": 3,
+      "truncated": true
+    }
+  ],
+  "stages": [
+    {
+      "stage": "QUERY_PLANNING",
+      "outcome": "OK",
+      "latencyMs": 5859
+    },
+    {
+      "stage": "RESEARCHER_RESOLUTION",
+      "outcome": "OK",
+      "latencyMs": 41
+    },
+    {
+      "stage": "COLLABORATION_METRICS",
+      "outcome": "SKIPPED",
+      "latencyMs": 0
+    },
+    {
+      "stage": "PATH_FINDING",
+      "outcome": "SKIPPED",
+      "latencyMs": 0
+    },
+    {
+      "stage": "COMMUNITY_ANALYSIS",
+      "outcome": "SKIPPED",
+      "latencyMs": 0
+    },
+    {
+      "stage": "SEMANTIC_CONTEXT",
+      "outcome": "OK",
+      "latencyMs": 166
+    },
+    {
+      "stage": "EVIDENCE_BUILDING",
+      "outcome": "OK",
+      "latencyMs": 1
+    },
+    {
+      "stage": "ANSWER_SYNTHESIS",
+      "outcome": "OK",
+      "latencyMs": 9559
+    },
+    {
+      "stage": "CLAIM_VERIFICATION",
+      "outcome": "ABSTAINED",
+      "latencyMs": 9
+    },
+    {
+      "stage": "AUDIT",
+      "outcome": "OK",
+      "latencyMs": 0
+    }
+  ],
+  "budget": {
+    "tokenBudget": 11000,
+    "graphTokens": 0,
+    "semanticTokens": 2261,
+    "omittedGraphItems": 0,
+    "omittedSemanticItems": 0
+  },
+  "verification": {
+    "verified": 0,
+    "partiallySupported": 0,
+    "unsupported": 0,
+    "conflicting": 2
+  },
+  "removedClaims": [
+    {
+      "claimId": "claim-1",
+      "kind": "DESCRIPTIVE",
+      "text": "Jack J. Dongarra is a researcher with 340 publications in the DBLP subset (2000-2025) and 499 distinct coauthors.",
+      "status": "CONFLICTING",
+      "failedChecks": [
+        {
+          "rule": "numbers-in-text",
+          "outcome": "FAIL",
+          "detail": "340 is not an asserted fact of a cited item; 499 is not an asserted fact of a cited item"
+        },
+        {
+          "rule": "window",
+          "outcome": "CONFLICT",
+          "detail": "the text names 2000-2025, which is not the window (none)"
+        },
+        {
+          "rule": "context-only",
+          "outcome": "FAIL",
+          "detail": "semantic context may name at most one researcher and state no count, relationship, path, component, community, or bridge measure"
+        }
+      ]
+    },
+    {
+      "claimId": "claim-2",
+      "kind": "DESCRIPTIVE",
+      "text": "Yves Robert is a researcher with 216 publications in the DBLP subset (2000-2026) and 141 distinct coauthors.",
+      "status": "CONFLICTING",
+      "failedChecks": [
+        {
+          "rule": "numbers-in-text",
+          "outcome": "FAIL",
+          "detail": "216 is not an asserted fact of a cited item; 141 is not an asserted fact of a cited item"
+        },
+        {
+          "rule": "window",
+          "outcome": "CONFLICT",
+          "detail": "the text names 2000-2026, which is not the window (none)"
+        },
+        {
+          "rule": "context-only",
+          "outcome": "FAIL",
+          "detail": "semantic context may name at most one researcher and state no count, relationship, path, component, community, or bridge measure"
+        }
+      ]
+    }
+  ],
+  "droppedLines": [
+    {
+      "part": "SUMMARY",
+      "text": "The bundle contains researcher profiles for Jack J. Dongarra and Yves Robert but no direct evidence of coauthorship between them. The graph evidence section is empty, providing no coauthor edge data. Semantic context shows their research profiles and frequent collaborators, but Yves Robert does not appear in Jack J. Dongarra's list of frequent coauthors, and Jack J. Dongarra does not appear in Yves Robert's list of frequent coauthors.",
+      "reasons": [
+        "no claim was kept"
+      ]
+    },
+    {
+      "part": "UNCERTAINTY",
+      "text": "The graph evidence section is empty; no coauthor edge data is provided in the bundle to confirm or deny direct coauthorship between Jack J. Dongarra and Yves Robert.",
+      "reasons": [
+        "0 is not an asserted fact of a cited item",
+        "names Jack J. Dongarra, whom no kept claim may name",
+        "names Yves Robert, whom no kept claim may name"
+      ]
+    }
+  ],
+  "abstained": true,
+  "abstentionReason": "NO_VERIFIED_CLAIM",
+  "answerHash": "sha256:f08be26b26138afdd547383f517733d3bf134ea85d04b1c880e35a7680e106b3",
+  "provenance": {
+    "schemaVersion": "provenance-v1",
+    "sourceDataset": "RUNTIME",
+    "sourceRecordId": "qry-550451479eed4a326062c60671d6b509",
+    "snapshot": "2026-10-03",
+    "runId": "run-b9ec0cd5d6d58f881177bc70d85308ac",
+    "policyVersion": "fusion-v1",
+    "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+  },
+  "retrievalMode": "VECTOR_ONLY"
+}

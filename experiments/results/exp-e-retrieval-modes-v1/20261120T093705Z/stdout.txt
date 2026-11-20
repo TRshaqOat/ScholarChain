@@ -1,0 +1,13 @@
+==> STEP preconditions
+==> OK no other sbt process
+==> STEP check fused --max 2
+==> OK fused exit 0
+==> OK check: plan sources: MODEL 2; outcomes: ANSWERED 2
+==> STEP modes fused --max 8
+==> OK fused exit 0
+==> STEP modes graph-only --max 10
+==> OK graph-only exit 0
+==> STEP modes vector-only --max 10
+==> OK vector-only exit 0
+==> EXP-E n=10 exit codes=[0,0,0,0] record=/Users/achyutpatel/Developer/Cloud/ScholarChain/experiments/results/exp-e-retrieval-modes-v1/20261120T093705Z/raw/harness.json
+==> OK experiment E modes complete

@@ -1,0 +1,177 @@
+{
+  "schemaVersion": "rag-benchmark-result-v3",
+  "questionId": "B04",
+  "category": "max_team_size",
+  "mode": "LIVE",
+  "retrievalMode": "VECTOR_ONLY",
+  "runtimeRunId": "run-b9ec0cd5d6d58f881177bc70d85308ac",
+  "queryId": "qry-b6afa9038948325a624574f242e6e2b1",
+  "planSource": "MODEL",
+  "operations": [
+    "RESEARCHER_RANKING/CORPUS"
+  ],
+  "metrics": [
+    "MAXIMUM_COAUTHORS_ON_ONE_PAPER"
+  ],
+  "window": "all-years",
+  "resolutions": [],
+  "abstained": true,
+  "abstentionReason": "NO_VERIFIED_CLAIM",
+  "verification": {
+    "verified": 0,
+    "partiallySupported": 0,
+    "unsupported": 0,
+    "conflicting": 0
+  },
+  "claims": 0,
+  "graph": {
+    "reads": 0,
+    "readsByTemplate": {},
+    "rows": 0,
+    "truncatedReads": 0,
+    "evidenceItems": 0,
+    "tokens": 0,
+    "omittedItems": 0,
+    "latencyMs": 0,
+    "pathStatuses": []
+  },
+  "semantic": {
+    "embeddingCalls": 1,
+    "embeddingInputTokens": 0,
+    "indexes": [
+      "topic-institution-summary-v1"
+    ],
+    "hits": 5,
+    "tokens": 1267,
+    "omittedItems": 0,
+    "latencyMs": 186,
+    "outcome": "OK"
+  },
+  "llm": {
+    "attempts": 2,
+    "requests": 2,
+    "attemptsByStage": {
+      "QUERY_PLANNING": 1,
+      "ANSWER_SYNTHESIS": 1
+    },
+    "outcomes": {
+      "OK": 2
+    },
+    "inputTokens": 5598,
+    "outputTokens": 311,
+    "throttleWaitMs": 11932
+  },
+  "latencyMs": 14719,
+  "stageLatencyMs": {
+    "COLLABORATION_METRICS": 0,
+    "PATH_FINDING": 0,
+    "EVIDENCE_BUILDING": 1,
+    "AUDIT": 0,
+    "QUERY_PLANNING": 6849,
+    "SEMANTIC_CONTEXT": 186,
+    "COMMUNITY_ANALYSIS": 0,
+    "CLAIM_VERIFICATION": 3,
+    "RESEARCHER_RESOLUTION": 0,
+    "ANSWER_SYNTHESIS": 7667
+  },
+  "checks": [
+    {
+      "name": "plan-operations",
+      "outcome": "PASS",
+      "detail": "needs MAXIMUM_TEAM_SIZE; plan [RESEARCHER_RANKING/CORPUS]"
+    },
+    {
+      "name": "researcher-names",
+      "outcome": "PASS",
+      "detail": "expected [], extracted []"
+    },
+    {
+      "name": "resolution",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no named researcher"
+    },
+    {
+      "name": "abstention",
+      "outcome": "FAIL",
+      "detail": "expected answer, got abstain (NO_VERIFIED_CLAIM)"
+    },
+    {
+      "name": "claim-evidence",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no claim"
+    },
+    {
+      "name": "verification",
+      "outcome": "PASS",
+      "detail": "abstained with no verified claim kept; counts 0/0/0/0; final claims 0 verified of 0"
+    },
+    {
+      "name": "bundle-budget",
+      "outcome": "PASS",
+      "detail": "graph 0/8000 tokens, semantic 1267/3000, items 5/300"
+    },
+    {
+      "name": "llm-budget",
+      "outcome": "PASS",
+      "detail": "2 attempts, 2 requests (ANSWER_SYNTHESIS 1, QUERY_PLANNING 1), tokens in 5598 out 311"
+    },
+    {
+      "name": "embedding-budget",
+      "outcome": "PASS",
+      "detail": "1 embedding calls for 1 indexes queried"
+    },
+    {
+      "name": "path-hops",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no path evidence in the bundle"
+    },
+    {
+      "name": "pair-edges",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no bundle edge has stored path evidence"
+    },
+    {
+      "name": "deadline",
+      "outcome": "PASS",
+      "detail": "14719 ms of 180000"
+    }
+  ],
+  "answerHash": "sha256:c31670b0920fdd0548b23c7e878598bcfe0fbd23f9ab0914a339750c034a7987",
+  "retrieved": [
+    {
+      "rank": 1,
+      "source": "vector",
+      "origin": "vector",
+      "evidenceId": "ev-ff36f45e1678c3b9349f424a773ebc05",
+      "elementId": "chunk-80e4aa6911cf711ff183ed85d1fc1310"
+    },
+    {
+      "rank": 2,
+      "source": "vector",
+      "origin": "vector",
+      "evidenceId": "ev-031542639188e691e72c9070758345e1",
+      "elementId": "chunk-a25952d0f16c6693a96e89ea51d3a342"
+    },
+    {
+      "rank": 3,
+      "source": "vector",
+      "origin": "vector",
+      "evidenceId": "ev-e679066e01cfdd761e634aae58994f04",
+      "elementId": "chunk-e14bfc21b1b929a62e1a5c6956d091e2"
+    },
+    {
+      "rank": 4,
+      "source": "vector",
+      "origin": "vector",
+      "evidenceId": "ev-50a73ba6e1700f91bbd589885d23c1cf",
+      "elementId": "chunk-2562e152bb08dd577647292751e02363"
+    },
+    {
+      "rank": 5,
+      "source": "vector",
+      "origin": "vector",
+      "evidenceId": "ev-50c429ed84ce3c5bb3614941189e1089",
+      "elementId": "chunk-aadaf624577600ea0eb351477733b57b"
+    }
+  ]
+}

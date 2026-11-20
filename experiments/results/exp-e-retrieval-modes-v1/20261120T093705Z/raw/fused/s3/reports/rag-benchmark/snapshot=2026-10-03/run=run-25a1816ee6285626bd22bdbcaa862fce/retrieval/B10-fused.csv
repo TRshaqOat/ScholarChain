@@ -1,0 +1,17 @@
+rank,source,origin,evidenceId,elementId
+1,fused,graph,ev-436bf9ecc38d5b21aa16fa7b8b3a97ed,dynamodb:EntityLinkCache/name-v1:rajkumar buyya/scr:canon-v1.er-v2:bede83f65bedfab8f7fc802f295ee293
+2,fused,graph,ev-e99f17432559f4dc52f420553c1c4291,dynamodb:EntityLinkCache/name-v1:rachid guerraoui/scr:canon-v1.er-v2:ba10a85f922c075c3cfdbf5a040332b8
+3,fused,graph,ev-6f7925e0193b944e31b5c50bdc18b53c,dynamodb:ResearcherMetricCache/scr:canon-v1.er-v2:bede83f65bedfab8f7fc802f295ee293/WINDOW#all-years
+4,fused,graph,ev-7fc78380c0448f323fe1e6f8870fee49,dynamodb:ResearcherMetricCache/scr:canon-v1.er-v2:ba10a85f922c075c3cfdbf5a040332b8/WINDOW#all-years
+5,fused,graph,ev-674f276aa89a5708c9793e59e3673817,runtime:graph.shortest-path
+6,fused,graph,ev-35e25066aeb0e50250c1f06b1e10e6a4,neptune:cae-d9861ae25d8627ccb7de118f6d3228b6
+7,fused,graph,ev-51ddd540fc0f574b0e5cc4ea6751a813,neptune:cae-05ac04e43d13eeb9fcdf2dffc24c67f8
+8,fused,graph,ev-2806f063f2fb94bcd79f8afe919e3c78,neptune:cae-79a866678d54d577129a2dcafc1433a8
+9,fused,graph,ev-99f7e5de2bb7886d47d2afd42aaa7d54,neptune:dblp:journals/fgcs/BrandicB12
+10,fused,graph,ev-c29261543dacc6e04c54913ac915d771,neptune:dblp:journals/fgcs/BuyyaYVBB09
+11,fused,graph,ev-db7645fd213c9d9b922cd23781771508,neptune:dblp:journals/fgcs/EmeakarohaNCBBR12
+12,fused,graph,ev-7107b7effb8b0b831fb750650d56666c,neptune:dblp:conf/europar/ElmrothFABDR12
+13,fused,graph,ev-4878cd9dc68a323aba0ee4a0f1a3e021,neptune:dblp:conf/asplos/DidonaDKGNR16
+14,fused,vector,ev-a95bdaf45d521d3ebf9d541f24638f37,chunk-ae25f1c807e14bb69764b435bdbaaabf
+15,fused,vector,ev-7eeb734c7b746f1ba5b6c0c28ec6a61b,chunk-7dd6e038c70bdd012d1be77adf90bf71
+16,fused,vector,ev-2659ac775df17ff2ffcf9a34fe5c6299,chunk-27ce8d60d1ef12d89516fc767d223b31

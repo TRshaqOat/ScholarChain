@@ -1,0 +1,330 @@
+{
+  "schemaVersion": "rag-audit-v3",
+  "queryId": "qry-edd40f5b84664456e4f1ca514d2b030c",
+  "sessionId": null,
+  "runId": "run-b9ec0cd5d6d58f881177bc70d85308ac",
+  "createdAt": "2026-11-20T09:45:30.283933Z",
+  "mode": "LIVE",
+  "questionHash": "sha256:8ec8a9cc58f463ba1f6ed2687f028123deb11dc849b622babe88a018f540d90e",
+  "questionChars": 65,
+  "plan": {
+    "schemaVersion": "rag-query-plan-v1",
+    "queryId": "qry-edd40f5b84664456e4f1ca514d2b030c",
+    "operations": [],
+    "researcherNames": [
+      {
+        "name": "Rajkumar Buyya",
+        "offset": 32
+      }
+    ],
+    "metrics": [
+      "DISTINCT_COAUTHOR_COUNT"
+    ],
+    "window": {
+      "requested": {
+        "kind": "NAMED",
+        "name": "2015-2026",
+        "yearFrom": null,
+        "yearTo": null
+      },
+      "window": "2015-2026",
+      "startYear": 2015,
+      "endYear": 2026,
+      "exact": true,
+      "note": null
+    },
+    "comparison": null,
+    "topics": [],
+    "venues": [],
+    "institutions": [],
+    "semanticIndexes": [
+      "researcher-profile-v1"
+    ],
+    "limits": {
+      "graphLimit": 100,
+      "vectorLimit": 50,
+      "maxPathDepth": 6,
+      "topK": 5
+    },
+    "source": "MODEL",
+    "overriddenFields": [],
+    "rejectedItems": [],
+    "promptVersion": "planner-v2",
+    "modelId": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "RUNTIME",
+      "sourceRecordId": "qry-edd40f5b84664456e4f1ca514d2b030c",
+      "snapshot": "2026-10-03",
+      "runId": "run-b9ec0cd5d6d58f881177bc70d85308ac",
+      "policyVersion": null,
+      "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+    }
+  },
+  "resolutions": [
+    {
+      "name": "Rajkumar Buyya",
+      "decision": "RESOLVED_DOMINANT",
+      "researcherId": "scr:canon-v1.er-v2:bede83f65bedfab8f7fc802f295ee293",
+      "topShare": 0.964516129032258,
+      "candidateCount": 11
+    }
+  ],
+  "graphEvidenceIds": [],
+  "semanticEvidenceIds": [
+    "ev-7eeb734c7b746f1ba5b6c0c28ec6a61b"
+  ],
+  "metricVersions": [],
+  "graphRunId": "run-1d6a86491812ff94887270c1ab885e69",
+  "vectorIndexes": [
+    "researcher-profile-v1"
+  ],
+  "embeddingModelVersion": "amazon.titan-embed-text-v2:0|1024|normalized|rendering-v1",
+  "promptVersions": {
+    "planner.schema": "planner-output-v1",
+    "synthesis.schema": "synthesis-output-v3",
+    "synthesis": "synthesis-v3",
+    "planner.schema.sha256": "sha256:3ff40901f3f625204eaaa3ddc525b844c96178ad36629666ebc96f9fe91c1368",
+    "synthesis.schema.sha256": "sha256:44eb22cc2e428a1e90884bcd115b6aac031c9c95f199efd4c42729fada880d02",
+    "planner.sha256": "sha256:c7354f86ece47e7aa01481f6c893a9721a9f13e3d24716bc73942ef49e81e655",
+    "planner": "planner-v2",
+    "synthesis.sha256": "sha256:5755fb97ab563ed8bbe19cded139818194bef346e1718d2ed5df4cc8c4953e2e"
+  },
+  "modelIds": {
+    "planner": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "synthesis": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "embedding": "amazon.titan-embed-text-v2:0|1024|normalized|rendering-v1"
+  },
+  "llmCalls": [
+    {
+      "stage": "QUERY_PLANNING",
+      "modelId": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+      "promptVersion": "planner-v2",
+      "schemaVersion": "planner-output-v1",
+      "attempt": 1,
+      "outcome": "OK",
+      "requests": 1,
+      "inputTokens": 2528,
+      "outputTokens": 149,
+      "latencyMs": 930,
+      "throttleWaitMs": 4992,
+      "failure": null
+    },
+    {
+      "stage": "ANSWER_SYNTHESIS",
+      "modelId": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+      "promptVersion": "synthesis-v3",
+      "schemaVersion": "synthesis-output-v3",
+      "attempt": 1,
+      "outcome": "OK",
+      "requests": 1,
+      "inputTokens": 2689,
+      "outputTokens": 260,
+      "latencyMs": 1928,
+      "throttleWaitMs": 6358,
+      "failure": null
+    }
+  ],
+  "embeddingCalls": [
+    {
+      "index": "researcher-profile-v1",
+      "modelVersion": "amazon.titan-embed-text-v2:0|1024|normalized|rendering-v1",
+      "attempt": 1,
+      "outcome": "OK",
+      "inputTokens": null,
+      "latencyMs": 162,
+      "throttleWaitMs": 0
+    }
+  ],
+  "templateCalls": [
+    {
+      "templateId": "kv.entity-link",
+      "latencyMs": 6,
+      "resultCount": 11,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.authored-counts",
+      "latencyMs": 6,
+      "resultCount": 11,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.researcher-institutions",
+      "latencyMs": 2,
+      "resultCount": 11,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 1,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 1,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 1,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 7,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    }
+  ],
+  "stages": [
+    {
+      "stage": "QUERY_PLANNING",
+      "outcome": "OK",
+      "latencyMs": 5924
+    },
+    {
+      "stage": "RESEARCHER_RESOLUTION",
+      "outcome": "OK",
+      "latencyMs": 22
+    },
+    {
+      "stage": "COLLABORATION_METRICS",
+      "outcome": "SKIPPED",
+      "latencyMs": 0
+    },
+    {
+      "stage": "PATH_FINDING",
+      "outcome": "SKIPPED",
+      "latencyMs": 0
+    },
+    {
+      "stage": "COMMUNITY_ANALYSIS",
+      "outcome": "SKIPPED",
+      "latencyMs": 0
+    },
+    {
+      "stage": "SEMANTIC_CONTEXT",
+      "outcome": "OK",
+      "latencyMs": 187
+    },
+    {
+      "stage": "EVIDENCE_BUILDING",
+      "outcome": "OK",
+      "latencyMs": 1
+    },
+    {
+      "stage": "ANSWER_SYNTHESIS",
+      "outcome": "OK",
+      "latencyMs": 8286
+    },
+    {
+      "stage": "CLAIM_VERIFICATION",
+      "outcome": "ABSTAINED",
+      "latencyMs": 14
+    },
+    {
+      "stage": "AUDIT",
+      "outcome": "OK",
+      "latencyMs": 0
+    }
+  ],
+  "budget": {
+    "tokenBudget": 11000,
+    "graphTokens": 0,
+    "semanticTokens": 618,
+    "omittedGraphItems": 0,
+    "omittedSemanticItems": 0
+  },
+  "verification": {
+    "verified": 0,
+    "partiallySupported": 0,
+    "unsupported": 0,
+    "conflicting": 0
+  },
+  "removedClaims": [],
+  "droppedLines": [
+    {
+      "part": "SUMMARY",
+      "text": "The bundle contains no metric evidence for Rajkumar Buyya's distinct coauthors in the 2015-2026 window. Semantic context describes 419 distinct coauthors across all years (2000-2026), but no graph or metric evidence supports a count specific to 2015-2026.",
+      "reasons": [
+        "no claim was kept"
+      ]
+    },
+    {
+      "part": "UNCERTAINTY",
+      "text": "No metric evidence (METRIC_RECORD or RANKING_RECORD) for Rajkumar Buyya's distinct coauthors in the 2015-2026 window is present in the bundle. The semantic context reports 419 distinct coauthors across all years (2000-2026), but this cannot be cited for a window-specific claim.",
+      "reasons": [
+        "419 is not an asserted fact of a cited item",
+        "the text names the window all-years",
+        "the text names 2000-2026, which is not the window 2015-2026",
+        "names Rajkumar Buyya, whom no kept claim may name"
+      ]
+    },
+    {
+      "part": "UNCERTAINTY",
+      "text": "Rajkumar Buyya is linked to scr:canon-v1.er-v2:bede83f65bedfab8f7fc802f295ee293 with confidence 0.9645 by dominant-name-v1.",
+      "reasons": [
+        "names Rajkumar Buyya, whom no kept claim may name"
+      ]
+    }
+  ],
+  "abstained": true,
+  "abstentionReason": "NO_VERIFIED_CLAIM",
+  "answerHash": "sha256:d3fa010d8b33727e3eab8a4e31435afb80b0a04cbe544493e9e87c5a2261ffa1",
+  "provenance": {
+    "schemaVersion": "provenance-v1",
+    "sourceDataset": "RUNTIME",
+    "sourceRecordId": "qry-edd40f5b84664456e4f1ca514d2b030c",
+    "snapshot": "2026-10-03",
+    "runId": "run-b9ec0cd5d6d58f881177bc70d85308ac",
+    "policyVersion": "fusion-v1",
+    "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+  },
+  "retrievalMode": "VECTOR_ONLY"
+}

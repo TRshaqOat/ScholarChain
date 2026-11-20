@@ -1,0 +1,506 @@
+{
+  "schemaVersion": "rag-audit-v3",
+  "queryId": "qry-0f1a38067f5d2dc0e597e52b66801679",
+  "sessionId": null,
+  "runId": "run-da948201a77e0fe136727d99a55c2b89",
+  "createdAt": "2026-11-20T09:40:50.100953Z",
+  "mode": "LIVE",
+  "questionHash": "sha256:be346e69119ed15ddd2d607a45aafba2e52acab039283ec4186006ceb2e915f4",
+  "questionChars": 83,
+  "plan": {
+    "schemaVersion": "rag-query-plan-v1",
+    "queryId": "qry-0f1a38067f5d2dc0e597e52b66801679",
+    "operations": [
+      {
+        "operation": "SHORTEST_PATH",
+        "scope": "PAIR",
+        "researchers": [
+          0,
+          1
+        ],
+        "metric": null,
+        "topN": null
+      }
+    ],
+    "researcherNames": [
+      {
+        "name": "Rajkumar Buyya",
+        "offset": 47
+      },
+      {
+        "name": "Rachid Guerraoui",
+        "offset": 66
+      }
+    ],
+    "metrics": [],
+    "window": {
+      "requested": {
+        "kind": "DEFAULT",
+        "name": null,
+        "yearFrom": null,
+        "yearTo": null
+      },
+      "window": "all-years",
+      "startYear": 2000,
+      "endYear": 2026,
+      "exact": true,
+      "note": null
+    },
+    "comparison": null,
+    "topics": [],
+    "venues": [],
+    "institutions": [],
+    "semanticIndexes": [
+      "researcher-profile-v1",
+      "collaboration-path-v1"
+    ],
+    "limits": {
+      "graphLimit": 100,
+      "vectorLimit": 50,
+      "maxPathDepth": 6,
+      "topK": 5
+    },
+    "source": "MODEL",
+    "overriddenFields": [],
+    "rejectedItems": [],
+    "promptVersion": "planner-v2",
+    "modelId": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "RUNTIME",
+      "sourceRecordId": "qry-0f1a38067f5d2dc0e597e52b66801679",
+      "snapshot": "2026-10-03",
+      "runId": "run-da948201a77e0fe136727d99a55c2b89",
+      "policyVersion": null,
+      "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+    }
+  },
+  "resolutions": [
+    {
+      "name": "Rajkumar Buyya",
+      "decision": "RESOLVED_DOMINANT",
+      "researcherId": "scr:canon-v1.er-v2:bede83f65bedfab8f7fc802f295ee293",
+      "topShare": 0.964516129032258,
+      "candidateCount": 11
+    },
+    {
+      "name": "Rachid Guerraoui",
+      "decision": "RESOLVED_DOMINANT",
+      "researcherId": "scr:canon-v1.er-v2:ba10a85f922c075c3cfdbf5a040332b8",
+      "topShare": 0.9615384615384616,
+      "candidateCount": 11
+    }
+  ],
+  "graphEvidenceIds": [
+    "ev-436bf9ecc38d5b21aa16fa7b8b3a97ed",
+    "ev-e99f17432559f4dc52f420553c1c4291",
+    "ev-6f7925e0193b944e31b5c50bdc18b53c",
+    "ev-7fc78380c0448f323fe1e6f8870fee49",
+    "ev-674f276aa89a5708c9793e59e3673817",
+    "ev-35e25066aeb0e50250c1f06b1e10e6a4",
+    "ev-51ddd540fc0f574b0e5cc4ea6751a813",
+    "ev-2806f063f2fb94bcd79f8afe919e3c78",
+    "ev-99f7e5de2bb7886d47d2afd42aaa7d54",
+    "ev-c29261543dacc6e04c54913ac915d771",
+    "ev-db7645fd213c9d9b922cd23781771508",
+    "ev-7107b7effb8b0b831fb750650d56666c",
+    "ev-4878cd9dc68a323aba0ee4a0f1a3e021"
+  ],
+  "semanticEvidenceIds": [
+    "ev-a95bdaf45d521d3ebf9d541f24638f37",
+    "ev-7eeb734c7b746f1ba5b6c0c28ec6a61b",
+    "ev-2659ac775df17ff2ffcf9a34fe5c6299"
+  ],
+  "metricVersions": [
+    "researcher-metrics-window-v1@run-d7865ad3f5f8195546c1dab817328ee5"
+  ],
+  "graphRunId": "run-1d6a86491812ff94887270c1ab885e69",
+  "vectorIndexes": [
+    "researcher-profile-v1",
+    "collaboration-path-v1"
+  ],
+  "embeddingModelVersion": "amazon.titan-embed-text-v2:0|1024|normalized|rendering-v1",
+  "promptVersions": {
+    "planner.schema": "planner-output-v1",
+    "synthesis.schema": "synthesis-output-v3",
+    "synthesis": "synthesis-v3",
+    "planner.schema.sha256": "sha256:3ff40901f3f625204eaaa3ddc525b844c96178ad36629666ebc96f9fe91c1368",
+    "synthesis.schema.sha256": "sha256:44eb22cc2e428a1e90884bcd115b6aac031c9c95f199efd4c42729fada880d02",
+    "planner.sha256": "sha256:c7354f86ece47e7aa01481f6c893a9721a9f13e3d24716bc73942ef49e81e655",
+    "planner": "planner-v2",
+    "synthesis.sha256": "sha256:5755fb97ab563ed8bbe19cded139818194bef346e1718d2ed5df4cc8c4953e2e"
+  },
+  "modelIds": {
+    "planner": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "synthesis": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "embedding": "amazon.titan-embed-text-v2:0|1024|normalized|rendering-v1"
+  },
+  "llmCalls": [
+    {
+      "stage": "QUERY_PLANNING",
+      "modelId": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+      "promptVersion": "planner-v2",
+      "schemaVersion": "planner-output-v1",
+      "attempt": 1,
+      "outcome": "OK",
+      "requests": 1,
+      "inputTokens": 2531,
+      "outputTokens": 193,
+      "latencyMs": 1101,
+      "throttleWaitMs": 6292,
+      "failure": null
+    },
+    {
+      "stage": "ANSWER_SYNTHESIS",
+      "modelId": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+      "promptVersion": "synthesis-v3",
+      "schemaVersion": "synthesis-output-v3",
+      "attempt": 1,
+      "outcome": "OK",
+      "requests": 1,
+      "inputTokens": 6888,
+      "outputTokens": 1484,
+      "latencyMs": 5614,
+      "throttleWaitMs": 6052,
+      "failure": null
+    }
+  ],
+  "embeddingCalls": [
+    {
+      "index": "researcher-profile-v1,collaboration-path-v1",
+      "modelVersion": "amazon.titan-embed-text-v2:0|1024|normalized|rendering-v1",
+      "attempt": 1,
+      "outcome": "OK",
+      "inputTokens": null,
+      "latencyMs": 169,
+      "throttleWaitMs": 0
+    }
+  ],
+  "templateCalls": [
+    {
+      "templateId": "kv.entity-link",
+      "latencyMs": 5,
+      "resultCount": 11,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.authored-counts",
+      "latencyMs": 9,
+      "resultCount": 11,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.researcher-institutions",
+      "latencyMs": 1,
+      "resultCount": 11,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 1,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 1,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 1,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 9,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "kv.entity-link",
+      "latencyMs": 3,
+      "resultCount": 11,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.authored-counts",
+      "latencyMs": 6,
+      "resultCount": 11,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.researcher-institutions",
+      "latencyMs": 2,
+      "resultCount": 11,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 7,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 1,
+      "resultCount": 2,
+      "truncated": false
+    },
+    {
+      "templateId": "kv.metrics.window",
+      "latencyMs": 1,
+      "resultCount": 1,
+      "truncated": false
+    },
+    {
+      "templateId": "kv.metrics.window",
+      "latencyMs": 1,
+      "resultCount": 1,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.shortest-path",
+      "latencyMs": 119,
+      "resultCount": 4,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.vertices",
+      "latencyMs": 0,
+      "resultCount": 4,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.vertices",
+      "latencyMs": 0,
+      "resultCount": 3,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.vertices",
+      "latencyMs": 0,
+      "resultCount": 1,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.vertices",
+      "latencyMs": 0,
+      "resultCount": 1,
+      "truncated": false
+    }
+  ],
+  "stages": [
+    {
+      "stage": "QUERY_PLANNING",
+      "outcome": "OK",
+      "latencyMs": 7393
+    },
+    {
+      "stage": "RESEARCHER_RESOLUTION",
+      "outcome": "OK",
+      "latencyMs": 45
+    },
+    {
+      "stage": "COLLABORATION_METRICS",
+      "outcome": "OK",
+      "latencyMs": 2
+    },
+    {
+      "stage": "PATH_FINDING",
+      "outcome": "OK",
+      "latencyMs": 119
+    },
+    {
+      "stage": "COMMUNITY_ANALYSIS",
+      "outcome": "SKIPPED",
+      "latencyMs": 0
+    },
+    {
+      "stage": "SEMANTIC_CONTEXT",
+      "outcome": "OK",
+      "latencyMs": 180
+    },
+    {
+      "stage": "EVIDENCE_BUILDING",
+      "outcome": "OK",
+      "latencyMs": 2
+    },
+    {
+      "stage": "ANSWER_SYNTHESIS",
+      "outcome": "OK",
+      "latencyMs": 11667
+    },
+    {
+      "stage": "CLAIM_VERIFICATION",
+      "outcome": "OK",
+      "latencyMs": 27
+    },
+    {
+      "stage": "AUDIT",
+      "outcome": "OK",
+      "latencyMs": 0
+    }
+  ],
+  "budget": {
+    "tokenBudget": 11000,
+    "graphTokens": 2306,
+    "semanticTokens": 1561,
+    "omittedGraphItems": 0,
+    "omittedSemanticItems": 0
+  },
+  "verification": {
+    "verified": 3,
+    "partiallySupported": 0,
+    "unsupported": 1,
+    "conflicting": 0
+  },
+  "removedClaims": [
+    {
+      "claimId": "claim-1",
+      "kind": "PATH",
+      "text": "The shortest coauthorship path between Rajkumar Buyya and Rachid Guerraoui has pathLength 3.",
+      "status": "UNSUPPORTED",
+      "failedChecks": [
+        {
+          "rule": "numbers-in-text",
+          "outcome": "FAIL",
+          "detail": "3 is not written next to the name of pathLength"
+        }
+      ]
+    }
+  ],
+  "droppedLines": [
+    {
+      "part": "SUMMARY",
+      "text": "The shortest coauthorship path between Rajkumar Buyya and Rachid Guerraoui has 3 hops, connecting them through Ivona Brandic and Paolo Romano 0002. Rajkumar Buyya collaborated with Ivona Brandic on 3 joint publications from 2009 to 2012, Ivona Brandic collaborated with Paolo Romano 0002 on 1 joint publication in 2012, and Paolo Romano 0002 collaborated with Rachid Guerraoui on 1 joint publication in 2016.",
+      "reasons": [
+        "3 is not written next to the name of hop.1.jointPublicationCount"
+      ]
+    },
+    {
+      "part": "UNCERTAINTY",
+      "text": "Rajkumar Buyya was resolved to scr:canon-v1.er-v2:bede83f65bedfab8f7fc802f295ee293 with 96.45% confidence among 11 researchers with this display name.",
+      "reasons": [
+        "96.45 is not an asserted fact of a cited item"
+      ]
+    },
+    {
+      "part": "UNCERTAINTY",
+      "text": "Rachid Guerraoui was resolved to scr:canon-v1.er-v2:ba10a85f922c075c3cfdbf5a040332b8 with 96.15% confidence among 11 researchers with this display name.",
+      "reasons": [
+        "96.15 is not an asserted fact of a cited item"
+      ]
+    }
+  ],
+  "abstained": false,
+  "abstentionReason": null,
+  "answerHash": "sha256:8b4bea2e1133455377f98af63ca106296d25c2823c96c1b9d2130cefe1860f2f",
+  "provenance": {
+    "schemaVersion": "provenance-v1",
+    "sourceDataset": "RUNTIME",
+    "sourceRecordId": "qry-0f1a38067f5d2dc0e597e52b66801679",
+    "snapshot": "2026-10-03",
+    "runId": "run-da948201a77e0fe136727d99a55c2b89",
+    "policyVersion": "fusion-v1",
+    "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+  }
+}

@@ -1,0 +1,4 @@
+rank,source,origin,evidenceId,elementId
+1,fused,graph,ev-436bf9ecc38d5b21aa16fa7b8b3a97ed,dynamodb:EntityLinkCache/name-v1:rajkumar buyya/scr:canon-v1.er-v2:bede83f65bedfab8f7fc802f295ee293
+2,fused,graph,ev-09571f294f40b1f64be1b173c04c6c95,dynamodb:ResearcherMetricCache/scr:canon-v1.er-v2:bede83f65bedfab8f7fc802f295ee293/WINDOW#2015-2026
+3,fused,vector,ev-7eeb734c7b746f1ba5b6c0c28ec6a61b,chunk-7dd6e038c70bdd012d1be77adf90bf71

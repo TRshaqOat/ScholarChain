@@ -1,0 +1,10 @@
+rank,source,origin,evidenceId,elementId
+1,graph,graph,ev-436bf9ecc38d5b21aa16fa7b8b3a97ed,dynamodb:EntityLinkCache/name-v1:rajkumar buyya/scr:canon-v1.er-v2:bede83f65bedfab8f7fc802f295ee293
+2,graph,graph,ev-2ec1cb5fc28b243020e34a6711ea0ae5,dynamodb:EntityLinkCache/name-v1:albert y zomaya/scr:canon-v1.er-v2:9c35232fa374c48fdc67309bfedd5f7c
+3,graph,graph,ev-6f7925e0193b944e31b5c50bdc18b53c,dynamodb:ResearcherMetricCache/scr:canon-v1.er-v2:bede83f65bedfab8f7fc802f295ee293/WINDOW#all-years
+4,graph,graph,ev-09c8ea2b95180900facf86a17e180f00,dynamodb:ResearcherMetricCache/scr:canon-v1.er-v2:9c35232fa374c48fdc67309bfedd5f7c/WINDOW#all-years
+5,graph,graph,ev-479e94275c30463deacf52ec4dab2f9e,runtime:graph.shortest-path
+6,graph,graph,ev-4e0786f34c891f5d61c8a005339b10d5,neptune:cae-d65f27c5a5fd6a6257e31f81d3eabf7b
+7,graph,graph,ev-90cc2b6789b7e8a4e671d2bcf82cfe13,neptune:dblp:journals/jpdc/HsiehLBZ20
+8,graph,graph,ev-7c76322d2f73e93c812dfdccd7117f2b,neptune:dblp:journals/tcc/ChenHHBZ20
+9,graph,graph,ev-0a2a118a696ca2842ab118d4c432bc11,neptune:dblp:journals/tcc/ChungLKHZB23

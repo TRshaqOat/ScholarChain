@@ -1,0 +1,160 @@
+{
+  "schemaVersion": "rag-benchmark-result-v3",
+  "questionId": "B02",
+  "category": "coauthor_breadth",
+  "mode": "LIVE",
+  "retrievalMode": "VECTOR_ONLY",
+  "runtimeRunId": "run-b9ec0cd5d6d58f881177bc70d85308ac",
+  "queryId": "qry-edd40f5b84664456e4f1ca514d2b030c",
+  "planSource": "MODEL",
+  "operations": [],
+  "metrics": [
+    "DISTINCT_COAUTHOR_COUNT"
+  ],
+  "window": "2015-2026",
+  "resolutions": [
+    {
+      "name": "Rajkumar Buyya",
+      "decision": "RESOLVED_DOMINANT",
+      "researcherId": "scr:canon-v1.er-v2:bede83f65bedfab8f7fc802f295ee293",
+      "topShare": 0.964516129032258,
+      "candidateCount": 11
+    }
+  ],
+  "abstained": true,
+  "abstentionReason": "NO_VERIFIED_CLAIM",
+  "verification": {
+    "verified": 0,
+    "partiallySupported": 0,
+    "unsupported": 0,
+    "conflicting": 0
+  },
+  "claims": 0,
+  "graph": {
+    "reads": 14,
+    "readsByTemplate": {
+      "kv.entity-link": 1,
+      "graph.researcher-institutions": 1,
+      "graph.coauthors": 11,
+      "graph.authored-counts": 1
+    },
+    "rows": 39,
+    "truncatedReads": 1,
+    "evidenceItems": 0,
+    "tokens": 0,
+    "omittedItems": 0,
+    "latencyMs": 0,
+    "pathStatuses": []
+  },
+  "semantic": {
+    "embeddingCalls": 1,
+    "embeddingInputTokens": 0,
+    "indexes": [
+      "researcher-profile-v1"
+    ],
+    "hits": 1,
+    "tokens": 618,
+    "omittedItems": 0,
+    "latencyMs": 187,
+    "outcome": "OK"
+  },
+  "llm": {
+    "attempts": 2,
+    "requests": 2,
+    "attemptsByStage": {
+      "QUERY_PLANNING": 1,
+      "ANSWER_SYNTHESIS": 1
+    },
+    "outcomes": {
+      "OK": 2
+    },
+    "inputTokens": 5217,
+    "outputTokens": 409,
+    "throttleWaitMs": 11350
+  },
+  "latencyMs": 14444,
+  "stageLatencyMs": {
+    "COLLABORATION_METRICS": 0,
+    "PATH_FINDING": 0,
+    "EVIDENCE_BUILDING": 1,
+    "AUDIT": 0,
+    "QUERY_PLANNING": 5924,
+    "SEMANTIC_CONTEXT": 187,
+    "COMMUNITY_ANALYSIS": 0,
+    "CLAIM_VERIFICATION": 14,
+    "RESEARCHER_RESOLUTION": 22,
+    "ANSWER_SYNTHESIS": 8286
+  },
+  "checks": [
+    {
+      "name": "plan-operations",
+      "outcome": "PASS",
+      "detail": "needs DISTINCT_COAUTHOR_COUNT; plan []"
+    },
+    {
+      "name": "researcher-names",
+      "outcome": "PASS",
+      "detail": "expected [Rajkumar Buyya], extracted [Rajkumar Buyya]"
+    },
+    {
+      "name": "resolution",
+      "outcome": "PASS",
+      "detail": "Rajkumar Buyya: expected RESOLVED_DOMINANT, got RESOLVED_DOMINANT"
+    },
+    {
+      "name": "abstention",
+      "outcome": "FAIL",
+      "detail": "expected answer, got abstain (NO_VERIFIED_CLAIM)"
+    },
+    {
+      "name": "claim-evidence",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no claim"
+    },
+    {
+      "name": "verification",
+      "outcome": "PASS",
+      "detail": "abstained with no verified claim kept; counts 0/0/0/0; final claims 0 verified of 0"
+    },
+    {
+      "name": "bundle-budget",
+      "outcome": "PASS",
+      "detail": "graph 0/8000 tokens, semantic 618/3000, items 1/300"
+    },
+    {
+      "name": "llm-budget",
+      "outcome": "PASS",
+      "detail": "2 attempts, 2 requests (ANSWER_SYNTHESIS 1, QUERY_PLANNING 1), tokens in 5217 out 409"
+    },
+    {
+      "name": "embedding-budget",
+      "outcome": "PASS",
+      "detail": "1 embedding calls for 1 indexes queried"
+    },
+    {
+      "name": "path-hops",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no path evidence in the bundle"
+    },
+    {
+      "name": "pair-edges",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no bundle edge has stored path evidence"
+    },
+    {
+      "name": "deadline",
+      "outcome": "PASS",
+      "detail": "14444 ms of 180000"
+    }
+  ],
+  "answerHash": "sha256:d3fa010d8b33727e3eab8a4e31435afb80b0a04cbe544493e9e87c5a2261ffa1",
+  "retrieved": [
+    {
+      "rank": 1,
+      "source": "vector",
+      "origin": "vector",
+      "evidenceId": "ev-7eeb734c7b746f1ba5b6c0c28ec6a61b",
+      "elementId": "chunk-7dd6e038c70bdd012d1be77adf90bf71"
+    }
+  ]
+}

@@ -1,0 +1,698 @@
+{
+  "schemaVersion": "rag-audit-v3",
+  "queryId": "qry-aa7031faa170437b4884fc46edf21a0c",
+  "sessionId": null,
+  "runId": "run-b9ec0cd5d6d58f881177bc70d85308ac",
+  "createdAt": "2026-11-20T09:47:21.506997Z",
+  "mode": "LIVE",
+  "questionHash": "sha256:be346e69119ed15ddd2d607a45aafba2e52acab039283ec4186006ceb2e915f4",
+  "questionChars": 83,
+  "plan": {
+    "schemaVersion": "rag-query-plan-v1",
+    "queryId": "qry-aa7031faa170437b4884fc46edf21a0c",
+    "operations": [
+      {
+        "operation": "SHORTEST_PATH",
+        "scope": "PAIR",
+        "researchers": [
+          0,
+          1
+        ],
+        "metric": null,
+        "topN": null
+      }
+    ],
+    "researcherNames": [
+      {
+        "name": "Rajkumar Buyya",
+        "offset": 47
+      },
+      {
+        "name": "Rachid Guerraoui",
+        "offset": 66
+      }
+    ],
+    "metrics": [],
+    "window": {
+      "requested": {
+        "kind": "DEFAULT",
+        "name": null,
+        "yearFrom": null,
+        "yearTo": null
+      },
+      "window": "all-years",
+      "startYear": 2000,
+      "endYear": 2026,
+      "exact": true,
+      "note": null
+    },
+    "comparison": null,
+    "topics": [],
+    "venues": [],
+    "institutions": [],
+    "semanticIndexes": [
+      "researcher-profile-v1",
+      "collaboration-path-v1"
+    ],
+    "limits": {
+      "graphLimit": 100,
+      "vectorLimit": 50,
+      "maxPathDepth": 6,
+      "topK": 5
+    },
+    "source": "MODEL",
+    "overriddenFields": [],
+    "rejectedItems": [],
+    "promptVersion": "planner-v2",
+    "modelId": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "RUNTIME",
+      "sourceRecordId": "qry-aa7031faa170437b4884fc46edf21a0c",
+      "snapshot": "2026-10-03",
+      "runId": "run-b9ec0cd5d6d58f881177bc70d85308ac",
+      "policyVersion": null,
+      "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+    }
+  },
+  "resolutions": [
+    {
+      "name": "Rajkumar Buyya",
+      "decision": "RESOLVED_DOMINANT",
+      "researcherId": "scr:canon-v1.er-v2:bede83f65bedfab8f7fc802f295ee293",
+      "topShare": 0.964516129032258,
+      "candidateCount": 11
+    },
+    {
+      "name": "Rachid Guerraoui",
+      "decision": "RESOLVED_DOMINANT",
+      "researcherId": "scr:canon-v1.er-v2:ba10a85f922c075c3cfdbf5a040332b8",
+      "topShare": 0.9615384615384616,
+      "candidateCount": 11
+    }
+  ],
+  "graphEvidenceIds": [],
+  "semanticEvidenceIds": [
+    "ev-a95bdaf45d521d3ebf9d541f24638f37",
+    "ev-7eeb734c7b746f1ba5b6c0c28ec6a61b",
+    "ev-2659ac775df17ff2ffcf9a34fe5c6299"
+  ],
+  "metricVersions": [],
+  "graphRunId": "run-1d6a86491812ff94887270c1ab885e69",
+  "vectorIndexes": [
+    "researcher-profile-v1",
+    "collaboration-path-v1"
+  ],
+  "embeddingModelVersion": "amazon.titan-embed-text-v2:0|1024|normalized|rendering-v1",
+  "promptVersions": {
+    "planner.schema": "planner-output-v1",
+    "synthesis.schema": "synthesis-output-v3",
+    "synthesis": "synthesis-v3",
+    "planner.schema.sha256": "sha256:3ff40901f3f625204eaaa3ddc525b844c96178ad36629666ebc96f9fe91c1368",
+    "synthesis.schema.sha256": "sha256:44eb22cc2e428a1e90884bcd115b6aac031c9c95f199efd4c42729fada880d02",
+    "planner.sha256": "sha256:c7354f86ece47e7aa01481f6c893a9721a9f13e3d24716bc73942ef49e81e655",
+    "planner": "planner-v2",
+    "synthesis.sha256": "sha256:5755fb97ab563ed8bbe19cded139818194bef346e1718d2ed5df4cc8c4953e2e"
+  },
+  "modelIds": {
+    "planner": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "synthesis": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "embedding": "amazon.titan-embed-text-v2:0|1024|normalized|rendering-v1"
+  },
+  "llmCalls": [
+    {
+      "stage": "QUERY_PLANNING",
+      "modelId": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+      "promptVersion": "planner-v2",
+      "schemaVersion": "planner-output-v1",
+      "attempt": 1,
+      "outcome": "OK",
+      "requests": 1,
+      "inputTokens": 2531,
+      "outputTokens": 193,
+      "latencyMs": 1092,
+      "throttleWaitMs": 6269,
+      "failure": null
+    },
+    {
+      "stage": "ANSWER_SYNTHESIS",
+      "modelId": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+      "promptVersion": "synthesis-v3",
+      "schemaVersion": "synthesis-output-v3",
+      "attempt": 1,
+      "outcome": "OK",
+      "requests": 1,
+      "inputTokens": 3644,
+      "outputTokens": 1352,
+      "latencyMs": 5637,
+      "throttleWaitMs": 6184,
+      "failure": null
+    }
+  ],
+  "embeddingCalls": [
+    {
+      "index": "researcher-profile-v1,collaboration-path-v1",
+      "modelVersion": "amazon.titan-embed-text-v2:0|1024|normalized|rendering-v1",
+      "attempt": 1,
+      "outcome": "OK",
+      "inputTokens": null,
+      "latencyMs": 185,
+      "throttleWaitMs": 0
+    }
+  ],
+  "templateCalls": [
+    {
+      "templateId": "kv.entity-link",
+      "latencyMs": 5,
+      "resultCount": 11,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.authored-counts",
+      "latencyMs": 2,
+      "resultCount": 11,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.researcher-institutions",
+      "latencyMs": 1,
+      "resultCount": 11,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 1,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 1,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 1,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 4,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "kv.entity-link",
+      "latencyMs": 2,
+      "resultCount": 11,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.authored-counts",
+      "latencyMs": 3,
+      "resultCount": 11,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.researcher-institutions",
+      "latencyMs": 1,
+      "resultCount": 11,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 4,
+      "resultCount": 3,
+      "truncated": true
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "graph.coauthors",
+      "latencyMs": 0,
+      "resultCount": 2,
+      "truncated": false
+    },
+    {
+      "templateId": "kv.entity-link",
+      "latencyMs": 2,
+      "resultCount": 1,
+      "truncated": false
+    },
+    {
+      "templateId": "kv.entity-link",
+      "latencyMs": 1,
+      "resultCount": 1,
+      "truncated": false
+    },
+    {
+      "templateId": "kv.entity-link",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "kv.entity-link",
+      "latencyMs": 1,
+      "resultCount": 0,
+      "truncated": false
+    },
+    {
+      "templateId": "kv.entity-link",
+      "latencyMs": 0,
+      "resultCount": 0,
+      "truncated": false
+    }
+  ],
+  "stages": [
+    {
+      "stage": "QUERY_PLANNING",
+      "outcome": "OK",
+      "latencyMs": 7361
+    },
+    {
+      "stage": "RESEARCHER_RESOLUTION",
+      "outcome": "OK",
+      "latencyMs": 24
+    },
+    {
+      "stage": "COLLABORATION_METRICS",
+      "outcome": "SKIPPED",
+      "latencyMs": 0
+    },
+    {
+      "stage": "PATH_FINDING",
+      "outcome": "SKIPPED",
+      "latencyMs": 0
+    },
+    {
+      "stage": "COMMUNITY_ANALYSIS",
+      "outcome": "SKIPPED",
+      "latencyMs": 0
+    },
+    {
+      "stage": "SEMANTIC_CONTEXT",
+      "outcome": "OK",
+      "latencyMs": 198
+    },
+    {
+      "stage": "EVIDENCE_BUILDING",
+      "outcome": "OK",
+      "latencyMs": 1
+    },
+    {
+      "stage": "ANSWER_SYNTHESIS",
+      "outcome": "OK",
+      "latencyMs": 11823
+    },
+    {
+      "stage": "CLAIM_VERIFICATION",
+      "outcome": "ABSTAINED",
+      "latencyMs": 20
+    },
+    {
+      "stage": "AUDIT",
+      "outcome": "OK",
+      "latencyMs": 0
+    }
+  ],
+  "budget": {
+    "tokenBudget": 11000,
+    "graphTokens": 0,
+    "semanticTokens": 1561,
+    "omittedGraphItems": 0,
+    "omittedSemanticItems": 0
+  },
+  "verification": {
+    "verified": 0,
+    "partiallySupported": 0,
+    "unsupported": 0,
+    "conflicting": 4
+  },
+  "removedClaims": [
+    {
+      "claimId": "claim-1",
+      "kind": "PATH",
+      "text": "The shortest coauthorship path between Rajkumar Buyya and Rachid Guerraoui is 3 hops.",
+      "status": "CONFLICTING",
+      "failedChecks": [
+        {
+          "rule": "graph-evidence-required",
+          "outcome": "FAIL",
+          "detail": "vector similarity is not evidence for a PATH claim"
+        },
+        {
+          "rule": "kind-matches-type",
+          "outcome": "FAIL",
+          "detail": "PATH needs GRAPH_PATH"
+        },
+        {
+          "rule": "asserted-values",
+          "outcome": "MISSING",
+          "detail": "pathLength: no cited graph item has this fact"
+        },
+        {
+          "rule": "numbers-in-text",
+          "outcome": "FAIL",
+          "detail": "3 is not an asserted fact of a cited item"
+        },
+        {
+          "rule": "identity",
+          "outcome": "FAIL",
+          "detail": "not resolved or cited: Rachid Guerraoui, Rajkumar Buyya"
+        },
+        {
+          "rule": "path-hops",
+          "outcome": "CONFLICT",
+          "detail": "the path differs from the GRAPH_PATH evidence"
+        }
+      ]
+    },
+    {
+      "claimId": "claim-2",
+      "kind": "PATH_HOP",
+      "text": "Rajkumar Buyya and Ivona Brandic have 3 joint works from 2009-2012, for example \"Special section: Recent advances in utility and cloud computing.\"",
+      "status": "CONFLICTING",
+      "failedChecks": [
+        {
+          "rule": "graph-evidence-required",
+          "outcome": "FAIL",
+          "detail": "vector similarity is not evidence for a PATH_HOP claim"
+        },
+        {
+          "rule": "kind-matches-type",
+          "outcome": "FAIL",
+          "detail": "PATH_HOP needs GRAPH_PATH"
+        },
+        {
+          "rule": "asserted-values",
+          "outcome": "MISSING",
+          "detail": "hop.1.firstYear: no cited graph item has this fact"
+        },
+        {
+          "rule": "asserted-values",
+          "outcome": "MISSING",
+          "detail": "hop.1.from: no cited graph item has this fact"
+        },
+        {
+          "rule": "asserted-values",
+          "outcome": "MISSING",
+          "detail": "hop.1.jointPublicationCount: no cited graph item has this fact"
+        },
+        {
+          "rule": "asserted-values",
+          "outcome": "MISSING",
+          "detail": "hop.1.lastYear: no cited graph item has this fact"
+        },
+        {
+          "rule": "asserted-values",
+          "outcome": "MISSING",
+          "detail": "hop.1.to: no cited graph item has this fact"
+        },
+        {
+          "rule": "numbers-in-text",
+          "outcome": "FAIL",
+          "detail": "3 is not an asserted fact of a cited item"
+        },
+        {
+          "rule": "window",
+          "outcome": "CONFLICT",
+          "detail": "the text names 2009-2012, which is not the window all-years"
+        },
+        {
+          "rule": "identity",
+          "outcome": "FAIL",
+          "detail": "not resolved or cited: scr:canon-v1.er-v2:579c60649a1eaa5276061729c159fa5d, Rajkumar Buyya; names 'Ivona Brandic' (a corpus researcher who is not in the evidence)"
+        },
+        {
+          "rule": "path-hops",
+          "outcome": "CONFLICT",
+          "detail": "hop 1"
+        },
+        {
+          "rule": "titles",
+          "outcome": "FAIL",
+          "detail": "1 quoted title(s) are not titles of cited works"
+        }
+      ]
+    },
+    {
+      "claimId": "claim-3",
+      "kind": "PATH_HOP",
+      "text": "Ivona Brandic and Paolo Romano 0002 have 1 joint work in 2012, for example \"Topic 6: Grid, Cluster and Cloud Computing.\"",
+      "status": "CONFLICTING",
+      "failedChecks": [
+        {
+          "rule": "graph-evidence-required",
+          "outcome": "FAIL",
+          "detail": "vector similarity is not evidence for a PATH_HOP claim"
+        },
+        {
+          "rule": "kind-matches-type",
+          "outcome": "FAIL",
+          "detail": "PATH_HOP needs GRAPH_PATH"
+        },
+        {
+          "rule": "asserted-values",
+          "outcome": "MISSING",
+          "detail": "hop.2.firstYear: no cited graph item has this fact"
+        },
+        {
+          "rule": "asserted-values",
+          "outcome": "MISSING",
+          "detail": "hop.2.from: no cited graph item has this fact"
+        },
+        {
+          "rule": "asserted-values",
+          "outcome": "MISSING",
+          "detail": "hop.2.jointPublicationCount: no cited graph item has this fact"
+        },
+        {
+          "rule": "asserted-values",
+          "outcome": "MISSING",
+          "detail": "hop.2.lastYear: no cited graph item has this fact"
+        },
+        {
+          "rule": "asserted-values",
+          "outcome": "MISSING",
+          "detail": "hop.2.to: no cited graph item has this fact"
+        },
+        {
+          "rule": "numbers-in-text",
+          "outcome": "FAIL",
+          "detail": "0002 is not an asserted fact of a cited item; 1 is not an asserted fact of a cited item; 2012 is not an asserted fact of a cited item; 6 is not an asserted fact of a cited item"
+        },
+        {
+          "rule": "identity",
+          "outcome": "FAIL",
+          "detail": "not resolved or cited: scr:canon-v1.er-v2:579c60649a1eaa5276061729c159fa5d, scr:canon-v1.er-v2:26367611b6aa01309f3b27e3bbc344bb; names 'Ivona Brandic' (a corpus researcher who is not in the evidence), 'Paolo Romano 0002' (a corpus researcher who is not in the evidence), 'Cloud Computing' (not a researcher, title, venue, topic, or institution of the evidence)"
+        },
+        {
+          "rule": "path-hops",
+          "outcome": "CONFLICT",
+          "detail": "hop 2"
+        },
+        {
+          "rule": "titles",
+          "outcome": "FAIL",
+          "detail": "1 quoted title(s) are not titles of cited works"
+        }
+      ]
+    },
+    {
+      "claimId": "claim-4",
+      "kind": "PATH_HOP",
+      "text": "Paolo Romano 0002 and Rachid Guerraoui have 1 joint work in 2016, for example \"ProteusTM: Abstraction Meets Performance in Transactional Memory.\"",
+      "status": "CONFLICTING",
+      "failedChecks": [
+        {
+          "rule": "graph-evidence-required",
+          "outcome": "FAIL",
+          "detail": "vector similarity is not evidence for a PATH_HOP claim"
+        },
+        {
+          "rule": "kind-matches-type",
+          "outcome": "FAIL",
+          "detail": "PATH_HOP needs GRAPH_PATH"
+        },
+        {
+          "rule": "asserted-values",
+          "outcome": "MISSING",
+          "detail": "hop.3.firstYear: no cited graph item has this fact"
+        },
+        {
+          "rule": "asserted-values",
+          "outcome": "MISSING",
+          "detail": "hop.3.from: no cited graph item has this fact"
+        },
+        {
+          "rule": "asserted-values",
+          "outcome": "MISSING",
+          "detail": "hop.3.jointPublicationCount: no cited graph item has this fact"
+        },
+        {
+          "rule": "asserted-values",
+          "outcome": "MISSING",
+          "detail": "hop.3.lastYear: no cited graph item has this fact"
+        },
+        {
+          "rule": "asserted-values",
+          "outcome": "MISSING",
+          "detail": "hop.3.to: no cited graph item has this fact"
+        },
+        {
+          "rule": "numbers-in-text",
+          "outcome": "FAIL",
+          "detail": "0002 is not an asserted fact of a cited item; 1 is not an asserted fact of a cited item; 2016 is not an asserted fact of a cited item"
+        },
+        {
+          "rule": "identity",
+          "outcome": "FAIL",
+          "detail": "not resolved or cited: scr:canon-v1.er-v2:26367611b6aa01309f3b27e3bbc344bb, Rachid Guerraoui; names 'Paolo Romano 0002' (a corpus researcher who is not in the evidence), 'Abstraction Meets Performance' (not a researcher, title, venue, topic, or institution of the evidence), 'Transactional Memory' (not a researcher, title, venue, topic, or institution of the evidence)"
+        },
+        {
+          "rule": "path-hops",
+          "outcome": "CONFLICT",
+          "detail": "hop 3"
+        },
+        {
+          "rule": "titles",
+          "outcome": "FAIL",
+          "detail": "1 quoted title(s) are not titles of cited works"
+        }
+      ]
+    }
+  ],
+  "droppedLines": [
+    {
+      "part": "SUMMARY",
+      "text": "The shortest coauthorship path between Rajkumar Buyya and Rachid Guerraoui is 3 hops. The path goes from Rajkumar Buyya to Ivona Brandic (3 joint works, 2009-2012), then to Paolo Romano 0002 (1 joint work, 2012), and finally to Rachid Guerraoui (1 joint work, 2016).",
+      "reasons": [
+        "no claim was kept"
+      ]
+    },
+    {
+      "part": "UNCERTAINTY",
+      "text": "Rajkumar Buyya was linked to scr:canon-v1.er-v2:bede83f65bedfab8f7fc802f295ee293 with confidence 0.9645.",
+      "reasons": [
+        "names Rajkumar Buyya, whom no kept claim may name"
+      ]
+    },
+    {
+      "part": "UNCERTAINTY",
+      "text": "Rachid Guerraoui was linked to scr:canon-v1.er-v2:ba10a85f922c075c3cfdbf5a040332b8 with confidence 0.9615.",
+      "reasons": [
+        "names Rachid Guerraoui, whom no kept claim may name"
+      ]
+    }
+  ],
+  "abstained": true,
+  "abstentionReason": "NO_VERIFIED_CLAIM",
+  "answerHash": "sha256:4703b11fea953728d62c1cb1e2bee1ecf3c2cc4a460fcd57d7e7c4222b736aff",
+  "provenance": {
+    "schemaVersion": "provenance-v1",
+    "sourceDataset": "RUNTIME",
+    "sourceRecordId": "qry-aa7031faa170437b4884fc46edf21a0c",
+    "snapshot": "2026-10-03",
+    "runId": "run-b9ec0cd5d6d58f881177bc70d85308ac",
+    "policyVersion": "fusion-v1",
+    "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+  },
+  "retrievalMode": "VECTOR_ONLY"
+}

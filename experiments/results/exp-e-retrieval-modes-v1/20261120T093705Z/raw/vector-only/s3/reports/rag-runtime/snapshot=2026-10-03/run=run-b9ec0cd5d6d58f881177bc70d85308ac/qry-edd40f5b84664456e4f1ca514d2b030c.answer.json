@@ -1,0 +1,325 @@
+{
+  "schemaVersion": "rag-answer-v1",
+  "response": {
+    "schemaVersion": "answer-response-v1",
+    "queryId": "qry-edd40f5b84664456e4f1ca514d2b030c",
+    "summary": "No claim of the drafted answer could be verified against the evidence, so the answer abstains.",
+    "claims": [],
+    "abstained": true,
+    "uncertainty": "Rajkumar Buyya was linked to scr:canon-v1.er-v2:bede83f65bedfab8f7fc802f295ee293 by dominant-name-v1: 0.9645 of 310 works among 11 researchers with this display name. 2 drafted uncertainty line(s) were left out because they failed verification.",
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "RUNTIME",
+      "sourceRecordId": "qry-edd40f5b84664456e4f1ca514d2b030c",
+      "snapshot": "2026-10-03",
+      "runId": "run-b9ec0cd5d6d58f881177bc70d85308ac",
+      "policyVersion": "fusion-v1",
+      "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+    }
+  },
+  "plan": {
+    "schemaVersion": "rag-query-plan-v1",
+    "queryId": "qry-edd40f5b84664456e4f1ca514d2b030c",
+    "operations": [],
+    "researcherNames": [
+      {
+        "name": "Rajkumar Buyya",
+        "offset": 32
+      }
+    ],
+    "metrics": [
+      "DISTINCT_COAUTHOR_COUNT"
+    ],
+    "window": {
+      "requested": {
+        "kind": "NAMED",
+        "name": "2015-2026",
+        "yearFrom": null,
+        "yearTo": null
+      },
+      "window": "2015-2026",
+      "startYear": 2015,
+      "endYear": 2026,
+      "exact": true,
+      "note": null
+    },
+    "comparison": null,
+    "topics": [],
+    "venues": [],
+    "institutions": [],
+    "semanticIndexes": [
+      "researcher-profile-v1"
+    ],
+    "limits": {
+      "graphLimit": 100,
+      "vectorLimit": 50,
+      "maxPathDepth": 6,
+      "topK": 5
+    },
+    "source": "MODEL",
+    "overriddenFields": [],
+    "rejectedItems": [],
+    "promptVersion": "planner-v2",
+    "modelId": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "provenance": {
+      "schemaVersion": "provenance-v1",
+      "sourceDataset": "RUNTIME",
+      "sourceRecordId": "qry-edd40f5b84664456e4f1ca514d2b030c",
+      "snapshot": "2026-10-03",
+      "runId": "run-b9ec0cd5d6d58f881177bc70d85308ac",
+      "policyVersion": null,
+      "modelVersion": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+    }
+  },
+  "resolutions": [
+    {
+      "schemaVersion": "researcher-resolution-v1",
+      "name": "Rajkumar Buyya",
+      "nameKey": "name-v1:rajkumar buyya",
+      "policyVersion": "dominant-name-v1",
+      "dominantShare": 0.9,
+      "minWorks": 5,
+      "decision": "RESOLVED_DOMINANT",
+      "researcherId": "scr:canon-v1.er-v2:bede83f65bedfab8f7fc802f295ee293",
+      "topShare": 0.964516129032258,
+      "totalWorks": 310,
+      "candidateCount": 11,
+      "candidates": [
+        {
+          "researcherId": "scr:canon-v1.er-v2:bede83f65bedfab8f7fc802f295ee293",
+          "displayName": "Rajkumar Buyya",
+          "matchedName": "Rajkumar Buyya",
+          "works": 299,
+          "share": 0.964516129032258,
+          "identityConfidence": 0.9300527553067827,
+          "mentionCount": 879,
+          "dblpAnchored": true,
+          "orcid": "0000-0001-9754-6496",
+          "institutions": [
+            {
+              "id": "ringgold:2281",
+              "name": "University of Melbourne",
+              "count": null
+            },
+            {
+              "id": "ror:01ej9dk98",
+              "name": "The University of Melbourne",
+              "count": null
+            },
+            {
+              "id": "ror:02bfwt286",
+              "name": "Monash University",
+              "count": null
+            }
+          ],
+          "topCoauthors": [
+            {
+              "id": "scr:canon-v1.er-v2:02db5d5eec978cfa13cb84323e03a65b",
+              "name": "Rajiv Ranjan 0001",
+              "count": 20
+            },
+            {
+              "id": "scr:canon-v1.er-v2:d14eeb7426138e1c728aad8ea3c8bc5c",
+              "name": "Rodrigo N. Calheiros",
+              "count": 20
+            },
+            {
+              "id": "scr:canon-v1.er-v2:de7dcf5224032c505f1a112beb2f1981",
+              "name": "Dawei Sun 0001",
+              "count": 17
+            }
+          ],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:123e4fdbece2f6388afe5ef635ec566c",
+          "displayName": "Rajkumar Buyya",
+          "matchedName": "Rajkumar Buyya",
+          "works": 2,
+          "share": 0.0064516129032258064,
+          "identityConfidence": 0.9999988200059715,
+          "mentionCount": 2,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [
+            {
+              "id": "scr:canon-v1.er-v2:167be8717578bcfc33014b7c1e447720",
+              "name": "Péter Kacsuk",
+              "count": 2
+            }
+          ],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:2f2b6a3387b537f49717ba2bc2a72db0",
+          "displayName": "Rajkumar Buyya",
+          "matchedName": "Rajkumar Buyya",
+          "works": 1,
+          "share": 0.0032258064516129032,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:3463e9be3a35b8da6a8f341f3dfa8468",
+          "displayName": "Rajkumar Buyya",
+          "matchedName": "Rajkumar Buyya",
+          "works": 1,
+          "share": 0.0032258064516129032,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:9c7b5af5238d4821facb51bf2f75c124",
+          "displayName": "Rajkumar Buyya",
+          "matchedName": "Rajkumar Buyya",
+          "works": 1,
+          "share": 0.0032258064516129032,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [
+            {
+              "id": "scr:canon-v1.er-v2:da7a6916df57fc4bd3087689e66efc5e",
+              "name": "Sudharshan Vazhkudai",
+              "count": 1
+            }
+          ],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:bace0d3ca66609da3793424d42984219",
+          "displayName": "Rajkumar Buyya",
+          "matchedName": "Rajkumar Buyya",
+          "works": 1,
+          "share": 0.0032258064516129032,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [
+            {
+              "id": "scr:canon-v1.er-v2:18457396eee0baeaf80bff3a1bb9c3fe",
+              "name": "Alexander Barmouta",
+              "count": 1
+            }
+          ],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:d2e36ddc9afb3ddad2d25626ed0fcebb",
+          "displayName": "Rajkumar Buyya",
+          "matchedName": "Rajkumar Buyya",
+          "works": 1,
+          "share": 0.0032258064516129032,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:e7b1825e4fc396bd00ed93b3b8b0bfa5",
+          "displayName": "Rajkumar Buyya",
+          "matchedName": "Rajkumar Buyya",
+          "works": 1,
+          "share": 0.0032258064516129032,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": true,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:eecdf880a6608a86ee0ef862a2536578",
+          "displayName": "Rajkumar Buyya",
+          "matchedName": "Rajkumar Buyya",
+          "works": 1,
+          "share": 0.0032258064516129032,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": false,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:effd8a455ffa53b4333c2fe22179bacd",
+          "displayName": "Rajkumar Buyya",
+          "matchedName": "Rajkumar Buyya",
+          "works": 1,
+          "share": 0.0032258064516129032,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": false,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        },
+        {
+          "researcherId": "scr:canon-v1.er-v2:f089948daf7e10d05a0f02c3150c008d",
+          "displayName": "Rajkumar Buyya",
+          "matchedName": "Rajkumar Buyya",
+          "works": 1,
+          "share": 0.0032258064516129032,
+          "identityConfidence": 1,
+          "mentionCount": 1,
+          "dblpAnchored": false,
+          "orcid": null,
+          "institutions": [],
+          "topCoauthors": [],
+          "runId": "run-10ceed31b3f602bb998eae7c00929ae9",
+          "snapshot": "2026-10-03"
+        }
+      ],
+      "otherNameMatches": [],
+      "truncated": false,
+      "evidenceId": "ev-436bf9ecc38d5b21aa16fa7b8b3a97ed"
+    }
+  ],
+  "verification": {
+    "schemaVersion": "claim-verification-v1",
+    "queryId": "qry-edd40f5b84664456e4f1ca514d2b030c",
+    "checks": [],
+    "counts": {
+      "verified": 0,
+      "partiallySupported": 0,
+      "unsupported": 0,
+      "conflicting": 0
+    }
+  },
+  "abstention": {
+    "reason": "NO_VERIFIED_CLAIM",
+    "detail": "No claim of the drafted answer could be verified against the evidence, so the answer abstains."
+  },
+  "answerHash": "sha256:d3fa010d8b33727e3eab8a4e31435afb80b0a04cbe544493e9e87c5a2261ffa1"
+}

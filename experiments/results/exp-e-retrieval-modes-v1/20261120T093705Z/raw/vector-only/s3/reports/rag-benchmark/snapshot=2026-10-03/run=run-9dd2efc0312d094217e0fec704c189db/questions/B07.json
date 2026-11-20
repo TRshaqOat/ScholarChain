@@ -1,0 +1,210 @@
+{
+  "schemaVersion": "rag-benchmark-result-v3",
+  "questionId": "B07",
+  "category": "direct_collaboration",
+  "mode": "LIVE",
+  "retrievalMode": "VECTOR_ONLY",
+  "runtimeRunId": "run-b9ec0cd5d6d58f881177bc70d85308ac",
+  "queryId": "qry-550451479eed4a326062c60671d6b509",
+  "planSource": "MODEL",
+  "operations": [
+    "DIRECT_COAUTHORS/PAIR"
+  ],
+  "metrics": [],
+  "window": "all-years",
+  "resolutions": [
+    {
+      "name": "Jack J. Dongarra",
+      "decision": "RESOLVED_DOMINANT",
+      "researcherId": "scr:canon-v1.er-v2:6de4012bbe8608f1d49d18cf9a40a763",
+      "topShare": 0.9575596816976127,
+      "candidateCount": 17
+    },
+    {
+      "name": "Yves Robert",
+      "decision": "RESOLVED_DOMINANT",
+      "researcherId": "scr:canon-v1.er-v2:da6e3bdff14745638f3f5425f0133388",
+      "topShare": 0.9774774774774775,
+      "candidateCount": 6
+    }
+  ],
+  "abstained": true,
+  "abstentionReason": "NO_VERIFIED_CLAIM",
+  "verification": {
+    "verified": 0,
+    "partiallySupported": 0,
+    "unsupported": 0,
+    "conflicting": 2
+  },
+  "claims": 0,
+  "graph": {
+    "reads": 29,
+    "readsByTemplate": {
+      "kv.entity-link": 2,
+      "graph.researcher-institutions": 2,
+      "graph.coauthors": 23,
+      "graph.authored-counts": 2
+    },
+    "rows": 78,
+    "truncatedReads": 2,
+    "evidenceItems": 0,
+    "tokens": 0,
+    "omittedItems": 0,
+    "latencyMs": 0,
+    "pathStatuses": []
+  },
+  "semantic": {
+    "embeddingCalls": 1,
+    "embeddingInputTokens": 0,
+    "indexes": [
+      "researcher-profile-v1",
+      "paper-abstract-v1"
+    ],
+    "hits": 7,
+    "tokens": 2261,
+    "omittedItems": 0,
+    "latencyMs": 166,
+    "outcome": "OK"
+  },
+  "llm": {
+    "attempts": 2,
+    "requests": 2,
+    "attemptsByStage": {
+      "QUERY_PLANNING": 1,
+      "ANSWER_SYNTHESIS": 1
+    },
+    "outcomes": {
+      "OK": 2
+    },
+    "inputTokens": 6541,
+    "outputTokens": 747,
+    "throttleWaitMs": 10825
+  },
+  "latencyMs": 15644,
+  "stageLatencyMs": {
+    "COLLABORATION_METRICS": 0,
+    "PATH_FINDING": 0,
+    "EVIDENCE_BUILDING": 1,
+    "AUDIT": 0,
+    "QUERY_PLANNING": 5859,
+    "SEMANTIC_CONTEXT": 166,
+    "COMMUNITY_ANALYSIS": 0,
+    "CLAIM_VERIFICATION": 9,
+    "RESEARCHER_RESOLUTION": 41,
+    "ANSWER_SYNTHESIS": 9559
+  },
+  "checks": [
+    {
+      "name": "plan-operations",
+      "outcome": "PASS",
+      "detail": "needs DIRECT_COAUTHORS/PAIR; plan [DIRECT_COAUTHORS/PAIR]"
+    },
+    {
+      "name": "researcher-names",
+      "outcome": "PASS",
+      "detail": "expected [Jack J. Dongarra; Yves Robert], extracted [Jack J. Dongarra; Yves Robert]"
+    },
+    {
+      "name": "resolution",
+      "outcome": "PASS",
+      "detail": "Jack J. Dongarra: expected RESOLVED_DOMINANT, got RESOLVED_DOMINANT; Yves Robert: expected RESOLVED_DOMINANT, got RESOLVED_DOMINANT"
+    },
+    {
+      "name": "abstention",
+      "outcome": "FAIL",
+      "detail": "expected answer, got abstain (NO_VERIFIED_CLAIM)"
+    },
+    {
+      "name": "claim-evidence",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no claim"
+    },
+    {
+      "name": "verification",
+      "outcome": "PASS",
+      "detail": "abstained with no verified claim kept; counts 0/0/0/2; final claims 0 verified of 0"
+    },
+    {
+      "name": "bundle-budget",
+      "outcome": "PASS",
+      "detail": "graph 0/8000 tokens, semantic 2261/3000, items 7/300"
+    },
+    {
+      "name": "llm-budget",
+      "outcome": "PASS",
+      "detail": "2 attempts, 2 requests (ANSWER_SYNTHESIS 1, QUERY_PLANNING 1), tokens in 6541 out 747"
+    },
+    {
+      "name": "embedding-budget",
+      "outcome": "PASS",
+      "detail": "1 embedding calls for 2 indexes queried"
+    },
+    {
+      "name": "path-hops",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no path evidence in the bundle"
+    },
+    {
+      "name": "pair-edges",
+      "outcome": "NOT_APPLICABLE",
+      "detail": "no bundle edge has stored path evidence"
+    },
+    {
+      "name": "deadline",
+      "outcome": "PASS",
+      "detail": "15644 ms of 180000"
+    }
+  ],
+  "answerHash": "sha256:f08be26b26138afdd547383f517733d3bf134ea85d04b1c880e35a7680e106b3",
+  "retrieved": [
+    {
+      "rank": 1,
+      "source": "vector",
+      "origin": "vector",
+      "evidenceId": "ev-7a6bfc434c09dcc756d43b65708120b5",
+      "elementId": "chunk-a467b0166fb25caf1894ebffe5f41413"
+    },
+    {
+      "rank": 2,
+      "source": "vector",
+      "origin": "vector",
+      "evidenceId": "ev-0e24fe7fc0e5a1f4d230e33a6cbbd7c7",
+      "elementId": "chunk-fe2b39567ddf5437bee4f994b8612e51"
+    },
+    {
+      "rank": 3,
+      "source": "vector",
+      "origin": "vector",
+      "evidenceId": "ev-d1fc7006f60bad90f06ffe1c6fdd6189",
+      "elementId": "chunk-fe00f27674d93c223853b94d065894f9"
+    },
+    {
+      "rank": 4,
+      "source": "vector",
+      "origin": "vector",
+      "evidenceId": "ev-cea3aa5180afa00c79607937c53541b7",
+      "elementId": "chunk-be738b32e6b79a93b28071a30ff72f86"
+    },
+    {
+      "rank": 5,
+      "source": "vector",
+      "origin": "vector",
+      "evidenceId": "ev-0be33fe21d81340e7bf308f840ba364c",
+      "elementId": "chunk-dee741bf2497d8dfbc164e9000418053"
+    },
+    {
+      "rank": 6,
+      "source": "vector",
+      "origin": "vector",
+      "evidenceId": "ev-8c2a13ae825c41f926e75436cfaaaa81",
+      "elementId": "chunk-529efc95880a5104377102423e66b3d8"
+    },
+    {
+      "rank": 7,
+      "source": "vector",
+      "origin": "vector",
+      "evidenceId": "ev-2fa215a943df4e32e72f81ecef15874f",
+      "elementId": "chunk-2755a23d2c0e864141f8645813f733aa"
+    }
+  ]
+}
