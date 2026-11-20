@@ -155,3 +155,17 @@ A6. Checks: `bash -n`; every `--self-test`; the dry-runs; `scripts/run-experimen
 ### Part B (infra-engineer)
 
 B1. Ruling 6 revert: `service_cpu_target_percent = 60` in `infra/terraform/envs/course/course.tfvars`, and one note in `infra/terraform/README.md` that window 3 ran with 15 as a declared experiment setting (Phase 15 rulings 2 and 6) and the default is 60. No other change and no terraform command; the human's check.sh covers fmt and validate.
+
+## Human ruling 12 (Nov 20, 2026): code review 3, repair-02 of work order 4
+
+12. Code review 3 (work order 4): REQUEST_CHANGES, 0/1/6. Part B is accepted. Part A goes to repair-02, by human exception to the one-repair-round rule (precedent: Phase 11 ruling 20): work order 4 is new scope after window 3, and its defect shows only against the real BenchmarkCli. Repair-02 is experiment-engineer only, `experiments/**` only, under all of ruling 11's rules. Its report goes to `docs/agent-runs/phase-15/repair-02.md`.
+   (a) E-M1: the harness runs step 1 (fused `--max 2`), then fused with `--max N-2`, then graph-only and vector-only with `--max N`, so every mode answers exactly the first N questions; N must be 3 to 10. This replaces "each with `--max N`" in A1. The stub models resume (it counts `questions/*.json` under `--out` and answers at most `--max` pending questions), and the self-test asserts that each mode ends with exactly N results and the same question IDs. The dry-run output and the recorded command text follow the new arguments. The manifest still describes 30 questions; recheck its arithmetic.
+   (b) E-m2: raw files go to `$SCHOLARCHAIN_EXPERIMENT_DIR/<mode>/` and `$SCHOLARCHAIN_EXPERIMENT_DIR/harness.json`, so `<stamp>/raw/<mode>/`, matching D and F. This replaces the A1 path text. Update the manifest's layout fields and the documented commands (`--raw <stamp>/raw`).
+   (c) E-m1: TERM at maxMinutes must stop the JVM too: start sbt in its own process group (or signal its children) and wait. A stub that spawns a child proves both stop.
+   (d) E-m3: the summarizer computes quality metrics over the question IDs present in all three modes and lists the excluded IDs; it adds a questions_without_items category; the Markdown prints a "question sets differ" line when they differ.
+   (e) E-m4: the D-scale derived README adds the reviewer's caveats (the one-task phase includes the level's warm-up; window 2's warmed single task served 35.72 requests per second at c=8; Neptune CPU about 97 percent in both phases; target registration is not health), plus a steady-state comparison labelled as such. Rerun derive-tables.py so the committed outputs match the code.
+   (f) E-m5: repair-02 states the correct summarizer self-test count; the work order 4 report stays verbatim.
+   (g) E-m6 is accepted as recorded (read-only, output discarded, nothing depends on it). A third deviation would not be accepted: repair-02 runs no git at all.
+   (h) The answers sheet may show each claim's verification status and the abstention reason: that is the answer as the API delivers it, which is what is rated. The blinding limit (vector-only abstentions are recognisable) is stated in the Phase 16 write-up.
+   (i) The guard false positive (a write verb plus the text `labels/` in file content) is a Phase 17 note for factory-engineer; no change now.
+   (j) Next: code review 4 (the repair only, one round). Then the human commits work order 4 and repair-02 (with `git add -f` for the evidence logs) and runs E.
