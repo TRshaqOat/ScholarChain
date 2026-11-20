@@ -1,0 +1,14 @@
+==> STEP test-reports
+==> STEP plans
+==> STEP records
+==> STEP target
+==> TARGET account=834519512655 region=us-east-2 profile=scholarchain-sdk
+==> STEP terraform-outputs
+==> OK outputs for account 834519512655
+==> STEP metrics
+==> OK metrics: 12 series
+==> STEP index
+==> OK 530 files in scratch/evidence-archive/window-3
+==> STEP upload
+==> OK uploaded to s3://scholarchain-course-data-834519512655-us-east-2/reports/evidence/window-3/
+==> ARCHIVE dir=scratch/evidence-archive/window-3

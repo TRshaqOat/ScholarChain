@@ -1,0 +1,88 @@
+{
+  "at": "2026-11-20T00:54:05.947Z",
+  "command": [
+    "aws",
+    "cloudwatch",
+    "describe-alarms",
+    "--alarm-names",
+    "TargetTracking-service/scholarchain-course-runtime/graph-evidence-api-AlarmHigh-be1aa0ff-7aa0-4746-a340-e2a90db2cb5b",
+    "TargetTracking-service/scholarchain-course-runtime/graph-evidence-api-AlarmLow-fdaea21a-1b31-4887-8532-4f3013cd0232"
+  ],
+  "data": {
+    "MetricAlarms": [
+      {
+        "AlarmName": "TargetTracking-service/scholarchain-course-runtime/graph-evidence-api-AlarmHigh-be1aa0ff-7aa0-4746-a340-e2a90db2cb5b",
+        "AlarmArn": "arn:aws:cloudwatch:us-east-2:834519512655:alarm:TargetTracking-service/scholarchain-course-runtime/graph-evidence-api-AlarmHigh-be1aa0ff-7aa0-4746-a340-e2a90db2cb5b",
+        "AlarmDescription": "DO NOT EDIT OR DELETE. For TargetTrackingScaling policy arn:aws:autoscaling:us-east-2:834519512655:scalingPolicy:cd97bad3-2894-4441-9949-6736cd87df4e:resource/ecs/service/scholarchain-course-runtime/graph-evidence-api:policyName/scholarchain-course-graph-evidence-api-cpu:createdBy/9e7e17d3-821c-40de-891e-74a4eb77dbe8.",
+        "AlarmConfigurationUpdatedTimestamp": "2026-11-19T17:42:51.033000+00:00",
+        "ActionsEnabled": true,
+        "OKActions": [],
+        "AlarmActions": [
+          "arn:aws:autoscaling:us-east-2:834519512655:scalingPolicy:cd97bad3-2894-4441-9949-6736cd87df4e:resource/ecs/service/scholarchain-course-runtime/graph-evidence-api:policyName/scholarchain-course-graph-evidence-api-cpu:createdBy/9e7e17d3-821c-40de-891e-74a4eb77dbe8"
+        ],
+        "InsufficientDataActions": [],
+        "StateValue": "OK",
+        "StateReason": "Threshold Crossed: 1 datapoint [14.834386189778645 (20/11/26 00:26:00)] was not greater than the threshold (15.0).",
+        "StateReasonData": "{\"version\":\"1.0\",\"queryDate\":\"2026-11-20T00:29:01.102+0000\",\"startDate\":\"2026-11-20T00:24:00.000+0000\",\"unit\":\"Percent\",\"statistic\":\"Average\",\"period\":60,\"recentDatapoints\":[21.932168881098427,15.383859634399414,14.834386189778645],\"threshold\":15.0,\"evaluatedDatapoints\":[{\"timestamp\":\"2026-11-20T00:26:00.000+0000\",\"sampleCount\":2.0,\"value\":14.834386189778645}]}",
+        "StateUpdatedTimestamp": "2026-11-20T00:29:01.103000+00:00",
+        "MetricName": "CPUUtilization",
+        "Namespace": "AWS/ECS",
+        "Statistic": "Average",
+        "Dimensions": [
+          {
+            "Name": "ClusterName",
+            "Value": "scholarchain-course-runtime"
+          },
+          {
+            "Name": "ServiceName",
+            "Value": "graph-evidence-api"
+          }
+        ],
+        "Period": 60,
+        "Unit": "Percent",
+        "EvaluationPeriods": 3,
+        "Threshold": 15.0,
+        "ComparisonOperator": "GreaterThanThreshold",
+        "StateTransitionedTimestamp": "2026-11-20T00:29:01.103000+00:00"
+      },
+      {
+        "AlarmName": "TargetTracking-service/scholarchain-course-runtime/graph-evidence-api-AlarmLow-fdaea21a-1b31-4887-8532-4f3013cd0232",
+        "AlarmArn": "arn:aws:cloudwatch:us-east-2:834519512655:alarm:TargetTracking-service/scholarchain-course-runtime/graph-evidence-api-AlarmLow-fdaea21a-1b31-4887-8532-4f3013cd0232",
+        "AlarmDescription": "DO NOT EDIT OR DELETE. For TargetTrackingScaling policy arn:aws:autoscaling:us-east-2:834519512655:scalingPolicy:cd97bad3-2894-4441-9949-6736cd87df4e:resource/ecs/service/scholarchain-course-runtime/graph-evidence-api:policyName/scholarchain-course-graph-evidence-api-cpu:createdBy/9e7e17d3-821c-40de-891e-74a4eb77dbe8.",
+        "AlarmConfigurationUpdatedTimestamp": "2026-11-19T17:42:51.105000+00:00",
+        "ActionsEnabled": true,
+        "OKActions": [],
+        "AlarmActions": [
+          "arn:aws:autoscaling:us-east-2:834519512655:scalingPolicy:cd97bad3-2894-4441-9949-6736cd87df4e:resource/ecs/service/scholarchain-course-runtime/graph-evidence-api:policyName/scholarchain-course-graph-evidence-api-cpu:createdBy/9e7e17d3-821c-40de-891e-74a4eb77dbe8"
+        ],
+        "InsufficientDataActions": [],
+        "StateValue": "ALARM",
+        "StateReason": "Threshold Crossed: 15 datapoints were less than the threshold (13.5). The most recent datapoints which crossed the threshold: [0.07394116527090469 (20/11/26 00:43:00), 0.06248660230388244 (20/11/26 00:42:00), 0.06587219734986623 (20/11/26 00:41:00), 0.06276254449039698 (20/11/26 00:40:00), 0.06601432804018259 (20/11/26 00:39:00)].",
+        "StateReasonData": "{\"version\":\"1.0\",\"queryDate\":\"2026-11-20T00:46:38.889+0000\",\"startDate\":\"2026-11-20T00:29:00.000+0000\",\"unit\":\"Percent\",\"statistic\":\"Average\",\"period\":60,\"recentDatapoints\":[1.6239873540277283,0.06250026635825634,0.06996639848997195,0.06409458133081596,0.06386166904121637,0.06566550675779581,0.062336053388814136,0.06036658864468336,0.0627793911844492,0.05946066385755936,0.06601432804018259,0.06276254449039698,0.06587219734986623,0.06248660230388244,0.07394116527090469],\"threshold\":13.5,\"evaluatedDatapoints\":[{\"timestamp\":\"2026-11-20T00:43:00.000+0000\",\"sampleCount\":2.0,\"value\":0.07394116527090469},{\"timestamp\":\"2026-11-20T00:42:00.000+0000\",\"sampleCount\":2.0,\"value\":0.06248660230388244},{\"timestamp\":\"2026-11-20T00:41:00.000+0000\",\"sampleCount\":2.0,\"value\":0.06587219734986623},{\"timestamp\":\"2026-11-20T00:40:00.000+0000\",\"sampleCount\":2.0,\"value\":0.06276254449039698},{\"timestamp\":\"2026-11-20T00:39:00.000+0000\",\"sampleCount\":2.0,\"value\":0.06601432804018259},{\"timestamp\":\"2026-11-20T00:38:00.000+0000\",\"sampleCount\":2.0,\"value\":0.05946066385755936},{\"timestamp\":\"2026-11-20T00:37:00.000+0000\",\"sampleCount\":2.0,\"value\":0.0627793911844492},{\"timestamp\":\"2026-11-20T00:36:00.000+0000\",\"sampleCount\":2.0,\"value\":0.06036658864468336},{\"timestamp\":\"2026-11-20T00:35:00.000+0000\",\"sampleCount\":2.0,\"value\":0.062336053388814136},{\"timestamp\":\"2026-11-20T00:34:00.000+0000\",\"sampleCount\":2.0,\"value\":0.06566550675779581},{\"timestamp\":\"2026-11-20T00:33:00.000+0000\",\"sampleCount\":2.0,\"value\":0.06386166904121637},{\"timestamp\":\"2026-11-20T00:32:00.000+0000\",\"sampleCount\":2.0,\"value\":0.06409458133081596},{\"timestamp\":\"2026-11-20T00:31:00.000+0000\",\"sampleCount\":2.0,\"value\":0.06996639848997195},{\"timestamp\":\"2026-11-20T00:30:00.000+0000\",\"sampleCount\":2.0,\"value\":0.06250026635825634},{\"timestamp\":\"2026-11-20T00:29:00.000+0000\",\"sampleCount\":2.0,\"value\":1.6239873540277283}]}",
+        "StateUpdatedTimestamp": "2026-11-20T00:46:38.891000+00:00",
+        "MetricName": "CPUUtilization",
+        "Namespace": "AWS/ECS",
+        "Statistic": "Average",
+        "Dimensions": [
+          {
+            "Name": "ClusterName",
+            "Value": "scholarchain-course-runtime"
+          },
+          {
+            "Name": "ServiceName",
+            "Value": "graph-evidence-api"
+          }
+        ],
+        "Period": 60,
+        "Unit": "Percent",
+        "EvaluationPeriods": 15,
+        "Threshold": 13.5,
+        "ComparisonOperator": "LessThanThreshold",
+        "StateTransitionedTimestamp": "2026-11-20T00:46:38.891000+00:00"
+      }
+    ],
+    "CompositeAlarms": [],
+    "LogAlarms": []
+  },
+  "error": null
+}

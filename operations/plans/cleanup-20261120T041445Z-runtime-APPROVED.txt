@@ -1,0 +1,6 @@
+Cleanup plan: scratch/plans/cleanup-20261120T041445Z-runtime/plan.tfplan
+plan.tfplan sha256: 3352beee7038b464d1a203f6a6c6e1633d56e25bd1c77b3607ca8f8f083de5a6
+Stage: runtime; HEAD: c5428063732af5f7a5279c215dc2a52b89f64f16
+Counts: 0 add, 0 change, 89 destroy (exactly the 89 runtime resources applied 11:40 CST); 43 base resources kept with reasons
+Evidence archived first: scratch/evidence-archive/window-3 (530 files, 12 metric series), uploaded to reports/evidence/window-3/
+Approved by Achyut Patel at 2026-11-20T04:15:48Z

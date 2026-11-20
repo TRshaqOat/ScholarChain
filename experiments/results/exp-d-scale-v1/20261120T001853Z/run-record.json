@@ -1,0 +1,155 @@
+{
+  "schemaVersion": "experiment-run-record-v1",
+  "experimentId": "exp-d-scale-v1",
+  "commit": "c5428063732af5f7a5279c215dc2a52b89f64f16",
+  "manifest": "experiments/manifests/exp-d-scale-v1.json",
+  "manifestSha256": "7afadc5773e674d166b95912aec56e670a2e4f551398f2fea9695f7501cc8033",
+  "limits": {
+    "maxMinutes": 45,
+    "maxMinutesReason": "Phase 15 ruling 6 (code review 1 m3): at least 5 minutes above the harness's own waits (Phase 14 ruling 34). Worst case with every wait at its bound: setup about 3 s (window 2) + preflight 60 s (6 GETs, 10 s timeout) + 3 ecs describe-services reads 60 s (20 s subprocess timeout each) + 600 s load + 30 s worker tail + 1,500 s post-observation + 20 s poller join + 90 s collection = 2,363 s, about 39.4 min, 5.6 min under 45",
+    "plannedMinutes": 38,
+    "plannedBreakdown": "setup (terraform output, sts, secret) under 1 min; preflight seconds; 600 s load; 1,500 s post-observation; collection at most 90 s",
+    "concurrencyLevels": [
+      8
+    ],
+    "maxConcurrency": 8,
+    "levelSeconds": 600,
+    "pauseSeconds": 0,
+    "postObserveSeconds": 1500,
+    "maxRequestsPerLevel": 40000,
+    "maxRequestsPerLevelReason": "window 2 ran about 36 requests per second at concurrency 8, so 600 s is about 21,500 requests, above the 20,000 default cap",
+    "requestTimeoutSeconds": 10,
+    "abortErrorRate": 0.05,
+    "abortWindowSeconds": 10,
+    "abortMinRequestsPerKind": 20,
+    "abortConsecutive5xxOrTimeouts": 10,
+    "abortScope": "unchanged from exp-d-query-load-v1: per request kind, a sliding window within the level and the whole level; preflight GET of each path first",
+    "pollSeconds": 30,
+    "collectBudgetSeconds": 90,
+    "exitCodes": "0 the level ran; 1 abort rule; 2 usage; 3 precondition or non-2xx preflight; 4 unexpected error. Collection never changes the exit code.",
+    "haikuCalls": 0,
+    "bedrockCalls": 0,
+    "httpMethods": [
+      "GET"
+    ],
+    "awsCallsByHarness": "read-only only: sts get-caller-identity, secretsmanager get-secret-value (API key, memory only), ecs describe-services, application-autoscaling describe-scaling-activities and describe-scaling-policies, cloudwatch describe-alarms, describe-alarm-history and get-metric-data; the collection calls are allowlisted in the harness (READ_ONLY_CALLS)",
+    "targetService": "graph-evidence-api",
+    "graphEvidenceApiMaxTasks": 2,
+    "cpuTargetPercent": 15,
+    "cpuTargetIs": "an experiment setting for window 3 (Phase 15 ruling 2), not a tuned production value; production default 60",
+    "scaleChanges": "none by the harness; Application Auto Scaling may move graph-evidence-api between 1 and 2 tasks (Terraform service_max_counts.graph_evidence_api = 2, cpu target 15, scale-out cooldown 60 s, scale-in cooldown 120 s)",
+    "region": "us-east-2",
+    "budgetUsd": 0.5,
+    "budgetNote": "incremental cost of the run only (one extra Fargate task for at most about 25 minutes, ALB requests, Neptune I/O, about 9 CloudWatch metric series in one get-metric-data call); the window's runtime hours are counted in the window 3 budget (ruling 3)"
+  },
+  "command": [
+    "load-tests/exp-d-query-load.py",
+    "--levels",
+    "8",
+    "--level-seconds",
+    "600",
+    "--pause-seconds",
+    "0",
+    "--post-observe-seconds",
+    "1500",
+    "--abort-error-rate",
+    "0.05",
+    "--abort-window-seconds",
+    "10",
+    "--abort-min-requests",
+    "20",
+    "--abort-consecutive",
+    "10",
+    "--max-requests-per-level",
+    "40000",
+    "--poll-seconds",
+    "30"
+  ],
+  "startedAt": "2026-11-20T00:18:53Z",
+  "endedAt": "2026-11-20T00:54:13Z",
+  "exitCode": 0,
+  "timedOut": false,
+  "account": "834519512655",
+  "region": "us-east-2",
+  "rawResults": "raw/",
+  "stdout": "stdout.txt",
+  "stderr": "stderr.txt",
+  "metricLocations": [
+    {
+      "namespace": "AWS/ECS",
+      "metricName": "CPUUtilization",
+      "stat": "Average",
+      "dimensions": {
+        "ClusterName": "scholarchain-course-runtime",
+        "ServiceName": "graph-evidence-api"
+      },
+      "region": "us-east-2",
+      "source": "CloudWatch"
+    },
+    {
+      "namespace": "AWS/ECS",
+      "metricName": "MemoryUtilization",
+      "stat": "Average",
+      "dimensions": {
+        "ClusterName": "scholarchain-course-runtime",
+        "ServiceName": "graph-evidence-api"
+      },
+      "region": "us-east-2",
+      "source": "CloudWatch"
+    },
+    {
+      "namespace": "AWS/ApplicationELB",
+      "metricName": "HealthyHostCount",
+      "stat": "Minimum and Maximum",
+      "dimensions": {
+        "TargetGroup": "describe-services:loadBalancers[].targetGroupArn suffix",
+        "LoadBalancer": "terraform-output:alb_arn_suffix"
+      },
+      "region": "us-east-2",
+      "source": "CloudWatch"
+    },
+    {
+      "namespace": "AWS/ApplicationELB",
+      "metricName": "RequestCount",
+      "stat": "Sum",
+      "dimensions": {
+        "TargetGroup": "describe-services:loadBalancers[].targetGroupArn suffix",
+        "LoadBalancer": "terraform-output:alb_arn_suffix"
+      },
+      "region": "us-east-2",
+      "source": "CloudWatch"
+    },
+    {
+      "namespace": "AWS/ApplicationELB",
+      "metricName": "TargetResponseTime",
+      "stat": "p50 and p95",
+      "dimensions": {
+        "TargetGroup": "describe-services:loadBalancers[].targetGroupArn suffix",
+        "LoadBalancer": "terraform-output:alb_arn_suffix"
+      },
+      "region": "us-east-2",
+      "source": "CloudWatch"
+    },
+    {
+      "namespace": "AWS/ApplicationELB",
+      "metricName": "HTTPCode_Target_5XX_Count",
+      "stat": "Sum",
+      "dimensions": {
+        "TargetGroup": "describe-services:loadBalancers[].targetGroupArn suffix",
+        "LoadBalancer": "terraform-output:alb_arn_suffix"
+      },
+      "region": "us-east-2",
+      "source": "CloudWatch"
+    },
+    {
+      "namespace": "AWS/Neptune",
+      "metricName": "CPUUtilization",
+      "stat": "Average",
+      "dimensions": {
+        "DBClusterIdentifier": "terraform-output:neptune_cluster_id"
+      },
+      "region": "us-east-2",
+      "source": "CloudWatch"
+    }
+  ]
+}

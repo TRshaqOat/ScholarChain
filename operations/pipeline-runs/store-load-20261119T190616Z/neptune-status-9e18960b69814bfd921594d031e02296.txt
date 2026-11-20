@@ -1,0 +1,2 @@
+load 6113dd40-42e5-4bd4-ac8a-5b82fc4474bb status LOAD_IN_PROGRESS records 1836000 duplicates 0
+errors parsing 0 datatype 0 insert 0

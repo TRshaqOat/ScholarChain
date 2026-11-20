@@ -1,0 +1,8 @@
+Plan: scratch/plans/20261119T173346Z-c5428063732a/plan.tfplan
+plan.tfplan sha256: 978ce3059dc6b039e7c1bd9361c896838ea568dea9b68164ae0ff2a02e4b0bb6
+HEAD: c5428063732af5f7a5279c215dc2a52b89f64f16
+Counts: 89 add, 0 change, 0 destroy (SSE-C pinned by Phase 15 work order 2; no drift change)
+runtime_enabled: true; TF_VAR_alarm_email empty (Phase 14 ruling 27)
+graph-evidence-api CPU target_value 15 (Phase 15 ruling 2, window 3 experiment setting)
+Package record: operations/releases/package-deef29516bf395ac2b551beb93710b6a48a937a8.json
+Approved by Achyut Patel at 2026-11-19T17:39:32Z

@@ -1,0 +1,47 @@
+{
+  "at": "2026-11-20T00:54:04.036Z",
+  "command": [
+    "aws",
+    "application-autoscaling",
+    "describe-scaling-policies",
+    "--service-namespace",
+    "ecs",
+    "--resource-id",
+    "service/scholarchain-course-runtime/graph-evidence-api",
+    "--scalable-dimension",
+    "ecs:service:DesiredCount"
+  ],
+  "data": {
+    "ScalingPolicies": [
+      {
+        "PolicyARN": "arn:aws:autoscaling:us-east-2:834519512655:scalingPolicy:cd97bad3-2894-4441-9949-6736cd87df4e:resource/ecs/service/scholarchain-course-runtime/graph-evidence-api:policyName/scholarchain-course-graph-evidence-api-cpu",
+        "PolicyName": "scholarchain-course-graph-evidence-api-cpu",
+        "ServiceNamespace": "ecs",
+        "ResourceId": "service/scholarchain-course-runtime/graph-evidence-api",
+        "ScalableDimension": "ecs:service:DesiredCount",
+        "PolicyType": "TargetTrackingScaling",
+        "TargetTrackingScalingPolicyConfiguration": {
+          "TargetValue": 15.0,
+          "PredefinedMetricSpecification": {
+            "PredefinedMetricType": "ECSServiceAverageCPUUtilization"
+          },
+          "ScaleOutCooldown": 60,
+          "ScaleInCooldown": 120,
+          "DisableScaleIn": false
+        },
+        "Alarms": [
+          {
+            "AlarmName": "TargetTracking-service/scholarchain-course-runtime/graph-evidence-api-AlarmHigh-be1aa0ff-7aa0-4746-a340-e2a90db2cb5b",
+            "AlarmARN": "arn:aws:cloudwatch:us-east-2:834519512655:alarm:TargetTracking-service/scholarchain-course-runtime/graph-evidence-api-AlarmHigh-be1aa0ff-7aa0-4746-a340-e2a90db2cb5b"
+          },
+          {
+            "AlarmName": "TargetTracking-service/scholarchain-course-runtime/graph-evidence-api-AlarmLow-fdaea21a-1b31-4887-8532-4f3013cd0232",
+            "AlarmARN": "arn:aws:cloudwatch:us-east-2:834519512655:alarm:TargetTracking-service/scholarchain-course-runtime/graph-evidence-api-AlarmLow-fdaea21a-1b31-4887-8532-4f3013cd0232"
+          }
+        ],
+        "CreationTime": "2026-11-19T17:42:50.893000+00:00"
+      }
+    ]
+  },
+  "error": null
+}

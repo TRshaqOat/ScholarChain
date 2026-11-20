@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "release-record-v1",
+  "commit": "c5428063732af5f7a5279c215dc2a52b89f64f16",
+  "planSha256": "978ce3059dc6b039e7c1bd9361c896838ea568dea9b68164ae0ff2a02e4b0bb6",
+  "account": "834519512655",
+  "region": "us-east-2",
+  "environment": "course",
+  "deployedAt": "2026-11-19T23:35:35Z",
+  "runtimeEnabled": true,
+  "resumed": true,
+  "image": {
+    "tag": "deef29516bf395ac2b551beb93710b6a48a937a8",
+    "digest": "sha256:5c751b1e1341fd9dd86101cdc8fffc9b8b9c91284b83ec1757758218588047ea",
+    "packageRecord": "operations/releases/package-deef29516bf395ac2b551beb93710b6a48a937a8.json"
+  },
+  "services": [
+    {
+      "service": "query-api",
+      "taskDefinitionArn": "arn:aws:ecs:us-east-2:834519512655:task-definition/scholarchain-course-query-api:2",
+      "imageDigest": "sha256:5c751b1e1341fd9dd86101cdc8fffc9b8b9c91284b83ec1757758218588047ea"
+    },
+    {
+      "service": "graph-evidence-api",
+      "taskDefinitionArn": "arn:aws:ecs:us-east-2:834519512655:task-definition/scholarchain-course-graph-evidence-api:2",
+      "imageDigest": "sha256:5c751b1e1341fd9dd86101cdc8fffc9b8b9c91284b83ec1757758218588047ea"
+    },
+    {
+      "service": "worker",
+      "taskDefinitionArn": "arn:aws:ecs:us-east-2:834519512655:task-definition/scholarchain-course-worker:2",
+      "imageDigest": "sha256:5c751b1e1341fd9dd86101cdc8fffc9b8b9c91284b83ec1757758218588047ea"
+    }
+  ],
+  "runtimeRunIds": {
+    "query-api": "run-c9f26a9ecfe83c96526d50d79d99fd67",
+    "worker": "run-c9f26a9ecfe83c96526d50d79d99fd67"
+  },
+  "outputsFile": "release-20261119T233215Z-c5428063732a.outputs.json",
+  "verified": true
+}

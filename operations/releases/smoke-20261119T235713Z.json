@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "smoke-record-v1",
+  "baseUrl": "http://scholarchain-course-api-1836821949.us-east-2.elb.amazonaws.com",
+  "finishedAt": "2026-11-19T23:57:37Z",
+  "account": "834519512655",
+  "region": "us-east-2",
+  "question": "Have Jack J. Dongarra and Yves Robert coauthored a paper?",
+  "result": "PASS",
+  "checks": [
+    {
+      "check": "healthz",
+      "result": "PASS",
+      "http": "200",
+      "detail": "ok"
+    },
+    {
+      "check": "readyz",
+      "result": "PASS",
+      "http": "200",
+      "detail": "ready"
+    },
+    {
+      "check": "query",
+      "result": "PASS",
+      "http": "200",
+      "detail": "qry-c08ceb31eb51c6547cda9e522e3d1427 claims=2 evidence=ev-927665f3bbac87eb60685e50cfeb8f9b"
+    },
+    {
+      "check": "evidence",
+      "result": "PASS",
+      "http": "200",
+      "detail": "ev-927665f3bbac87eb60685e50cfeb8f9b COAUTHOR_EDGE"
+    },
+    {
+      "check": "idempotent",
+      "result": "PASS",
+      "http": "200",
+      "detail": "same queryId and answerHash"
+    },
+    {
+      "check": "auth-error",
+      "result": "PASS",
+      "http": "401",
+      "detail": "UNAUTHORIZED"
+    }
+  ],
+  "bodies": "smoke-20261119T235713Z/"
+}

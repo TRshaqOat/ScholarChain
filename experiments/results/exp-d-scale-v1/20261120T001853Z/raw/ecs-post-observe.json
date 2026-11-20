@@ -1,0 +1,33 @@
+{
+  "label": "post-observe",
+  "at": "2026-11-20T00:54:03.095Z",
+  "service": "graph-evidence-api",
+  "describe": {
+    "desired": 1,
+    "running": 1,
+    "pending": 0,
+    "events": [
+      [
+        "2026-11-19T18:46:51.672000-06:00",
+        "(service graph-evidence-api) has reached a steady state."
+      ],
+      [
+        "2026-11-19T18:46:51.654000-06:00",
+        "(service graph-evidence-api, taskSet ecs-svc/8840283790729610003) has begun draining connections on 1 tasks."
+      ],
+      [
+        "2026-11-19T18:46:51.650000-06:00",
+        "(service graph-evidence-api) deregistered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-2:834519512655:targetgroup/scholarchain-course-graph-eviden/c3c3882e4020d487)"
+      ],
+      [
+        "2026-11-19T18:46:42.018000-06:00",
+        "(service graph-evidence-api) has stopped 1 running tasks: (task 0605c516615348e7ac1817c4d8b16922)."
+      ],
+      [
+        "2026-11-19T18:24:41.097000-06:00",
+        "(service graph-evidence-api) has reached a steady state."
+      ]
+    ]
+  },
+  "error": null
+}

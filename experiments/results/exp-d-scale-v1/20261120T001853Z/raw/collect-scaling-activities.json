@@ -1,0 +1,43 @@
+{
+  "at": "2026-11-20T00:54:03.096Z",
+  "command": [
+    "aws",
+    "application-autoscaling",
+    "describe-scaling-activities",
+    "--service-namespace",
+    "ecs",
+    "--resource-id",
+    "service/scholarchain-course-runtime/graph-evidence-api",
+    "--scalable-dimension",
+    "ecs:service:DesiredCount"
+  ],
+  "data": {
+    "ScalingActivities": [
+      {
+        "ActivityId": "864f684a-e79e-40f7-b1cc-1b41738be4f0",
+        "ServiceNamespace": "ecs",
+        "ResourceId": "service/scholarchain-course-runtime/graph-evidence-api",
+        "ScalableDimension": "ecs:service:DesiredCount",
+        "Description": "Setting desired count to 1.",
+        "Cause": "monitor alarm TargetTracking-service/scholarchain-course-runtime/graph-evidence-api-AlarmLow-fdaea21a-1b31-4887-8532-4f3013cd0232 in state ALARM triggered policy scholarchain-course-graph-evidence-api-cpu",
+        "StartTime": "2026-11-20T00:46:39.066000+00:00",
+        "EndTime": "2026-11-20T00:47:12.964000+00:00",
+        "StatusCode": "Successful",
+        "StatusMessage": "Successfully set desired count to 1. Change successfully fulfilled by ecs."
+      },
+      {
+        "ActivityId": "fa93ed83-9c16-414b-9ecc-1c7d4513e343",
+        "ServiceNamespace": "ecs",
+        "ResourceId": "service/scholarchain-course-runtime/graph-evidence-api",
+        "ScalableDimension": "ecs:service:DesiredCount",
+        "Description": "Setting desired count to 2.",
+        "Cause": "monitor alarm TargetTracking-service/scholarchain-course-runtime/graph-evidence-api-AlarmHigh-be1aa0ff-7aa0-4746-a340-e2a90db2cb5b in state ALARM triggered policy scholarchain-course-graph-evidence-api-cpu",
+        "StartTime": "2026-11-20T00:24:01.287000+00:00",
+        "EndTime": "2026-11-20T00:24:35.219000+00:00",
+        "StatusCode": "Successful",
+        "StatusMessage": "Successfully set desired count to 2. Change successfully fulfilled by ecs."
+      }
+    ]
+  },
+  "error": null
+}

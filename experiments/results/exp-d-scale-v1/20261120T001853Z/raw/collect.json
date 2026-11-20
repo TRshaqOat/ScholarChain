@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "exp-d-collect-v1",
+  "metricsStartUtc": "2026-11-20T00:13:00Z",
+  "metricsEndUtc": "2026-11-20T00:55:00Z",
+  "targetGroupArn": "arn:aws:elasticloadbalancing:us-east-2:834519512655:targetgroup/scholarchain-course-graph-eviden/c3c3882e4020d487",
+  "skippedMetricQueries": [],
+  "budgetSeconds": 90,
+  "calls": [
+    {
+      "name": "scaling-activities",
+      "file": "collect-scaling-activities.json",
+      "at": "2026-11-20T00:54:03.096Z",
+      "error": null
+    },
+    {
+      "name": "scaling-policies",
+      "file": "collect-scaling-policies.json",
+      "at": "2026-11-20T00:54:04.036Z",
+      "error": null
+    },
+    {
+      "name": "ecs-service",
+      "file": "collect-ecs-service.json",
+      "at": "2026-11-20T00:54:04.986Z",
+      "error": null
+    },
+    {
+      "name": "alarms",
+      "file": "collect-alarms.json",
+      "at": "2026-11-20T00:54:05.947Z",
+      "error": null
+    },
+    {
+      "name": "alarm-history-0",
+      "file": "collect-alarm-history-0.json",
+      "at": "2026-11-20T00:54:06.907Z",
+      "error": null
+    },
+    {
+      "name": "alarm-history-1",
+      "file": "collect-alarm-history-1.json",
+      "at": "2026-11-20T00:54:07.764Z",
+      "error": null
+    },
+    {
+      "name": "metrics",
+      "file": "collect-metrics.json",
+      "at": "2026-11-20T00:54:08.626Z",
+      "error": null
+    }
+  ]
+}

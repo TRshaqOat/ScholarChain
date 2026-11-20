@@ -1,0 +1,7 @@
+--- terraform state count (expect 43)
+      53
+--- Neptune (expect empty)
+--- ECS clusters (expect empty)
+--- DynamoDB tables (expect empty)
+--- load balancers (expect empty)
+--- active EMR (expect empty)

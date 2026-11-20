@@ -1,0 +1,16 @@
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project/project
+[info] loading settings for project scholarchain-build from plugins.sbt...
+[info] loading project definition from /Users/achyutpatel/Developer/Cloud/ScholarChain/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/Users/achyutpatel/Developer/Cloud/ScholarChain/)
+[info] running scholarchain.storage.cli.LoadDynamoCli --dir /Users/achyutpatel/Developer/Cloud/ScholarChain/scratch/stores/s3/curated/dynamodb/snapshot=2026-10-03/run=run-1d6a86491812ff94887270c1ab885e69 --live --profile scholarchain-sdk --region us-east-2 --concurrency 8
+LIVE: DynamoDB tables scholarchain-course-* in us-east-2, profile scholarchain-sdk
+SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+SLF4J: Defaulting to no-operation (NOP) logger implementation
+SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+load run run-62359da6f98c0613ea9684d7db3dafc6 from source run run-1d6a86491812ff94887270c1ab885e69 snapshot 2026-10-03
+pass 1 ArtifactRegistry conflict=0 inserted=9 invalid=0 registry=RECORDED unchanged=0
+pass 1 EntityLinkCache conflict=0 inserted=287780 invalid=0 registry=RECORDED unchanged=0
+pass 1 ResearcherMetricCache conflict=0 inserted=588439 invalid=0 registry=RECORDED unchanged=0
+[success] Total time: 5498 s (01:31:38.0), completed Nov 19, 2026, 3:48:38 PM

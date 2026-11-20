@@ -1,0 +1,126 @@
+{
+  "at": "2026-11-20T00:54:04.986Z",
+  "command": [
+    "aws",
+    "ecs",
+    "describe-services",
+    "--cluster",
+    "scholarchain-course-runtime",
+    "--services",
+    "graph-evidence-api",
+    "--query",
+    "services[0].{events:events,loadBalancers:loadBalancers}"
+  ],
+  "data": {
+    "events": [
+      {
+        "id": "23ce0409-2f39-42cf-b872-3e3b9e6cc334",
+        "createdAt": "2026-11-20T00:46:51.672000+00:00",
+        "message": "(service graph-evidence-api) has reached a steady state."
+      },
+      {
+        "id": "5f87e0a3-62fb-456b-9749-7d0d8e7aaf3b",
+        "createdAt": "2026-11-20T00:46:51.654000+00:00",
+        "message": "(service graph-evidence-api, taskSet ecs-svc/8840283790729610003) has begun draining connections on 1 tasks."
+      },
+      {
+        "id": "df90955f-44fc-4e7a-921e-1315577aca90",
+        "createdAt": "2026-11-20T00:46:51.650000+00:00",
+        "message": "(service graph-evidence-api) deregistered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-2:834519512655:targetgroup/scholarchain-course-graph-eviden/c3c3882e4020d487)"
+      },
+      {
+        "id": "28bef0d0-6341-4833-9892-1d85c8ab75c2",
+        "createdAt": "2026-11-20T00:46:42.018000+00:00",
+        "message": "(service graph-evidence-api) has stopped 1 running tasks: (task 0605c516615348e7ac1817c4d8b16922)."
+      },
+      {
+        "id": "26ea4469-70bf-4dd9-8f7f-12d1c92389e8",
+        "createdAt": "2026-11-20T00:24:41.097000+00:00",
+        "message": "(service graph-evidence-api) has reached a steady state."
+      },
+      {
+        "id": "094eff89-6f1a-46dc-9ccc-642ea0d5240c",
+        "createdAt": "2026-11-20T00:24:32.269000+00:00",
+        "message": "(service graph-evidence-api) registered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-2:834519512655:targetgroup/scholarchain-course-graph-eviden/c3c3882e4020d487)"
+      },
+      {
+        "id": "1d036527-2a7c-4e45-a6be-268d236ddcff",
+        "createdAt": "2026-11-20T00:24:03.594000+00:00",
+        "message": "(service graph-evidence-api) has started 1 tasks: (task 0605c516615348e7ac1817c4d8b16922)."
+      },
+      {
+        "id": "7fa200a6-e09e-4074-9657-86c1cc0021a5",
+        "createdAt": "2026-11-19T23:33:14.164000+00:00",
+        "message": "(service graph-evidence-api) has reached a steady state."
+      },
+      {
+        "id": "3b8116e7-2729-47bb-9cd1-c20e98fe4327",
+        "createdAt": "2026-11-19T23:33:14.163000+00:00",
+        "message": "(service graph-evidence-api) (deployment ecs-svc/8840283790729610003) deployment completed."
+      },
+      {
+        "id": "8aeb1554-b49d-4412-9f96-2eea1e3f02be",
+        "createdAt": "2026-11-19T23:33:04.153000+00:00",
+        "message": "(service graph-evidence-api) registered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-2:834519512655:targetgroup/scholarchain-course-graph-eviden/c3c3882e4020d487)"
+      },
+      {
+        "id": "435f0ed1-7d58-44a7-9f2d-8aa447a0d7df",
+        "createdAt": "2026-11-19T23:32:33.684000+00:00",
+        "message": "(service graph-evidence-api) has started 1 tasks: (task 3f9c696481954bef8a3b8aee187ef3a9)."
+      },
+      {
+        "id": "ec629b64-6a17-4fd2-8daf-880ebe7c0268",
+        "createdAt": "2026-11-19T17:47:08.837000+00:00",
+        "message": "(service graph-evidence-api) (deployment ecs-svc/2096208964031713589) deployment failed: tasks failed to start."
+      },
+      {
+        "id": "b60dbf3d-9770-4cb7-97c0-b577974ae7b5",
+        "createdAt": "2026-11-19T17:46:39.929000+00:00",
+        "message": "(service graph-evidence-api) was unable to place a task. Reason: ResourceInitializationError: unable to pull secrets or registry auth: execution resource retrieval failed: unable to retrieve secret from asm: service call has been retried 1 time(s): failed to fetch secret arn:aws:secretsmanager:us-east-2:834519512655:secret:scholarchain-course/api-key-Wsyv7j from secrets manager: operation error Secrets Manager: GetSecretValue, https response error StatusCode: 400, RequestID: 70ecbde1-3e64-43eb-a8c8-f9c0b1ec37fc, ResourceNotFoundException: Secrets Manager can't find the specified secret value for staging label: AWSCURRENT."
+      },
+      {
+        "id": "b312c61a-ea4e-4116-ae34-5a2553a8740c",
+        "createdAt": "2026-11-19T17:46:11.434000+00:00",
+        "message": "(service graph-evidence-api) has started 1 tasks: (task 1ba485ec796e49618c35bfe64e77a3d2)."
+      },
+      {
+        "id": "0d2187b2-d2e7-4f9e-abda-cdb1a5c1e7ff",
+        "createdAt": "2026-11-19T17:45:38.800000+00:00",
+        "message": "(service graph-evidence-api) was unable to place a task. Reason: ResourceInitializationError: unable to pull secrets or registry auth: execution resource retrieval failed: unable to retrieve secret from asm: service call has been retried 1 time(s): failed to fetch secret arn:aws:secretsmanager:us-east-2:834519512655:secret:scholarchain-course/api-key-Wsyv7j from secrets manager: operation error Secrets Manager: GetSecretValue, https response error StatusCode: 400, RequestID: ce9c6baa-5a15-4cdc-aac0-89ef525b6aaf, ResourceNotFoundException: Secrets Manager can't find the specified secret value for staging label: AWSCURRENT."
+      },
+      {
+        "id": "5b341172-e851-4bfe-a057-5f8846ef6489",
+        "createdAt": "2026-11-19T17:45:11.564000+00:00",
+        "message": "(service graph-evidence-api) has started 1 tasks: (task 52bf7b6d38874e788cfba310b930ec25)."
+      },
+      {
+        "id": "dff9f44e-04e9-4652-9c47-05052b5aabff",
+        "createdAt": "2026-11-19T17:44:39.434000+00:00",
+        "message": "(service graph-evidence-api) was unable to place a task. Reason: ResourceInitializationError: unable to pull secrets or registry auth: execution resource retrieval failed: unable to retrieve secret from asm: service call has been retried 1 time(s): failed to fetch secret arn:aws:secretsmanager:us-east-2:834519512655:secret:scholarchain-course/api-key-Wsyv7j from secrets manager: operation error Secrets Manager: GetSecretValue, https response error StatusCode: 400, RequestID: 626e715d-8196-433e-b7e6-d248ad3a1463, ResourceNotFoundException: Secrets Manager can't find the specified secret value for staging label: AWSCURRENT."
+      },
+      {
+        "id": "c78cef6c-f02b-4d13-8157-8befd971e9a2",
+        "createdAt": "2026-11-19T17:44:11.555000+00:00",
+        "message": "(service graph-evidence-api) has started 1 tasks: (task a983b10e205e466aa64f015145b35dee)."
+      },
+      {
+        "id": "3e557f7f-d564-4eb0-aa9f-663f0a00cf9e",
+        "createdAt": "2026-11-19T17:43:40.177000+00:00",
+        "message": "(service graph-evidence-api) was unable to place a task. Reason: ResourceInitializationError: unable to pull secrets or registry auth: execution resource retrieval failed: unable to retrieve secret from asm: service call has been retried 1 time(s): failed to fetch secret arn:aws:secretsmanager:us-east-2:834519512655:secret:scholarchain-course/api-key-Wsyv7j from secrets manager: operation error Secrets Manager: GetSecretValue, https response error StatusCode: 400, RequestID: 0b5c7546-bb99-4690-b256-d247018eb5bd, ResourceNotFoundException: Secrets Manager can't find the specified secret value for staging label: AWSCURRENT."
+      },
+      {
+        "id": "688e6dfd-a7af-4bc9-9570-6af9b472e17f",
+        "createdAt": "2026-11-19T17:43:09.845000+00:00",
+        "message": "(service graph-evidence-api) has started 1 tasks: (task d18373a7b732466e87241595986ebf21)."
+      }
+    ],
+    "loadBalancers": [
+      {
+        "targetGroupArn": "arn:aws:elasticloadbalancing:us-east-2:834519512655:targetgroup/scholarchain-course-graph-eviden/c3c3882e4020d487",
+        "containerName": "graph-evidence-api",
+        "containerPort": 8081
+      }
+    ]
+  },
+  "error": null
+}

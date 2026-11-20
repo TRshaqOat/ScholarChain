@@ -1,0 +1,3360 @@
+==> STEP clean-tree
+==> OK clean-tree at c5428063732af5f7a5279c215dc2a52b89f64f16
+==> STEP target
+==> TARGET account=834519512655 region=us-east-2 profile=scholarchain-sdk
+==> STEP init
+[0m[1mInitializing the backend...[0m
+
+[0m[1mInitializing modules...[0m
+
+[0m[1mInitializing provider plugins...[0m
+- Reusing previous version of hashicorp/aws from the dependency lock file
+- Using previously-installed hashicorp/aws v6.28.0
+
+[0m[1m[32mTerraform has been successfully initialized![0m[32m[0m
+[0m[32m
+You may now begin working with Terraform. Try running "terraform plan" to see
+any changes that are required for your infrastructure. All Terraform commands
+should now work.
+
+If you ever set or change modules or backend configuration for Terraform,
+rerun this command to reinitialize your working directory. If you forget, other
+commands will detect it and remind you to do so if necessary.[0m
+==> STEP plan
+[0m[1mmodule.emr.data.aws_iam_policy_document.instance_trust: Reading...[0m[0m
+[0m[1mmodule.foundation.data.aws_caller_identity.current: Reading...[0m[0m
+[0m[1mmodule.foundation.data.aws_region.current: Reading...[0m[0m
+[0m[1mmodule.network.aws_vpc.this: Refreshing state... [id=vpc-0fd8e31fa7b48c139][0m
+[0m[1mmodule.build.aws_cloudwatch_log_group.codebuild: Refreshing state... [id=/scholarchain/scholarchain-course/codebuild/services-image][0m
+[0m[1mmodule.foundation.data.aws_region.current: Read complete after 0s [id=us-east-2][0m
+[0m[1mmodule.emr.data.aws_iam_policy_document.instance_trust: Read complete after 0s [id=2851119427][0m
+[0m[1mmodule.foundation.data.aws_caller_identity.current: Read complete after 0s [id=834519512655][0m
+[0m[1mmodule.build.aws_ecr_repository.services: Refreshing state... [id=scholarchain-course-services][0m
+[0m[1mmodule.foundation.data.aws_partition.current: Reading...[0m[0m
+[0m[1mmodule.foundation.data.aws_partition.current: Read complete after 0s [id=aws][0m
+[0m[1mmodule.observability.aws_cloudwatch_log_group.ecs["graph-evidence-api"]: Refreshing state... [id=/scholarchain/scholarchain-course/ecs/graph-evidence-api][0m
+[0m[1mmodule.observability.aws_cloudwatch_log_group.ecs["worker"]: Refreshing state... [id=/scholarchain/scholarchain-course/ecs/worker][0m
+[0m[1mmodule.observability.aws_cloudwatch_log_group.ecs["query-api"]: Refreshing state... [id=/scholarchain/scholarchain-course/ecs/query-api][0m
+[0m[1mmodule.observability.aws_cloudwatch_log_group.ecs["neptune-loader"]: Refreshing state... [id=/scholarchain/scholarchain-course/ecs/neptune-loader][0m
+[0m[1mmodule.emr.aws_iam_role.instance: Refreshing state... [id=scholarchain-course-emr-instance][0m
+[0m[1mmodule.neptune[0].data.aws_iam_policy_document.loader_trust: Reading...[0m[0m
+[0m[1mmodule.neptune[0].data.aws_iam_policy_document.loader_trust: Read complete after 0s [id=482331581][0m
+[0m[1mmodule.build.data.aws_iam_policy_document.trust: Reading...[0m[0m
+[0m[1mmodule.build.data.aws_iam_policy_document.trust: Read complete after 0s [id=99223622][0m
+[0m[1mmodule.emr.data.aws_iam_policy_document.service_trust: Reading...[0m[0m
+[0m[1mmodule.emr.data.aws_iam_policy_document.service_trust: Read complete after 0s [id=1250819272][0m
+[0m[1mmodule.data.aws_s3_bucket.data: Refreshing state... [id=scholarchain-course-data-834519512655-us-east-2][0m
+[0m[1mmodule.build.aws_iam_role.codebuild: Refreshing state... [id=scholarchain-course-codebuild-services-image][0m
+[0m[1mmodule.emr.aws_iam_role.service: Refreshing state... [id=scholarchain-course-emr-service][0m
+[0m[1mmodule.iam[0].data.aws_iam_policy_document.ecs_trust: Reading...[0m[0m
+[0m[1mmodule.iam[0].data.aws_iam_policy_document.ecs_trust: Read complete after 0s [id=1344169109][0m
+[0m[1mmodule.build.aws_ecr_lifecycle_policy.services: Refreshing state... [id=scholarchain-course-services][0m
+[0m[1mmodule.iam[0].data.aws_iam_policy_document.execution["loader"]: Reading...[0m[0m
+[0m[1mmodule.iam[0].data.aws_iam_policy_document.execution["loader"]: Read complete after 0s [id=1950950860][0m
+[0m[1mmodule.emr.aws_iam_instance_profile.instance: Refreshing state... [id=scholarchain-course-emr-instance][0m
+[0m[1mmodule.emr.data.aws_iam_policy_document.service_pass_role: Reading...[0m[0m
+[0m[1mmodule.emr.data.aws_iam_policy_document.service_pass_role: Read complete after 0s [id=1648478373][0m
+[0m[1mmodule.emr.aws_iam_role_policy_attachment.service_v2: Refreshing state... [id=scholarchain-course-emr-service/arn:aws:iam::aws:policy/service-role/AmazonEMRServicePolicy_v2][0m
+[0m[1mmodule.emr.aws_iam_role_policy.service_pass_role: Refreshing state... [id=scholarchain-course-emr-service:pass-instance-role][0m
+[0m[1mmodule.data.aws_s3_bucket_versioning.data: Refreshing state... [id=scholarchain-course-data-834519512655-us-east-2][0m
+[0m[1mmodule.data.aws_s3_bucket_ownership_controls.data: Refreshing state... [id=scholarchain-course-data-834519512655-us-east-2][0m
+[0m[1mmodule.data.aws_s3_bucket_public_access_block.data: Refreshing state... [id=scholarchain-course-data-834519512655-us-east-2][0m
+[0m[1mmodule.data.aws_s3_bucket_server_side_encryption_configuration.data: Refreshing state... [id=scholarchain-course-data-834519512655-us-east-2][0m
+[0m[1mmodule.neptune[0].data.aws_iam_policy_document.loader_read: Reading...[0m[0m
+[0m[1mmodule.data.data.aws_iam_policy_document.tls_only: Reading...[0m[0m
+[0m[1mmodule.emr.data.aws_iam_policy_document.instance_s3: Reading...[0m[0m
+[0m[1mmodule.build.data.aws_iam_policy_document.codebuild: Reading...[0m[0m
+[0m[1mmodule.data.data.aws_iam_policy_document.tls_only: Read complete after 0s [id=2599753479][0m
+[0m[1mmodule.neptune[0].data.aws_iam_policy_document.loader_read: Read complete after 0s [id=654808255][0m
+[0m[1mmodule.build.aws_codebuild_project.services_image: Refreshing state... [id=arn:aws:codebuild:us-east-2:834519512655:project/scholarchain-course-services-image][0m
+[0m[1mmodule.emr.data.aws_iam_policy_document.instance_s3: Read complete after 0s [id=1038427236][0m
+[0m[1mmodule.build.data.aws_iam_policy_document.codebuild: Read complete after 0s [id=1895859041][0m
+[0m[1mmodule.emr.aws_iam_role_policy.instance_s3: Refreshing state... [id=scholarchain-course-emr-instance:data-bucket][0m
+[0m[1mmodule.build.aws_iam_role_policy.codebuild: Refreshing state... [id=scholarchain-course-codebuild-services-image:services-image][0m
+[0m[1mmodule.data.aws_s3_bucket_policy.data: Refreshing state... [id=scholarchain-course-data-834519512655-us-east-2][0m
+[0m[1mmodule.network.aws_internet_gateway.this: Refreshing state... [id=igw-040a287096deb8c67][0m
+[0m[1mmodule.network.aws_default_security_group.this: Refreshing state... [id=sg-0b349594ad1ea9774][0m
+[0m[1mmodule.network.aws_route_table.public: Refreshing state... [id=rtb-0028b1800699e4081][0m
+[0m[1mmodule.network.aws_route_table.private: Refreshing state... [id=rtb-0138ac54c060f3f07][0m
+[0m[1mmodule.network.aws_subnet.public[0]: Refreshing state... [id=subnet-01ba5443d067a76f4][0m
+[0m[1mmodule.network.aws_subnet.public[1]: Refreshing state... [id=subnet-0e94ae0d8ed9a3c09][0m
+[0m[1mmodule.network.aws_subnet.private[0]: Refreshing state... [id=subnet-08e8a7e37da4af95f][0m
+[0m[1mmodule.network.aws_subnet.private[1]: Refreshing state... [id=subnet-0d62d88d3791db7bc][0m
+[0m[1mmodule.emr.aws_security_group.primary: Refreshing state... [id=sg-06850b56e702003b3][0m
+[0m[1mmodule.emr.aws_security_group.core: Refreshing state... [id=sg-045cdc6a597240486][0m
+[0m[1mmodule.network.aws_route.public_internet: Refreshing state... [id=r-rtb-0028b1800699e40811080289494][0m
+[0m[1mmodule.network.aws_vpc_endpoint.dynamodb: Refreshing state... [id=vpce-0b5684d029a8efdc1][0m
+[0m[1mmodule.network.aws_vpc_endpoint.s3: Refreshing state... [id=vpce-0881c52adddf58849][0m
+[0m[1mmodule.emr.aws_vpc_security_group_egress_rule.emr_all["primary"]: Refreshing state... [id=sgr-050b04d48aee6d4c5][0m
+[0m[1mmodule.emr.aws_vpc_security_group_egress_rule.emr_all["core"]: Refreshing state... [id=sgr-06e4c31f1ea609093][0m
+[0m[1mmodule.network.aws_route_table_association.public[1]: Refreshing state... [id=rtbassoc-018058d7ebb5f6e08][0m
+[0m[1mmodule.network.aws_route_table_association.public[0]: Refreshing state... [id=rtbassoc-0ce1bb2df39bf5948][0m
+[0m[1mmodule.network.aws_route_table_association.private[0]: Refreshing state... [id=rtbassoc-049d9e593ab27cc17][0m
+[0m[1mmodule.network.aws_route_table_association.private[1]: Refreshing state... [id=rtbassoc-04174e65a4af63c90][0m
+[0m[1mmodule.data.aws_s3_bucket_lifecycle_configuration.data: Refreshing state... [id=scholarchain-course-data-834519512655-us-east-2][0m
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  [32m+[0m create[0m
+ [36m<=[0m read (data resources)[0m
+
+Terraform will perform the following actions:
+
+[1m  # module.apikey[0].aws_secretsmanager_secret.api_key[0m will be created
+[0m  [32m+[0m[0m resource "aws_secretsmanager_secret" "api_key" {
+      [32m+[0m[0m arn                            = (known after apply)
+      [32m+[0m[0m description                    = "ScholarChain REST API key (X-Api-Key). Value set by the human, never by Terraform."
+      [32m+[0m[0m force_overwrite_replica_secret = false
+      [32m+[0m[0m id                             = (known after apply)
+      [32m+[0m[0m name                           = "scholarchain-course/api-key"
+      [32m+[0m[0m name_prefix                    = (known after apply)
+      [32m+[0m[0m policy                         = (known after apply)
+      [32m+[0m[0m recovery_window_in_days        = 7
+      [32m+[0m[0m region                         = "us-east-2"
+      [32m+[0m[0m tags_all                       = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+
+      [32m+[0m[0m replica (known after apply)
+    }
+
+[1m  # module.dynamodb[0].aws_dynamodb_table.this["ArtifactRegistry"][0m will be created
+[0m  [32m+[0m[0m resource "aws_dynamodb_table" "this" {
+      [32m+[0m[0m arn                         = (known after apply)
+      [32m+[0m[0m billing_mode                = "PAY_PER_REQUEST"
+      [32m+[0m[0m deletion_protection_enabled = false
+      [32m+[0m[0m hash_key                    = "artifactKey"
+      [32m+[0m[0m id                          = (known after apply)
+      [32m+[0m[0m name                        = "scholarchain-course-ArtifactRegistry"
+      [32m+[0m[0m range_key                   = "versionKey"
+      [32m+[0m[0m read_capacity               = (known after apply)
+      [32m+[0m[0m region                      = "us-east-2"
+      [32m+[0m[0m stream_arn                  = (known after apply)
+      [32m+[0m[0m stream_label                = (known after apply)
+      [32m+[0m[0m stream_view_type            = (known after apply)
+      [32m+[0m[0m tags_all                    = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m write_capacity              = (known after apply)
+
+      [32m+[0m[0m attribute {
+          [32m+[0m[0m name = "artifactKey"
+          [32m+[0m[0m type = "S"
+        }
+      [32m+[0m[0m attribute {
+          [32m+[0m[0m name = "versionKey"
+          [32m+[0m[0m type = "S"
+        }
+
+      [32m+[0m[0m global_secondary_index (known after apply)
+
+      [32m+[0m[0m global_table_witness (known after apply)
+
+      [32m+[0m[0m point_in_time_recovery {
+          [32m+[0m[0m enabled                 = false
+          [32m+[0m[0m recovery_period_in_days = (known after apply)
+        }
+
+      [32m+[0m[0m server_side_encryption (known after apply)
+
+      [32m+[0m[0m ttl (known after apply)
+
+      [32m+[0m[0m warm_throughput (known after apply)
+    }
+
+[1m  # module.dynamodb[0].aws_dynamodb_table.this["EntityLinkCache"][0m will be created
+[0m  [32m+[0m[0m resource "aws_dynamodb_table" "this" {
+      [32m+[0m[0m arn                         = (known after apply)
+      [32m+[0m[0m billing_mode                = "PAY_PER_REQUEST"
+      [32m+[0m[0m deletion_protection_enabled = false
+      [32m+[0m[0m hash_key                    = "nameKey"
+      [32m+[0m[0m id                          = (known after apply)
+      [32m+[0m[0m name                        = "scholarchain-course-EntityLinkCache"
+      [32m+[0m[0m range_key                   = "researcherId"
+      [32m+[0m[0m read_capacity               = (known after apply)
+      [32m+[0m[0m region                      = "us-east-2"
+      [32m+[0m[0m stream_arn                  = (known after apply)
+      [32m+[0m[0m stream_label                = (known after apply)
+      [32m+[0m[0m stream_view_type            = (known after apply)
+      [32m+[0m[0m tags_all                    = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m write_capacity              = (known after apply)
+
+      [32m+[0m[0m attribute {
+          [32m+[0m[0m name = "nameKey"
+          [32m+[0m[0m type = "S"
+        }
+      [32m+[0m[0m attribute {
+          [32m+[0m[0m name = "researcherId"
+          [32m+[0m[0m type = "S"
+        }
+
+      [32m+[0m[0m global_secondary_index (known after apply)
+
+      [32m+[0m[0m global_table_witness (known after apply)
+
+      [32m+[0m[0m point_in_time_recovery {
+          [32m+[0m[0m enabled                 = false
+          [32m+[0m[0m recovery_period_in_days = (known after apply)
+        }
+
+      [32m+[0m[0m server_side_encryption (known after apply)
+
+      [32m+[0m[0m ttl (known after apply)
+
+      [32m+[0m[0m warm_throughput (known after apply)
+    }
+
+[1m  # module.dynamodb[0].aws_dynamodb_table.this["EvidenceBundle"][0m will be created
+[0m  [32m+[0m[0m resource "aws_dynamodb_table" "this" {
+      [32m+[0m[0m arn                         = (known after apply)
+      [32m+[0m[0m billing_mode                = "PAY_PER_REQUEST"
+      [32m+[0m[0m deletion_protection_enabled = false
+      [32m+[0m[0m hash_key                    = "queryId"
+      [32m+[0m[0m id                          = (known after apply)
+      [32m+[0m[0m name                        = "scholarchain-course-EvidenceBundle"
+      [32m+[0m[0m range_key                   = "itemKey"
+      [32m+[0m[0m read_capacity               = (known after apply)
+      [32m+[0m[0m region                      = "us-east-2"
+      [32m+[0m[0m stream_arn                  = (known after apply)
+      [32m+[0m[0m stream_label                = (known after apply)
+      [32m+[0m[0m stream_view_type            = (known after apply)
+      [32m+[0m[0m tags_all                    = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m write_capacity              = (known after apply)
+
+      [32m+[0m[0m attribute {
+          [32m+[0m[0m name = "itemKey"
+          [32m+[0m[0m type = "S"
+        }
+      [32m+[0m[0m attribute {
+          [32m+[0m[0m name = "queryId"
+          [32m+[0m[0m type = "S"
+        }
+
+      [32m+[0m[0m global_secondary_index {
+          [32m+[0m[0m hash_key           = "itemKey"
+          [32m+[0m[0m name               = "evidenceById"
+          [32m+[0m[0m non_key_attributes = []
+          [32m+[0m[0m projection_type    = "ALL"
+          [32m+[0m[0m range_key          = "queryId"
+          [32m+[0m[0m read_capacity      = (known after apply)
+          [32m+[0m[0m write_capacity     = (known after apply)
+
+          [32m+[0m[0m warm_throughput (known after apply)
+        }
+
+      [32m+[0m[0m global_table_witness (known after apply)
+
+      [32m+[0m[0m point_in_time_recovery {
+          [32m+[0m[0m enabled                 = false
+          [32m+[0m[0m recovery_period_in_days = (known after apply)
+        }
+
+      [32m+[0m[0m server_side_encryption (known after apply)
+
+      [32m+[0m[0m ttl {
+          [32m+[0m[0m attribute_name = "expiresAt"
+          [32m+[0m[0m enabled        = true
+        }
+
+      [32m+[0m[0m warm_throughput (known after apply)
+    }
+
+[1m  # module.dynamodb[0].aws_dynamodb_table.this["QuerySession"][0m will be created
+[0m  [32m+[0m[0m resource "aws_dynamodb_table" "this" {
+      [32m+[0m[0m arn                         = (known after apply)
+      [32m+[0m[0m billing_mode                = "PAY_PER_REQUEST"
+      [32m+[0m[0m deletion_protection_enabled = false
+      [32m+[0m[0m hash_key                    = "sessionId"
+      [32m+[0m[0m id                          = (known after apply)
+      [32m+[0m[0m name                        = "scholarchain-course-QuerySession"
+      [32m+[0m[0m range_key                   = "turnKey"
+      [32m+[0m[0m read_capacity               = (known after apply)
+      [32m+[0m[0m region                      = "us-east-2"
+      [32m+[0m[0m stream_arn                  = (known after apply)
+      [32m+[0m[0m stream_label                = (known after apply)
+      [32m+[0m[0m stream_view_type            = (known after apply)
+      [32m+[0m[0m tags_all                    = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m write_capacity              = (known after apply)
+
+      [32m+[0m[0m attribute {
+          [32m+[0m[0m name = "sessionId"
+          [32m+[0m[0m type = "S"
+        }
+      [32m+[0m[0m attribute {
+          [32m+[0m[0m name = "turnKey"
+          [32m+[0m[0m type = "S"
+        }
+
+      [32m+[0m[0m global_secondary_index (known after apply)
+
+      [32m+[0m[0m global_table_witness (known after apply)
+
+      [32m+[0m[0m point_in_time_recovery {
+          [32m+[0m[0m enabled                 = false
+          [32m+[0m[0m recovery_period_in_days = (known after apply)
+        }
+
+      [32m+[0m[0m server_side_encryption (known after apply)
+
+      [32m+[0m[0m ttl {
+          [32m+[0m[0m attribute_name = "expiresAt"
+          [32m+[0m[0m enabled        = true
+        }
+
+      [32m+[0m[0m warm_throughput (known after apply)
+    }
+
+[1m  # module.dynamodb[0].aws_dynamodb_table.this["ResearcherMetricCache"][0m will be created
+[0m  [32m+[0m[0m resource "aws_dynamodb_table" "this" {
+      [32m+[0m[0m arn                         = (known after apply)
+      [32m+[0m[0m billing_mode                = "PAY_PER_REQUEST"
+      [32m+[0m[0m deletion_protection_enabled = false
+      [32m+[0m[0m hash_key                    = "researcherId"
+      [32m+[0m[0m id                          = (known after apply)
+      [32m+[0m[0m name                        = "scholarchain-course-ResearcherMetricCache"
+      [32m+[0m[0m range_key                   = "metricKey"
+      [32m+[0m[0m read_capacity               = (known after apply)
+      [32m+[0m[0m region                      = "us-east-2"
+      [32m+[0m[0m stream_arn                  = (known after apply)
+      [32m+[0m[0m stream_label                = (known after apply)
+      [32m+[0m[0m stream_view_type            = (known after apply)
+      [32m+[0m[0m tags_all                    = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m write_capacity              = (known after apply)
+
+      [32m+[0m[0m attribute {
+          [32m+[0m[0m name = "metricKey"
+          [32m+[0m[0m type = "S"
+        }
+      [32m+[0m[0m attribute {
+          [32m+[0m[0m name = "researcherId"
+          [32m+[0m[0m type = "S"
+        }
+
+      [32m+[0m[0m global_secondary_index (known after apply)
+
+      [32m+[0m[0m global_table_witness (known after apply)
+
+      [32m+[0m[0m point_in_time_recovery {
+          [32m+[0m[0m enabled                 = false
+          [32m+[0m[0m recovery_period_in_days = (known after apply)
+        }
+
+      [32m+[0m[0m server_side_encryption (known after apply)
+
+      [32m+[0m[0m ttl (known after apply)
+
+      [32m+[0m[0m warm_throughput (known after apply)
+    }
+
+[1m  # module.dynamodb[0].aws_dynamodb_table.this["RunLedger"][0m will be created
+[0m  [32m+[0m[0m resource "aws_dynamodb_table" "this" {
+      [32m+[0m[0m arn                         = (known after apply)
+      [32m+[0m[0m billing_mode                = "PAY_PER_REQUEST"
+      [32m+[0m[0m deletion_protection_enabled = false
+      [32m+[0m[0m hash_key                    = "runId"
+      [32m+[0m[0m id                          = (known after apply)
+      [32m+[0m[0m name                        = "scholarchain-course-RunLedger"
+      [32m+[0m[0m range_key                   = "entryKey"
+      [32m+[0m[0m read_capacity               = (known after apply)
+      [32m+[0m[0m region                      = "us-east-2"
+      [32m+[0m[0m stream_arn                  = (known after apply)
+      [32m+[0m[0m stream_label                = (known after apply)
+      [32m+[0m[0m stream_view_type            = (known after apply)
+      [32m+[0m[0m tags_all                    = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m write_capacity              = (known after apply)
+
+      [32m+[0m[0m attribute {
+          [32m+[0m[0m name = "entryKey"
+          [32m+[0m[0m type = "S"
+        }
+      [32m+[0m[0m attribute {
+          [32m+[0m[0m name = "runId"
+          [32m+[0m[0m type = "S"
+        }
+
+      [32m+[0m[0m global_secondary_index (known after apply)
+
+      [32m+[0m[0m global_table_witness (known after apply)
+
+      [32m+[0m[0m point_in_time_recovery {
+          [32m+[0m[0m enabled                 = false
+          [32m+[0m[0m recovery_period_in_days = (known after apply)
+        }
+
+      [32m+[0m[0m server_side_encryption (known after apply)
+
+      [32m+[0m[0m ttl (known after apply)
+
+      [32m+[0m[0m warm_throughput (known after apply)
+    }
+
+[1m  # module.dynamodb[0].aws_dynamodb_table.this["ServiceState"][0m will be created
+[0m  [32m+[0m[0m resource "aws_dynamodb_table" "this" {
+      [32m+[0m[0m arn                         = (known after apply)
+      [32m+[0m[0m billing_mode                = "PAY_PER_REQUEST"
+      [32m+[0m[0m deletion_protection_enabled = false
+      [32m+[0m[0m hash_key                    = "recordKey"
+      [32m+[0m[0m id                          = (known after apply)
+      [32m+[0m[0m name                        = "scholarchain-course-ServiceState"
+      [32m+[0m[0m range_key                   = "recordType"
+      [32m+[0m[0m read_capacity               = (known after apply)
+      [32m+[0m[0m region                      = "us-east-2"
+      [32m+[0m[0m stream_arn                  = (known after apply)
+      [32m+[0m[0m stream_label                = (known after apply)
+      [32m+[0m[0m stream_view_type            = (known after apply)
+      [32m+[0m[0m tags_all                    = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m write_capacity              = (known after apply)
+
+      [32m+[0m[0m attribute {
+          [32m+[0m[0m name = "recordKey"
+          [32m+[0m[0m type = "S"
+        }
+      [32m+[0m[0m attribute {
+          [32m+[0m[0m name = "recordType"
+          [32m+[0m[0m type = "S"
+        }
+
+      [32m+[0m[0m global_secondary_index (known after apply)
+
+      [32m+[0m[0m global_table_witness (known after apply)
+
+      [32m+[0m[0m point_in_time_recovery {
+          [32m+[0m[0m enabled                 = false
+          [32m+[0m[0m recovery_period_in_days = (known after apply)
+        }
+
+      [32m+[0m[0m server_side_encryption (known after apply)
+
+      [32m+[0m[0m ttl {
+          [32m+[0m[0m attribute_name = "expiresAt"
+          [32m+[0m[0m enabled        = true
+        }
+
+      [32m+[0m[0m warm_throughput (known after apply)
+    }
+
+[1m  # module.ecs[0].aws_appautoscaling_policy.cpu["graph-evidence-api"][0m will be created
+[0m  [32m+[0m[0m resource "aws_appautoscaling_policy" "cpu" {
+      [32m+[0m[0m alarm_arns         = (known after apply)
+      [32m+[0m[0m arn                = (known after apply)
+      [32m+[0m[0m id                 = (known after apply)
+      [32m+[0m[0m name               = "scholarchain-course-graph-evidence-api-cpu"
+      [32m+[0m[0m policy_type        = "TargetTrackingScaling"
+      [32m+[0m[0m region             = "us-east-2"
+      [32m+[0m[0m resource_id        = "service/scholarchain-course-runtime/graph-evidence-api"
+      [32m+[0m[0m scalable_dimension = "ecs:service:DesiredCount"
+      [32m+[0m[0m service_namespace  = "ecs"
+
+      [32m+[0m[0m target_tracking_scaling_policy_configuration {
+          [32m+[0m[0m disable_scale_in   = false
+          [32m+[0m[0m scale_in_cooldown  = 120
+          [32m+[0m[0m scale_out_cooldown = 60
+          [32m+[0m[0m target_value       = 15
+
+          [32m+[0m[0m predefined_metric_specification {
+              [32m+[0m[0m predefined_metric_type = "ECSServiceAverageCPUUtilization"
+            }
+        }
+    }
+
+[1m  # module.ecs[0].aws_appautoscaling_target.this["graph-evidence-api"][0m will be created
+[0m  [32m+[0m[0m resource "aws_appautoscaling_target" "this" {
+      [32m+[0m[0m arn                = (known after apply)
+      [32m+[0m[0m id                 = (known after apply)
+      [32m+[0m[0m max_capacity       = 2
+      [32m+[0m[0m min_capacity       = 1
+      [32m+[0m[0m region             = "us-east-2"
+      [32m+[0m[0m resource_id        = "service/scholarchain-course-runtime/graph-evidence-api"
+      [32m+[0m[0m role_arn           = (known after apply)
+      [32m+[0m[0m scalable_dimension = "ecs:service:DesiredCount"
+      [32m+[0m[0m service_namespace  = "ecs"
+      [32m+[0m[0m tags_all           = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+
+      [32m+[0m[0m suspended_state (known after apply)
+    }
+
+[1m  # module.ecs[0].aws_appautoscaling_target.this["query-api"][0m will be created
+[0m  [32m+[0m[0m resource "aws_appautoscaling_target" "this" {
+      [32m+[0m[0m arn                = (known after apply)
+      [32m+[0m[0m id                 = (known after apply)
+      [32m+[0m[0m max_capacity       = 1
+      [32m+[0m[0m min_capacity       = 1
+      [32m+[0m[0m region             = "us-east-2"
+      [32m+[0m[0m resource_id        = "service/scholarchain-course-runtime/query-api"
+      [32m+[0m[0m role_arn           = (known after apply)
+      [32m+[0m[0m scalable_dimension = "ecs:service:DesiredCount"
+      [32m+[0m[0m service_namespace  = "ecs"
+      [32m+[0m[0m tags_all           = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+
+      [32m+[0m[0m suspended_state (known after apply)
+    }
+
+[1m  # module.ecs[0].aws_appautoscaling_target.this["worker"][0m will be created
+[0m  [32m+[0m[0m resource "aws_appautoscaling_target" "this" {
+      [32m+[0m[0m arn                = (known after apply)
+      [32m+[0m[0m id                 = (known after apply)
+      [32m+[0m[0m max_capacity       = 1
+      [32m+[0m[0m min_capacity       = 1
+      [32m+[0m[0m region             = "us-east-2"
+      [32m+[0m[0m resource_id        = "service/scholarchain-course-runtime/worker"
+      [32m+[0m[0m role_arn           = (known after apply)
+      [32m+[0m[0m scalable_dimension = "ecs:service:DesiredCount"
+      [32m+[0m[0m service_namespace  = "ecs"
+      [32m+[0m[0m tags_all           = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+
+      [32m+[0m[0m suspended_state (known after apply)
+    }
+
+[1m  # module.ecs[0].aws_ecs_cluster.this[0m will be created
+[0m  [32m+[0m[0m resource "aws_ecs_cluster" "this" {
+      [32m+[0m[0m arn      = (known after apply)
+      [32m+[0m[0m id       = (known after apply)
+      [32m+[0m[0m name     = "scholarchain-course-runtime"
+      [32m+[0m[0m region   = "us-east-2"
+      [32m+[0m[0m tags_all = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+
+      [32m+[0m[0m setting {
+          [32m+[0m[0m name  = "containerInsights"
+          [32m+[0m[0m value = "disabled"
+        }
+    }
+
+[1m  # module.ecs[0].aws_ecs_service.this["graph-evidence-api"][0m will be created
+[0m  [32m+[0m[0m resource "aws_ecs_service" "this" {
+      [32m+[0m[0m arn                                = (known after apply)
+      [32m+[0m[0m availability_zone_rebalancing      = (known after apply)
+      [32m+[0m[0m cluster                            = (known after apply)
+      [32m+[0m[0m deployment_maximum_percent         = 200
+      [32m+[0m[0m deployment_minimum_healthy_percent = 100
+      [32m+[0m[0m desired_count                      = 1
+      [32m+[0m[0m enable_ecs_managed_tags            = false
+      [32m+[0m[0m enable_execute_command             = false
+      [32m+[0m[0m health_check_grace_period_seconds  = 120
+      [32m+[0m[0m iam_role                           = (known after apply)
+      [32m+[0m[0m id                                 = (known after apply)
+      [32m+[0m[0m launch_type                        = "FARGATE"
+      [32m+[0m[0m name                               = "graph-evidence-api"
+      [32m+[0m[0m platform_version                   = (known after apply)
+      [32m+[0m[0m propagate_tags                     = "SERVICE"
+      [32m+[0m[0m region                             = "us-east-2"
+      [32m+[0m[0m scheduling_strategy                = "REPLICA"
+      [32m+[0m[0m tags_all                           = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m task_definition                    = (known after apply)
+      [32m+[0m[0m triggers                           = (known after apply)
+      [32m+[0m[0m wait_for_steady_state              = false
+
+      [32m+[0m[0m deployment_circuit_breaker {
+          [32m+[0m[0m enable   = true
+          [32m+[0m[0m rollback = true
+        }
+
+      [32m+[0m[0m deployment_configuration (known after apply)
+
+      [32m+[0m[0m load_balancer {
+          [32m+[0m[0m container_name   = "graph-evidence-api"
+          [32m+[0m[0m container_port   = 8081
+          [32m+[0m[0m target_group_arn = (known after apply)
+            [90m# (1 unchanged attribute hidden)[0m[0m
+        }
+
+      [32m+[0m[0m network_configuration {
+          [32m+[0m[0m assign_public_ip = true
+          [32m+[0m[0m security_groups  = (known after apply)
+          [32m+[0m[0m subnets          = [
+              [32m+[0m[0m "subnet-01ba5443d067a76f4",
+              [32m+[0m[0m "subnet-0e94ae0d8ed9a3c09",
+            ]
+        }
+    }
+
+[1m  # module.ecs[0].aws_ecs_service.this["query-api"][0m will be created
+[0m  [32m+[0m[0m resource "aws_ecs_service" "this" {
+      [32m+[0m[0m arn                                = (known after apply)
+      [32m+[0m[0m availability_zone_rebalancing      = (known after apply)
+      [32m+[0m[0m cluster                            = (known after apply)
+      [32m+[0m[0m deployment_maximum_percent         = 200
+      [32m+[0m[0m deployment_minimum_healthy_percent = 100
+      [32m+[0m[0m desired_count                      = 1
+      [32m+[0m[0m enable_ecs_managed_tags            = false
+      [32m+[0m[0m enable_execute_command             = false
+      [32m+[0m[0m health_check_grace_period_seconds  = 120
+      [32m+[0m[0m iam_role                           = (known after apply)
+      [32m+[0m[0m id                                 = (known after apply)
+      [32m+[0m[0m launch_type                        = "FARGATE"
+      [32m+[0m[0m name                               = "query-api"
+      [32m+[0m[0m platform_version                   = (known after apply)
+      [32m+[0m[0m propagate_tags                     = "SERVICE"
+      [32m+[0m[0m region                             = "us-east-2"
+      [32m+[0m[0m scheduling_strategy                = "REPLICA"
+      [32m+[0m[0m tags_all                           = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m task_definition                    = (known after apply)
+      [32m+[0m[0m triggers                           = (known after apply)
+      [32m+[0m[0m wait_for_steady_state              = false
+
+      [32m+[0m[0m deployment_circuit_breaker {
+          [32m+[0m[0m enable   = true
+          [32m+[0m[0m rollback = true
+        }
+
+      [32m+[0m[0m deployment_configuration (known after apply)
+
+      [32m+[0m[0m load_balancer {
+          [32m+[0m[0m container_name   = "query-api"
+          [32m+[0m[0m container_port   = 8080
+          [32m+[0m[0m target_group_arn = (known after apply)
+            [90m# (1 unchanged attribute hidden)[0m[0m
+        }
+
+      [32m+[0m[0m network_configuration {
+          [32m+[0m[0m assign_public_ip = true
+          [32m+[0m[0m security_groups  = (known after apply)
+          [32m+[0m[0m subnets          = [
+              [32m+[0m[0m "subnet-01ba5443d067a76f4",
+              [32m+[0m[0m "subnet-0e94ae0d8ed9a3c09",
+            ]
+        }
+    }
+
+[1m  # module.ecs[0].aws_ecs_service.this["worker"][0m will be created
+[0m  [32m+[0m[0m resource "aws_ecs_service" "this" {
+      [32m+[0m[0m arn                                = (known after apply)
+      [32m+[0m[0m availability_zone_rebalancing      = (known after apply)
+      [32m+[0m[0m cluster                            = (known after apply)
+      [32m+[0m[0m deployment_maximum_percent         = 200
+      [32m+[0m[0m deployment_minimum_healthy_percent = 100
+      [32m+[0m[0m desired_count                      = 1
+      [32m+[0m[0m enable_ecs_managed_tags            = false
+      [32m+[0m[0m enable_execute_command             = false
+      [32m+[0m[0m iam_role                           = (known after apply)
+      [32m+[0m[0m id                                 = (known after apply)
+      [32m+[0m[0m launch_type                        = "FARGATE"
+      [32m+[0m[0m name                               = "worker"
+      [32m+[0m[0m platform_version                   = (known after apply)
+      [32m+[0m[0m propagate_tags                     = "SERVICE"
+      [32m+[0m[0m region                             = "us-east-2"
+      [32m+[0m[0m scheduling_strategy                = "REPLICA"
+      [32m+[0m[0m tags_all                           = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m task_definition                    = (known after apply)
+      [32m+[0m[0m triggers                           = (known after apply)
+      [32m+[0m[0m wait_for_steady_state              = false
+
+      [32m+[0m[0m deployment_circuit_breaker {
+          [32m+[0m[0m enable   = true
+          [32m+[0m[0m rollback = true
+        }
+
+      [32m+[0m[0m deployment_configuration (known after apply)
+
+      [32m+[0m[0m network_configuration {
+          [32m+[0m[0m assign_public_ip = true
+          [32m+[0m[0m security_groups  = (known after apply)
+          [32m+[0m[0m subnets          = [
+              [32m+[0m[0m "subnet-01ba5443d067a76f4",
+              [32m+[0m[0m "subnet-0e94ae0d8ed9a3c09",
+            ]
+        }
+    }
+
+[1m  # module.ecs[0].aws_ecs_task_definition.neptune_loader[0m will be created
+[0m  [32m+[0m[0m resource "aws_ecs_task_definition" "neptune_loader" {
+      [32m+[0m[0m arn                      = (known after apply)
+      [32m+[0m[0m arn_without_revision     = (known after apply)
+      [32m+[0m[0m container_definitions    = (known after apply)
+      [32m+[0m[0m cpu                      = "2048"
+      [32m+[0m[0m enable_fault_injection   = (known after apply)
+      [32m+[0m[0m execution_role_arn       = (known after apply)
+      [32m+[0m[0m family                   = "scholarchain-course-neptune-loader"
+      [32m+[0m[0m id                       = (known after apply)
+      [32m+[0m[0m memory                   = "8192"
+      [32m+[0m[0m network_mode             = "awsvpc"
+      [32m+[0m[0m region                   = "us-east-2"
+      [32m+[0m[0m requires_compatibilities = [
+          [32m+[0m[0m "FARGATE",
+        ]
+      [32m+[0m[0m revision                 = (known after apply)
+      [32m+[0m[0m skip_destroy             = false
+      [32m+[0m[0m tags_all                 = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m task_role_arn            = (known after apply)
+      [32m+[0m[0m track_latest             = false
+
+      [32m+[0m[0m runtime_platform {
+          [32m+[0m[0m cpu_architecture        = "ARM64"
+          [32m+[0m[0m operating_system_family = "LINUX"
+        }
+    }
+
+[1m  # module.ecs[0].aws_ecs_task_definition.service["graph-evidence-api"][0m will be created
+[0m  [32m+[0m[0m resource "aws_ecs_task_definition" "service" {
+      [32m+[0m[0m arn                      = (known after apply)
+      [32m+[0m[0m arn_without_revision     = (known after apply)
+      [32m+[0m[0m container_definitions    = (known after apply)
+      [32m+[0m[0m cpu                      = "1024"
+      [32m+[0m[0m enable_fault_injection   = (known after apply)
+      [32m+[0m[0m execution_role_arn       = (known after apply)
+      [32m+[0m[0m family                   = "scholarchain-course-graph-evidence-api"
+      [32m+[0m[0m id                       = (known after apply)
+      [32m+[0m[0m memory                   = "2048"
+      [32m+[0m[0m network_mode             = "awsvpc"
+      [32m+[0m[0m region                   = "us-east-2"
+      [32m+[0m[0m requires_compatibilities = [
+          [32m+[0m[0m "FARGATE",
+        ]
+      [32m+[0m[0m revision                 = (known after apply)
+      [32m+[0m[0m skip_destroy             = false
+      [32m+[0m[0m tags_all                 = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m task_role_arn            = (known after apply)
+      [32m+[0m[0m track_latest             = false
+
+      [32m+[0m[0m runtime_platform {
+          [32m+[0m[0m cpu_architecture        = "ARM64"
+          [32m+[0m[0m operating_system_family = "LINUX"
+        }
+    }
+
+[1m  # module.ecs[0].aws_ecs_task_definition.service["query-api"][0m will be created
+[0m  [32m+[0m[0m resource "aws_ecs_task_definition" "service" {
+      [32m+[0m[0m arn                      = (known after apply)
+      [32m+[0m[0m arn_without_revision     = (known after apply)
+      [32m+[0m[0m container_definitions    = (known after apply)
+      [32m+[0m[0m cpu                      = "1024"
+      [32m+[0m[0m enable_fault_injection   = (known after apply)
+      [32m+[0m[0m execution_role_arn       = (known after apply)
+      [32m+[0m[0m family                   = "scholarchain-course-query-api"
+      [32m+[0m[0m id                       = (known after apply)
+      [32m+[0m[0m memory                   = "2048"
+      [32m+[0m[0m network_mode             = "awsvpc"
+      [32m+[0m[0m region                   = "us-east-2"
+      [32m+[0m[0m requires_compatibilities = [
+          [32m+[0m[0m "FARGATE",
+        ]
+      [32m+[0m[0m revision                 = (known after apply)
+      [32m+[0m[0m skip_destroy             = false
+      [32m+[0m[0m tags_all                 = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m task_role_arn            = (known after apply)
+      [32m+[0m[0m track_latest             = false
+
+      [32m+[0m[0m runtime_platform {
+          [32m+[0m[0m cpu_architecture        = "ARM64"
+          [32m+[0m[0m operating_system_family = "LINUX"
+        }
+    }
+
+[1m  # module.ecs[0].aws_ecs_task_definition.service["worker"][0m will be created
+[0m  [32m+[0m[0m resource "aws_ecs_task_definition" "service" {
+      [32m+[0m[0m arn                      = (known after apply)
+      [32m+[0m[0m arn_without_revision     = (known after apply)
+      [32m+[0m[0m container_definitions    = (known after apply)
+      [32m+[0m[0m cpu                      = "1024"
+      [32m+[0m[0m enable_fault_injection   = (known after apply)
+      [32m+[0m[0m execution_role_arn       = (known after apply)
+      [32m+[0m[0m family                   = "scholarchain-course-worker"
+      [32m+[0m[0m id                       = (known after apply)
+      [32m+[0m[0m memory                   = "2048"
+      [32m+[0m[0m network_mode             = "awsvpc"
+      [32m+[0m[0m region                   = "us-east-2"
+      [32m+[0m[0m requires_compatibilities = [
+          [32m+[0m[0m "FARGATE",
+        ]
+      [32m+[0m[0m revision                 = (known after apply)
+      [32m+[0m[0m skip_destroy             = false
+      [32m+[0m[0m tags_all                 = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m task_role_arn            = (known after apply)
+      [32m+[0m[0m track_latest             = false
+
+      [32m+[0m[0m runtime_platform {
+          [32m+[0m[0m cpu_architecture        = "ARM64"
+          [32m+[0m[0m operating_system_family = "LINUX"
+        }
+    }
+
+[1m  # module.ecs[0].aws_lb.this[0m will be created
+[0m  [32m+[0m[0m resource "aws_lb" "this" {
+      [32m+[0m[0m arn                                                          = (known after apply)
+      [32m+[0m[0m arn_suffix                                                   = (known after apply)
+      [32m+[0m[0m client_keep_alive                                            = 3600
+      [32m+[0m[0m desync_mitigation_mode                                       = "defensive"
+      [32m+[0m[0m dns_name                                                     = (known after apply)
+      [32m+[0m[0m drop_invalid_header_fields                                   = true
+      [32m+[0m[0m enable_deletion_protection                                   = false
+      [32m+[0m[0m enable_http2                                                 = true
+      [32m+[0m[0m enable_tls_version_and_cipher_suite_headers                  = false
+      [32m+[0m[0m enable_waf_fail_open                                         = false
+      [32m+[0m[0m enable_xff_client_port                                       = false
+      [32m+[0m[0m enable_zonal_shift                                           = false
+      [32m+[0m[0m enforce_security_group_inbound_rules_on_private_link_traffic = (known after apply)
+      [32m+[0m[0m id                                                           = (known after apply)
+      [32m+[0m[0m idle_timeout                                                 = 60
+      [32m+[0m[0m internal                                                     = false
+      [32m+[0m[0m ip_address_type                                              = (known after apply)
+      [32m+[0m[0m load_balancer_type                                           = "application"
+      [32m+[0m[0m name                                                         = "scholarchain-course-api"
+      [32m+[0m[0m name_prefix                                                  = (known after apply)
+      [32m+[0m[0m preserve_host_header                                         = false
+      [32m+[0m[0m region                                                       = "us-east-2"
+      [32m+[0m[0m secondary_ips_auto_assigned_per_subnet                       = (known after apply)
+      [32m+[0m[0m security_groups                                              = (known after apply)
+      [32m+[0m[0m subnets                                                      = [
+          [32m+[0m[0m "subnet-01ba5443d067a76f4",
+          [32m+[0m[0m "subnet-0e94ae0d8ed9a3c09",
+        ]
+      [32m+[0m[0m tags_all                                                     = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m vpc_id                                                       = (known after apply)
+      [32m+[0m[0m xff_header_processing_mode                                   = "append"
+      [32m+[0m[0m zone_id                                                      = (known after apply)
+
+      [32m+[0m[0m subnet_mapping (known after apply)
+    }
+
+[1m  # module.ecs[0].aws_lb_listener.http[0m will be created
+[0m  [32m+[0m[0m resource "aws_lb_listener" "http" {
+      [32m+[0m[0m arn                                                                   = (known after apply)
+      [32m+[0m[0m id                                                                    = (known after apply)
+      [32m+[0m[0m load_balancer_arn                                                     = (known after apply)
+      [32m+[0m[0m port                                                                  = 80
+      [32m+[0m[0m protocol                                                              = "HTTP"
+      [32m+[0m[0m region                                                                = "us-east-2"
+      [32m+[0m[0m routing_http_request_x_amzn_mtls_clientcert_header_name               = (known after apply)
+      [32m+[0m[0m routing_http_request_x_amzn_mtls_clientcert_issuer_header_name        = (known after apply)
+      [32m+[0m[0m routing_http_request_x_amzn_mtls_clientcert_leaf_header_name          = (known after apply)
+      [32m+[0m[0m routing_http_request_x_amzn_mtls_clientcert_serial_number_header_name = (known after apply)
+      [32m+[0m[0m routing_http_request_x_amzn_mtls_clientcert_subject_header_name       = (known after apply)
+      [32m+[0m[0m routing_http_request_x_amzn_mtls_clientcert_validity_header_name      = (known after apply)
+      [32m+[0m[0m routing_http_request_x_amzn_tls_cipher_suite_header_name              = (known after apply)
+      [32m+[0m[0m routing_http_request_x_amzn_tls_version_header_name                   = (known after apply)
+      [32m+[0m[0m routing_http_response_access_control_allow_credentials_header_value   = (known after apply)
+      [32m+[0m[0m routing_http_response_access_control_allow_headers_header_value       = (known after apply)
+      [32m+[0m[0m routing_http_response_access_control_allow_methods_header_value       = (known after apply)
+      [32m+[0m[0m routing_http_response_access_control_allow_origin_header_value        = (known after apply)
+      [32m+[0m[0m routing_http_response_access_control_expose_headers_header_value      = (known after apply)
+      [32m+[0m[0m routing_http_response_access_control_max_age_header_value             = (known after apply)
+      [32m+[0m[0m routing_http_response_content_security_policy_header_value            = (known after apply)
+      [32m+[0m[0m routing_http_response_server_enabled                                  = (known after apply)
+      [32m+[0m[0m routing_http_response_strict_transport_security_header_value          = (known after apply)
+      [32m+[0m[0m routing_http_response_x_content_type_options_header_value             = (known after apply)
+      [32m+[0m[0m routing_http_response_x_frame_options_header_value                    = (known after apply)
+      [32m+[0m[0m ssl_policy                                                            = (known after apply)
+      [32m+[0m[0m tags_all                                                              = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m tcp_idle_timeout_seconds                                              = (known after apply)
+
+      [32m+[0m[0m default_action {
+          [32m+[0m[0m order = (known after apply)
+          [32m+[0m[0m type  = "fixed-response"
+
+          [32m+[0m[0m fixed_response {
+              [32m+[0m[0m content_type = "application/json"
+              [32m+[0m[0m message_body = jsonencode(
+                    {
+                      [32m+[0m[0m code    = "NOT_FOUND"
+                      [32m+[0m[0m message = "no such route"
+                    }
+                )
+              [32m+[0m[0m status_code  = "404"
+            }
+        }
+
+      [32m+[0m[0m mutual_authentication (known after apply)
+    }
+
+[1m  # module.ecs[0].aws_lb_listener_rule.health[0m will be created
+[0m  [32m+[0m[0m resource "aws_lb_listener_rule" "health" {
+      [32m+[0m[0m arn          = (known after apply)
+      [32m+[0m[0m id           = (known after apply)
+      [32m+[0m[0m listener_arn = (known after apply)
+      [32m+[0m[0m priority     = 30
+      [32m+[0m[0m region       = "us-east-2"
+      [32m+[0m[0m tags_all     = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+
+      [32m+[0m[0m action {
+          [32m+[0m[0m order            = (known after apply)
+          [32m+[0m[0m target_group_arn = (known after apply)
+          [32m+[0m[0m type             = "forward"
+        }
+
+      [32m+[0m[0m condition {
+          [32m+[0m[0m path_pattern {
+              [32m+[0m[0m regex_values = []
+              [32m+[0m[0m values       = [
+                  [32m+[0m[0m "/healthz",
+                  [32m+[0m[0m "/readyz",
+                ]
+            }
+        }
+    }
+
+[1m  # module.ecs[0].aws_lb_listener_rule.service["graph-evidence-api"][0m will be created
+[0m  [32m+[0m[0m resource "aws_lb_listener_rule" "service" {
+      [32m+[0m[0m arn          = (known after apply)
+      [32m+[0m[0m id           = (known after apply)
+      [32m+[0m[0m listener_arn = (known after apply)
+      [32m+[0m[0m priority     = 20
+      [32m+[0m[0m region       = "us-east-2"
+      [32m+[0m[0m tags_all     = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+
+      [32m+[0m[0m action {
+          [32m+[0m[0m order            = (known after apply)
+          [32m+[0m[0m target_group_arn = (known after apply)
+          [32m+[0m[0m type             = "forward"
+        }
+
+      [32m+[0m[0m condition {
+          [32m+[0m[0m path_pattern {
+              [32m+[0m[0m regex_values = []
+              [32m+[0m[0m values       = [
+                  [32m+[0m[0m "/v1/evidence/*",
+                  [32m+[0m[0m "/v1/graph/*",
+                ]
+            }
+        }
+    }
+
+[1m  # module.ecs[0].aws_lb_listener_rule.service["query-api"][0m will be created
+[0m  [32m+[0m[0m resource "aws_lb_listener_rule" "service" {
+      [32m+[0m[0m arn          = (known after apply)
+      [32m+[0m[0m id           = (known after apply)
+      [32m+[0m[0m listener_arn = (known after apply)
+      [32m+[0m[0m priority     = 10
+      [32m+[0m[0m region       = "us-east-2"
+      [32m+[0m[0m tags_all     = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+
+      [32m+[0m[0m action {
+          [32m+[0m[0m order            = (known after apply)
+          [32m+[0m[0m target_group_arn = (known after apply)
+          [32m+[0m[0m type             = "forward"
+        }
+
+      [32m+[0m[0m condition {
+          [32m+[0m[0m path_pattern {
+              [32m+[0m[0m regex_values = []
+              [32m+[0m[0m values       = [
+                  [32m+[0m[0m "/v1/explain/*",
+                  [32m+[0m[0m "/v1/jobs/*",
+                  [32m+[0m[0m "/v1/query",
+                ]
+            }
+        }
+    }
+
+[1m  # module.ecs[0].aws_lb_target_group.service["graph-evidence-api"][0m will be created
+[0m  [32m+[0m[0m resource "aws_lb_target_group" "service" {
+      [32m+[0m[0m arn                                = (known after apply)
+      [32m+[0m[0m arn_suffix                         = (known after apply)
+      [32m+[0m[0m connection_termination             = (known after apply)
+      [32m+[0m[0m deregistration_delay               = "30"
+      [32m+[0m[0m id                                 = (known after apply)
+      [32m+[0m[0m ip_address_type                    = (known after apply)
+      [32m+[0m[0m lambda_multi_value_headers_enabled = false
+      [32m+[0m[0m load_balancer_arns                 = (known after apply)
+      [32m+[0m[0m load_balancing_algorithm_type      = (known after apply)
+      [32m+[0m[0m load_balancing_anomaly_mitigation  = (known after apply)
+      [32m+[0m[0m load_balancing_cross_zone_enabled  = (known after apply)
+      [32m+[0m[0m name                               = "scholarchain-course-graph-eviden"
+      [32m+[0m[0m name_prefix                        = (known after apply)
+      [32m+[0m[0m port                               = 8081
+      [32m+[0m[0m preserve_client_ip                 = (known after apply)
+      [32m+[0m[0m protocol                           = "HTTP"
+      [32m+[0m[0m protocol_version                   = (known after apply)
+      [32m+[0m[0m proxy_protocol_v2                  = false
+      [32m+[0m[0m region                             = "us-east-2"
+      [32m+[0m[0m slow_start                         = 0
+      [32m+[0m[0m tags_all                           = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m target_type                        = "ip"
+      [32m+[0m[0m vpc_id                             = "vpc-0fd8e31fa7b48c139"
+
+      [32m+[0m[0m health_check {
+          [32m+[0m[0m enabled             = true
+          [32m+[0m[0m healthy_threshold   = 2
+          [32m+[0m[0m interval            = 15
+          [32m+[0m[0m matcher             = "200"
+          [32m+[0m[0m path                = "/healthz"
+          [32m+[0m[0m port                = "traffic-port"
+          [32m+[0m[0m protocol            = "HTTP"
+          [32m+[0m[0m timeout             = 5
+          [32m+[0m[0m unhealthy_threshold = 3
+        }
+
+      [32m+[0m[0m stickiness (known after apply)
+
+      [32m+[0m[0m target_failover (known after apply)
+
+      [32m+[0m[0m target_group_health (known after apply)
+
+      [32m+[0m[0m target_health_state (known after apply)
+    }
+
+[1m  # module.ecs[0].aws_lb_target_group.service["query-api"][0m will be created
+[0m  [32m+[0m[0m resource "aws_lb_target_group" "service" {
+      [32m+[0m[0m arn                                = (known after apply)
+      [32m+[0m[0m arn_suffix                         = (known after apply)
+      [32m+[0m[0m connection_termination             = (known after apply)
+      [32m+[0m[0m deregistration_delay               = "30"
+      [32m+[0m[0m id                                 = (known after apply)
+      [32m+[0m[0m ip_address_type                    = (known after apply)
+      [32m+[0m[0m lambda_multi_value_headers_enabled = false
+      [32m+[0m[0m load_balancer_arns                 = (known after apply)
+      [32m+[0m[0m load_balancing_algorithm_type      = (known after apply)
+      [32m+[0m[0m load_balancing_anomaly_mitigation  = (known after apply)
+      [32m+[0m[0m load_balancing_cross_zone_enabled  = (known after apply)
+      [32m+[0m[0m name                               = "scholarchain-course-query-api"
+      [32m+[0m[0m name_prefix                        = (known after apply)
+      [32m+[0m[0m port                               = 8080
+      [32m+[0m[0m preserve_client_ip                 = (known after apply)
+      [32m+[0m[0m protocol                           = "HTTP"
+      [32m+[0m[0m protocol_version                   = (known after apply)
+      [32m+[0m[0m proxy_protocol_v2                  = false
+      [32m+[0m[0m region                             = "us-east-2"
+      [32m+[0m[0m slow_start                         = 0
+      [32m+[0m[0m tags_all                           = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m target_type                        = "ip"
+      [32m+[0m[0m vpc_id                             = "vpc-0fd8e31fa7b48c139"
+
+      [32m+[0m[0m health_check {
+          [32m+[0m[0m enabled             = true
+          [32m+[0m[0m healthy_threshold   = 2
+          [32m+[0m[0m interval            = 15
+          [32m+[0m[0m matcher             = "200"
+          [32m+[0m[0m path                = "/healthz"
+          [32m+[0m[0m port                = "traffic-port"
+          [32m+[0m[0m protocol            = "HTTP"
+          [32m+[0m[0m timeout             = 5
+          [32m+[0m[0m unhealthy_threshold = 3
+        }
+
+      [32m+[0m[0m stickiness (known after apply)
+
+      [32m+[0m[0m target_failover (known after apply)
+
+      [32m+[0m[0m target_group_health (known after apply)
+
+      [32m+[0m[0m target_health_state (known after apply)
+    }
+
+[1m  # module.iam[0].data.aws_iam_policy_document.answering[0m will be read during apply
+  # (config refers to values not yet known)
+[0m [36m<=[0m[0m data "aws_iam_policy_document" "answering" {
+      [32m+[0m[0m id            = (known after apply)
+      [32m+[0m[0m json          = (known after apply)
+      [32m+[0m[0m minified_json = (known after apply)
+
+      [32m+[0m[0m statement {
+          [32m+[0m[0m actions   = [
+              [32m+[0m[0m "s3:ListBucket",
+            ]
+          [32m+[0m[0m resources = [
+              [32m+[0m[0m "arn:aws:s3:::scholarchain-course-data-834519512655-us-east-2",
+            ]
+          [32m+[0m[0m sid       = "ListDataBucket"
+        }
+      [32m+[0m[0m statement {
+          [32m+[0m[0m actions   = [
+              [32m+[0m[0m "s3:GetObject",
+            ]
+          [32m+[0m[0m resources = [
+              [32m+[0m[0m "arn:aws:s3:::scholarchain-course-data-834519512655-us-east-2/curated/coauthor-evidence/*",
+              [32m+[0m[0m "arn:aws:s3:::scholarchain-course-data-834519512655-us-east-2/curated/window-summary/*",
+              [32m+[0m[0m "arn:aws:s3:::scholarchain-course-data-834519512655-us-east-2/logs/rag-runtime/*",
+              [32m+[0m[0m "arn:aws:s3:::scholarchain-course-data-834519512655-us-east-2/reports/rag-runtime/*",
+              [32m+[0m[0m "arn:aws:s3:::scholarchain-course-data-834519512655-us-east-2/semantic-context/text/*",
+            ]
+          [32m+[0m[0m sid       = "ReadRuntimeObjects"
+        }
+      [32m+[0m[0m statement {
+          [32m+[0m[0m actions   = [
+              [32m+[0m[0m "s3:PutObject",
+            ]
+          [32m+[0m[0m resources = [
+              [32m+[0m[0m "arn:aws:s3:::scholarchain-course-data-834519512655-us-east-2/logs/rag-runtime/*",
+              [32m+[0m[0m "arn:aws:s3:::scholarchain-course-data-834519512655-us-east-2/reports/rag-runtime/*",
+            ]
+          [32m+[0m[0m sid       = "WriteRuntimeRecords"
+        }
+      [32m+[0m[0m statement {
+          [32m+[0m[0m actions   = [
+              [32m+[0m[0m "dynamodb:GetItem",
+              [32m+[0m[0m "dynamodb:Query",
+            ]
+          [32m+[0m[0m resources = [
+              [32m+[0m[0m (known after apply),
+              [32m+[0m[0m (known after apply),
+              [32m+[0m[0m (known after apply),
+              [32m+[0m[0m (known after apply),
+              [32m+[0m[0m (known after apply),
+            ]
+          [32m+[0m[0m sid       = "ReadStoreTables"
+        }
+      [32m+[0m[0m statement {
+          [32m+[0m[0m actions   = [
+              [32m+[0m[0m "dynamodb:PutItem",
+            ]
+          [32m+[0m[0m resources = [
+              [32m+[0m[0m (known after apply),
+              [32m+[0m[0m (known after apply),
+            ]
+          [32m+[0m[0m sid       = "CreateRuntimeRecords"
+        }
+      [32m+[0m[0m statement {
+          [32m+[0m[0m actions   = [
+              [32m+[0m[0m "dynamodb:GetItem",
+              [32m+[0m[0m "dynamodb:PutItem",
+            ]
+          [32m+[0m[0m resources = [
+              [32m+[0m[0m (known after apply),
+            ]
+          [32m+[0m[0m sid       = "ServiceState"
+        }
+      [32m+[0m[0m statement {
+          [32m+[0m[0m actions   = [
+              [32m+[0m[0m "neptune-db:ReadDataViaQuery",
+            ]
+          [32m+[0m[0m resources = [
+              [32m+[0m[0m (known after apply),
+            ]
+          [32m+[0m[0m sid       = "GraphRead"
+        }
+      [32m+[0m[0m statement {
+          [32m+[0m[0m actions   = [
+              [32m+[0m[0m "s3vectors:GetVectors",
+              [32m+[0m[0m "s3vectors:QueryVectors",
+            ]
+          [32m+[0m[0m resources = [
+              [32m+[0m[0m (known after apply),
+              [32m+[0m[0m (known after apply),
+              [32m+[0m[0m (known after apply),
+              [32m+[0m[0m (known after apply),
+              [32m+[0m[0m (known after apply),
+            ]
+          [32m+[0m[0m sid       = "VectorQuery"
+        }
+      [32m+[0m[0m statement {
+          [32m+[0m[0m actions   = [
+              [32m+[0m[0m "bedrock:InvokeModel",
+            ]
+          [32m+[0m[0m resources = [
+              [32m+[0m[0m "arn:aws:bedrock:us-east-2::foundation-model/amazon.titan-embed-text-v2:0",
+            ]
+          [32m+[0m[0m sid       = "EmbedQuestion"
+        }
+      [32m+[0m[0m statement {
+          [32m+[0m[0m actions   = [
+              [32m+[0m[0m "bedrock:InvokeModel",
+            ]
+          [32m+[0m[0m resources = [
+              [32m+[0m[0m "arn:aws:bedrock:us-east-2:834519512655:inference-profile/us.anthropic.claude-haiku-4-5-20251001-v1:0",
+            ]
+          [32m+[0m[0m sid       = "HaikuProfile"
+        }
+      [32m+[0m[0m statement {
+          [32m+[0m[0m actions   = [
+              [32m+[0m[0m "bedrock:InvokeModel",
+            ]
+          [32m+[0m[0m resources = [
+              [32m+[0m[0m "arn:aws:bedrock:us-east-1::foundation-model/anthropic.claude-haiku-4-5-20251001-v1:0",
+              [32m+[0m[0m "arn:aws:bedrock:us-east-2::foundation-model/anthropic.claude-haiku-4-5-20251001-v1:0",
+              [32m+[0m[0m "arn:aws:bedrock:us-west-2::foundation-model/anthropic.claude-haiku-4-5-20251001-v1:0",
+            ]
+          [32m+[0m[0m sid       = "HaikuThroughProfile"
+
+          [32m+[0m[0m condition {
+              [32m+[0m[0m test     = "StringEquals"
+              [32m+[0m[0m values   = [
+                  [32m+[0m[0m "arn:aws:bedrock:us-east-2:834519512655:inference-profile/us.anthropic.claude-haiku-4-5-20251001-v1:0",
+                ]
+              [32m+[0m[0m variable = "bedrock:InferenceProfileArn"
+            }
+        }
+    }
+
+[1m  # module.iam[0].data.aws_iam_policy_document.execution["services"][0m will be read during apply
+  # (config refers to values not yet known)
+[0m [36m<=[0m[0m data "aws_iam_policy_document" "execution" {
+      [32m+[0m[0m id            = (known after apply)
+      [32m+[0m[0m json          = (known after apply)
+      [32m+[0m[0m minified_json = (known after apply)
+
+      [32m+[0m[0m statement {
+          [32m+[0m[0m actions   = [
+              [32m+[0m[0m "ecr:GetAuthorizationToken",
+            ]
+          [32m+[0m[0m resources = [
+              [32m+[0m[0m "*",
+            ]
+          [32m+[0m[0m sid       = "EcrLogin"
+        }
+      [32m+[0m[0m statement {
+          [32m+[0m[0m actions   = [
+              [32m+[0m[0m "ecr:BatchCheckLayerAvailability",
+              [32m+[0m[0m "ecr:BatchGetImage",
+              [32m+[0m[0m "ecr:GetDownloadUrlForLayer",
+            ]
+          [32m+[0m[0m resources = [
+              [32m+[0m[0m "arn:aws:ecr:us-east-2:834519512655:repository/scholarchain-course-services",
+            ]
+          [32m+[0m[0m sid       = "EcrPull"
+        }
+      [32m+[0m[0m statement {
+          [32m+[0m[0m actions   = [
+              [32m+[0m[0m "logs:CreateLogStream",
+              [32m+[0m[0m "logs:PutLogEvents",
+            ]
+          [32m+[0m[0m resources = [
+              [32m+[0m[0m "arn:aws:logs:us-east-2:834519512655:log-group:/scholarchain/scholarchain-course/ecs/graph-evidence-api:*",
+              [32m+[0m[0m "arn:aws:logs:us-east-2:834519512655:log-group:/scholarchain/scholarchain-course/ecs/query-api:*",
+              [32m+[0m[0m "arn:aws:logs:us-east-2:834519512655:log-group:/scholarchain/scholarchain-course/ecs/worker:*",
+            ]
+          [32m+[0m[0m sid       = "Logs"
+        }
+      [32m+[0m[0m statement {
+          [32m+[0m[0m actions   = [
+              [32m+[0m[0m "secretsmanager:GetSecretValue",
+            ]
+          [32m+[0m[0m resources = [
+              [32m+[0m[0m (known after apply),
+            ]
+          [32m+[0m[0m sid       = "ApiKeySecret"
+        }
+    }
+
+[1m  # module.iam[0].data.aws_iam_policy_document.graph_evidence_api[0m will be read during apply
+  # (config refers to values not yet known)
+[0m [36m<=[0m[0m data "aws_iam_policy_document" "graph_evidence_api" {
+      [32m+[0m[0m id            = (known after apply)
+      [32m+[0m[0m json          = (known after apply)
+      [32m+[0m[0m minified_json = (known after apply)
+
+      [32m+[0m[0m statement {
+          [32m+[0m[0m actions   = [
+              [32m+[0m[0m "dynamodb:Query",
+            ]
+          [32m+[0m[0m resources = [
+              [32m+[0m[0m (known after apply),
+            ]
+          [32m+[0m[0m sid       = "EvidenceById"
+        }
+      [32m+[0m[0m statement {
+          [32m+[0m[0m actions   = [
+              [32m+[0m[0m "s3:GetObject",
+            ]
+          [32m+[0m[0m resources = [
+              [32m+[0m[0m "arn:aws:s3:::scholarchain-course-data-834519512655-us-east-2/logs/rag-runtime/*",
+            ]
+          [32m+[0m[0m sid       = "EvidencePayloads"
+        }
+      [32m+[0m[0m statement {
+          [32m+[0m[0m actions   = [
+              [32m+[0m[0m "neptune-db:ReadDataViaQuery",
+            ]
+          [32m+[0m[0m resources = [
+              [32m+[0m[0m (known after apply),
+            ]
+          [32m+[0m[0m sid       = "GraphRead"
+        }
+    }
+
+[1m  # module.iam[0].data.aws_iam_policy_document.neptune_loader[0m will be read during apply
+  # (config refers to values not yet known)
+[0m [36m<=[0m[0m data "aws_iam_policy_document" "neptune_loader" {
+      [32m+[0m[0m id            = (known after apply)
+      [32m+[0m[0m json          = (known after apply)
+      [32m+[0m[0m minified_json = (known after apply)
+
+      [32m+[0m[0m statement {
+          [32m+[0m[0m actions   = [
+              [32m+[0m[0m "s3:ListBucket",
+            ]
+          [32m+[0m[0m resources = [
+              [32m+[0m[0m "arn:aws:s3:::scholarchain-course-data-834519512655-us-east-2",
+            ]
+          [32m+[0m[0m sid       = "ListLoadInputs"
+
+          [32m+[0m[0m condition {
+              [32m+[0m[0m test     = "StringLike"
+              [32m+[0m[0m values   = [
+                  [32m+[0m[0m "graph/neptune/*",
+                  [32m+[0m[0m "curated/coauthor-evidence/*",
+                  [32m+[0m[0m "runs/store-conversion/*",
+                ]
+              [32m+[0m[0m variable = "s3:prefix"
+            }
+        }
+      [32m+[0m[0m statement {
+          [32m+[0m[0m actions   = [
+              [32m+[0m[0m "s3:GetObject",
+            ]
+          [32m+[0m[0m resources = [
+              [32m+[0m[0m "arn:aws:s3:::scholarchain-course-data-834519512655-us-east-2/curated/coauthor-evidence/*",
+              [32m+[0m[0m "arn:aws:s3:::scholarchain-course-data-834519512655-us-east-2/graph/neptune/*",
+              [32m+[0m[0m "arn:aws:s3:::scholarchain-course-data-834519512655-us-east-2/runs/store-conversion/*",
+            ]
+          [32m+[0m[0m sid       = "ReadLoadInputs"
+        }
+      [32m+[0m[0m statement {
+          [32m+[0m[0m actions   = [
+              [32m+[0m[0m "neptune-db:GetLoaderJobStatus",
+              [32m+[0m[0m "neptune-db:StartLoaderJob",
+            ]
+          [32m+[0m[0m resources = [
+              [32m+[0m[0m (known after apply),
+            ]
+          [32m+[0m[0m sid       = "BulkLoad"
+        }
+    }
+
+[1m  # module.iam[0].data.aws_iam_policy_document.query_api_queue[0m will be read during apply
+  # (config refers to values not yet known)
+[0m [36m<=[0m[0m data "aws_iam_policy_document" "query_api_queue" {
+      [32m+[0m[0m id            = (known after apply)
+      [32m+[0m[0m json          = (known after apply)
+      [32m+[0m[0m minified_json = (known after apply)
+
+      [32m+[0m[0m statement {
+          [32m+[0m[0m actions   = [
+              [32m+[0m[0m "sqs:SendMessage",
+            ]
+          [32m+[0m[0m resources = [
+              [32m+[0m[0m (known after apply),
+            ]
+          [32m+[0m[0m sid       = "SendJobs"
+        }
+    }
+
+[1m  # module.iam[0].data.aws_iam_policy_document.task["graph-evidence-api"][0m will be read during apply
+  # (config refers to values not yet known)
+[0m [36m<=[0m[0m data "aws_iam_policy_document" "task" {
+      [32m+[0m[0m id                      = (known after apply)
+      [32m+[0m[0m json                    = (known after apply)
+      [32m+[0m[0m minified_json           = (known after apply)
+      [32m+[0m[0m source_policy_documents = (known after apply)
+    }
+
+[1m  # module.iam[0].data.aws_iam_policy_document.task["neptune-loader"][0m will be read during apply
+  # (config refers to values not yet known)
+[0m [36m<=[0m[0m data "aws_iam_policy_document" "task" {
+      [32m+[0m[0m id                      = (known after apply)
+      [32m+[0m[0m json                    = (known after apply)
+      [32m+[0m[0m minified_json           = (known after apply)
+      [32m+[0m[0m source_policy_documents = (known after apply)
+    }
+
+[1m  # module.iam[0].data.aws_iam_policy_document.task["query-api"][0m will be read during apply
+  # (config refers to values not yet known)
+[0m [36m<=[0m[0m data "aws_iam_policy_document" "task" {
+      [32m+[0m[0m id                      = (known after apply)
+      [32m+[0m[0m json                    = (known after apply)
+      [32m+[0m[0m minified_json           = (known after apply)
+      [32m+[0m[0m source_policy_documents = (known after apply)
+    }
+
+[1m  # module.iam[0].data.aws_iam_policy_document.task["worker"][0m will be read during apply
+  # (config refers to values not yet known)
+[0m [36m<=[0m[0m data "aws_iam_policy_document" "task" {
+      [32m+[0m[0m id                      = (known after apply)
+      [32m+[0m[0m json                    = (known after apply)
+      [32m+[0m[0m minified_json           = (known after apply)
+      [32m+[0m[0m source_policy_documents = (known after apply)
+    }
+
+[1m  # module.iam[0].data.aws_iam_policy_document.worker_queue[0m will be read during apply
+  # (config refers to values not yet known)
+[0m [36m<=[0m[0m data "aws_iam_policy_document" "worker_queue" {
+      [32m+[0m[0m id            = (known after apply)
+      [32m+[0m[0m json          = (known after apply)
+      [32m+[0m[0m minified_json = (known after apply)
+
+      [32m+[0m[0m statement {
+          [32m+[0m[0m actions   = [
+              [32m+[0m[0m "sqs:ChangeMessageVisibility",
+              [32m+[0m[0m "sqs:DeleteMessage",
+              [32m+[0m[0m "sqs:ReceiveMessage",
+            ]
+          [32m+[0m[0m resources = [
+              [32m+[0m[0m (known after apply),
+            ]
+          [32m+[0m[0m sid       = "ConsumeJobs"
+        }
+    }
+
+[1m  # module.iam[0].aws_iam_role.execution["loader"][0m will be created
+[0m  [32m+[0m[0m resource "aws_iam_role" "execution" {
+      [32m+[0m[0m arn                   = (known after apply)
+      [32m+[0m[0m assume_role_policy    = jsonencode(
+            {
+              [32m+[0m[0m Statement = [
+                  [32m+[0m[0m {
+                      [32m+[0m[0m Action    = "sts:AssumeRole"
+                      [32m+[0m[0m Condition = {
+                          [32m+[0m[0m ArnLike      = {
+                              [32m+[0m[0m "aws:SourceArn" = "arn:aws:ecs:us-east-2:834519512655:*"
+                            }
+                          [32m+[0m[0m StringEquals = {
+                              [32m+[0m[0m "aws:SourceAccount" = "834519512655"
+                            }
+                        }
+                      [32m+[0m[0m Effect    = "Allow"
+                      [32m+[0m[0m Principal = {
+                          [32m+[0m[0m Service = "ecs-tasks.amazonaws.com"
+                        }
+                    },
+                ]
+              [32m+[0m[0m Version   = "2012-10-17"
+            }
+        )
+      [32m+[0m[0m create_date           = (known after apply)
+      [32m+[0m[0m description           = "ECS task execution role (loader): image pull, logs"
+      [32m+[0m[0m force_detach_policies = false
+      [32m+[0m[0m id                    = (known after apply)
+      [32m+[0m[0m managed_policy_arns   = (known after apply)
+      [32m+[0m[0m max_session_duration  = 3600
+      [32m+[0m[0m name                  = "scholarchain-course-ecs-exec-loader"
+      [32m+[0m[0m name_prefix           = (known after apply)
+      [32m+[0m[0m path                  = "/"
+      [32m+[0m[0m tags_all              = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m unique_id             = (known after apply)
+
+      [32m+[0m[0m inline_policy (known after apply)
+    }
+
+[1m  # module.iam[0].aws_iam_role.execution["services"][0m will be created
+[0m  [32m+[0m[0m resource "aws_iam_role" "execution" {
+      [32m+[0m[0m arn                   = (known after apply)
+      [32m+[0m[0m assume_role_policy    = jsonencode(
+            {
+              [32m+[0m[0m Statement = [
+                  [32m+[0m[0m {
+                      [32m+[0m[0m Action    = "sts:AssumeRole"
+                      [32m+[0m[0m Condition = {
+                          [32m+[0m[0m ArnLike      = {
+                              [32m+[0m[0m "aws:SourceArn" = "arn:aws:ecs:us-east-2:834519512655:*"
+                            }
+                          [32m+[0m[0m StringEquals = {
+                              [32m+[0m[0m "aws:SourceAccount" = "834519512655"
+                            }
+                        }
+                      [32m+[0m[0m Effect    = "Allow"
+                      [32m+[0m[0m Principal = {
+                          [32m+[0m[0m Service = "ecs-tasks.amazonaws.com"
+                        }
+                    },
+                ]
+              [32m+[0m[0m Version   = "2012-10-17"
+            }
+        )
+      [32m+[0m[0m create_date           = (known after apply)
+      [32m+[0m[0m description           = "ECS task execution role (services): image pull, logs, API key secret"
+      [32m+[0m[0m force_detach_policies = false
+      [32m+[0m[0m id                    = (known after apply)
+      [32m+[0m[0m managed_policy_arns   = (known after apply)
+      [32m+[0m[0m max_session_duration  = 3600
+      [32m+[0m[0m name                  = "scholarchain-course-ecs-exec-services"
+      [32m+[0m[0m name_prefix           = (known after apply)
+      [32m+[0m[0m path                  = "/"
+      [32m+[0m[0m tags_all              = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m unique_id             = (known after apply)
+
+      [32m+[0m[0m inline_policy (known after apply)
+    }
+
+[1m  # module.iam[0].aws_iam_role.task["graph-evidence-api"][0m will be created
+[0m  [32m+[0m[0m resource "aws_iam_role" "task" {
+      [32m+[0m[0m arn                   = (known after apply)
+      [32m+[0m[0m assume_role_policy    = jsonencode(
+            {
+              [32m+[0m[0m Statement = [
+                  [32m+[0m[0m {
+                      [32m+[0m[0m Action    = "sts:AssumeRole"
+                      [32m+[0m[0m Condition = {
+                          [32m+[0m[0m ArnLike      = {
+                              [32m+[0m[0m "aws:SourceArn" = "arn:aws:ecs:us-east-2:834519512655:*"
+                            }
+                          [32m+[0m[0m StringEquals = {
+                              [32m+[0m[0m "aws:SourceAccount" = "834519512655"
+                            }
+                        }
+                      [32m+[0m[0m Effect    = "Allow"
+                      [32m+[0m[0m Principal = {
+                          [32m+[0m[0m Service = "ecs-tasks.amazonaws.com"
+                        }
+                    },
+                ]
+              [32m+[0m[0m Version   = "2012-10-17"
+            }
+        )
+      [32m+[0m[0m create_date           = (known after apply)
+      [32m+[0m[0m description           = "ECS task role: graph-evidence-api"
+      [32m+[0m[0m force_detach_policies = false
+      [32m+[0m[0m id                    = (known after apply)
+      [32m+[0m[0m managed_policy_arns   = (known after apply)
+      [32m+[0m[0m max_session_duration  = 3600
+      [32m+[0m[0m name                  = "scholarchain-course-task-graph-evidence-api"
+      [32m+[0m[0m name_prefix           = (known after apply)
+      [32m+[0m[0m path                  = "/"
+      [32m+[0m[0m tags_all              = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m unique_id             = (known after apply)
+
+      [32m+[0m[0m inline_policy (known after apply)
+    }
+
+[1m  # module.iam[0].aws_iam_role.task["neptune-loader"][0m will be created
+[0m  [32m+[0m[0m resource "aws_iam_role" "task" {
+      [32m+[0m[0m arn                   = (known after apply)
+      [32m+[0m[0m assume_role_policy    = jsonencode(
+            {
+              [32m+[0m[0m Statement = [
+                  [32m+[0m[0m {
+                      [32m+[0m[0m Action    = "sts:AssumeRole"
+                      [32m+[0m[0m Condition = {
+                          [32m+[0m[0m ArnLike      = {
+                              [32m+[0m[0m "aws:SourceArn" = "arn:aws:ecs:us-east-2:834519512655:*"
+                            }
+                          [32m+[0m[0m StringEquals = {
+                              [32m+[0m[0m "aws:SourceAccount" = "834519512655"
+                            }
+                        }
+                      [32m+[0m[0m Effect    = "Allow"
+                      [32m+[0m[0m Principal = {
+                          [32m+[0m[0m Service = "ecs-tasks.amazonaws.com"
+                        }
+                    },
+                ]
+              [32m+[0m[0m Version   = "2012-10-17"
+            }
+        )
+      [32m+[0m[0m create_date           = (known after apply)
+      [32m+[0m[0m description           = "ECS task role: neptune-loader"
+      [32m+[0m[0m force_detach_policies = false
+      [32m+[0m[0m id                    = (known after apply)
+      [32m+[0m[0m managed_policy_arns   = (known after apply)
+      [32m+[0m[0m max_session_duration  = 3600
+      [32m+[0m[0m name                  = "scholarchain-course-task-neptune-loader"
+      [32m+[0m[0m name_prefix           = (known after apply)
+      [32m+[0m[0m path                  = "/"
+      [32m+[0m[0m tags_all              = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m unique_id             = (known after apply)
+
+      [32m+[0m[0m inline_policy (known after apply)
+    }
+
+[1m  # module.iam[0].aws_iam_role.task["query-api"][0m will be created
+[0m  [32m+[0m[0m resource "aws_iam_role" "task" {
+      [32m+[0m[0m arn                   = (known after apply)
+      [32m+[0m[0m assume_role_policy    = jsonencode(
+            {
+              [32m+[0m[0m Statement = [
+                  [32m+[0m[0m {
+                      [32m+[0m[0m Action    = "sts:AssumeRole"
+                      [32m+[0m[0m Condition = {
+                          [32m+[0m[0m ArnLike      = {
+                              [32m+[0m[0m "aws:SourceArn" = "arn:aws:ecs:us-east-2:834519512655:*"
+                            }
+                          [32m+[0m[0m StringEquals = {
+                              [32m+[0m[0m "aws:SourceAccount" = "834519512655"
+                            }
+                        }
+                      [32m+[0m[0m Effect    = "Allow"
+                      [32m+[0m[0m Principal = {
+                          [32m+[0m[0m Service = "ecs-tasks.amazonaws.com"
+                        }
+                    },
+                ]
+              [32m+[0m[0m Version   = "2012-10-17"
+            }
+        )
+      [32m+[0m[0m create_date           = (known after apply)
+      [32m+[0m[0m description           = "ECS task role: query-api"
+      [32m+[0m[0m force_detach_policies = false
+      [32m+[0m[0m id                    = (known after apply)
+      [32m+[0m[0m managed_policy_arns   = (known after apply)
+      [32m+[0m[0m max_session_duration  = 3600
+      [32m+[0m[0m name                  = "scholarchain-course-task-query-api"
+      [32m+[0m[0m name_prefix           = (known after apply)
+      [32m+[0m[0m path                  = "/"
+      [32m+[0m[0m tags_all              = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m unique_id             = (known after apply)
+
+      [32m+[0m[0m inline_policy (known after apply)
+    }
+
+[1m  # module.iam[0].aws_iam_role.task["worker"][0m will be created
+[0m  [32m+[0m[0m resource "aws_iam_role" "task" {
+      [32m+[0m[0m arn                   = (known after apply)
+      [32m+[0m[0m assume_role_policy    = jsonencode(
+            {
+              [32m+[0m[0m Statement = [
+                  [32m+[0m[0m {
+                      [32m+[0m[0m Action    = "sts:AssumeRole"
+                      [32m+[0m[0m Condition = {
+                          [32m+[0m[0m ArnLike      = {
+                              [32m+[0m[0m "aws:SourceArn" = "arn:aws:ecs:us-east-2:834519512655:*"
+                            }
+                          [32m+[0m[0m StringEquals = {
+                              [32m+[0m[0m "aws:SourceAccount" = "834519512655"
+                            }
+                        }
+                      [32m+[0m[0m Effect    = "Allow"
+                      [32m+[0m[0m Principal = {
+                          [32m+[0m[0m Service = "ecs-tasks.amazonaws.com"
+                        }
+                    },
+                ]
+              [32m+[0m[0m Version   = "2012-10-17"
+            }
+        )
+      [32m+[0m[0m create_date           = (known after apply)
+      [32m+[0m[0m description           = "ECS task role: worker"
+      [32m+[0m[0m force_detach_policies = false
+      [32m+[0m[0m id                    = (known after apply)
+      [32m+[0m[0m managed_policy_arns   = (known after apply)
+      [32m+[0m[0m max_session_duration  = 3600
+      [32m+[0m[0m name                  = "scholarchain-course-task-worker"
+      [32m+[0m[0m name_prefix           = (known after apply)
+      [32m+[0m[0m path                  = "/"
+      [32m+[0m[0m tags_all              = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m unique_id             = (known after apply)
+
+      [32m+[0m[0m inline_policy (known after apply)
+    }
+
+[1m  # module.iam[0].aws_iam_role_policy.execution["loader"][0m will be created
+[0m  [32m+[0m[0m resource "aws_iam_role_policy" "execution" {
+      [32m+[0m[0m id          = (known after apply)
+      [32m+[0m[0m name        = "execution"
+      [32m+[0m[0m name_prefix = (known after apply)
+      [32m+[0m[0m policy      = jsonencode(
+            {
+              [32m+[0m[0m Statement = [
+                  [32m+[0m[0m {
+                      [32m+[0m[0m Action   = "ecr:GetAuthorizationToken"
+                      [32m+[0m[0m Effect   = "Allow"
+                      [32m+[0m[0m Resource = "*"
+                      [32m+[0m[0m Sid      = "EcrLogin"
+                    },
+                  [32m+[0m[0m {
+                      [32m+[0m[0m Action   = [
+                          [32m+[0m[0m "ecr:GetDownloadUrlForLayer",
+                          [32m+[0m[0m "ecr:BatchGetImage",
+                          [32m+[0m[0m "ecr:BatchCheckLayerAvailability",
+                        ]
+                      [32m+[0m[0m Effect   = "Allow"
+                      [32m+[0m[0m Resource = "arn:aws:ecr:us-east-2:834519512655:repository/scholarchain-course-services"
+                      [32m+[0m[0m Sid      = "EcrPull"
+                    },
+                  [32m+[0m[0m {
+                      [32m+[0m[0m Action   = [
+                          [32m+[0m[0m "logs:PutLogEvents",
+                          [32m+[0m[0m "logs:CreateLogStream",
+                        ]
+                      [32m+[0m[0m Effect   = "Allow"
+                      [32m+[0m[0m Resource = "arn:aws:logs:us-east-2:834519512655:log-group:/scholarchain/scholarchain-course/ecs/neptune-loader:*"
+                      [32m+[0m[0m Sid      = "Logs"
+                    },
+                ]
+              [32m+[0m[0m Version   = "2012-10-17"
+            }
+        )
+      [32m+[0m[0m role        = (known after apply)
+    }
+
+[1m  # module.iam[0].aws_iam_role_policy.execution["services"][0m will be created
+[0m  [32m+[0m[0m resource "aws_iam_role_policy" "execution" {
+      [32m+[0m[0m id          = (known after apply)
+      [32m+[0m[0m name        = "execution"
+      [32m+[0m[0m name_prefix = (known after apply)
+      [32m+[0m[0m policy      = (known after apply)
+      [32m+[0m[0m role        = (known after apply)
+    }
+
+[1m  # module.iam[0].aws_iam_role_policy.task["graph-evidence-api"][0m will be created
+[0m  [32m+[0m[0m resource "aws_iam_role_policy" "task" {
+      [32m+[0m[0m id          = (known after apply)
+      [32m+[0m[0m name        = "runtime"
+      [32m+[0m[0m name_prefix = (known after apply)
+      [32m+[0m[0m policy      = (known after apply)
+      [32m+[0m[0m role        = (known after apply)
+    }
+
+[1m  # module.iam[0].aws_iam_role_policy.task["neptune-loader"][0m will be created
+[0m  [32m+[0m[0m resource "aws_iam_role_policy" "task" {
+      [32m+[0m[0m id          = (known after apply)
+      [32m+[0m[0m name        = "runtime"
+      [32m+[0m[0m name_prefix = (known after apply)
+      [32m+[0m[0m policy      = (known after apply)
+      [32m+[0m[0m role        = (known after apply)
+    }
+
+[1m  # module.iam[0].aws_iam_role_policy.task["query-api"][0m will be created
+[0m  [32m+[0m[0m resource "aws_iam_role_policy" "task" {
+      [32m+[0m[0m id          = (known after apply)
+      [32m+[0m[0m name        = "runtime"
+      [32m+[0m[0m name_prefix = (known after apply)
+      [32m+[0m[0m policy      = (known after apply)
+      [32m+[0m[0m role        = (known after apply)
+    }
+
+[1m  # module.iam[0].aws_iam_role_policy.task["worker"][0m will be created
+[0m  [32m+[0m[0m resource "aws_iam_role_policy" "task" {
+      [32m+[0m[0m id          = (known after apply)
+      [32m+[0m[0m name        = "runtime"
+      [32m+[0m[0m name_prefix = (known after apply)
+      [32m+[0m[0m policy      = (known after apply)
+      [32m+[0m[0m role        = (known after apply)
+    }
+
+[1m  # module.messaging[0].aws_sqs_queue.dlq[0m will be created
+[0m  [32m+[0m[0m resource "aws_sqs_queue" "dlq" {
+      [32m+[0m[0m arn                               = (known after apply)
+      [32m+[0m[0m content_based_deduplication       = false
+      [32m+[0m[0m deduplication_scope               = (known after apply)
+      [32m+[0m[0m delay_seconds                     = 0
+      [32m+[0m[0m fifo_queue                        = false
+      [32m+[0m[0m fifo_throughput_limit             = (known after apply)
+      [32m+[0m[0m id                                = (known after apply)
+      [32m+[0m[0m kms_data_key_reuse_period_seconds = 0
+      [32m+[0m[0m max_message_size                  = 262144
+      [32m+[0m[0m message_retention_seconds         = 1209600
+      [32m+[0m[0m name                              = "scholarchain-course-jobs-dlq"
+      [32m+[0m[0m name_prefix                       = (known after apply)
+      [32m+[0m[0m policy                            = (known after apply)
+      [32m+[0m[0m receive_wait_time_seconds         = 0
+      [32m+[0m[0m redrive_allow_policy              = (known after apply)
+      [32m+[0m[0m redrive_policy                    = (known after apply)
+      [32m+[0m[0m region                            = "us-east-2"
+      [32m+[0m[0m sqs_managed_sse_enabled           = true
+      [32m+[0m[0m tags_all                          = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m url                               = (known after apply)
+      [32m+[0m[0m visibility_timeout_seconds        = 30
+    }
+
+[1m  # module.messaging[0].aws_sqs_queue.jobs[0m will be created
+[0m  [32m+[0m[0m resource "aws_sqs_queue" "jobs" {
+      [32m+[0m[0m arn                               = (known after apply)
+      [32m+[0m[0m content_based_deduplication       = false
+      [32m+[0m[0m deduplication_scope               = (known after apply)
+      [32m+[0m[0m delay_seconds                     = 0
+      [32m+[0m[0m fifo_queue                        = false
+      [32m+[0m[0m fifo_throughput_limit             = (known after apply)
+      [32m+[0m[0m id                                = (known after apply)
+      [32m+[0m[0m kms_data_key_reuse_period_seconds = 0
+      [32m+[0m[0m max_message_size                  = 262144
+      [32m+[0m[0m message_retention_seconds         = 345600
+      [32m+[0m[0m name                              = "scholarchain-course-jobs"
+      [32m+[0m[0m name_prefix                       = (known after apply)
+      [32m+[0m[0m policy                            = (known after apply)
+      [32m+[0m[0m receive_wait_time_seconds         = 20
+      [32m+[0m[0m redrive_allow_policy              = (known after apply)
+      [32m+[0m[0m redrive_policy                    = (known after apply)
+      [32m+[0m[0m region                            = "us-east-2"
+      [32m+[0m[0m sqs_managed_sse_enabled           = true
+      [32m+[0m[0m tags_all                          = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m url                               = (known after apply)
+      [32m+[0m[0m visibility_timeout_seconds        = 300
+    }
+
+[1m  # module.messaging[0].aws_sqs_queue_redrive_allow_policy.dlq[0m will be created
+[0m  [32m+[0m[0m resource "aws_sqs_queue_redrive_allow_policy" "dlq" {
+      [32m+[0m[0m id                   = (known after apply)
+      [32m+[0m[0m queue_url            = (known after apply)
+      [32m+[0m[0m redrive_allow_policy = (known after apply)
+      [32m+[0m[0m region               = "us-east-2"
+    }
+
+[1m  # module.neptune[0].aws_iam_role.bulk_loader[0m will be created
+[0m  [32m+[0m[0m resource "aws_iam_role" "bulk_loader" {
+      [32m+[0m[0m arn                   = (known after apply)
+      [32m+[0m[0m assume_role_policy    = jsonencode(
+            {
+              [32m+[0m[0m Statement = [
+                  [32m+[0m[0m {
+                      [32m+[0m[0m Action    = "sts:AssumeRole"
+                      [32m+[0m[0m Condition = {
+                          [32m+[0m[0m StringEquals = {
+                              [32m+[0m[0m "aws:SourceAccount" = "834519512655"
+                            }
+                        }
+                      [32m+[0m[0m Effect    = "Allow"
+                      [32m+[0m[0m Principal = {
+                          [32m+[0m[0m Service = "rds.amazonaws.com"
+                        }
+                    },
+                ]
+              [32m+[0m[0m Version   = "2012-10-17"
+            }
+        )
+      [32m+[0m[0m create_date           = (known after apply)
+      [32m+[0m[0m description           = "Assumed by Neptune to read graph/ for bulk loads"
+      [32m+[0m[0m force_detach_policies = false
+      [32m+[0m[0m id                    = (known after apply)
+      [32m+[0m[0m managed_policy_arns   = (known after apply)
+      [32m+[0m[0m max_session_duration  = 3600
+      [32m+[0m[0m name                  = "scholarchain-course-neptune-bulk-loader"
+      [32m+[0m[0m name_prefix           = (known after apply)
+      [32m+[0m[0m path                  = "/"
+      [32m+[0m[0m tags_all              = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m unique_id             = (known after apply)
+
+      [32m+[0m[0m inline_policy (known after apply)
+    }
+
+[1m  # module.neptune[0].aws_iam_role_policy.bulk_loader[0m will be created
+[0m  [32m+[0m[0m resource "aws_iam_role_policy" "bulk_loader" {
+      [32m+[0m[0m id          = (known after apply)
+      [32m+[0m[0m name        = "read-graph-prefix"
+      [32m+[0m[0m name_prefix = (known after apply)
+      [32m+[0m[0m policy      = jsonencode(
+            {
+              [32m+[0m[0m Statement = [
+                  [32m+[0m[0m {
+                      [32m+[0m[0m Action    = "s3:ListBucket"
+                      [32m+[0m[0m Condition = {
+                          [32m+[0m[0m StringLike = {
+                              [32m+[0m[0m "s3:prefix" = "graph/*"
+                            }
+                        }
+                      [32m+[0m[0m Effect    = "Allow"
+                      [32m+[0m[0m Resource  = "arn:aws:s3:::scholarchain-course-data-834519512655-us-east-2"
+                      [32m+[0m[0m Sid       = "ListGraphPrefix"
+                    },
+                  [32m+[0m[0m {
+                      [32m+[0m[0m Action   = "s3:GetObject"
+                      [32m+[0m[0m Effect   = "Allow"
+                      [32m+[0m[0m Resource = "arn:aws:s3:::scholarchain-course-data-834519512655-us-east-2/graph/*"
+                      [32m+[0m[0m Sid      = "ReadGraphPrefix"
+                    },
+                ]
+              [32m+[0m[0m Version   = "2012-10-17"
+            }
+        )
+      [32m+[0m[0m role        = (known after apply)
+    }
+
+[1m  # module.neptune[0].aws_neptune_cluster.this[0m will be created
+[0m  [32m+[0m[0m resource "aws_neptune_cluster" "this" {
+      [32m+[0m[0m allow_major_version_upgrade          = (known after apply)
+      [32m+[0m[0m apply_immediately                    = true
+      [32m+[0m[0m arn                                  = (known after apply)
+      [32m+[0m[0m availability_zones                   = (known after apply)
+      [32m+[0m[0m backup_retention_period              = 1
+      [32m+[0m[0m cluster_identifier                   = "scholarchain-course-graph"
+      [32m+[0m[0m cluster_identifier_prefix            = (known after apply)
+      [32m+[0m[0m cluster_members                      = (known after apply)
+      [32m+[0m[0m cluster_resource_id                  = (known after apply)
+      [32m+[0m[0m copy_tags_to_snapshot                = true
+      [32m+[0m[0m deletion_protection                  = false
+      [32m+[0m[0m endpoint                             = (known after apply)
+      [32m+[0m[0m engine                               = "neptune"
+      [32m+[0m[0m engine_version                       = "1.4.8.1"
+      [32m+[0m[0m hosted_zone_id                       = (known after apply)
+      [32m+[0m[0m iam_database_authentication_enabled  = true
+      [32m+[0m[0m iam_roles                            = (known after apply)
+      [32m+[0m[0m id                                   = (known after apply)
+      [32m+[0m[0m kms_key_arn                          = (known after apply)
+      [32m+[0m[0m neptune_cluster_parameter_group_name = "scholarchain-course-neptune-cluster"
+      [32m+[0m[0m neptune_subnet_group_name            = "scholarchain-course-neptune"
+      [32m+[0m[0m port                                 = 8182
+      [32m+[0m[0m preferred_backup_window              = "07:00-08:00"
+      [32m+[0m[0m preferred_maintenance_window         = (known after apply)
+      [32m+[0m[0m reader_endpoint                      = (known after apply)
+      [32m+[0m[0m region                               = "us-east-2"
+      [32m+[0m[0m skip_final_snapshot                  = true
+      [32m+[0m[0m storage_encrypted                    = true
+      [32m+[0m[0m storage_type                         = (known after apply)
+      [32m+[0m[0m tags_all                             = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m vpc_security_group_ids               = (known after apply)
+    }
+
+[1m  # module.neptune[0].aws_neptune_cluster_instance.this[0m will be created
+[0m  [32m+[0m[0m resource "aws_neptune_cluster_instance" "this" {
+      [32m+[0m[0m address                      = (known after apply)
+      [32m+[0m[0m apply_immediately            = true
+      [32m+[0m[0m arn                          = (known after apply)
+      [32m+[0m[0m auto_minor_version_upgrade   = false
+      [32m+[0m[0m availability_zone            = (known after apply)
+      [32m+[0m[0m cluster_identifier           = (known after apply)
+      [32m+[0m[0m dbi_resource_id              = (known after apply)
+      [32m+[0m[0m endpoint                     = (known after apply)
+      [32m+[0m[0m engine                       = "neptune"
+      [32m+[0m[0m engine_version               = (known after apply)
+      [32m+[0m[0m id                           = (known after apply)
+      [32m+[0m[0m identifier                   = "scholarchain-course-graph-1"
+      [32m+[0m[0m identifier_prefix            = (known after apply)
+      [32m+[0m[0m instance_class               = "db.t4g.medium"
+      [32m+[0m[0m kms_key_arn                  = (known after apply)
+      [32m+[0m[0m neptune_parameter_group_name = "scholarchain-course-neptune-instance"
+      [32m+[0m[0m neptune_subnet_group_name    = (known after apply)
+      [32m+[0m[0m port                         = 8182
+      [32m+[0m[0m preferred_backup_window      = (known after apply)
+      [32m+[0m[0m preferred_maintenance_window = (known after apply)
+      [32m+[0m[0m promotion_tier               = 0
+      [32m+[0m[0m publicly_accessible          = false
+      [32m+[0m[0m region                       = "us-east-2"
+      [32m+[0m[0m storage_encrypted            = (known after apply)
+      [32m+[0m[0m storage_type                 = (known after apply)
+      [32m+[0m[0m tags_all                     = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m writer                       = (known after apply)
+    }
+
+[1m  # module.neptune[0].aws_neptune_cluster_parameter_group.this[0m will be created
+[0m  [32m+[0m[0m resource "aws_neptune_cluster_parameter_group" "this" {
+      [32m+[0m[0m arn         = (known after apply)
+      [32m+[0m[0m description = "ScholarChain Neptune cluster parameters"
+      [32m+[0m[0m family      = "neptune1.4"
+      [32m+[0m[0m id          = (known after apply)
+      [32m+[0m[0m name        = "scholarchain-course-neptune-cluster"
+      [32m+[0m[0m name_prefix = (known after apply)
+      [32m+[0m[0m region      = "us-east-2"
+      [32m+[0m[0m tags_all    = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+
+      [32m+[0m[0m parameter {
+          [32m+[0m[0m apply_method = "pending-reboot"
+          [32m+[0m[0m name         = "neptune_query_timeout"
+          [32m+[0m[0m value        = "30000"
+        }
+    }
+
+[1m  # module.neptune[0].aws_neptune_parameter_group.this[0m will be created
+[0m  [32m+[0m[0m resource "aws_neptune_parameter_group" "this" {
+      [32m+[0m[0m arn         = (known after apply)
+      [32m+[0m[0m description = "ScholarChain Neptune instance parameters"
+      [32m+[0m[0m family      = "neptune1.4"
+      [32m+[0m[0m id          = (known after apply)
+      [32m+[0m[0m name        = "scholarchain-course-neptune-instance"
+      [32m+[0m[0m name_prefix = (known after apply)
+      [32m+[0m[0m region      = "us-east-2"
+      [32m+[0m[0m tags_all    = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+    }
+
+[1m  # module.neptune[0].aws_neptune_subnet_group.this[0m will be created
+[0m  [32m+[0m[0m resource "aws_neptune_subnet_group" "this" {
+      [32m+[0m[0m arn         = (known after apply)
+      [32m+[0m[0m description = "Private subnets for Neptune"
+      [32m+[0m[0m id          = (known after apply)
+      [32m+[0m[0m name        = "scholarchain-course-neptune"
+      [32m+[0m[0m name_prefix = (known after apply)
+      [32m+[0m[0m region      = "us-east-2"
+      [32m+[0m[0m subnet_ids  = [
+          [32m+[0m[0m "subnet-08e8a7e37da4af95f",
+          [32m+[0m[0m "subnet-0d62d88d3791db7bc",
+        ]
+      [32m+[0m[0m tags_all    = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+    }
+
+[1m  # module.network.aws_security_group.alb[0][0m will be created
+[0m  [32m+[0m[0m resource "aws_security_group" "alb" {
+      [32m+[0m[0m arn                    = (known after apply)
+      [32m+[0m[0m description            = "Public ALB: HTTP listener only"
+      [32m+[0m[0m egress                 = (known after apply)
+      [32m+[0m[0m id                     = (known after apply)
+      [32m+[0m[0m ingress                = (known after apply)
+      [32m+[0m[0m name                   = "scholarchain-course-alb"
+      [32m+[0m[0m name_prefix            = (known after apply)
+      [32m+[0m[0m owner_id               = (known after apply)
+      [32m+[0m[0m region                 = "us-east-2"
+      [32m+[0m[0m revoke_rules_on_delete = false
+      [32m+[0m[0m tags                   = {
+          [32m+[0m[0m "Name" = "scholarchain-course-alb"
+        }
+      [32m+[0m[0m tags_all               = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Name"        = "scholarchain-course-alb"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m vpc_id                 = "vpc-0fd8e31fa7b48c139"
+    }
+
+[1m  # module.network.aws_security_group.graph_evidence_api[0][0m will be created
+[0m  [32m+[0m[0m resource "aws_security_group" "graph_evidence_api" {
+      [32m+[0m[0m arn                    = (known after apply)
+      [32m+[0m[0m description            = "graph-evidence-api tasks: from the ALB only"
+      [32m+[0m[0m egress                 = (known after apply)
+      [32m+[0m[0m id                     = (known after apply)
+      [32m+[0m[0m ingress                = (known after apply)
+      [32m+[0m[0m name                   = "scholarchain-course-graph-evidence-api"
+      [32m+[0m[0m name_prefix            = (known after apply)
+      [32m+[0m[0m owner_id               = (known after apply)
+      [32m+[0m[0m region                 = "us-east-2"
+      [32m+[0m[0m revoke_rules_on_delete = false
+      [32m+[0m[0m tags                   = {
+          [32m+[0m[0m "Name" = "scholarchain-course-graph-evidence-api"
+        }
+      [32m+[0m[0m tags_all               = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Name"        = "scholarchain-course-graph-evidence-api"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m vpc_id                 = "vpc-0fd8e31fa7b48c139"
+    }
+
+[1m  # module.network.aws_security_group.loader[0][0m will be created
+[0m  [32m+[0m[0m resource "aws_security_group" "loader" {
+      [32m+[0m[0m arn                    = (known after apply)
+      [32m+[0m[0m description            = "One-off Neptune loader tasks: no inbound traffic"
+      [32m+[0m[0m egress                 = (known after apply)
+      [32m+[0m[0m id                     = (known after apply)
+      [32m+[0m[0m ingress                = (known after apply)
+      [32m+[0m[0m name                   = "scholarchain-course-neptune-loader"
+      [32m+[0m[0m name_prefix            = (known after apply)
+      [32m+[0m[0m owner_id               = (known after apply)
+      [32m+[0m[0m region                 = "us-east-2"
+      [32m+[0m[0m revoke_rules_on_delete = false
+      [32m+[0m[0m tags                   = {
+          [32m+[0m[0m "Name" = "scholarchain-course-neptune-loader"
+        }
+      [32m+[0m[0m tags_all               = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Name"        = "scholarchain-course-neptune-loader"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m vpc_id                 = "vpc-0fd8e31fa7b48c139"
+    }
+
+[1m  # module.network.aws_security_group.neptune[0][0m will be created
+[0m  [32m+[0m[0m resource "aws_security_group" "neptune" {
+      [32m+[0m[0m arn                    = (known after apply)
+      [32m+[0m[0m description            = "Neptune: from the service and loader groups only"
+      [32m+[0m[0m egress                 = (known after apply)
+      [32m+[0m[0m id                     = (known after apply)
+      [32m+[0m[0m ingress                = (known after apply)
+      [32m+[0m[0m name                   = "scholarchain-course-neptune"
+      [32m+[0m[0m name_prefix            = (known after apply)
+      [32m+[0m[0m owner_id               = (known after apply)
+      [32m+[0m[0m region                 = "us-east-2"
+      [32m+[0m[0m revoke_rules_on_delete = false
+      [32m+[0m[0m tags                   = {
+          [32m+[0m[0m "Name" = "scholarchain-course-neptune"
+        }
+      [32m+[0m[0m tags_all               = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Name"        = "scholarchain-course-neptune"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m vpc_id                 = "vpc-0fd8e31fa7b48c139"
+    }
+
+[1m  # module.network.aws_security_group.query_api[0][0m will be created
+[0m  [32m+[0m[0m resource "aws_security_group" "query_api" {
+      [32m+[0m[0m arn                    = (known after apply)
+      [32m+[0m[0m description            = "query-api tasks: from the ALB only"
+      [32m+[0m[0m egress                 = (known after apply)
+      [32m+[0m[0m id                     = (known after apply)
+      [32m+[0m[0m ingress                = (known after apply)
+      [32m+[0m[0m name                   = "scholarchain-course-query-api"
+      [32m+[0m[0m name_prefix            = (known after apply)
+      [32m+[0m[0m owner_id               = (known after apply)
+      [32m+[0m[0m region                 = "us-east-2"
+      [32m+[0m[0m revoke_rules_on_delete = false
+      [32m+[0m[0m tags                   = {
+          [32m+[0m[0m "Name" = "scholarchain-course-query-api"
+        }
+      [32m+[0m[0m tags_all               = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Name"        = "scholarchain-course-query-api"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m vpc_id                 = "vpc-0fd8e31fa7b48c139"
+    }
+
+[1m  # module.network.aws_security_group.worker[0][0m will be created
+[0m  [32m+[0m[0m resource "aws_security_group" "worker" {
+      [32m+[0m[0m arn                    = (known after apply)
+      [32m+[0m[0m description            = "worker tasks: no inbound traffic"
+      [32m+[0m[0m egress                 = (known after apply)
+      [32m+[0m[0m id                     = (known after apply)
+      [32m+[0m[0m ingress                = (known after apply)
+      [32m+[0m[0m name                   = "scholarchain-course-worker"
+      [32m+[0m[0m name_prefix            = (known after apply)
+      [32m+[0m[0m owner_id               = (known after apply)
+      [32m+[0m[0m region                 = "us-east-2"
+      [32m+[0m[0m revoke_rules_on_delete = false
+      [32m+[0m[0m tags                   = {
+          [32m+[0m[0m "Name" = "scholarchain-course-worker"
+        }
+      [32m+[0m[0m tags_all               = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Name"        = "scholarchain-course-worker"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m vpc_id                 = "vpc-0fd8e31fa7b48c139"
+    }
+
+[1m  # module.network.aws_vpc_security_group_egress_rule.alb_to_graph_evidence_api[0][0m will be created
+[0m  [32m+[0m[0m resource "aws_vpc_security_group_egress_rule" "alb_to_graph_evidence_api" {
+      [32m+[0m[0m arn                          = (known after apply)
+      [32m+[0m[0m description                  = "To graph-evidence-api targets"
+      [32m+[0m[0m from_port                    = 8081
+      [32m+[0m[0m id                           = (known after apply)
+      [32m+[0m[0m ip_protocol                  = "tcp"
+      [32m+[0m[0m referenced_security_group_id = (known after apply)
+      [32m+[0m[0m region                       = "us-east-2"
+      [32m+[0m[0m security_group_id            = (known after apply)
+      [32m+[0m[0m security_group_rule_id       = (known after apply)
+      [32m+[0m[0m tags_all                     = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m to_port                      = 8081
+    }
+
+[1m  # module.network.aws_vpc_security_group_egress_rule.alb_to_query_api[0][0m will be created
+[0m  [32m+[0m[0m resource "aws_vpc_security_group_egress_rule" "alb_to_query_api" {
+      [32m+[0m[0m arn                          = (known after apply)
+      [32m+[0m[0m description                  = "To query-api targets"
+      [32m+[0m[0m from_port                    = 8080
+      [32m+[0m[0m id                           = (known after apply)
+      [32m+[0m[0m ip_protocol                  = "tcp"
+      [32m+[0m[0m referenced_security_group_id = (known after apply)
+      [32m+[0m[0m region                       = "us-east-2"
+      [32m+[0m[0m security_group_id            = (known after apply)
+      [32m+[0m[0m security_group_rule_id       = (known after apply)
+      [32m+[0m[0m tags_all                     = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m to_port                      = 8080
+    }
+
+[1m  # module.network.aws_vpc_security_group_egress_rule.clients_https["graph_evidence_api"][0m will be created
+[0m  [32m+[0m[0m resource "aws_vpc_security_group_egress_rule" "clients_https" {
+      [32m+[0m[0m arn                    = (known after apply)
+      [32m+[0m[0m cidr_ipv4              = "0.0.0.0/0"
+      [32m+[0m[0m description            = "HTTPS to AWS service endpoints"
+      [32m+[0m[0m from_port              = 443
+      [32m+[0m[0m id                     = (known after apply)
+      [32m+[0m[0m ip_protocol            = "tcp"
+      [32m+[0m[0m region                 = "us-east-2"
+      [32m+[0m[0m security_group_id      = (known after apply)
+      [32m+[0m[0m security_group_rule_id = (known after apply)
+      [32m+[0m[0m tags_all               = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m to_port                = 443
+    }
+
+[1m  # module.network.aws_vpc_security_group_egress_rule.clients_https["loader"][0m will be created
+[0m  [32m+[0m[0m resource "aws_vpc_security_group_egress_rule" "clients_https" {
+      [32m+[0m[0m arn                    = (known after apply)
+      [32m+[0m[0m cidr_ipv4              = "0.0.0.0/0"
+      [32m+[0m[0m description            = "HTTPS to AWS service endpoints"
+      [32m+[0m[0m from_port              = 443
+      [32m+[0m[0m id                     = (known after apply)
+      [32m+[0m[0m ip_protocol            = "tcp"
+      [32m+[0m[0m region                 = "us-east-2"
+      [32m+[0m[0m security_group_id      = (known after apply)
+      [32m+[0m[0m security_group_rule_id = (known after apply)
+      [32m+[0m[0m tags_all               = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m to_port                = 443
+    }
+
+[1m  # module.network.aws_vpc_security_group_egress_rule.clients_https["query_api"][0m will be created
+[0m  [32m+[0m[0m resource "aws_vpc_security_group_egress_rule" "clients_https" {
+      [32m+[0m[0m arn                    = (known after apply)
+      [32m+[0m[0m cidr_ipv4              = "0.0.0.0/0"
+      [32m+[0m[0m description            = "HTTPS to AWS service endpoints"
+      [32m+[0m[0m from_port              = 443
+      [32m+[0m[0m id                     = (known after apply)
+      [32m+[0m[0m ip_protocol            = "tcp"
+      [32m+[0m[0m region                 = "us-east-2"
+      [32m+[0m[0m security_group_id      = (known after apply)
+      [32m+[0m[0m security_group_rule_id = (known after apply)
+      [32m+[0m[0m tags_all               = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m to_port                = 443
+    }
+
+[1m  # module.network.aws_vpc_security_group_egress_rule.clients_https["worker"][0m will be created
+[0m  [32m+[0m[0m resource "aws_vpc_security_group_egress_rule" "clients_https" {
+      [32m+[0m[0m arn                    = (known after apply)
+      [32m+[0m[0m cidr_ipv4              = "0.0.0.0/0"
+      [32m+[0m[0m description            = "HTTPS to AWS service endpoints"
+      [32m+[0m[0m from_port              = 443
+      [32m+[0m[0m id                     = (known after apply)
+      [32m+[0m[0m ip_protocol            = "tcp"
+      [32m+[0m[0m region                 = "us-east-2"
+      [32m+[0m[0m security_group_id      = (known after apply)
+      [32m+[0m[0m security_group_rule_id = (known after apply)
+      [32m+[0m[0m tags_all               = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m to_port                = 443
+    }
+
+[1m  # module.network.aws_vpc_security_group_egress_rule.clients_to_neptune["graph_evidence_api"][0m will be created
+[0m  [32m+[0m[0m resource "aws_vpc_security_group_egress_rule" "clients_to_neptune" {
+      [32m+[0m[0m arn                          = (known after apply)
+      [32m+[0m[0m description                  = "To Neptune"
+      [32m+[0m[0m from_port                    = 8182
+      [32m+[0m[0m id                           = (known after apply)
+      [32m+[0m[0m ip_protocol                  = "tcp"
+      [32m+[0m[0m referenced_security_group_id = (known after apply)
+      [32m+[0m[0m region                       = "us-east-2"
+      [32m+[0m[0m security_group_id            = (known after apply)
+      [32m+[0m[0m security_group_rule_id       = (known after apply)
+      [32m+[0m[0m tags_all                     = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m to_port                      = 8182
+    }
+
+[1m  # module.network.aws_vpc_security_group_egress_rule.clients_to_neptune["loader"][0m will be created
+[0m  [32m+[0m[0m resource "aws_vpc_security_group_egress_rule" "clients_to_neptune" {
+      [32m+[0m[0m arn                          = (known after apply)
+      [32m+[0m[0m description                  = "To Neptune"
+      [32m+[0m[0m from_port                    = 8182
+      [32m+[0m[0m id                           = (known after apply)
+      [32m+[0m[0m ip_protocol                  = "tcp"
+      [32m+[0m[0m referenced_security_group_id = (known after apply)
+      [32m+[0m[0m region                       = "us-east-2"
+      [32m+[0m[0m security_group_id            = (known after apply)
+      [32m+[0m[0m security_group_rule_id       = (known after apply)
+      [32m+[0m[0m tags_all                     = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m to_port                      = 8182
+    }
+
+[1m  # module.network.aws_vpc_security_group_egress_rule.clients_to_neptune["query_api"][0m will be created
+[0m  [32m+[0m[0m resource "aws_vpc_security_group_egress_rule" "clients_to_neptune" {
+      [32m+[0m[0m arn                          = (known after apply)
+      [32m+[0m[0m description                  = "To Neptune"
+      [32m+[0m[0m from_port                    = 8182
+      [32m+[0m[0m id                           = (known after apply)
+      [32m+[0m[0m ip_protocol                  = "tcp"
+      [32m+[0m[0m referenced_security_group_id = (known after apply)
+      [32m+[0m[0m region                       = "us-east-2"
+      [32m+[0m[0m security_group_id            = (known after apply)
+      [32m+[0m[0m security_group_rule_id       = (known after apply)
+      [32m+[0m[0m tags_all                     = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m to_port                      = 8182
+    }
+
+[1m  # module.network.aws_vpc_security_group_egress_rule.clients_to_neptune["worker"][0m will be created
+[0m  [32m+[0m[0m resource "aws_vpc_security_group_egress_rule" "clients_to_neptune" {
+      [32m+[0m[0m arn                          = (known after apply)
+      [32m+[0m[0m description                  = "To Neptune"
+      [32m+[0m[0m from_port                    = 8182
+      [32m+[0m[0m id                           = (known after apply)
+      [32m+[0m[0m ip_protocol                  = "tcp"
+      [32m+[0m[0m referenced_security_group_id = (known after apply)
+      [32m+[0m[0m region                       = "us-east-2"
+      [32m+[0m[0m security_group_id            = (known after apply)
+      [32m+[0m[0m security_group_rule_id       = (known after apply)
+      [32m+[0m[0m tags_all                     = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m to_port                      = 8182
+    }
+
+[1m  # module.network.aws_vpc_security_group_egress_rule.neptune_to_s3[0][0m will be created
+[0m  [32m+[0m[0m resource "aws_vpc_security_group_egress_rule" "neptune_to_s3" {
+      [32m+[0m[0m arn                    = (known after apply)
+      [32m+[0m[0m description            = "Bulk loader to S3 (gateway endpoint)"
+      [32m+[0m[0m from_port              = 443
+      [32m+[0m[0m id                     = (known after apply)
+      [32m+[0m[0m ip_protocol            = "tcp"
+      [32m+[0m[0m prefix_list_id         = "pl-7ba54012"
+      [32m+[0m[0m region                 = "us-east-2"
+      [32m+[0m[0m security_group_id      = (known after apply)
+      [32m+[0m[0m security_group_rule_id = (known after apply)
+      [32m+[0m[0m tags_all               = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m to_port                = 443
+    }
+
+[1m  # module.network.aws_vpc_security_group_ingress_rule.alb_http["0.0.0.0/0"][0m will be created
+[0m  [32m+[0m[0m resource "aws_vpc_security_group_ingress_rule" "alb_http" {
+      [32m+[0m[0m arn                    = (known after apply)
+      [32m+[0m[0m cidr_ipv4              = "0.0.0.0/0"
+      [32m+[0m[0m description            = "HTTP listener"
+      [32m+[0m[0m from_port              = 80
+      [32m+[0m[0m id                     = (known after apply)
+      [32m+[0m[0m ip_protocol            = "tcp"
+      [32m+[0m[0m region                 = "us-east-2"
+      [32m+[0m[0m security_group_id      = (known after apply)
+      [32m+[0m[0m security_group_rule_id = (known after apply)
+      [32m+[0m[0m tags_all               = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m to_port                = 80
+    }
+
+[1m  # module.network.aws_vpc_security_group_ingress_rule.graph_evidence_api_from_alb[0][0m will be created
+[0m  [32m+[0m[0m resource "aws_vpc_security_group_ingress_rule" "graph_evidence_api_from_alb" {
+      [32m+[0m[0m arn                          = (known after apply)
+      [32m+[0m[0m description                  = "From the ALB"
+      [32m+[0m[0m from_port                    = 8081
+      [32m+[0m[0m id                           = (known after apply)
+      [32m+[0m[0m ip_protocol                  = "tcp"
+      [32m+[0m[0m referenced_security_group_id = (known after apply)
+      [32m+[0m[0m region                       = "us-east-2"
+      [32m+[0m[0m security_group_id            = (known after apply)
+      [32m+[0m[0m security_group_rule_id       = (known after apply)
+      [32m+[0m[0m tags_all                     = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m to_port                      = 8081
+    }
+
+[1m  # module.network.aws_vpc_security_group_ingress_rule.neptune_from_clients["graph_evidence_api"][0m will be created
+[0m  [32m+[0m[0m resource "aws_vpc_security_group_ingress_rule" "neptune_from_clients" {
+      [32m+[0m[0m arn                          = (known after apply)
+      [32m+[0m[0m description                  = "From graph_evidence_api"
+      [32m+[0m[0m from_port                    = 8182
+      [32m+[0m[0m id                           = (known after apply)
+      [32m+[0m[0m ip_protocol                  = "tcp"
+      [32m+[0m[0m referenced_security_group_id = (known after apply)
+      [32m+[0m[0m region                       = "us-east-2"
+      [32m+[0m[0m security_group_id            = (known after apply)
+      [32m+[0m[0m security_group_rule_id       = (known after apply)
+      [32m+[0m[0m tags_all                     = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m to_port                      = 8182
+    }
+
+[1m  # module.network.aws_vpc_security_group_ingress_rule.neptune_from_clients["loader"][0m will be created
+[0m  [32m+[0m[0m resource "aws_vpc_security_group_ingress_rule" "neptune_from_clients" {
+      [32m+[0m[0m arn                          = (known after apply)
+      [32m+[0m[0m description                  = "From loader"
+      [32m+[0m[0m from_port                    = 8182
+      [32m+[0m[0m id                           = (known after apply)
+      [32m+[0m[0m ip_protocol                  = "tcp"
+      [32m+[0m[0m referenced_security_group_id = (known after apply)
+      [32m+[0m[0m region                       = "us-east-2"
+      [32m+[0m[0m security_group_id            = (known after apply)
+      [32m+[0m[0m security_group_rule_id       = (known after apply)
+      [32m+[0m[0m tags_all                     = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m to_port                      = 8182
+    }
+
+[1m  # module.network.aws_vpc_security_group_ingress_rule.neptune_from_clients["query_api"][0m will be created
+[0m  [32m+[0m[0m resource "aws_vpc_security_group_ingress_rule" "neptune_from_clients" {
+      [32m+[0m[0m arn                          = (known after apply)
+      [32m+[0m[0m description                  = "From query_api"
+      [32m+[0m[0m from_port                    = 8182
+      [32m+[0m[0m id                           = (known after apply)
+      [32m+[0m[0m ip_protocol                  = "tcp"
+      [32m+[0m[0m referenced_security_group_id = (known after apply)
+      [32m+[0m[0m region                       = "us-east-2"
+      [32m+[0m[0m security_group_id            = (known after apply)
+      [32m+[0m[0m security_group_rule_id       = (known after apply)
+      [32m+[0m[0m tags_all                     = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m to_port                      = 8182
+    }
+
+[1m  # module.network.aws_vpc_security_group_ingress_rule.neptune_from_clients["worker"][0m will be created
+[0m  [32m+[0m[0m resource "aws_vpc_security_group_ingress_rule" "neptune_from_clients" {
+      [32m+[0m[0m arn                          = (known after apply)
+      [32m+[0m[0m description                  = "From worker"
+      [32m+[0m[0m from_port                    = 8182
+      [32m+[0m[0m id                           = (known after apply)
+      [32m+[0m[0m ip_protocol                  = "tcp"
+      [32m+[0m[0m referenced_security_group_id = (known after apply)
+      [32m+[0m[0m region                       = "us-east-2"
+      [32m+[0m[0m security_group_id            = (known after apply)
+      [32m+[0m[0m security_group_rule_id       = (known after apply)
+      [32m+[0m[0m tags_all                     = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m to_port                      = 8182
+    }
+
+[1m  # module.network.aws_vpc_security_group_ingress_rule.query_api_from_alb[0][0m will be created
+[0m  [32m+[0m[0m resource "aws_vpc_security_group_ingress_rule" "query_api_from_alb" {
+      [32m+[0m[0m arn                          = (known after apply)
+      [32m+[0m[0m description                  = "From the ALB"
+      [32m+[0m[0m from_port                    = 8080
+      [32m+[0m[0m id                           = (known after apply)
+      [32m+[0m[0m ip_protocol                  = "tcp"
+      [32m+[0m[0m referenced_security_group_id = (known after apply)
+      [32m+[0m[0m region                       = "us-east-2"
+      [32m+[0m[0m security_group_id            = (known after apply)
+      [32m+[0m[0m security_group_rule_id       = (known after apply)
+      [32m+[0m[0m tags_all                     = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m to_port                      = 8080
+    }
+
+[1m  # module.observability.aws_cloudwatch_dashboard.runtime[0][0m will be created
+[0m  [32m+[0m[0m resource "aws_cloudwatch_dashboard" "runtime" {
+      [32m+[0m[0m dashboard_arn  = (known after apply)
+      [32m+[0m[0m dashboard_body = (known after apply)
+      [32m+[0m[0m dashboard_name = "scholarchain-course-runtime"
+      [32m+[0m[0m id             = (known after apply)
+      [32m+[0m[0m region         = "us-east-2"
+    }
+
+[1m  # module.observability.aws_cloudwatch_metric_alarm.alb_5xx["elb"][0m will be created
+[0m  [32m+[0m[0m resource "aws_cloudwatch_metric_alarm" "alb_5xx" {
+      [32m+[0m[0m actions_enabled                       = true
+      [32m+[0m[0m alarm_description                     = "ALB HTTPCode_ELB_5XX_Count at or above 5 in 5 minutes"
+      [32m+[0m[0m alarm_name                            = "scholarchain-course-alb-elb-5xx"
+      [32m+[0m[0m arn                                   = (known after apply)
+      [32m+[0m[0m comparison_operator                   = "GreaterThanOrEqualToThreshold"
+      [32m+[0m[0m dimensions                            = (known after apply)
+      [32m+[0m[0m evaluate_low_sample_count_percentiles = (known after apply)
+      [32m+[0m[0m evaluation_periods                    = 1
+      [32m+[0m[0m id                                    = (known after apply)
+      [32m+[0m[0m metric_name                           = "HTTPCode_ELB_5XX_Count"
+      [32m+[0m[0m namespace                             = "AWS/ApplicationELB"
+      [32m+[0m[0m period                                = 300
+      [32m+[0m[0m region                                = "us-east-2"
+      [32m+[0m[0m statistic                             = "Sum"
+      [32m+[0m[0m tags_all                              = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m threshold                             = 5
+      [32m+[0m[0m treat_missing_data                    = "notBreaching"
+    }
+
+[1m  # module.observability.aws_cloudwatch_metric_alarm.alb_5xx["target"][0m will be created
+[0m  [32m+[0m[0m resource "aws_cloudwatch_metric_alarm" "alb_5xx" {
+      [32m+[0m[0m actions_enabled                       = true
+      [32m+[0m[0m alarm_description                     = "ALB HTTPCode_Target_5XX_Count at or above 5 in 5 minutes"
+      [32m+[0m[0m alarm_name                            = "scholarchain-course-alb-target-5xx"
+      [32m+[0m[0m arn                                   = (known after apply)
+      [32m+[0m[0m comparison_operator                   = "GreaterThanOrEqualToThreshold"
+      [32m+[0m[0m dimensions                            = (known after apply)
+      [32m+[0m[0m evaluate_low_sample_count_percentiles = (known after apply)
+      [32m+[0m[0m evaluation_periods                    = 1
+      [32m+[0m[0m id                                    = (known after apply)
+      [32m+[0m[0m metric_name                           = "HTTPCode_Target_5XX_Count"
+      [32m+[0m[0m namespace                             = "AWS/ApplicationELB"
+      [32m+[0m[0m period                                = 300
+      [32m+[0m[0m region                                = "us-east-2"
+      [32m+[0m[0m statistic                             = "Sum"
+      [32m+[0m[0m tags_all                              = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m threshold                             = 5
+      [32m+[0m[0m treat_missing_data                    = "notBreaching"
+    }
+
+[1m  # module.observability.aws_cloudwatch_metric_alarm.dlq_depth[0][0m will be created
+[0m  [32m+[0m[0m resource "aws_cloudwatch_metric_alarm" "dlq_depth" {
+      [32m+[0m[0m actions_enabled                       = true
+      [32m+[0m[0m alarm_description                     = "Job dead-letter queue holds a message"
+      [32m+[0m[0m alarm_name                            = "scholarchain-course-jobs-dlq-not-empty"
+      [32m+[0m[0m arn                                   = (known after apply)
+      [32m+[0m[0m comparison_operator                   = "GreaterThanThreshold"
+      [32m+[0m[0m dimensions                            = {
+          [32m+[0m[0m "QueueName" = "scholarchain-course-jobs-dlq"
+        }
+      [32m+[0m[0m evaluate_low_sample_count_percentiles = (known after apply)
+      [32m+[0m[0m evaluation_periods                    = 1
+      [32m+[0m[0m id                                    = (known after apply)
+      [32m+[0m[0m metric_name                           = "ApproximateNumberOfMessagesVisible"
+      [32m+[0m[0m namespace                             = "AWS/SQS"
+      [32m+[0m[0m period                                = 300
+      [32m+[0m[0m region                                = "us-east-2"
+      [32m+[0m[0m statistic                             = "Maximum"
+      [32m+[0m[0m tags_all                              = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m threshold                             = 0
+      [32m+[0m[0m treat_missing_data                    = "notBreaching"
+    }
+
+[1m  # module.observability.aws_cloudwatch_metric_alarm.ecs_cpu["graph-evidence-api"][0m will be created
+[0m  [32m+[0m[0m resource "aws_cloudwatch_metric_alarm" "ecs_cpu" {
+      [32m+[0m[0m actions_enabled                       = true
+      [32m+[0m[0m alarm_description                     = "graph-evidence-api: average CPU at or above 80% for 10 minutes"
+      [32m+[0m[0m alarm_name                            = "scholarchain-course-graph-evidence-api-cpu"
+      [32m+[0m[0m arn                                   = (known after apply)
+      [32m+[0m[0m comparison_operator                   = "GreaterThanOrEqualToThreshold"
+      [32m+[0m[0m dimensions                            = {
+          [32m+[0m[0m "ClusterName" = "scholarchain-course-runtime"
+          [32m+[0m[0m "ServiceName" = "graph-evidence-api"
+        }
+      [32m+[0m[0m evaluate_low_sample_count_percentiles = (known after apply)
+      [32m+[0m[0m evaluation_periods                    = 2
+      [32m+[0m[0m id                                    = (known after apply)
+      [32m+[0m[0m metric_name                           = "CPUUtilization"
+      [32m+[0m[0m namespace                             = "AWS/ECS"
+      [32m+[0m[0m period                                = 300
+      [32m+[0m[0m region                                = "us-east-2"
+      [32m+[0m[0m statistic                             = "Average"
+      [32m+[0m[0m tags_all                              = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m threshold                             = 80
+      [32m+[0m[0m treat_missing_data                    = "notBreaching"
+    }
+
+[1m  # module.observability.aws_cloudwatch_metric_alarm.ecs_cpu["query-api"][0m will be created
+[0m  [32m+[0m[0m resource "aws_cloudwatch_metric_alarm" "ecs_cpu" {
+      [32m+[0m[0m actions_enabled                       = true
+      [32m+[0m[0m alarm_description                     = "query-api: average CPU at or above 80% for 10 minutes"
+      [32m+[0m[0m alarm_name                            = "scholarchain-course-query-api-cpu"
+      [32m+[0m[0m arn                                   = (known after apply)
+      [32m+[0m[0m comparison_operator                   = "GreaterThanOrEqualToThreshold"
+      [32m+[0m[0m dimensions                            = {
+          [32m+[0m[0m "ClusterName" = "scholarchain-course-runtime"
+          [32m+[0m[0m "ServiceName" = "query-api"
+        }
+      [32m+[0m[0m evaluate_low_sample_count_percentiles = (known after apply)
+      [32m+[0m[0m evaluation_periods                    = 2
+      [32m+[0m[0m id                                    = (known after apply)
+      [32m+[0m[0m metric_name                           = "CPUUtilization"
+      [32m+[0m[0m namespace                             = "AWS/ECS"
+      [32m+[0m[0m period                                = 300
+      [32m+[0m[0m region                                = "us-east-2"
+      [32m+[0m[0m statistic                             = "Average"
+      [32m+[0m[0m tags_all                              = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m threshold                             = 80
+      [32m+[0m[0m treat_missing_data                    = "notBreaching"
+    }
+
+[1m  # module.observability.aws_cloudwatch_metric_alarm.ecs_cpu["worker"][0m will be created
+[0m  [32m+[0m[0m resource "aws_cloudwatch_metric_alarm" "ecs_cpu" {
+      [32m+[0m[0m actions_enabled                       = true
+      [32m+[0m[0m alarm_description                     = "worker: average CPU at or above 80% for 10 minutes"
+      [32m+[0m[0m alarm_name                            = "scholarchain-course-worker-cpu"
+      [32m+[0m[0m arn                                   = (known after apply)
+      [32m+[0m[0m comparison_operator                   = "GreaterThanOrEqualToThreshold"
+      [32m+[0m[0m dimensions                            = {
+          [32m+[0m[0m "ClusterName" = "scholarchain-course-runtime"
+          [32m+[0m[0m "ServiceName" = "worker"
+        }
+      [32m+[0m[0m evaluate_low_sample_count_percentiles = (known after apply)
+      [32m+[0m[0m evaluation_periods                    = 2
+      [32m+[0m[0m id                                    = (known after apply)
+      [32m+[0m[0m metric_name                           = "CPUUtilization"
+      [32m+[0m[0m namespace                             = "AWS/ECS"
+      [32m+[0m[0m period                                = 300
+      [32m+[0m[0m region                                = "us-east-2"
+      [32m+[0m[0m statistic                             = "Average"
+      [32m+[0m[0m tags_all                              = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m threshold                             = 80
+      [32m+[0m[0m treat_missing_data                    = "notBreaching"
+    }
+
+[1m  # module.observability.aws_cloudwatch_metric_alarm.neptune_cpu[0][0m will be created
+[0m  [32m+[0m[0m resource "aws_cloudwatch_metric_alarm" "neptune_cpu" {
+      [32m+[0m[0m actions_enabled                       = true
+      [32m+[0m[0m alarm_description                     = "Neptune: average CPU at or above 80% for 10 minutes"
+      [32m+[0m[0m alarm_name                            = "scholarchain-course-neptune-cpu"
+      [32m+[0m[0m arn                                   = (known after apply)
+      [32m+[0m[0m comparison_operator                   = "GreaterThanOrEqualToThreshold"
+      [32m+[0m[0m dimensions                            = (known after apply)
+      [32m+[0m[0m evaluate_low_sample_count_percentiles = (known after apply)
+      [32m+[0m[0m evaluation_periods                    = 2
+      [32m+[0m[0m id                                    = (known after apply)
+      [32m+[0m[0m metric_name                           = "CPUUtilization"
+      [32m+[0m[0m namespace                             = "AWS/Neptune"
+      [32m+[0m[0m period                                = 300
+      [32m+[0m[0m region                                = "us-east-2"
+      [32m+[0m[0m statistic                             = "Average"
+      [32m+[0m[0m tags_all                              = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m threshold                             = 80
+      [32m+[0m[0m treat_missing_data                    = "notBreaching"
+    }
+
+[1m  # module.observability.aws_cloudwatch_metric_alarm.unhealthy_targets["graph-evidence-api"][0m will be created
+[0m  [32m+[0m[0m resource "aws_cloudwatch_metric_alarm" "unhealthy_targets" {
+      [32m+[0m[0m actions_enabled                       = true
+      [32m+[0m[0m alarm_description                     = "graph-evidence-api: at least one unhealthy target for 2 minutes"
+      [32m+[0m[0m alarm_name                            = "scholarchain-course-graph-evidence-api-unhealthy-targets"
+      [32m+[0m[0m arn                                   = (known after apply)
+      [32m+[0m[0m comparison_operator                   = "GreaterThanThreshold"
+      [32m+[0m[0m dimensions                            = (known after apply)
+      [32m+[0m[0m evaluate_low_sample_count_percentiles = (known after apply)
+      [32m+[0m[0m evaluation_periods                    = 2
+      [32m+[0m[0m id                                    = (known after apply)
+      [32m+[0m[0m metric_name                           = "UnHealthyHostCount"
+      [32m+[0m[0m namespace                             = "AWS/ApplicationELB"
+      [32m+[0m[0m period                                = 60
+      [32m+[0m[0m region                                = "us-east-2"
+      [32m+[0m[0m statistic                             = "Maximum"
+      [32m+[0m[0m tags_all                              = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m threshold                             = 0
+      [32m+[0m[0m treat_missing_data                    = "notBreaching"
+    }
+
+[1m  # module.observability.aws_cloudwatch_metric_alarm.unhealthy_targets["query-api"][0m will be created
+[0m  [32m+[0m[0m resource "aws_cloudwatch_metric_alarm" "unhealthy_targets" {
+      [32m+[0m[0m actions_enabled                       = true
+      [32m+[0m[0m alarm_description                     = "query-api: at least one unhealthy target for 2 minutes"
+      [32m+[0m[0m alarm_name                            = "scholarchain-course-query-api-unhealthy-targets"
+      [32m+[0m[0m arn                                   = (known after apply)
+      [32m+[0m[0m comparison_operator                   = "GreaterThanThreshold"
+      [32m+[0m[0m dimensions                            = (known after apply)
+      [32m+[0m[0m evaluate_low_sample_count_percentiles = (known after apply)
+      [32m+[0m[0m evaluation_periods                    = 2
+      [32m+[0m[0m id                                    = (known after apply)
+      [32m+[0m[0m metric_name                           = "UnHealthyHostCount"
+      [32m+[0m[0m namespace                             = "AWS/ApplicationELB"
+      [32m+[0m[0m period                                = 60
+      [32m+[0m[0m region                                = "us-east-2"
+      [32m+[0m[0m statistic                             = "Maximum"
+      [32m+[0m[0m tags_all                              = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m threshold                             = 0
+      [32m+[0m[0m treat_missing_data                    = "notBreaching"
+    }
+
+[1m  # module.vectors[0].aws_s3vectors_index.this["collaboration-community-v1"][0m will be created
+[0m  [32m+[0m[0m resource "aws_s3vectors_index" "this" {
+      [32m+[0m[0m creation_time            = (known after apply)
+      [32m+[0m[0m data_type                = "float32"
+      [32m+[0m[0m dimension                = 1024
+      [32m+[0m[0m distance_metric          = "cosine"
+      [32m+[0m[0m encryption_configuration = (known after apply)
+      [32m+[0m[0m index_arn                = (known after apply)
+      [32m+[0m[0m index_name               = "collaboration-community-v1"
+      [32m+[0m[0m region                   = "us-east-2"
+      [32m+[0m[0m tags_all                 = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m vector_bucket_name       = "scholarchain-course-vectors-834519512655"
+
+      [32m+[0m[0m metadata_configuration {
+          [32m+[0m[0m non_filterable_metadata_keys = [
+              [32m+[0m[0m "textHash",
+              [32m+[0m[0m "textRef",
+              [32m+[0m[0m "vectorKey",
+            ]
+        }
+    }
+
+[1m  # module.vectors[0].aws_s3vectors_index.this["collaboration-path-v1"][0m will be created
+[0m  [32m+[0m[0m resource "aws_s3vectors_index" "this" {
+      [32m+[0m[0m creation_time            = (known after apply)
+      [32m+[0m[0m data_type                = "float32"
+      [32m+[0m[0m dimension                = 1024
+      [32m+[0m[0m distance_metric          = "cosine"
+      [32m+[0m[0m encryption_configuration = (known after apply)
+      [32m+[0m[0m index_arn                = (known after apply)
+      [32m+[0m[0m index_name               = "collaboration-path-v1"
+      [32m+[0m[0m region                   = "us-east-2"
+      [32m+[0m[0m tags_all                 = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m vector_bucket_name       = "scholarchain-course-vectors-834519512655"
+
+      [32m+[0m[0m metadata_configuration {
+          [32m+[0m[0m non_filterable_metadata_keys = [
+              [32m+[0m[0m "textHash",
+              [32m+[0m[0m "textRef",
+              [32m+[0m[0m "vectorKey",
+            ]
+        }
+    }
+
+[1m  # module.vectors[0].aws_s3vectors_index.this["paper-abstract-v1"][0m will be created
+[0m  [32m+[0m[0m resource "aws_s3vectors_index" "this" {
+      [32m+[0m[0m creation_time            = (known after apply)
+      [32m+[0m[0m data_type                = "float32"
+      [32m+[0m[0m dimension                = 1024
+      [32m+[0m[0m distance_metric          = "cosine"
+      [32m+[0m[0m encryption_configuration = (known after apply)
+      [32m+[0m[0m index_arn                = (known after apply)
+      [32m+[0m[0m index_name               = "paper-abstract-v1"
+      [32m+[0m[0m region                   = "us-east-2"
+      [32m+[0m[0m tags_all                 = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m vector_bucket_name       = "scholarchain-course-vectors-834519512655"
+
+      [32m+[0m[0m metadata_configuration {
+          [32m+[0m[0m non_filterable_metadata_keys = [
+              [32m+[0m[0m "textHash",
+              [32m+[0m[0m "textRef",
+              [32m+[0m[0m "vectorKey",
+            ]
+        }
+    }
+
+[1m  # module.vectors[0].aws_s3vectors_index.this["researcher-profile-v1"][0m will be created
+[0m  [32m+[0m[0m resource "aws_s3vectors_index" "this" {
+      [32m+[0m[0m creation_time            = (known after apply)
+      [32m+[0m[0m data_type                = "float32"
+      [32m+[0m[0m dimension                = 1024
+      [32m+[0m[0m distance_metric          = "cosine"
+      [32m+[0m[0m encryption_configuration = (known after apply)
+      [32m+[0m[0m index_arn                = (known after apply)
+      [32m+[0m[0m index_name               = "researcher-profile-v1"
+      [32m+[0m[0m region                   = "us-east-2"
+      [32m+[0m[0m tags_all                 = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m vector_bucket_name       = "scholarchain-course-vectors-834519512655"
+
+      [32m+[0m[0m metadata_configuration {
+          [32m+[0m[0m non_filterable_metadata_keys = [
+              [32m+[0m[0m "textHash",
+              [32m+[0m[0m "textRef",
+              [32m+[0m[0m "vectorKey",
+            ]
+        }
+    }
+
+[1m  # module.vectors[0].aws_s3vectors_index.this["topic-institution-summary-v1"][0m will be created
+[0m  [32m+[0m[0m resource "aws_s3vectors_index" "this" {
+      [32m+[0m[0m creation_time            = (known after apply)
+      [32m+[0m[0m data_type                = "float32"
+      [32m+[0m[0m dimension                = 1024
+      [32m+[0m[0m distance_metric          = "cosine"
+      [32m+[0m[0m encryption_configuration = (known after apply)
+      [32m+[0m[0m index_arn                = (known after apply)
+      [32m+[0m[0m index_name               = "topic-institution-summary-v1"
+      [32m+[0m[0m region                   = "us-east-2"
+      [32m+[0m[0m tags_all                 = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m vector_bucket_name       = "scholarchain-course-vectors-834519512655"
+
+      [32m+[0m[0m metadata_configuration {
+          [32m+[0m[0m non_filterable_metadata_keys = [
+              [32m+[0m[0m "textHash",
+              [32m+[0m[0m "textRef",
+              [32m+[0m[0m "vectorKey",
+            ]
+        }
+    }
+
+[1m  # module.vectors[0].aws_s3vectors_vector_bucket.this[0m will be created
+[0m  [32m+[0m[0m resource "aws_s3vectors_vector_bucket" "this" {
+      [32m+[0m[0m creation_time            = (known after apply)
+      [32m+[0m[0m encryption_configuration = [
+          [32m+[0m[0m {
+              [32m+[0m[0m sse_type = "AES256"
+            },
+        ]
+      [32m+[0m[0m force_destroy            = false
+      [32m+[0m[0m region                   = "us-east-2"
+      [32m+[0m[0m tags_all                 = {
+          [32m+[0m[0m "Course"      = "CS441"
+          [32m+[0m[0m "Environment" = "course"
+          [32m+[0m[0m "Expiration"  = "2026-12-15"
+          [32m+[0m[0m "ManagedBy"   = "terraform"
+          [32m+[0m[0m "Owner"       = "scholarchain-human-architect"
+          [32m+[0m[0m "Project"     = "ScholarChain"
+        }
+      [32m+[0m[0m vector_bucket_arn        = (known after apply)
+      [32m+[0m[0m vector_bucket_name       = "scholarchain-course-vectors-834519512655"
+    }
+
+[1mPlan:[0m [0m89 to add, 0 to change, 0 to destroy.
+
+Changes to Outputs:
+  [32m+[0m[0m alb_arn_suffix               = (known after apply)
+  [32m+[0m[0m alb_dns_name                 = (known after apply)
+  [32m+[0m[0m api_key_secret_arn           = (known after apply)
+  [32m+[0m[0m api_key_secret_name          = "scholarchain-course/api-key"
+  [32m+[0m[0m dashboard_name               = "scholarchain-course-runtime"
+  [32m+[0m[0m dynamodb_table_names         = {
+      [32m+[0m[0m ArtifactRegistry      = "scholarchain-course-ArtifactRegistry"
+      [32m+[0m[0m EntityLinkCache       = "scholarchain-course-EntityLinkCache"
+      [32m+[0m[0m EvidenceBundle        = "scholarchain-course-EvidenceBundle"
+      [32m+[0m[0m QuerySession          = "scholarchain-course-QuerySession"
+      [32m+[0m[0m ResearcherMetricCache = "scholarchain-course-ResearcherMetricCache"
+      [32m+[0m[0m RunLedger             = "scholarchain-course-RunLedger"
+      [32m+[0m[0m ServiceState          = "scholarchain-course-ServiceState"
+    }
+  [32m+[0m[0m dynamodb_table_prefix        = "scholarchain-course-"
+  [32m+[0m[0m ecs_cluster_name             = "scholarchain-course-runtime"
+  [32m+[0m[0m ecs_service_names            = {
+      [32m+[0m[0m graph-evidence-api = "graph-evidence-api"
+      [32m+[0m[0m query-api          = "query-api"
+      [32m+[0m[0m worker             = "worker"
+    }
+  [32m+[0m[0m ecs_task_definition_arns     = {
+      [32m+[0m[0m graph-evidence-api = (known after apply)
+      [32m+[0m[0m neptune-loader     = (known after apply)
+      [32m+[0m[0m query-api          = (known after apply)
+      [32m+[0m[0m worker             = (known after apply)
+    }
+  [32m+[0m[0m ecs_task_definition_families = {
+      [32m+[0m[0m graph-evidence-api = "scholarchain-course-graph-evidence-api"
+      [32m+[0m[0m neptune-loader     = "scholarchain-course-neptune-loader"
+      [32m+[0m[0m query-api          = "scholarchain-course-query-api"
+      [32m+[0m[0m worker             = "scholarchain-course-worker"
+    }
+  [32m+[0m[0m execution_role_arns          = {
+      [32m+[0m[0m loader   = (known after apply)
+      [32m+[0m[0m services = (known after apply)
+    }
+  [32m+[0m[0m job_dlq_url                  = (known after apply)
+  [32m+[0m[0m job_queue_url                = (known after apply)
+  [32m+[0m[0m neptune_cluster_id           = (known after apply)
+  [32m+[0m[0m neptune_endpoint             = (known after apply)
+  [32m+[0m[0m neptune_loader_role_arn      = (known after apply)
+  [32m+[0m[0m neptune_port                 = 8182
+  [33m~[0m[0m runtime_enabled              = false [33m->[0m[0m true
+  [32m+[0m[0m runtime_environment          = {
+      [32m+[0m[0m SCHOLARCHAIN_ADJUDICATION_MODEL_ID   = "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+      [32m+[0m[0m SCHOLARCHAIN_AWS_ACCOUNT_ID          = "834519512655"
+      [32m+[0m[0m SCHOLARCHAIN_AWS_REGION              = "us-east-2"
+      [32m+[0m[0m SCHOLARCHAIN_BUCKET                  = "scholarchain-course-data-834519512655-us-east-2"
+      [32m+[0m[0m SCHOLARCHAIN_DYNAMODB_TABLE_PREFIX   = "scholarchain-course-"
+      [32m+[0m[0m SCHOLARCHAIN_EMBEDDING_MODEL_ID      = "amazon.titan-embed-text-v2:0"
+      [32m+[0m[0m SCHOLARCHAIN_ENVIRONMENT             = "course"
+      [32m+[0m[0m SCHOLARCHAIN_JOB_DLQ_URL             = (known after apply)
+      [32m+[0m[0m SCHOLARCHAIN_JOB_MAX_RECEIVE_COUNT   = "3"
+      [32m+[0m[0m SCHOLARCHAIN_JOB_QUEUE_URL           = (known after apply)
+      [32m+[0m[0m SCHOLARCHAIN_LLM_REQUESTS_PER_MINUTE = "4"
+      [32m+[0m[0m SCHOLARCHAIN_NEPTUNE_ENDPOINT        = (known after apply)
+      [32m+[0m[0m SCHOLARCHAIN_NEPTUNE_LOADER_ROLE_ARN = (known after apply)
+      [32m+[0m[0m SCHOLARCHAIN_NEPTUNE_PORT            = "8182"
+      [32m+[0m[0m SCHOLARCHAIN_PLANNER_MODEL_ID        = "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+      [32m+[0m[0m SCHOLARCHAIN_PROMPTS_DIR             = "/opt/docker/prompts"
+      [32m+[0m[0m SCHOLARCHAIN_STUB_LLM                = "false"
+      [32m+[0m[0m SCHOLARCHAIN_SYNTHESIS_MODEL_ID      = "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+      [32m+[0m[0m SCHOLARCHAIN_VECTOR_BUCKET           = "scholarchain-course-vectors-834519512655"
+      [32m+[0m[0m SCHOLARCHAIN_VERIFICATION_MODEL_ID   = "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+    }
+  [32m+[0m[0m security_group_ids           = {
+      [32m+[0m[0m alb                = (known after apply)
+      [32m+[0m[0m graph_evidence_api = (known after apply)
+      [32m+[0m[0m loader             = (known after apply)
+      [32m+[0m[0m neptune            = (known after apply)
+      [32m+[0m[0m query_api          = (known after apply)
+      [32m+[0m[0m worker             = (known after apply)
+    }
+  [32m+[0m[0m task_role_arns               = {
+      [32m+[0m[0m graph-evidence-api = (known after apply)
+      [32m+[0m[0m neptune-loader     = (known after apply)
+      [32m+[0m[0m query-api          = (known after apply)
+      [32m+[0m[0m worker             = (known after apply)
+    }
+  [32m+[0m[0m vector_bucket_name           = "scholarchain-course-vectors-834519512655"
+[90m
+─────────────────────────────────────────────────────────────────────────────[0m
+
+Saved the plan to:
+/Users/achyutpatel/Developer/Cloud/ScholarChain/scratch/plans/20261119T173346Z-c5428063732a/plan.tfplan
+
+To perform exactly these actions, run the following command to apply:
+    terraform apply "/Users/achyutpatel/Developer/Cloud/ScholarChain/scratch/plans/20261119T173346Z-c5428063732a/plan.tfplan"
+==> STEP show
+==> STEP summarize
+# Terraform plan summary
+
+- Plan SHA-256: `978ce3059dc6b039e7c1bd9361c896838ea568dea9b68164ae0ff2a02e4b0bb6`
+- Commit: `c5428063732af5f7a5279c215dc2a52b89f64f16`
+- Account: `834519512655`
+- Region: `us-east-2`
+- runtime_enabled: `true`
+- Var file: `infra/terraform/envs/course/course.tfvars`
+- Created: 2026-11-19T17:33:52Z
+- Counts: {"add":89,"change":0,"destroy":0}
+
+## Stateful destroy or replace (needs explicit human sign-off)
+
+none
+
+## IAM changes
+
+- create module.iam[0].aws_iam_role.execution["loader"]
+- create module.iam[0].aws_iam_role.execution["services"]
+- create module.iam[0].aws_iam_role.task["graph-evidence-api"]
+- create module.iam[0].aws_iam_role.task["neptune-loader"]
+- create module.iam[0].aws_iam_role.task["query-api"]
+- create module.iam[0].aws_iam_role.task["worker"]
+- create module.iam[0].aws_iam_role_policy.execution["loader"]
+- create module.iam[0].aws_iam_role_policy.execution["services"]
+- create module.iam[0].aws_iam_role_policy.task["graph-evidence-api"]
+- create module.iam[0].aws_iam_role_policy.task["neptune-loader"]
+- create module.iam[0].aws_iam_role_policy.task["query-api"]
+- create module.iam[0].aws_iam_role_policy.task["worker"]
+- create module.neptune[0].aws_iam_role.bulk_loader
+- create module.neptune[0].aws_iam_role_policy.bulk_loader
+
+## High-cost resources
+
+- create module.dynamodb[0].aws_dynamodb_table.this["ArtifactRegistry"]
+- create module.dynamodb[0].aws_dynamodb_table.this["EntityLinkCache"]
+- create module.dynamodb[0].aws_dynamodb_table.this["EvidenceBundle"]
+- create module.dynamodb[0].aws_dynamodb_table.this["QuerySession"]
+- create module.dynamodb[0].aws_dynamodb_table.this["ResearcherMetricCache"]
+- create module.dynamodb[0].aws_dynamodb_table.this["RunLedger"]
+- create module.dynamodb[0].aws_dynamodb_table.this["ServiceState"]
+- create module.ecs[0].aws_appautoscaling_target.this["graph-evidence-api"]
+- create module.ecs[0].aws_appautoscaling_target.this["query-api"]
+- create module.ecs[0].aws_appautoscaling_target.this["worker"]
+- create module.ecs[0].aws_ecs_service.this["graph-evidence-api"]
+- create module.ecs[0].aws_ecs_service.this["query-api"]
+- create module.ecs[0].aws_ecs_service.this["worker"]
+- create module.ecs[0].aws_lb.this
+- create module.neptune[0].aws_neptune_cluster_instance.this
+- create module.vectors[0].aws_s3vectors_index.this["collaboration-community-v1"]
+- create module.vectors[0].aws_s3vectors_index.this["collaboration-path-v1"]
+- create module.vectors[0].aws_s3vectors_index.this["paper-abstract-v1"]
+- create module.vectors[0].aws_s3vectors_index.this["researcher-profile-v1"]
+- create module.vectors[0].aws_s3vectors_index.this["topic-institution-summary-v1"]
+==> PLAN file=/Users/achyutpatel/Developer/Cloud/ScholarChain/scratch/plans/20261119T173346Z-c5428063732a/plan.tfplan sha256=978ce3059dc6b039e7c1bd9361c896838ea568dea9b68164ae0ff2a02e4b0bb6 counts={"add":89,"change":0,"destroy":0}
+==> OK plan written; nothing applied. Approve by checksum, then: scripts/deploy.sh --plan-file /Users/achyutpatel/Developer/Cloud/ScholarChain/scratch/plans/20261119T173346Z-c5428063732a/plan.tfplan --approved-plan-sha256 978ce3059dc6b039e7c1bd9361c896838ea568dea9b68164ae0ff2a02e4b0bb6

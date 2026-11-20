@@ -1,0 +1,56 @@
+{
+  "schemaVersion": "store-load-record-v1",
+  "finishedAt": "2026-11-19T21:50:23Z",
+  "account": "834519512655",
+  "region": "us-east-2",
+  "commit": "c5428063732af5f7a5279c215dc2a52b89f64f16",
+  "snapshot": "2026-10-03",
+  "storeRun": "run-1d6a86491812ff94887270c1ab885e69",
+  "vectorsRun": "run-b28edbd40f932f0342c05d5b6f57b46c",
+  "windowSummaryRun": "run-6fbad498beb0d8f570df67665fb97544",
+  "neptuneLoadId": "6113dd40-42e5-4bd4-ac8a-5b82fc4474bb",
+  "steps": [
+    {
+      "step": "s3-store-conversion",
+      "status": "skipped",
+      "seconds": 0,
+      "log": ""
+    },
+    {
+      "step": "s3-embed",
+      "status": "skipped",
+      "seconds": 0,
+      "log": ""
+    },
+    {
+      "step": "s3-window-summary",
+      "status": "skipped",
+      "seconds": 0,
+      "log": ""
+    },
+    {
+      "step": "neptune",
+      "status": "LOAD_COMPLETED",
+      "seconds": 4241,
+      "log": "neptune-status-ac8b0c3cb5fc495696b9ebac8793b0c3.txt"
+    },
+    {
+      "step": "dynamodb",
+      "status": "ok",
+      "seconds": 5501,
+      "log": "dynamodb.txt"
+    },
+    {
+      "step": "vectors",
+      "status": "ok",
+      "seconds": 105,
+      "log": "vectors.txt"
+    }
+  ],
+  "skippedSteps": [
+    "s3-store-conversion",
+    "s3-embed",
+    "s3-window-summary"
+  ],
+  "counts": "printed by each loader; see the per-step logs in this directory"
+}

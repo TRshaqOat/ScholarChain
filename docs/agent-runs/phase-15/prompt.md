@@ -101,3 +101,21 @@ The same rules as ruling 4 apply. Each part's report is appended verbatim to doc
        3. Run aws login immediately before load-stores.sh; it can run for 3 h or more.
    (d) Human check.sh on the final working tree (11:24 to 11:28 CST): exit 0; 845 passed, 0 failed, 10 pending (evidence/gate/check-sh-prewindow3.txt). The secret scan matched only the credential filter's own pattern text and FAKE fixture values; no raw session token and no credential value.
    (e) Window 3 goes ahead under ruling 3 at the commit that follows this ruling. From the plan until cleanup, nothing is written under docs/agent-runs/; mid-window rulings go to operations/rulings/ (ruling 3).
+
+## Human rulings 8 and 9 (Nov 19, 2026; written during cloud window 3 in operations/rulings/)
+
+8. Window 3 timing (Nov 19, 2026). Runtime applied 11:40 CST (89 added); secret set; state backup window3-apply; Neptune scholarchain-course-graph-1 resized to db.r6g.large 17:56-18:07Z and confirmed available with no pending modifications before the loads (ruling 7(c) rule 1). A deferral of the loads to 15:30 CST for connectivity was considered and not needed; the loads start about 12:20 CST. The ruling 3 runtime cap (10 h, until 21:40 CST) and the $23 month-to-date stop are unchanged.
+
+9. Window 3 schedule (Nov 19, 2026). Loads completed 15:50 CST (Neptune load 6113dd40 LOAD_COMPLETED, 34,052,689 records; DynamoDB 876,228 items; Vectors 13,023); Neptune back to db.t4g.medium 23:28Z; deploy.sh --resume exit 0; smoke PASS (smoke-20261119T235713Z). The demonstration recording moves to about 21:00 CST because of the human's availability. The ruling 3 runtime cap is extended from 10 h to 12 h (until 23:40 CST, 05:40Z Nov 20); the $23 month-to-date stop is unchanged. D-scale runs before the demonstration; item 20 is then shown from the recorded history (CloudWatch dashboard, scaling activities, ECS service events). Cleanup starts no later than 23:00 CST.
+
+## Human ruling 10 (Nov 19, 2026): cloud window 3 closed
+
+10. Window 3 ran 11:40 to 22:27 CST at c542806, inside the ruling 9 cap.
+   (a) Apply: plan 978ce305 (89 add, 0 change, 0 destroy; CPU target 15), applied 89; secret set; state backup window3-apply.
+   (b) Loads (load-stores.sh, 13:06 to 15:50): Neptune load 6113dd40 LOAD_COMPLETED, 34,052,689 records, 0 errors, about 70 min on db.r6g.large; DynamoDB 876,228 items (ArtifactRegistry 9, EntityLinkCache 287,780, ResearcherMetricCache 588,439), 0 conflicts; S3 Vectors 13,023 written, 0 rejected. The repaired status loop read every status line live (code review 2 evidence gap closed).
+   (c) Deviation: Neptune stayed on db.r6g.large from 17:56Z to 23:28Z; the downsize ran after the loads instead of during the DynamoDB step, about 1.5 h longer than planned (cost only).
+   (d) deploy.sh --resume exit 0: digest sha256:5c751b1e on all services; runtime run run-c9f26a9e for query-api and worker. Warm-up after the downsize (two 504s, then 200); smoke PASS on the first attempt (smoke-20261119T235713Z; evidence ev-927665f3, the same as window 2).
+   (e) exp-d-scale-v1 (20261120T001853Z) exit 0: 21,962 requests in 600 s, 0 errors, p50 112 ms, p95 683 ms, p99 922 ms; desired count 1 to 2 at 18:24:01 CST and 2 to 1 at 18:46:39 CST (target 15%, ruling 2); all 7 collection calls ok.
+   (f) Demonstration items 4, 11 to 15 and 19 to 22 recorded. A9 probes: guard-dangerous.sh blocked all three (recursive S3 delete, EMR terminate, ECS desired count 100) before AWS.
+   (g) Evidence archive: scratch/evidence-archive/window-3 (530 files, 12 metric series), uploaded to reports/evidence/window-3/. Cleanup runtime: plan 3352beee, 89 destroyed, 43 kept with reasons (operations/cleanup/cleanup-20261120T041658Z-runtime/); state backup window3-cleanup.
+   (h) Open for Phase 16 and 17: explain the Neptune record count (34,052,689 now, 29,054,998 in window 2's second load); service_cpu_target_percent back to 60 (ruling 6); Claude Code CLI updated from 2.1.178 to 2.1.329 on Nov 19 to run the course autograder (tool only, not a project dependency).

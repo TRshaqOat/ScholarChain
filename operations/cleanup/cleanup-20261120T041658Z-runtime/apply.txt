@@ -1,0 +1,331 @@
+[0m[1mmodule.observability.aws_cloudwatch_dashboard.runtime[0]: Destroying... [id=scholarchain-course-runtime][0m[0m
+[0m[1mmodule.network.aws_vpc_security_group_ingress_rule.alb_http["0.0.0.0/0"]: Destroying... [id=sgr-0b089ef9e45a6d503][0m[0m
+[0m[1mmodule.observability.aws_cloudwatch_metric_alarm.ecs_cpu["worker"]: Destroying... [id=scholarchain-course-worker-cpu][0m[0m
+[0m[1mmodule.network.aws_vpc_security_group_ingress_rule.neptune_from_clients["graph_evidence_api"]: Destroying... [id=sgr-00f7c669e29338091][0m[0m
+[0m[1mmodule.network.aws_vpc_security_group_egress_rule.clients_to_neptune["query_api"]: Destroying... [id=sgr-020bf844f57d418a6][0m[0m
+[0m[1mmodule.network.aws_vpc_security_group_egress_rule.clients_https["graph_evidence_api"]: Destroying... [id=sgr-0e34225c5f95f5ae5][0m[0m
+[0m[1mmodule.network.aws_vpc_security_group_egress_rule.alb_to_graph_evidence_api[0]: Destroying... [id=sgr-0c6a1d9f41ca481ef][0m[0m
+[0m[1mmodule.observability.aws_cloudwatch_metric_alarm.alb_5xx["target"]: Destroying... [id=scholarchain-course-alb-target-5xx][0m[0m
+[0m[1mmodule.observability.aws_cloudwatch_metric_alarm.unhealthy_targets["query-api"]: Destroying... [id=scholarchain-course-query-api-unhealthy-targets][0m[0m
+[0m[1mmodule.observability.aws_cloudwatch_metric_alarm.neptune_cpu[0]: Destroying... [id=scholarchain-course-neptune-cpu][0m[0m
+[0m[1mmodule.observability.aws_cloudwatch_metric_alarm.ecs_cpu["worker"]: Destruction complete after 0s[0m
+[0m[1mmodule.observability.aws_cloudwatch_metric_alarm.unhealthy_targets["query-api"]: Destruction complete after 0s[0m
+[0m[1mmodule.observability.aws_cloudwatch_metric_alarm.neptune_cpu[0]: Destruction complete after 0s[0m
+[0m[1mmodule.observability.aws_cloudwatch_metric_alarm.alb_5xx["target"]: Destruction complete after 0s[0m
+[0m[1mmodule.network.aws_vpc_security_group_ingress_rule.graph_evidence_api_from_alb[0]: Destroying... [id=sgr-02b77aed8b944c16b][0m[0m
+[0m[1mmodule.observability.aws_cloudwatch_dashboard.runtime[0]: Destruction complete after 0s[0m
+[0m[1mmodule.network.aws_vpc_security_group_ingress_rule.query_api_from_alb[0]: Destroying... [id=sgr-0656c0f58679c677f][0m[0m
+[0m[1mmodule.network.aws_vpc_security_group_ingress_rule.neptune_from_clients["query_api"]: Destroying... [id=sgr-0d6e59569a04399eb][0m[0m
+[0m[1mmodule.observability.aws_cloudwatch_metric_alarm.alb_5xx["elb"]: Destroying... [id=scholarchain-course-alb-elb-5xx][0m[0m
+[0m[1mmodule.iam[0].aws_iam_role_policy.task["query-api"]: Destroying... [id=scholarchain-course-task-query-api:runtime][0m[0m
+[0m[1mmodule.network.aws_vpc_security_group_ingress_rule.alb_http["0.0.0.0/0"]: Destruction complete after 0s[0m
+[0m[1mmodule.network.aws_vpc_security_group_egress_rule.clients_https["query_api"]: Destroying... [id=sgr-0c76e828792beb584][0m[0m
+[0m[1mmodule.observability.aws_cloudwatch_metric_alarm.alb_5xx["elb"]: Destruction complete after 0s[0m
+[0m[1mmodule.network.aws_vpc_security_group_egress_rule.clients_https["graph_evidence_api"]: Destruction complete after 0s[0m
+[0m[1mmodule.network.aws_vpc_security_group_egress_rule.clients_to_neptune["loader"]: Destroying... [id=sgr-048750d8d364bc28a][0m[0m
+[0m[1mmodule.network.aws_vpc_security_group_egress_rule.clients_to_neptune["query_api"]: Destruction complete after 0s[0m
+[0m[1mmodule.network.aws_vpc_security_group_ingress_rule.neptune_from_clients["graph_evidence_api"]: Destruction complete after 0s[0m
+[0m[1mmodule.iam[0].aws_iam_role_policy.execution["services"]: Destroying... [id=scholarchain-course-ecs-exec-services:execution][0m[0m
+[0m[1mmodule.network.aws_vpc_security_group_egress_rule.alb_to_graph_evidence_api[0]: Destruction complete after 0s[0m
+[0m[1mmodule.network.aws_vpc_security_group_egress_rule.clients_https["worker"]: Destroying... [id=sgr-08fa7e687ebf1e41e][0m[0m
+[0m[1mmodule.network.aws_vpc_security_group_egress_rule.alb_to_query_api[0]: Destroying... [id=sgr-0ce9309dc190bf137][0m[0m
+[0m[1mmodule.network.aws_vpc_security_group_egress_rule.clients_to_neptune["graph_evidence_api"]: Destroying... [id=sgr-00f6fb8f99877b498][0m[0m
+[0m[1mmodule.iam[0].aws_iam_role_policy.task["query-api"]: Destruction complete after 1s[0m
+[0m[1mmodule.network.aws_vpc_security_group_egress_rule.clients_https["loader"]: Destroying... [id=sgr-0c0245ee8044cd434][0m[0m
+[0m[1mmodule.network.aws_vpc_security_group_ingress_rule.graph_evidence_api_from_alb[0]: Destruction complete after 1s[0m
+[0m[1mmodule.network.aws_vpc_security_group_ingress_rule.neptune_from_clients["query_api"]: Destruction complete after 1s[0m
+[0m[1mmodule.network.aws_vpc_security_group_egress_rule.clients_to_neptune["loader"]: Destruction complete after 1s[0m
+[0m[1mmodule.network.aws_vpc_security_group_ingress_rule.query_api_from_alb[0]: Destruction complete after 1s[0m
+[0m[1mmodule.network.aws_vpc_security_group_egress_rule.clients_https["query_api"]: Destruction complete after 1s[0m
+[0m[1mmodule.network.aws_vpc_security_group_egress_rule.clients_to_neptune["worker"]: Destroying... [id=sgr-03bfc1488fef669d2][0m[0m
+[0m[1mmodule.observability.aws_cloudwatch_metric_alarm.unhealthy_targets["graph-evidence-api"]: Destroying... [id=scholarchain-course-graph-evidence-api-unhealthy-targets][0m[0m
+[0m[1mmodule.observability.aws_cloudwatch_metric_alarm.ecs_cpu["query-api"]: Destroying... [id=scholarchain-course-query-api-cpu][0m[0m
+[0m[1mmodule.iam[0].aws_iam_role_policy.execution["services"]: Destruction complete after 1s[0m
+[0m[1mmodule.network.aws_vpc_security_group_egress_rule.clients_to_neptune["graph_evidence_api"]: Destruction complete after 1s[0m
+[0m[1mmodule.network.aws_vpc_security_group_ingress_rule.neptune_from_clients["loader"]: Destroying... [id=sgr-095f5713d65bffa4e][0m[0m
+[0m[1mmodule.network.aws_vpc_security_group_ingress_rule.neptune_from_clients["worker"]: Destroying... [id=sgr-06de91ea2c7c7517a][0m[0m
+[0m[1mmodule.network.aws_vpc_security_group_egress_rule.clients_https["worker"]: Destruction complete after 1s[0m
+[0m[1mmodule.network.aws_vpc_security_group_egress_rule.alb_to_query_api[0]: Destruction complete after 1s[0m
+[0m[1mmodule.observability.aws_cloudwatch_metric_alarm.ecs_cpu["graph-evidence-api"]: Destroying... [id=scholarchain-course-graph-evidence-api-cpu][0m[0m
+[0m[1mmodule.iam[0].aws_iam_role_policy.task["graph-evidence-api"]: Destroying... [id=scholarchain-course-task-graph-evidence-api:runtime][0m[0m
+[0m[1mmodule.iam[0].aws_iam_role_policy.task["neptune-loader"]: Destroying... [id=scholarchain-course-task-neptune-loader:runtime][0m[0m
+[0m[1mmodule.observability.aws_cloudwatch_metric_alarm.dlq_depth[0]: Destroying... [id=scholarchain-course-jobs-dlq-not-empty][0m[0m
+[0m[1mmodule.observability.aws_cloudwatch_metric_alarm.unhealthy_targets["graph-evidence-api"]: Destruction complete after 0s[0m
+[0m[1mmodule.iam[0].aws_iam_role_policy.execution["loader"]: Destroying... [id=scholarchain-course-ecs-exec-loader:execution][0m[0m
+[0m[1mmodule.observability.aws_cloudwatch_metric_alarm.ecs_cpu["query-api"]: Destruction complete after 0s[0m
+[0m[1mmodule.network.aws_vpc_security_group_egress_rule.neptune_to_s3[0]: Destroying... [id=sgr-04062e3b8a90b6c8e][0m[0m
+[0m[1mmodule.network.aws_vpc_security_group_egress_rule.clients_https["loader"]: Destruction complete after 0s[0m
+[0m[1mmodule.iam[0].aws_iam_role_policy.task["worker"]: Destroying... [id=scholarchain-course-task-worker:runtime][0m[0m
+[0m[1mmodule.iam[0].aws_iam_role_policy.task["neptune-loader"]: Destruction complete after 0s[0m
+[0m[1mmodule.observability.aws_cloudwatch_metric_alarm.dlq_depth[0]: Destruction complete after 0s[0m
+[0m[1mmodule.iam[0].aws_iam_role_policy.task["graph-evidence-api"]: Destruction complete after 0s[0m
+[0m[1mmodule.observability.aws_cloudwatch_metric_alarm.ecs_cpu["graph-evidence-api"]: Destruction complete after 0s[0m
+[0m[1mmodule.neptune[0].aws_iam_role_policy.bulk_loader: Destroying... [id=scholarchain-course-neptune-bulk-loader:read-graph-prefix][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_instance.this: Destroying... [id=scholarchain-course-graph-1][0m[0m
+[0m[1mmodule.messaging[0].aws_sqs_queue_redrive_allow_policy.dlq: Destroying... [id=https://sqs.us-east-2.amazonaws.com/834519512655/scholarchain-course-jobs-dlq][0m[0m
+[0m[1mmodule.ecs[0].aws_lb_listener_rule.health: Destroying... [id=arn:aws:elasticloadbalancing:us-east-2:834519512655:listener-rule/app/scholarchain-course-api/1591ca5aab88eb4f/bc4b4955a55324fb/8c53f8138bf3e2dc][0m[0m
+[0m[1mmodule.network.aws_vpc_security_group_egress_rule.clients_to_neptune["worker"]: Destruction complete after 0s[0m
+[0m[1mmodule.ecs[0].aws_ecs_task_definition.neptune_loader: Destroying... [id=scholarchain-course-neptune-loader][0m[0m
+[0m[1mmodule.iam[0].aws_iam_role_policy.execution["loader"]: Destruction complete after 0s[0m
+[0m[1mmodule.ecs[0].aws_appautoscaling_policy.cpu["graph-evidence-api"]: Destroying... [id=scholarchain-course-graph-evidence-api-cpu][0m[0m
+[0m[1mmodule.network.aws_vpc_security_group_ingress_rule.neptune_from_clients["loader"]: Destruction complete after 0s[0m
+[0m[1mmodule.iam[0].aws_iam_role_policy.task["worker"]: Destruction complete after 0s[0m
+[0m[1mmodule.vectors[0].aws_s3vectors_index.this["topic-institution-summary-v1"]: Destroying...[0m[0m
+[0m[1mmodule.dynamodb[0].aws_dynamodb_table.this["RunLedger"]: Destroying... [id=scholarchain-course-RunLedger][0m[0m
+[0m[1mmodule.neptune[0].aws_iam_role_policy.bulk_loader: Destruction complete after 0s[0m
+[0m[1mmodule.network.aws_vpc_security_group_ingress_rule.neptune_from_clients["worker"]: Destruction complete after 0s[0m
+[0m[1mmodule.vectors[0].aws_s3vectors_index.this["collaboration-community-v1"]: Destroying...[0m[0m
+[0m[1mmodule.dynamodb[0].aws_dynamodb_table.this["EntityLinkCache"]: Destroying... [id=scholarchain-course-EntityLinkCache][0m[0m
+[0m[1mmodule.network.aws_vpc_security_group_egress_rule.neptune_to_s3[0]: Destruction complete after 0s[0m
+[0m[1mmodule.dynamodb[0].aws_dynamodb_table.this["QuerySession"]: Destroying... [id=scholarchain-course-QuerySession][0m[0m
+[0m[1mmodule.ecs[0].aws_ecs_task_definition.neptune_loader: Destruction complete after 0s[0m
+[0m[1mmodule.vectors[0].aws_s3vectors_index.this["researcher-profile-v1"]: Destroying...[0m[0m
+[0m[1mmodule.ecs[0].aws_lb_listener_rule.health: Destruction complete after 0s[0m
+[0m[1mmodule.dynamodb[0].aws_dynamodb_table.this["ServiceState"]: Destroying... [id=scholarchain-course-ServiceState][0m[0m
+[0m[1mmodule.vectors[0].aws_s3vectors_index.this["collaboration-community-v1"]: Destruction complete after 0s[0m
+[0m[1mmodule.vectors[0].aws_s3vectors_index.this["researcher-profile-v1"]: Destruction complete after 0s[0m
+[0m[1mmodule.ecs[0].aws_appautoscaling_policy.cpu["graph-evidence-api"]: Destruction complete after 0s[0m
+[0m[1mmodule.vectors[0].aws_s3vectors_index.this["collaboration-path-v1"]: Destroying...[0m[0m
+[0m[1mmodule.vectors[0].aws_s3vectors_index.this["paper-abstract-v1"]: Destroying...[0m[0m
+[0m[1mmodule.dynamodb[0].aws_dynamodb_table.this["ResearcherMetricCache"]: Destroying... [id=scholarchain-course-ResearcherMetricCache][0m[0m
+[0m[1mmodule.vectors[0].aws_s3vectors_index.this["topic-institution-summary-v1"]: Destruction complete after 0s[0m
+[0m[1mmodule.dynamodb[0].aws_dynamodb_table.this["EvidenceBundle"]: Destroying... [id=scholarchain-course-EvidenceBundle][0m[0m
+[0m[1mmodule.vectors[0].aws_s3vectors_index.this["collaboration-path-v1"]: Destruction complete after 0s[0m
+[0m[1mmodule.dynamodb[0].aws_dynamodb_table.this["ArtifactRegistry"]: Destroying... [id=scholarchain-course-ArtifactRegistry][0m[0m
+[0m[1mmodule.vectors[0].aws_s3vectors_index.this["paper-abstract-v1"]: Destruction complete after 0s[0m
+[0m[1mmodule.ecs[0].aws_appautoscaling_target.this["worker"]: Destroying... [id=service/scholarchain-course-runtime/worker][0m[0m
+[0m[1mmodule.ecs[0].aws_appautoscaling_target.this["worker"]: Destruction complete after 1s[0m
+[0m[1mmodule.ecs[0].aws_appautoscaling_target.this["graph-evidence-api"]: Destroying... [id=service/scholarchain-course-runtime/graph-evidence-api][0m[0m
+[0m[1mmodule.ecs[0].aws_appautoscaling_target.this["graph-evidence-api"]: Destruction complete after 0s[0m
+[0m[1mmodule.ecs[0].aws_appautoscaling_target.this["query-api"]: Destroying... [id=service/scholarchain-course-runtime/query-api][0m[0m
+[0m[1mmodule.ecs[0].aws_appautoscaling_target.this["query-api"]: Destruction complete after 0s[0m
+[0m[1mmodule.ecs[0].aws_ecs_service.this["query-api"]: Destroying... [id=arn:aws:ecs:us-east-2:834519512655:service/scholarchain-course-runtime/query-api][0m[0m
+[0m[1mmodule.dynamodb[0].aws_dynamodb_table.this["RunLedger"]: Destruction complete after 3s[0m
+[0m[1mmodule.ecs[0].aws_ecs_service.this["worker"]: Destroying... [id=arn:aws:ecs:us-east-2:834519512655:service/scholarchain-course-runtime/worker][0m[0m
+[0m[1mmodule.dynamodb[0].aws_dynamodb_table.this["EntityLinkCache"]: Destruction complete after 7s[0m
+[0m[1mmodule.ecs[0].aws_ecs_service.this["graph-evidence-api"]: Destroying... [id=arn:aws:ecs:us-east-2:834519512655:service/scholarchain-course-runtime/graph-evidence-api][0m[0m
+[0m[1mmodule.dynamodb[0].aws_dynamodb_table.this["ServiceState"]: Destruction complete after 7s[0m
+[0m[1mmodule.dynamodb[0].aws_dynamodb_table.this["QuerySession"]: Destruction complete after 7s[0m
+[0m[1mmodule.dynamodb[0].aws_dynamodb_table.this["ResearcherMetricCache"]: Destruction complete after 7s[0m
+[0m[1mmodule.dynamodb[0].aws_dynamodb_table.this["EvidenceBundle"]: Destruction complete after 7s[0m
+[0m[1mmodule.dynamodb[0].aws_dynamodb_table.this["ArtifactRegistry"]: Destruction complete after 7s[0m
+[0m[1mmodule.messaging[0].aws_sqs_queue_redrive_allow_policy.dlq: Still destroying... [id=https://sqs.us-east-2.amazonaws.com/834519512655/scholarchain-course-jobs-dlq, 00m10s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_instance.this: Still destroying... [id=scholarchain-course-graph-1, 00m10s elapsed][0m[0m
+[0m[1mmodule.ecs[0].aws_ecs_service.this["query-api"]: Still destroying... [id=arn:aws:ecs:us-east-2:834519512655:service/scholarchain-course-runtime/query-api, 00m10s elapsed][0m[0m
+[0m[1mmodule.ecs[0].aws_ecs_service.this["worker"]: Still destroying... [id=arn:aws:ecs:us-east-2:834519512655:service/scholarchain-course-runtime/worker, 00m10s elapsed][0m[0m
+[0m[1mmodule.ecs[0].aws_ecs_service.this["graph-evidence-api"]: Still destroying... [id=arn:aws:ecs:us-east-2:834519512655:serv...hain-course-runtime/graph-evidence-api, 00m10s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_instance.this: Still destroying... [id=scholarchain-course-graph-1, 00m20s elapsed][0m[0m
+[0m[1mmodule.messaging[0].aws_sqs_queue_redrive_allow_policy.dlq: Still destroying... [id=https://sqs.us-east-2.amazonaws.com/834519512655/scholarchain-course-jobs-dlq, 00m20s elapsed][0m[0m
+[0m[1mmodule.ecs[0].aws_ecs_service.this["query-api"]: Still destroying... [id=arn:aws:ecs:us-east-2:834519512655:service/scholarchain-course-runtime/query-api, 00m20s elapsed][0m[0m
+[0m[1mmodule.ecs[0].aws_ecs_service.this["worker"]: Still destroying... [id=arn:aws:ecs:us-east-2:834519512655:service/scholarchain-course-runtime/worker, 00m20s elapsed][0m[0m
+[0m[1mmodule.messaging[0].aws_sqs_queue_redrive_allow_policy.dlq: Destruction complete after 25s[0m
+[0m[1mmodule.ecs[0].aws_ecs_service.this["graph-evidence-api"]: Still destroying... [id=arn:aws:ecs:us-east-2:834519512655:serv...hain-course-runtime/graph-evidence-api, 00m20s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_instance.this: Still destroying... [id=scholarchain-course-graph-1, 00m30s elapsed][0m[0m
+[0m[1mmodule.ecs[0].aws_ecs_service.this["query-api"]: Still destroying... [id=arn:aws:ecs:us-east-2:834519512655:service/scholarchain-course-runtime/query-api, 00m30s elapsed][0m[0m
+[0m[1mmodule.ecs[0].aws_ecs_service.this["worker"]: Still destroying... [id=arn:aws:ecs:us-east-2:834519512655:service/scholarchain-course-runtime/worker, 00m30s elapsed][0m[0m
+[0m[1mmodule.ecs[0].aws_ecs_service.this["graph-evidence-api"]: Still destroying... [id=arn:aws:ecs:us-east-2:834519512655:serv...hain-course-runtime/graph-evidence-api, 00m30s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_instance.this: Still destroying... [id=scholarchain-course-graph-1, 00m40s elapsed][0m[0m
+[0m[1mmodule.ecs[0].aws_ecs_service.this["query-api"]: Still destroying... [id=arn:aws:ecs:us-east-2:834519512655:service/scholarchain-course-runtime/query-api, 00m40s elapsed][0m[0m
+[0m[1mmodule.ecs[0].aws_ecs_service.this["worker"]: Still destroying... [id=arn:aws:ecs:us-east-2:834519512655:service/scholarchain-course-runtime/worker, 00m40s elapsed][0m[0m
+[0m[1mmodule.ecs[0].aws_ecs_service.this["graph-evidence-api"]: Still destroying... [id=arn:aws:ecs:us-east-2:834519512655:serv...hain-course-runtime/graph-evidence-api, 00m40s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_instance.this: Still destroying... [id=scholarchain-course-graph-1, 00m50s elapsed][0m[0m
+[0m[1mmodule.ecs[0].aws_ecs_service.this["query-api"]: Still destroying... [id=arn:aws:ecs:us-east-2:834519512655:service/scholarchain-course-runtime/query-api, 00m50s elapsed][0m[0m
+[0m[1mmodule.ecs[0].aws_ecs_service.this["worker"]: Still destroying... [id=arn:aws:ecs:us-east-2:834519512655:service/scholarchain-course-runtime/worker, 00m50s elapsed][0m[0m
+[0m[1mmodule.ecs[0].aws_ecs_service.this["graph-evidence-api"]: Still destroying... [id=arn:aws:ecs:us-east-2:834519512655:serv...hain-course-runtime/graph-evidence-api, 00m50s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_instance.this: Still destroying... [id=scholarchain-course-graph-1, 01m00s elapsed][0m[0m
+[0m[1mmodule.ecs[0].aws_ecs_service.this["query-api"]: Still destroying... [id=arn:aws:ecs:us-east-2:834519512655:service/scholarchain-course-runtime/query-api, 01m00s elapsed][0m[0m
+[0m[1mmodule.ecs[0].aws_ecs_service.this["worker"]: Still destroying... [id=arn:aws:ecs:us-east-2:834519512655:service/scholarchain-course-runtime/worker, 01m00s elapsed][0m[0m
+[0m[1mmodule.ecs[0].aws_ecs_service.this["graph-evidence-api"]: Still destroying... [id=arn:aws:ecs:us-east-2:834519512655:serv...hain-course-runtime/graph-evidence-api, 01m00s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_instance.this: Still destroying... [id=scholarchain-course-graph-1, 01m10s elapsed][0m[0m
+[0m[1mmodule.ecs[0].aws_ecs_service.this["query-api"]: Still destroying... [id=arn:aws:ecs:us-east-2:834519512655:service/scholarchain-course-runtime/query-api, 01m10s elapsed][0m[0m
+[0m[1mmodule.ecs[0].aws_ecs_service.this["worker"]: Still destroying... [id=arn:aws:ecs:us-east-2:834519512655:service/scholarchain-course-runtime/worker, 01m10s elapsed][0m[0m
+[0m[1mmodule.ecs[0].aws_ecs_service.this["graph-evidence-api"]: Still destroying... [id=arn:aws:ecs:us-east-2:834519512655:serv...hain-course-runtime/graph-evidence-api, 01m10s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_instance.this: Still destroying... [id=scholarchain-course-graph-1, 01m20s elapsed][0m[0m
+[0m[1mmodule.ecs[0].aws_ecs_service.this["query-api"]: Still destroying... [id=arn:aws:ecs:us-east-2:834519512655:service/scholarchain-course-runtime/query-api, 01m20s elapsed][0m[0m
+[0m[1mmodule.ecs[0].aws_ecs_service.this["worker"]: Still destroying... [id=arn:aws:ecs:us-east-2:834519512655:service/scholarchain-course-runtime/worker, 01m20s elapsed][0m[0m
+[0m[1mmodule.ecs[0].aws_ecs_service.this["graph-evidence-api"]: Still destroying... [id=arn:aws:ecs:us-east-2:834519512655:serv...hain-course-runtime/graph-evidence-api, 01m20s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_instance.this: Still destroying... [id=scholarchain-course-graph-1, 01m30s elapsed][0m[0m
+[0m[1mmodule.ecs[0].aws_ecs_service.this["worker"]: Destruction complete after 1m26s[0m
+[0m[1mmodule.ecs[0].aws_ecs_service.this["query-api"]: Still destroying... [id=arn:aws:ecs:us-east-2:834519512655:service/scholarchain-course-runtime/query-api, 01m30s elapsed][0m[0m
+[0m[1mmodule.ecs[0].aws_ecs_service.this["graph-evidence-api"]: Still destroying... [id=arn:aws:ecs:us-east-2:834519512655:serv...hain-course-runtime/graph-evidence-api, 01m30s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_instance.this: Still destroying... [id=scholarchain-course-graph-1, 01m40s elapsed][0m[0m
+[0m[1mmodule.ecs[0].aws_ecs_service.this["query-api"]: Still destroying... [id=arn:aws:ecs:us-east-2:834519512655:service/scholarchain-course-runtime/query-api, 01m40s elapsed][0m[0m
+[0m[1mmodule.ecs[0].aws_ecs_service.this["graph-evidence-api"]: Still destroying... [id=arn:aws:ecs:us-east-2:834519512655:serv...hain-course-runtime/graph-evidence-api, 01m40s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_instance.this: Still destroying... [id=scholarchain-course-graph-1, 01m50s elapsed][0m[0m
+[0m[1mmodule.ecs[0].aws_ecs_service.this["query-api"]: Still destroying... [id=arn:aws:ecs:us-east-2:834519512655:service/scholarchain-course-runtime/query-api, 01m50s elapsed][0m[0m
+[0m[1mmodule.ecs[0].aws_ecs_service.this["graph-evidence-api"]: Still destroying... [id=arn:aws:ecs:us-east-2:834519512655:serv...hain-course-runtime/graph-evidence-api, 01m50s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_instance.this: Still destroying... [id=scholarchain-course-graph-1, 02m00s elapsed][0m[0m
+[0m[1mmodule.ecs[0].aws_ecs_service.this["query-api"]: Still destroying... [id=arn:aws:ecs:us-east-2:834519512655:service/scholarchain-course-runtime/query-api, 02m00s elapsed][0m[0m
+[0m[1mmodule.ecs[0].aws_ecs_service.this["graph-evidence-api"]: Still destroying... [id=arn:aws:ecs:us-east-2:834519512655:serv...hain-course-runtime/graph-evidence-api, 02m00s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_instance.this: Still destroying... [id=scholarchain-course-graph-1, 02m10s elapsed][0m[0m
+[0m[1mmodule.ecs[0].aws_ecs_service.this["query-api"]: Still destroying... [id=arn:aws:ecs:us-east-2:834519512655:service/scholarchain-course-runtime/query-api, 02m10s elapsed][0m[0m
+[0m[1mmodule.ecs[0].aws_ecs_service.this["graph-evidence-api"]: Still destroying... [id=arn:aws:ecs:us-east-2:834519512655:serv...hain-course-runtime/graph-evidence-api, 02m10s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_instance.this: Still destroying... [id=scholarchain-course-graph-1, 02m20s elapsed][0m[0m
+[0m[1mmodule.ecs[0].aws_ecs_service.this["query-api"]: Still destroying... [id=arn:aws:ecs:us-east-2:834519512655:service/scholarchain-course-runtime/query-api, 02m20s elapsed][0m[0m
+[0m[1mmodule.ecs[0].aws_ecs_service.this["graph-evidence-api"]: Still destroying... [id=arn:aws:ecs:us-east-2:834519512655:serv...hain-course-runtime/graph-evidence-api, 02m20s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_instance.this: Still destroying... [id=scholarchain-course-graph-1, 02m30s elapsed][0m[0m
+[0m[1mmodule.ecs[0].aws_ecs_service.this["query-api"]: Still destroying... [id=arn:aws:ecs:us-east-2:834519512655:service/scholarchain-course-runtime/query-api, 02m30s elapsed][0m[0m
+[0m[1mmodule.ecs[0].aws_ecs_service.this["graph-evidence-api"]: Still destroying... [id=arn:aws:ecs:us-east-2:834519512655:serv...hain-course-runtime/graph-evidence-api, 02m30s elapsed][0m[0m
+[0m[1mmodule.ecs[0].aws_ecs_service.this["query-api"]: Destruction complete after 2m38s[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_instance.this: Still destroying... [id=scholarchain-course-graph-1, 02m40s elapsed][0m[0m
+[0m[1mmodule.ecs[0].aws_ecs_service.this["graph-evidence-api"]: Destruction complete after 2m37s[0m
+[0m[1mmodule.ecs[0].aws_ecs_cluster.this: Destroying... [id=arn:aws:ecs:us-east-2:834519512655:cluster/scholarchain-course-runtime][0m[0m
+[0m[1mmodule.ecs[0].aws_ecs_task_definition.service["query-api"]: Destroying... [id=scholarchain-course-query-api][0m[0m
+[0m[1mmodule.ecs[0].aws_ecs_task_definition.service["graph-evidence-api"]: Destroying... [id=scholarchain-course-graph-evidence-api][0m[0m
+[0m[1mmodule.ecs[0].aws_ecs_task_definition.service["worker"]: Destroying... [id=scholarchain-course-worker][0m[0m
+[0m[1mmodule.ecs[0].aws_lb_listener_rule.service["graph-evidence-api"]: Destroying... [id=arn:aws:elasticloadbalancing:us-east-2:834519512655:listener-rule/app/scholarchain-course-api/1591ca5aab88eb4f/bc4b4955a55324fb/0ea9c2dd701e84fa][0m[0m
+[0m[1mmodule.ecs[0].aws_lb_listener_rule.service["query-api"]: Destroying... [id=arn:aws:elasticloadbalancing:us-east-2:834519512655:listener-rule/app/scholarchain-course-api/1591ca5aab88eb4f/bc4b4955a55324fb/89242916b826eb77][0m[0m
+[0m[1mmodule.ecs[0].aws_ecs_task_definition.service["graph-evidence-api"]: Destruction complete after 1s[0m
+[0m[1mmodule.ecs[0].aws_ecs_task_definition.service["query-api"]: Destruction complete after 1s[0m
+[0m[1mmodule.ecs[0].aws_ecs_cluster.this: Destruction complete after 1s[0m
+[0m[1mmodule.ecs[0].aws_ecs_task_definition.service["worker"]: Destruction complete after 1s[0m
+[0m[1mmodule.ecs[0].aws_lb_listener_rule.service["query-api"]: Destruction complete after 1s[0m
+[0m[1mmodule.apikey[0].aws_secretsmanager_secret.api_key: Destroying... [id=arn:aws:secretsmanager:us-east-2:834519512655:secret:scholarchain-course/api-key-Wsyv7j][0m[0m
+[0m[1mmodule.iam[0].aws_iam_role.execution["loader"]: Destroying... [id=scholarchain-course-ecs-exec-loader][0m[0m
+[0m[1mmodule.iam[0].aws_iam_role.execution["services"]: Destroying... [id=scholarchain-course-ecs-exec-services][0m[0m
+[0m[1mmodule.messaging[0].aws_sqs_queue.jobs: Destroying... [id=https://sqs.us-east-2.amazonaws.com/834519512655/scholarchain-course-jobs][0m[0m
+[0m[1mmodule.iam[0].aws_iam_role.task["graph-evidence-api"]: Destroying... [id=scholarchain-course-task-graph-evidence-api][0m[0m
+[0m[1mmodule.vectors[0].aws_s3vectors_vector_bucket.this: Destroying...[0m[0m
+[0m[1mmodule.iam[0].aws_iam_role.task["neptune-loader"]: Destroying... [id=scholarchain-course-task-neptune-loader][0m[0m
+[0m[1mmodule.iam[0].aws_iam_role.task["worker"]: Destroying... [id=scholarchain-course-task-worker][0m[0m
+[0m[1mmodule.ecs[0].aws_lb_listener_rule.service["graph-evidence-api"]: Destruction complete after 1s[0m
+[0m[1mmodule.iam[0].aws_iam_role.task["query-api"]: Destroying... [id=scholarchain-course-task-query-api][0m[0m
+[0m[1mmodule.vectors[0].aws_s3vectors_vector_bucket.this: Destruction complete after 0s[0m
+[0m[1mmodule.apikey[0].aws_secretsmanager_secret.api_key: Destruction complete after 0s[0m
+[0m[1mmodule.ecs[0].aws_lb_target_group.service["graph-evidence-api"]: Destroying... [id=arn:aws:elasticloadbalancing:us-east-2:834519512655:targetgroup/scholarchain-course-graph-eviden/c3c3882e4020d487][0m[0m
+[0m[1mmodule.ecs[0].aws_lb_target_group.service["query-api"]: Destroying... [id=arn:aws:elasticloadbalancing:us-east-2:834519512655:targetgroup/scholarchain-course-query-api/4934b2fa2576a636][0m[0m
+[0m[1mmodule.ecs[0].aws_lb_target_group.service["graph-evidence-api"]: Destruction complete after 0s[0m
+[0m[1mmodule.ecs[0].aws_lb_target_group.service["query-api"]: Destruction complete after 0s[0m
+[0m[1mmodule.ecs[0].aws_lb_listener.http: Destroying... [id=arn:aws:elasticloadbalancing:us-east-2:834519512655:listener/app/scholarchain-course-api/1591ca5aab88eb4f/bc4b4955a55324fb][0m[0m
+[0m[1mmodule.iam[0].aws_iam_role.execution["services"]: Destruction complete after 0s[0m
+[0m[1mmodule.iam[0].aws_iam_role.task["neptune-loader"]: Destruction complete after 0s[0m
+[0m[1mmodule.iam[0].aws_iam_role.task["graph-evidence-api"]: Destruction complete after 0s[0m
+[0m[1mmodule.iam[0].aws_iam_role.execution["loader"]: Destruction complete after 0s[0m
+[0m[1mmodule.iam[0].aws_iam_role.task["query-api"]: Destruction complete after 0s[0m
+[0m[1mmodule.ecs[0].aws_lb_listener.http: Destruction complete after 0s[0m
+[0m[1mmodule.ecs[0].aws_lb.this: Destroying... [id=arn:aws:elasticloadbalancing:us-east-2:834519512655:loadbalancer/app/scholarchain-course-api/1591ca5aab88eb4f][0m[0m
+[0m[1mmodule.iam[0].aws_iam_role.task["worker"]: Destruction complete after 0s[0m
+[0m[1mmodule.messaging[0].aws_sqs_queue.jobs: Destruction complete after 2s[0m
+[0m[1mmodule.messaging[0].aws_sqs_queue.dlq: Destroying... [id=https://sqs.us-east-2.amazonaws.com/834519512655/scholarchain-course-jobs-dlq][0m[0m
+[0m[1mmodule.messaging[0].aws_sqs_queue.dlq: Destruction complete after 2s[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_instance.this: Still destroying... [id=scholarchain-course-graph-1, 02m50s elapsed][0m[0m
+[0m[1mmodule.ecs[0].aws_lb.this: Still destroying... [id=arn:aws:elasticloadbalancing:us-east-2:...holarchain-course-api/1591ca5aab88eb4f, 00m10s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_instance.this: Still destroying... [id=scholarchain-course-graph-1, 03m00s elapsed][0m[0m
+[0m[1mmodule.ecs[0].aws_lb.this: Destruction complete after 17s[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_instance.this: Still destroying... [id=scholarchain-course-graph-1, 03m10s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_instance.this: Still destroying... [id=scholarchain-course-graph-1, 03m20s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_instance.this: Still destroying... [id=scholarchain-course-graph-1, 03m30s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_instance.this: Still destroying... [id=scholarchain-course-graph-1, 03m40s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_instance.this: Still destroying... [id=scholarchain-course-graph-1, 03m50s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_instance.this: Still destroying... [id=scholarchain-course-graph-1, 04m00s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_instance.this: Still destroying... [id=scholarchain-course-graph-1, 04m10s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_instance.this: Still destroying... [id=scholarchain-course-graph-1, 04m20s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_instance.this: Still destroying... [id=scholarchain-course-graph-1, 04m30s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_instance.this: Still destroying... [id=scholarchain-course-graph-1, 04m40s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_instance.this: Still destroying... [id=scholarchain-course-graph-1, 04m50s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_instance.this: Still destroying... [id=scholarchain-course-graph-1, 05m00s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_instance.this: Still destroying... [id=scholarchain-course-graph-1, 05m10s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_instance.this: Still destroying... [id=scholarchain-course-graph-1, 05m20s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_instance.this: Still destroying... [id=scholarchain-course-graph-1, 05m30s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_instance.this: Still destroying... [id=scholarchain-course-graph-1, 05m40s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_instance.this: Still destroying... [id=scholarchain-course-graph-1, 05m50s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_instance.this: Still destroying... [id=scholarchain-course-graph-1, 06m00s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_instance.this: Still destroying... [id=scholarchain-course-graph-1, 06m10s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_instance.this: Still destroying... [id=scholarchain-course-graph-1, 06m20s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_instance.this: Still destroying... [id=scholarchain-course-graph-1, 06m30s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_instance.this: Still destroying... [id=scholarchain-course-graph-1, 06m40s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_instance.this: Still destroying... [id=scholarchain-course-graph-1, 06m50s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_instance.this: Still destroying... [id=scholarchain-course-graph-1, 07m00s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_instance.this: Still destroying... [id=scholarchain-course-graph-1, 07m10s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_instance.this: Still destroying... [id=scholarchain-course-graph-1, 07m20s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_instance.this: Still destroying... [id=scholarchain-course-graph-1, 07m30s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_instance.this: Still destroying... [id=scholarchain-course-graph-1, 07m40s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_instance.this: Still destroying... [id=scholarchain-course-graph-1, 07m50s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_instance.this: Still destroying... [id=scholarchain-course-graph-1, 08m00s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_instance.this: Still destroying... [id=scholarchain-course-graph-1, 08m10s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_instance.this: Still destroying... [id=scholarchain-course-graph-1, 08m20s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_instance.this: Still destroying... [id=scholarchain-course-graph-1, 08m30s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_instance.this: Still destroying... [id=scholarchain-course-graph-1, 08m40s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_instance.this: Still destroying... [id=scholarchain-course-graph-1, 08m50s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_instance.this: Still destroying... [id=scholarchain-course-graph-1, 09m00s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_instance.this: Destruction complete after 9m8s[0m
+[0m[1mmodule.neptune[0].aws_neptune_parameter_group.this: Destroying... [id=scholarchain-course-neptune-instance][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster.this: Destroying... [id=scholarchain-course-graph][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_parameter_group.this: Destruction complete after 0s[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster.this: Still destroying... [id=scholarchain-course-graph, 00m10s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster.this: Still destroying... [id=scholarchain-course-graph, 00m20s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster.this: Still destroying... [id=scholarchain-course-graph, 00m30s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster.this: Still destroying... [id=scholarchain-course-graph, 00m40s elapsed][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster.this: Destruction complete after 40s[0m
+[0m[1mmodule.neptune[0].aws_neptune_subnet_group.this: Destroying... [id=scholarchain-course-neptune][0m[0m
+[0m[1mmodule.neptune[0].aws_iam_role.bulk_loader: Destroying... [id=scholarchain-course-neptune-bulk-loader][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_parameter_group.this: Destroying... [id=scholarchain-course-neptune-cluster][0m[0m
+[0m[1mmodule.network.aws_security_group.loader[0]: Destroying... [id=sg-0543d9ca43a93709e][0m[0m
+[0m[1mmodule.network.aws_security_group.neptune[0]: Destroying... [id=sg-04dcd10819aa7b99a][0m[0m
+[0m[1mmodule.network.aws_security_group.worker[0]: Destroying... [id=sg-08cc7e95b02b95f95][0m[0m
+[0m[1mmodule.network.aws_security_group.query_api[0]: Destroying... [id=sg-0ade36d4381c5ac7b][0m[0m
+[0m[1mmodule.network.aws_security_group.alb[0]: Destroying... [id=sg-05567d1e62c11c9d2][0m[0m
+[0m[1mmodule.network.aws_security_group.graph_evidence_api[0]: Destroying... [id=sg-0e9e35bce1eb9d920][0m[0m
+[0m[1mmodule.neptune[0].aws_neptune_subnet_group.this: Destruction complete after 1s[0m
+[0m[1mmodule.neptune[0].aws_neptune_cluster_parameter_group.this: Destruction complete after 1s[0m
+[0m[1mmodule.neptune[0].aws_iam_role.bulk_loader: Destruction complete after 1s[0m
+[0m[1mmodule.network.aws_security_group.alb[0]: Destruction complete after 1s[0m
+[0m[1mmodule.network.aws_security_group.neptune[0]: Destruction complete after 1s[0m
+[0m[1mmodule.network.aws_security_group.loader[0]: Destruction complete after 1s[0m
+[0m[1mmodule.network.aws_security_group.worker[0]: Destruction complete after 1s[0m
+[0m[1mmodule.network.aws_security_group.query_api[0]: Destruction complete after 1s[0m
+[0m[1mmodule.network.aws_security_group.graph_evidence_api[0]: Destruction complete after 1s[0m
+[0m[1m[32m
+Apply complete! Resources: 0 added, 0 changed, 89 destroyed.[0m
+[0m[1m[32m
+Outputs:
+
+[0maccount_id = "834519512655"
+codebuild_project_name = "scholarchain-course-services-image"
+codebuild_source_prefix = "artifacts/codebuild/source/"
+data_bucket_name = "scholarchain-course-data-834519512655-us-east-2"
+data_bucket_prefixes = {
+  "artifacts" = "artifacts/"
+  "curated" = "curated/"
+  "graph" = "graph/"
+  "logs" = "logs/"
+  "raw" = "raw/"
+  "reports" = "reports/"
+  "runs" = "runs/"
+  "semantic_context" = "semantic-context/"
+  "vectors" = "vectors/"
+}
+ecr_repository_name = "scholarchain-course-services"
+ecr_repository_url = "834519512655.dkr.ecr.us-east-2.amazonaws.com/scholarchain-course-services"
+emr = {
+  "artifacts_prefix" = "artifacts/jobs/"
+  "core_instance_count" = 2
+  "core_security_group_id" = "sg-045cdc6a597240486"
+  "instance_profile" = "scholarchain-course-emr-instance"
+  "instance_type" = "m6g.xlarge"
+  "log_uri" = "s3://scholarchain-course-data-834519512655-us-east-2/logs/emr/"
+  "primary_instance_count" = 1
+  "primary_security_group_id" = "sg-06850b56e702003b3"
+  "release_label" = "emr-spark-8.0.0"
+  "service_role" = "scholarchain-course-emr-service"
+  "subnet_id" = "subnet-01ba5443d067a76f4"
+}
+log_group_names = {
+  "codebuild" = "/scholarchain/scholarchain-course/codebuild/services-image"
+  "graph-evidence-api" = "/scholarchain/scholarchain-course/ecs/graph-evidence-api"
+  "neptune-loader" = "/scholarchain/scholarchain-course/ecs/neptune-loader"
+  "query-api" = "/scholarchain/scholarchain-course/ecs/query-api"
+  "worker" = "/scholarchain/scholarchain-course/ecs/worker"
+}
+name_prefix = "scholarchain-course"
+private_subnet_ids = [
+  "subnet-08e8a7e37da4af95f",
+  "subnet-0d62d88d3791db7bc",
+]
+public_subnet_ids = [
+  "subnet-01ba5443d067a76f4",
+  "subnet-0e94ae0d8ed9a3c09",
+]
+region = "us-east-2"
+runtime_enabled = false
+vpc_id = "vpc-0fd8e31fa7b48c139"

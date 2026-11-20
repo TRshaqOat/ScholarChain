@@ -1,0 +1,52 @@
+    plan file /Users/achyutpatel/Developer/Cloud/ScholarChain/scratch/plans/20261119T173346Z-c5428063732a/plan.tfplan
+==> STEP approval
+==> OK plan checksum approved: 978ce3059dc6b039e7c1bd9361c896838ea568dea9b68164ae0ff2a02e4b0bb6
+==> STEP clean-tree
+==> OK clean-tree at c5428063732af5f7a5279c215dc2a52b89f64f16
+==> STEP target
+==> TARGET account=834519512655 region=us-east-2 profile=scholarchain-sdk
+==> STEP apply
+    SKIPPED (--resume)
+==> STEP terraform-outputs
+==> OK outputs for account 834519512655
+==> STEP secret-value
+==> OK secret has a version (value not read)
+==> STEP force-new-deployment
+query-api
+graph-evidence-api
+worker
+==> STEP wait-stable
+    query-api deployments/rollout/running/desired: 2	IN_PROGRESS	0	1
+    query-api deployments/rollout/running/desired: 2	IN_PROGRESS	0	1
+    query-api deployments/rollout/running/desired: 2	IN_PROGRESS	0	1
+    query-api deployments/rollout/running/desired: 1	COMPLETED	1	1
+    graph-evidence-api deployments/rollout/running/desired: 1	COMPLETED	1	1
+    worker deployments/rollout/running/desired: 2	IN_PROGRESS	1	1
+    query-api deployments/rollout/running/desired: 1	COMPLETED	1	1
+    graph-evidence-api deployments/rollout/running/desired: 1	COMPLETED	1	1
+    worker deployments/rollout/running/desired: 1	IN_PROGRESS	1	1
+    query-api deployments/rollout/running/desired: 1	COMPLETED	1	1
+    graph-evidence-api deployments/rollout/running/desired: 1	COMPLETED	1	1
+    worker deployments/rollout/running/desired: 1	IN_PROGRESS	1	1
+    query-api deployments/rollout/running/desired: 1	COMPLETED	1	1
+    graph-evidence-api deployments/rollout/running/desired: 1	COMPLETED	1	1
+    worker deployments/rollout/running/desired: 1	IN_PROGRESS	1	1
+    query-api deployments/rollout/running/desired: 1	COMPLETED	1	1
+    graph-evidence-api deployments/rollout/running/desired: 1	COMPLETED	1	1
+    worker deployments/rollout/running/desired: 1	IN_PROGRESS	1	1
+    query-api deployments/rollout/running/desired: 1	COMPLETED	1	1
+    graph-evidence-api deployments/rollout/running/desired: 1	COMPLETED	1	1
+    worker deployments/rollout/running/desired: 1	COMPLETED	1	1
+==> OK services stable
+==> STEP verify-digests
+    query-api arn:aws:ecs:us-east-2:834519512655:task-definition/scholarchain-course-query-api:2 sha256:5c751b1e1341fd9dd86101cdc8fffc9b8b9c91284b83ec1757758218588047ea
+    graph-evidence-api arn:aws:ecs:us-east-2:834519512655:task-definition/scholarchain-course-graph-evidence-api:2 sha256:5c751b1e1341fd9dd86101cdc8fffc9b8b9c91284b83ec1757758218588047ea
+    worker arn:aws:ecs:us-east-2:834519512655:task-definition/scholarchain-course-worker:2 sha256:5c751b1e1341fd9dd86101cdc8fffc9b8b9c91284b83ec1757758218588047ea
+==> OK running digests equal sha256:5c751b1e1341fd9dd86101cdc8fffc9b8b9c91284b83ec1757758218588047ea
+==> STEP runtime-run-ids
+    query-api runtime run run-c9f26a9ecfe83c96526d50d79d99fd67
+    worker runtime run run-c9f26a9ecfe83c96526d50d79d99fd67
+==> OK query-api and worker share one runtime run ID
+==> STEP record
+==> RELEASE record=/Users/achyutpatel/Developer/Cloud/ScholarChain/operations/releases/release-20261119T233215Z-c5428063732a.json commit=c5428063732af5f7a5279c215dc2a52b89f64f16 plan=978ce3059dc6b039e7c1bd9361c896838ea568dea9b68164ae0ff2a02e4b0bb6
+==> OK deploy complete; next: scripts/smoke-test.sh

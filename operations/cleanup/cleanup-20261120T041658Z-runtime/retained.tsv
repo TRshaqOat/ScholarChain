@@ -1,0 +1,43 @@
+module.build.aws_cloudwatch_log_group.codebuild	log groups: logs kept as evidence (14-day retention)
+module.build.aws_codebuild_project.services_image	kept by this stage
+module.build.aws_ecr_lifecycle_policy.services	ECR: image history for reproduction (force_delete=false)
+module.build.aws_ecr_repository.services	ECR: image history for reproduction (force_delete=false)
+module.build.aws_iam_role.codebuild	kept by this stage
+module.build.aws_iam_role_policy.codebuild	kept by this stage
+module.data.aws_s3_bucket.data	data bucket: grading evidence until the instructor approves the archive (force_destroy=false)
+module.data.aws_s3_bucket_lifecycle_configuration.data	data bucket: grading evidence until the instructor approves the archive (force_destroy=false)
+module.data.aws_s3_bucket_ownership_controls.data	data bucket: grading evidence until the instructor approves the archive (force_destroy=false)
+module.data.aws_s3_bucket_policy.data	data bucket: grading evidence until the instructor approves the archive (force_destroy=false)
+module.data.aws_s3_bucket_public_access_block.data	data bucket: grading evidence until the instructor approves the archive (force_destroy=false)
+module.data.aws_s3_bucket_server_side_encryption_configuration.data	data bucket: grading evidence until the instructor approves the archive (force_destroy=false)
+module.data.aws_s3_bucket_versioning.data	data bucket: grading evidence until the instructor approves the archive (force_destroy=false)
+module.emr.aws_iam_instance_profile.instance	kept by this stage
+module.emr.aws_iam_role.instance	kept by this stage
+module.emr.aws_iam_role.service	kept by this stage
+module.emr.aws_iam_role_policy.instance_s3	kept by this stage
+module.emr.aws_iam_role_policy.service_pass_role	kept by this stage
+module.emr.aws_iam_role_policy_attachment.service_v2	kept by this stage
+module.emr.aws_security_group.core	kept by this stage
+module.emr.aws_security_group.primary	kept by this stage
+module.emr.aws_vpc_security_group_egress_rule.emr_all["core"]	kept by this stage
+module.emr.aws_vpc_security_group_egress_rule.emr_all["primary"]	kept by this stage
+module.network.aws_default_security_group.this	kept by this stage
+module.network.aws_internet_gateway.this	kept by this stage
+module.network.aws_route.public_internet	kept by this stage
+module.network.aws_route_table.private	kept by this stage
+module.network.aws_route_table.public	kept by this stage
+module.network.aws_route_table_association.private[0]	kept by this stage
+module.network.aws_route_table_association.private[1]	kept by this stage
+module.network.aws_route_table_association.public[0]	kept by this stage
+module.network.aws_route_table_association.public[1]	kept by this stage
+module.network.aws_subnet.private[0]	kept by this stage
+module.network.aws_subnet.private[1]	kept by this stage
+module.network.aws_subnet.public[0]	kept by this stage
+module.network.aws_subnet.public[1]	kept by this stage
+module.network.aws_vpc.this	kept by this stage
+module.network.aws_vpc_endpoint.dynamodb	kept by this stage
+module.network.aws_vpc_endpoint.s3	kept by this stage
+module.observability.aws_cloudwatch_log_group.ecs["graph-evidence-api"]	log groups: logs kept as evidence (14-day retention)
+module.observability.aws_cloudwatch_log_group.ecs["neptune-loader"]	log groups: logs kept as evidence (14-day retention)
+module.observability.aws_cloudwatch_log_group.ecs["query-api"]	log groups: logs kept as evidence (14-day retention)
+module.observability.aws_cloudwatch_log_group.ecs["worker"]	log groups: logs kept as evidence (14-day retention)

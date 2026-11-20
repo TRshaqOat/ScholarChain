@@ -1,0 +1,124 @@
+{
+  "schemaVersion": "exp-d-summary-v1",
+  "startedAt": "2026-11-20T00:18:56.681Z",
+  "abortRule": {
+    "scope": "per request kind (evidence, node, neighbors); sliding window within a level, whole level between levels; preflight GET of each path before the first level",
+    "errorRateAbove": 0.05,
+    "windowSeconds": 10.0,
+    "minRequestsPerKind": 20,
+    "consecutive5xxOrTransport": 10
+  },
+  "preflight": {
+    "requests": 6,
+    "non2xx": 0,
+    "raw": "preflight.json"
+  },
+  "levels": [
+    {
+      "concurrency": 8,
+      "startedAt": "2026-11-20T00:19:00.723Z",
+      "endedAt": "2026-11-20T00:29:00.975Z",
+      "seconds": 600,
+      "elapsedSeconds": 600.252,
+      "throughputPerSecond": 36.59,
+      "requestCapReached": false,
+      "stoppedByAbortRule": false,
+      "requests": 21962,
+      "errors": 0,
+      "errorRate": 0.0,
+      "statusCounts": {
+        "200": 21962
+      },
+      "maxConsecutive5xxOrTransport": 0,
+      "latencyMsAll": {
+        "p50": 112.3,
+        "p95": 682.9,
+        "p99": 922.3
+      },
+      "latencyMs2xx": {
+        "p50": 112.3,
+        "p95": 682.9,
+        "p99": 922.3
+      },
+      "byKind": {
+        "evidence": {
+          "requests": 7318,
+          "errors": 0,
+          "errorRate": 0.0,
+          "statusCounts": {
+            "200": 7318
+          },
+          "maxConsecutive5xxOrTransport": 0,
+          "latencyMsAll": {
+            "p50": 72.3,
+            "p95": 90.3,
+            "p99": 107.3
+          },
+          "latencyMs2xx": {
+            "p50": 72.3,
+            "p95": 90.3,
+            "p99": 107.3
+          }
+        },
+        "neighbors": {
+          "requests": 7323,
+          "errors": 0,
+          "errorRate": 0.0,
+          "statusCounts": {
+            "200": 7323
+          },
+          "maxConsecutive5xxOrTransport": 0,
+          "latencyMsAll": {
+            "p50": 434.8,
+            "p95": 848.0,
+            "p99": 1097.6
+          },
+          "latencyMs2xx": {
+            "p50": 434.8,
+            "p95": 848.0,
+            "p99": 1097.6
+          }
+        },
+        "node": {
+          "requests": 7321,
+          "errors": 0,
+          "errorRate": 0.0,
+          "statusCounts": {
+            "200": 7321
+          },
+          "maxConsecutive5xxOrTransport": 0,
+          "latencyMsAll": {
+            "p50": 111.3,
+            "p95": 271.8,
+            "p99": 381.3
+          },
+          "latencyMs2xx": {
+            "p50": 111.3,
+            "p95": 271.8,
+            "p99": 381.3
+          }
+        }
+      },
+      "ecsBefore": {
+        "desired": 1,
+        "running": 1,
+        "pending": 0
+      },
+      "ecsAfter": {
+        "desired": 2,
+        "running": 2,
+        "pending": 0
+      }
+    }
+  ],
+  "aborted": null,
+  "abortedAt": null,
+  "abortWindowCounts": null,
+  "error": null,
+  "ecsPostObserve": {
+    "desired": 1,
+    "running": 1,
+    "pending": 0
+  },
+  "endedAt": "2026-11-20T00:54:03.095Z"
+}

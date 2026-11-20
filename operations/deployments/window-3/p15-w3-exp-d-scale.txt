@@ -1,0 +1,24 @@
+==> STEP clean-tree
+==> OK clean-tree at c5428063732af5f7a5279c215dc2a52b89f64f16
+==> STEP target
+==> TARGET account=834519512655 region=us-east-2 profile=scholarchain-sdk
+==> STEP run exp-d-scale-v1
+==> OK API key read (not printed)
+    preflight requests=6 non2xx=0
+    ecs before-c8              desired=1 running=1 pending=0
+    level c=8 requests=21962 elapsed=600.3s rps=36.59 errors=0 p50=112.3 p95=682.9 p99=922.3
+      evidence  requests=7318 errors=0 p50=72.3 p95=90.3 p99=107.3
+      neighbors requests=7323 errors=0 p50=434.8 p95=848.0 p99=1097.6
+      node      requests=7321 errors=0 p50=111.3 p95=271.8 p99=381.3
+    ecs after-c8               desired=2 running=2 pending=0
+    ecs post-observe           desired=1 running=1 pending=0
+==> EXP-D levels=1 aborted=None error=None exit=0
+    collect scaling-activities   ok
+    collect scaling-policies     ok
+    collect ecs-service          ok
+    collect alarms               ok
+    collect alarm-history-0      ok
+    collect alarm-history-1      ok
+    collect metrics              ok
+==> EXPERIMENT id=exp-d-scale-v1 record=/Users/achyutpatel/Developer/Cloud/ScholarChain/experiments/results/exp-d-scale-v1/20261120T001853Z/run-record.json exit=0
+==> OK experiment complete

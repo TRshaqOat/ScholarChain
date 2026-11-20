@@ -1,0 +1,19 @@
+==> STEP target
+==> TARGET account=834519512655 region=us-east-2 profile=scholarchain-sdk
+==> STEP terraform-outputs
+==> OK outputs for account 834519512655
+==> STEP api-key
+==> OK API key read (not printed)
+==> STEP healthz
+==> OK healthz ok
+==> STEP readyz
+==> OK readyz ready
+==> STEP query
+==> OK query qry-c08ceb31eb51c6547cda9e522e3d1427 claims=2 evidence=ev-927665f3bbac87eb60685e50cfeb8f9b
+==> STEP evidence
+==> OK evidence ev-927665f3bbac87eb60685e50cfeb8f9b COAUTHOR_EDGE
+==> STEP idempotent
+==> OK idempotent same queryId and answerHash
+==> STEP auth-error
+==> OK auth-error UNAUTHORIZED
+==> SMOKE result=PASS record=/Users/achyutpatel/Developer/Cloud/ScholarChain/operations/releases/smoke-20261119T235713Z.json query=qry-c08ceb31eb51c6547cda9e522e3d1427
