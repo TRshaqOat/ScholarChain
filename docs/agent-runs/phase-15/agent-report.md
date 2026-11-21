@@ -528,3 +528,122 @@ No aws or aws-api MCP call, no Bedrock or Haiku call, no git, no terraform, no s
 **NEXT GATE:** Code review 3 (one round, separate session), then the human's check.sh, plan review, and apply-path approval before experiment E.
 
 Not checked: fmt, validate and plan were not run, per the session rules. The only risk is that live autoscaling stays at 15 until this is applied.
+
+## Work order 5 part A (documentation-engineer): docs/evaluation.md
+
+STATUS: COMPLETE
+OWNER: documentation-engineer
+WORK ORDER: Phase 15+16 work order 5 part A (docs/agent-runs/phase-15/prompt.md lines 214-259), under rulings 1-15. Write docs/evaluation.md for spec Phase 16 evaluation groups 1-7 from committed evidence, with two subsections marked "Pending (work order 5 part B)".
+
+FILES CREATED:
+- /Users/achyutpatel/Developer/Cloud/ScholarChain/docs/evaluation.md (509 lines)
+
+FILES MODIFIED: none
+FILES DELETED: none
+
+COMMANDS RUN: none. Only the Read tool was used. No Bash, git, aws, terraform, sbt, python, Bedrock or MCP call.
+
+COMMANDS REPLAYED: none. The work order forbids Bash. The regeneration commands in section 7.1 (derive-tables.py and summarize-exp-e.py, each with and without `--self-test`) were copied from the scripts' usage text and were not run; the human records the result at the gate.
+
+TEST RESULTS: none run. No Scala or sbt source changed.
+
+VALIDATION RESULTS:
+- Every number in the file was read from the source it cites. The 845 total in check-sh-wo4.txt was checked: the eight per-project totals (191, 141, 122, 115, 111, 70, 49, 46) add up to 845, with 10 pending.
+- The removal rates in the work order were each confirmed in that phase's gate file: Phase 9 43/73, Phase 10 15/100, Phase 11 12/99.
+- Link check: internal paths are written as code spans, not Markdown links. No external link check was done (no network). Some cited paths were not opened; they are named only as cited by files that were opened:
+  - `operations/plans/20261117T201324Z-506eddf46f23-APPROVED.txt`
+  - `operations/releases/release-20261116T062349Z-d33ce8e8d507.json`
+  - `operations/releases/release-20261117T232233Z-506eddf46f23.json`
+  - `operations/releases/smoke-20261118T061612Z.json`
+  - `operations/pipeline-runs/20261117T045335Z-fraction25`
+  - `docs/agent-runs/phase-14/evidence/window-1/p14-window1-results.tsv`
+  - `modules/spark/JOBS.md`
+  - `experiments/benchmark/benchmark-questions-v1.csv` (path only, not read)
+
+### Source files cited, per group
+1. Entity resolution:
+   - docs/agent-runs/phase-05/human-gate.md
+   - docs/agent-runs/phase-05/evidence/eval-er-v1/metrics.json
+   - docs/agent-runs/phase-05/evidence/eval-er-v2/metrics.json
+   - docs/agent-runs/phase-06/human-gate.md (refusal tiers)
+   - docs/agent-runs/phase-09/human-gate.md (adjudication demonstration)
+2. Graph correctness:
+   - docs/agent-runs/phase-15/evidence/gate/check-sh-wo4.txt (ruling 14 point 8)
+   - docs/agent-runs/phase-06/human-gate.md, phase-07/human-gate.md, phase-09/human-gate.md, phase-10/human-gate.md
+   - operations/pipeline-runs/store-load-20261119T190616Z/neptune-status-ac8b0c3cb5fc495696b9ebac8793b0c3.txt
+   - ruling 10(b) and 10(d)
+3. Retrieval:
+   - experiments/derived/exp-e/exp-e-summary.md and exp-e-summary.csv
+   - experiments/manifests/exp-e-retrieval-modes-v1.json
+   - rulings 6, 12(h), 14; Phase 14 ruling 31
+   - phase-07/human-gate.md and phase-09/human-gate.md (earlier retrieval smoke tests)
+4. Answer quality:
+   - docs/agent-runs/phase-09/human-gate.md, phase-10/human-gate.md, phase-11/human-gate.md
+   - experiments/derived/exp-e/exp-e-summary.csv
+   - experiments/analysis/summarize-exp-e.py (how the counts are defined)
+   - check-sh-wo4.txt (pending verifier tests)
+5. Performance and elasticity:
+   - experiments/derived/exp-a/, size-scaling/, exp-d/, exp-d-scale/ and exp-f/ (each README.md), plus experiments/derived/README.md
+   - operations/deployments/window-2/post-exp-d-cloudwatch.txt
+   - Phase 14 rulings 21, 22, 38, 42-48
+   - rulings 2, 10, 13(c), 13(e), 14 point 9
+6. Agentic factory:
+   - docs/agent-runs/factory-metrics.md
+   - human-gate.md of phases 01, 04, 05, 06, 07, 09, 10, 11, 12, 14
+   - Phase 14 ruling 13; rulings 5, 6, 7, 10(f), 12, 13; ruling 15 point 4
+   - check-sh-wo4.txt (hook self-tests)
+7. Reproducibility:
+   - check-sh-wo4.txt
+   - phase-04/human-gate.md, phase-06/human-gate.md, phase-12/human-gate.md, phase-14/human-gate.md
+   - Phase 14 rulings 3, 11, 39; ruling 10(a) and 10(d)
+   - experiments/derived/size-scaling/README.md
+   - experiments/analysis/derive-tables.py and summarize-exp-e.py (usage text)
+
+### Pending subsections left for part B
+- Section 3.2: E recall at 5 and 10, and MRR, per mode.
+- Section 4.2: E mean usefulness and clarity per mode.
+- Section 5.7: settled cost of windows 2 and 3 and of E. Window 1's 3.32 USD (Phase 14 ruling 22) and the recorded estimates and month-to-date readings are already in the file.
+
+Matching rows in the "Missing data" table are also marked Pending (work order 5 part B).
+
+### Sources that disagreed with the work order
+None of the work order's figures disagreed with its sources. Disagreements between sources, stated in the file:
+- **Phase 11 BLOCKED-ON count.** factory-metrics' status column shows 1 BLOCKED-ON (domain-engineer repair-01 D). The Phase 11 gate lists 2 (WO3, and repair-01 Part D for D8). The file uses the gate's 2, which gives 10 BLOCKED-ON events in total.
+- **Manual edits.** factory-metrics' "manual edits" column has non-zero values in Phases 09, 11 and 12. Those phases' gates state no manual edits to agent-owned files, and the file does not define the column's unit.
+- **CloudWatch export.** post-exp-d-cloudwatch.txt headers say "UTC", but its timestamps carry a -06:00 offset. Ruling 2's "20 to 27 percent" ECS CPU is the file's 19.8 to 26.6 percent, rounded.
+
+### Neptune record-count finding
+Open.
+- The window 3 load (6113dd40) on a newly applied cluster recorded 34,052,689 records, 0 duplicates and 0 errors.
+- Window 2's first load (153fcdc9) was cancelled after 5,059,443 records, with the vertex files loaded and the edge files not (OUT_OF_MEMORY_ERROR).
+- Window 2's second load (08a704ef) recorded 29,054,998 records and 0 duplicates into the partly loaded cluster.
+- Both windows loaded the same store run, run-1d6a86491812ff94887270c1ab885e69.
+
+The evidence fits this hypothesis: the second load neither counted nor reported as duplicates the elements the first load had already written (Phase 14 ruling 43). Two things remain unexplained:
+- 34,052,689 - 29,054,998 = 4,997,691, which is 61,752 short of 5,059,443.
+- The loader's counting unit is not documented in committed evidence. The Phase 7 validator counted 3,635,231 elements in the same store run, so a loader "record" is not one vertex or edge row.
+
+Both clusters are destroyed, so a per-label count can no longer settle it.
+
+### Deviations
+- The work order allows Read, Grep and Glob, but Grep and Glob were not available in this session. Files were found by reading known or cited paths and the derive-tables.py source. Some files that a search would have found may have been missed. One example: a validator run on EMR outputs is listed as "not found in the sources read".
+- Nothing under labels/, scratch/, secrets/ or any e-labelling path was opened. No label or rating was produced, suggested or read.
+
+ASSUMPTIONS:
+- First-pass acceptance counts only the y/n cells of the factory-metrics rows that are not code-reviewer rows (64/101). Rows marked "-" or "?" are excluded.
+- Severity sums (2 critical / 34 major / 148 minor) cover the known cells only.
+- In section 4.1, the E "removed share" is removed / (verified + partially supported + removed). Verified and partially supported come from the result records and removed from the audit records, as summarize-exp-e.py reads them.
+- The 10 pending tests are attributed to the 141-test, 20-suite project; this matches the Phase 11 gate's 20 suites.
+
+RISKS:
+- The Phase 15 factory rows are taken from ruling 15 point 4 and the review counts in the rulings, not from factory-metrics, which has no Phase 15 rows yet.
+- The D18 to D20 mapping to specific pending test names is not certain. The file quotes the pending test names without assigning IDs.
+- run.json under store-load-20261119T190616Z contains the AWS account ID. It was not copied into docs/evaluation.md.
+
+MANUAL ACTION REQUIRED:
+- The human records the regeneration result for derive-tables.py and summarize-exp-e.py at the gate.
+- Part B fills sections 3.2, 4.2 and 5.7 after labels/relevance-e-v1.csv, labels/ratings-e-v1.csv, experiments/derived/exp-e-labelled/ and ruling 16 are committed.
+
+BLOCKED-ON OWNER: none
+BLOCKED-ON EVIDENCE: none
+NEXT GATE: work order 5 part B (session 10), then code review 5 of the whole file (session 11, Ponytail OFF), link check, evidence review.
