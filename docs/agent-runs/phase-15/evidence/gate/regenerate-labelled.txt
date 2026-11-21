@@ -1,0 +1,5 @@
+== labelled summary regeneration with the committed key copy, 2026-11-21 17:22:31 CST, HEAD cdb9578
+argument: --raw experiments/results/exp-e-retrieval-modes-v1/20261120T093705Z//raw --keys docs/agent-runs/phase-15/evidence/exp-e-keys (output to a temporary folder, then compared)
+wrote /tmp/exp-e-labelled-check.MLIk/exp-e-summary.csv and .md and exp-e-quality.csv
+summarize exit 0
+IDENTICAL: every file byte-identical to the committed experiments/derived/exp-e-labelled
