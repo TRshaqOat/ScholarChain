@@ -1,0 +1,43 @@
+== Cost Explorer read 2026-11-21 17:00:48 CST; UTC billing days; credits and refunds excluded
+--- month to date before credits
+16.8378173179
+--- per UTC day and service (0.01 USD or more)
+2026-11-14	Claude Haiku 4.5 (Amazon Bedrock Edition)	0.46
+2026-11-16	EC2 - Other	0.08
+2026-11-16	Amazon Elastic Compute Cloud - Compute	1.1
+2026-11-16	Amazon Elastic MapReduce	0.18
+2026-11-16	Amazon Simple Storage Service	0.13
+2026-11-16	Amazon Virtual Private Cloud	0.04
+2026-11-17	AWS Cost Explorer	0.02
+2026-11-17	Amazon DynamoDB	0.15
+2026-11-17	EC2 - Other	0.1
+2026-11-17	Amazon Elastic Compute Cloud - Compute	1.53
+2026-11-17	Amazon Elastic Container Service	0.19
+2026-11-17	Amazon Elastic Load Balancing	0.09
+2026-11-17	Amazon Elastic MapReduce	0.42
+2026-11-17	Amazon Simple Storage Service	0.2
+2026-11-17	Amazon Virtual Private Cloud	0.11
+2026-11-18	AWS Cost Explorer	0.03
+2026-11-18	AWS Secrets Manager	0.01
+2026-11-18	Amazon DynamoDB	0.41
+2026-11-18	Amazon Elastic Container Service	2.14
+2026-11-18	Amazon Elastic Load Balancing	0.41
+2026-11-18	Amazon Neptune	0.67
+2026-11-18	Amazon Simple Storage Service	0.04
+2026-11-18	Amazon Virtual Private Cloud	0.45
+2026-11-18	Claude Haiku 4.5 (Amazon Bedrock Edition)	0.04
+2026-11-19	AWS Cost Explorer	0.02
+2026-11-19	Amazon DynamoDB	0.56
+2026-11-19	Amazon Elastic Container Service	0.1
+2026-11-19	Amazon Elastic Load Balancing	0.16
+2026-11-19	Amazon Neptune	2.01
+2026-11-19	Amazon Simple Storage Service	0.04
+2026-11-19	Amazon Virtual Private Cloud	0.07
+2026-11-19	Claude Haiku 4.5 (Amazon Bedrock Edition)	0.02
+2026-11-20	AWS Cost Explorer	0.02
+2026-11-20	Amazon Elastic Container Service	0.53
+2026-11-20	Amazon Elastic Load Balancing	0.1
+2026-11-20	Amazon Neptune	0.02
+2026-11-20	Amazon Simple Storage Service	0.02
+2026-11-20	Amazon Virtual Private Cloud	0.11
+2026-11-20	Claude Haiku 4.5 (Amazon Bedrock Edition)	0.36

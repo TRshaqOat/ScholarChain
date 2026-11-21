@@ -257,3 +257,59 @@ Report (the orchestrator appends it verbatim to docs/agent-runs/phase-15/agent-r
 - any source that disagreed with this work order;
 - the Neptune record-count finding;
 - deviations (expected: none).
+
+## Ruling 16 (human, Nov 21, 2026): experiment E labels, labelled results, settled costs
+
+1. Labels. On Nov 21, 2026 the human labelled all 101 pooled retrieved items for relevance (1 or 0) in labels/relevance-e-v1.csv and rated all 30 answers for usefulness and clarity (1 to 5) in labels/ratings-e-v1.csv. Counts-only check: 101 rows, 0 blank, 0 invalid; 30 rows, 0 blank, 0 invalid. The values were entered with a display-only labeller kept outside the repo at ~/scholarchain-evidence/tools/scholarchain-e-labeller.html (sha256 2b01bffb9b7983dfe6630f641e33bd78b79eee4dab2cd52ef7b0ce5ac6b496cb; built by Claude in the web chat on Nov 20; it shows the sheets as written and never suggests a label or a score). The human wrote the rating anchors before rating; they are saved as evidence/gate/e-rating-anchors.txt. No label or rating value was shown to Claude or to any agent before this commit.
+
+2. Labelled summary. summarize-exp-e.py was run with the E2 argument (experiments/results/exp-e-retrieval-modes-v1/20261120T093705Z//raw), the keys and both label files; exit 0. Outputs: experiments/derived/exp-e-labelled/ (exp-e-summary.md, exp-e-summary.csv, exp-e-quality.csv); tool-generated, not hand-edited (ruling 14 point 7). Retrieval quality over 9 scored questions per mode (per mode: 1 question without retrieved items, 0 incompletely labelled, 0 without a relevant item):
+   - fused: recall at 5 0.787, recall at 10 0.8241, MRR 0.4926;
+   - graph-only: recall at 5 0.5648, recall at 10 0.6019, MRR 0.4556;
+   - vector-only: recall at 5 0.3704, recall at 10 0.3704, MRR 0.6111.
+   Answer ratings over 10 answers per mode: fused usefulness 4.4, clarity 3.6; graph-only usefulness 4.6, clarity 3.6; vector-only usefulness 1.9, clarity 1.9.
+   Reading notes for the write-up: recall at K is capped at the bundle size (mean list length 8.6, 6.2 and 3.7; ruling 6, m5), which bounds vector-only's recall; vector-only has the highest MRR and the lowest recall over short lists; one run of 10 questions and one labeller, so differences are indicative, not significant.
+
+3. Abstention rule and vector-only usefulness. All 10 vector-only answers abstained (AMBIGUOUS_RESEARCHER 1, NO_VERIFIED_CLAIM 9); fused and graph-only abstained once each (AMBIGUOUS_RESEARCHER). The anchors give an answer that says it cannot answer usefulness 1, which applied alone would make vector-only's mean usefulness 1.0; the recorded mean is 1.9, so some abstaining answers were rated above 1. The ratings are kept as entered: the keys have been opened, so a re-rating now would not be blind. The write-up reports the measured mean, states the rule, and states this departure.
+
+4. Blinding. Only the summarizer read scratch/e-labelling-keys/, after both label files were complete; the keys were then copied to evidence/exp-e-keys/ (answer-keys.csv, item-keys.csv), and the sheets and templates to evidence/exp-e-sheets/. Known limit: the answers sheet may show claim statuses, which can hint at the mode (ruling 12 h).
+
+5. Settled costs (evidence/gate/cost-explorer-20261121.txt; read Nov 21, 2026 5:00 PM CST; UTC billing days; credits and refunds excluded; lines under $0.01 omitted; Nov 21 not yet posted and Nov 20 possibly incomplete):
+   - Month to date before credits: $16.84.
+   - Nov 14: Haiku $0.46 (local live checks before window 1).
+   - Window 1 (EMR, Nov 16-17 UTC): Nov 16 $1.53 (EC2 compute 1.10, EMR 0.18, S3 0.13, EC2-Other 0.08, VPC 0.04); Nov 17 EC2 compute 1.53, EMR 0.42, EC2-Other 0.10 ($2.05). About $3.58 in total, against the recorded cluster-timeline estimate of $3.32 (Phase 14 ruling 22).
+   - Window 2 (Nov 17 about 8 PM UTC to Nov 18 about 6:20 PM UTC): Nov 17 DynamoDB 0.15, ECS 0.19, ELB 0.09 ($0.43); Nov 18 $4.20 (ECS 2.14, Neptune 0.67, VPC 0.45, ELB 0.41, DynamoDB 0.41, other 0.12). About $4.63, plus part of Nov 17's S3, VPC and Cost Explorer lines ($0.33, shared with window 1). Neptune has no line on Nov 17 UTC.
+   - Window 3 (Nov 19 about 4:40 PM UTC to Nov 20 about 4:20 AM UTC): Nov 19 $2.98 (Neptune 2.01, DynamoDB 0.56, ELB 0.16, ECS 0.10, VPC 0.07, other 0.08).
+   - Nov 20 UTC (window 3 tail and E): $1.16 (ECS 0.53, Haiku 0.36, VPC 0.11, ELB 0.10, other 0.06). Bedrock on Nov 20 UTC (window 3 tail and E) is $0.36; E's share cannot be separated by day; E's token counts give about $0.28 at list price.
+   - Nov 1-13 plus lines under $0.01: about $3.70 (the month total minus the listed lines, $13.14).
+   - Total $16.84, under the $25 limit (D-13). Only the 43 base resources remain.
+
+6. Regeneration evidence (evidence/gate/regenerate-derived.txt): derive-tables self-test 5/5 PASS and rebuild byte-identical; summarize-exp-e self-test 17/17 PASS; the unlabelled E summary rebuilds byte-identically with the E2 argument (//raw); with /raw only the Source line differs. The labelled summary used the same argument.
+
+7. Session 9 deviation: Grep and Glob were unavailable to the documentation-engineer, which worked from known and cited paths. Work order 5 part B names every input; code review 5 looks for committed sources that part A may have missed.
+
+8. Next: work order 5 part B (session 10, documentation-engineer, Ponytail ON), then code review 5 (session 11, code-reviewer, Ponytail OFF) on the whole of docs/evaluation.md. Phase 15 already used repair-01 and repair-02 (the second by human exception, ruling 12), so a repair after code review 5 needs a further explicit human-exception ruling; otherwise minor findings become residual risks.
+
+## Work order 5 part B (documentation-engineer): complete docs/evaluation.md
+
+Goal: finish docs/evaluation.md (part A, commit 43201d8) with the human's labelled results and the settled costs. Change only what this work order names; keep everything else as written.
+
+Territory and limits: as in work order 5 part A. Write only docs/evaluation.md. Read, Grep and Glob only (if Grep or Glob is unavailable, read the paths named here). No Bash, git, aws, terraform, sbt, python, Bedrock or MCP calls. Do not open labels/, scratch/, secrets/ or any path containing e-labelling. No text may address a grader or an evaluator.
+
+Inputs:
+- experiments/derived/exp-e-labelled/ (exp-e-summary.md, exp-e-summary.csv, exp-e-quality.csv; tool-generated, ruling 14 point 7 and ruling 16).
+- docs/agent-runs/phase-15/prompt.md ruling 16 (labels, labelled results, the abstention-rule departure, settled costs, deviations).
+- docs/agent-runs/phase-15/evidence/gate/e-rating-anchors.txt (the human's rating anchors).
+- docs/agent-runs/phase-15/evidence/gate/cost-explorer-20261121.txt.
+- docs/agent-runs/phase-15/evidence/gate/regenerate-derived.txt.
+
+Changes:
+1. Section 3.2: replace the pending text with recall at 5, recall at 10 and MRR per mode, the number of questions scored per mode, and any unscored question with its reason, exactly as the labelled summary reports them. State that the labels are binary, by one human, blind except for the ruling 12(h) limit, and that recall at K is capped at the bundle size (ruling 6, m5).
+2. Section 4.2: replace the pending text with mean usefulness and mean clarity per mode and the number of answers rated, exactly as the labelled summary reports them. Cite the anchors file and state its abstention rule in one sentence (an answer that says it cannot answer gets usefulness 1; clarity is scored separately). State that all 10 vector-only answers abstained and report the departure recorded in ruling 16 point 3 (the rule alone would give 1.0; the measured mean is 1.9; the ratings are kept as entered because a re-rating after the keys were opened would not be blind).
+3. Section 5.7: replace the pending text with the settled costs from ruling 16 point 5 and the Cost Explorer file (month to date before credits; per window by UTC day and service; the shared Nov 17 lines; the stated overlap of window 3 and E on Nov 20 UTC). Keep the existing window 1 figure and the recorded estimates.
+4. Update only the interpretation lines the new numbers bear on (3.4, 4.3, 5.8). Remove "cannot be judged until the labels exist" style lines. Keep Measured and Interpretation separate; interpretation stays hedged where one run of 10 questions and one labeller cannot show more.
+5. The Status line at the top: say the document is complete (work order 5 parts A and B).
+6. The Missing data table: remove the pending marks of the three rows now filled; keep precision at K and nDCG as not reported.
+7. Threats to validity: reword the single-labeller bullet now that the E labels exist, and add the abstention-rule departure (ruling 16 point 3).
+8. Section 7.1: make the summarize-exp-e command match the committed summary's argument (`S=$(ls -td experiments/results/exp-e-retrieval-modes-v1/*/ | head -1)` and `--raw "$S/raw"`, which gives `.../20261120T093705Z//raw`), add the labelled command, and state the recorded regeneration result from regenerate-derived.txt (derive-tables rebuild byte-identical; summarize-exp-e byte-identical with the same argument; with `/raw` only the Source line differs).
+
+Report (the orchestrator appends it verbatim to docs/agent-runs/phase-15/agent-report.md under "Work order 5 part B"): status COMPLETE or BLOCKED-ON; the line count before and after; each change made, with its source; any number that differs between ruling 16 and the derived files (use the derived files and say so); deviations.

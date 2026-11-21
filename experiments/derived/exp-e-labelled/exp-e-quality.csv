@@ -1,0 +1,4 @@
+mode,questions_excluded,recall_at_5,recall_at_10,mrr,questions_scored,questions_without_items,questions_incompletely_labelled,questions_without_relevant_item,mean_usefulness,answers_rated_usefulness,mean_clarity,answers_rated_clarity
+fused,,0.787,0.8241,0.4926,9,1,0,0,4.4,10,3.6,10
+graph-only,,0.5648,0.6019,0.4556,9,1,0,0,4.6,10,3.6,10
+vector-only,,0.3704,0.3704,0.6111,9,1,0,0,1.9,10,1.9,10

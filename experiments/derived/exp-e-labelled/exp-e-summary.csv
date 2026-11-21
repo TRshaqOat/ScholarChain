@@ -1,0 +1,4 @@
+mode,questions,answered,abstained,abstained_by_reason,verified,partially_supported,removed_claims,latency_p50_ms,latency_p95_ms,latency_max_ms,llm_attempts,bedrock_requests,llm_input_tokens,llm_output_tokens,embedding_calls,retrieved_items,retrieved_items_mean,questions_ids
+fused,10,9,1,AMBIGUOUS_RESEARCHER 1,14,0,8,14663,19644,19644,19,19,65072,8255,9,86,8.6,B01 B02 B03 B04 B05 B06 B07 B08 B09 B10
+graph-only,10,9,1,AMBIGUOUS_RESEARCHER 1,14,0,2,14945,20300,20300,19,19,57030,6705,0,62,6.2,B01 B02 B03 B04 B05 B06 B07 B08 B09 B10
+vector-only,10,0,10,AMBIGUOUS_RESEARCHER 1; NO_VERIFIED_CLAIM 9,0,0,11,14719,19435,19435,19,19,54989,5889,9,37,3.7,B01 B02 B03 B04 B05 B06 B07 B08 B09 B10

@@ -1,0 +1,8 @@
+Experiment E rating anchors (written before rating, Nov 20, 2026)
+Usefulness 1 = Does not answer the question or provide useful help.
+Usefulness 3 = Gives some useful information but leaves important parts unanswered.
+Usefulness 5 = Fully addresses the question with relevant, actionable information.
+Clarity 1 = Hard to understand, confusing, or poorly organized.
+Clarity 3 = Mostly understandable, but some wording or organization takes extra effort to follow.
+Clarity 5 = Clear, well organized, and easy to follow.
+Abstaining answers are rated as follows: I'll give an answer that says it cannot answer a Usefulness score of 1, since it does not provide the requested information. I'll score its Clarity independently based on how clearly it communicates. I’ll apply this rule consistently across all three modes, including the ambiguous question.
