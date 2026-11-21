@@ -1,6 +1,6 @@
 # ScholarChain evaluation (spec Phase 16, groups 1 to 7)
 
-Status: Phase 15+16 work order 5 part A. Two subsections are marked "Pending (work order 5 part B)": retrieval quality and answer ratings of experiment E (section 3.2 and 4.2), and the settled cost of windows 2 and 3 and of E (section 5.7).
+Status: complete (Phase 15+16 work order 5, parts A and B). Part B added the human-labelled retrieval quality and answer ratings of experiment E (sections 3.2 and 4.2, ruling 16) and the settled costs (section 5.7, ruling 16 point 5).
 
 ## Rules used in this document
 
@@ -147,7 +147,20 @@ Earlier retrieval evidence (not relevance-labelled, context only):
 
 ### 3.2 Retrieval quality: recall at 5 and 10, MRR
 
-Pending (work order 5 part B). Requires the human's relevance labels (ruling 15 point 1). `exp-e-summary.md` states "Relevance: not labelled yet."
+Source: `experiments/derived/exp-e-labelled/exp-e-summary.md` and `exp-e-quality.csv` (tool-generated from the human's labels, ruling 14 point 7, ruling 16 point 2).
+
+| Mode | Recall at 5 | Recall at 10 | MRR | Questions scored | Without retrieved items | Incompletely labelled | Without a relevant item | Mean list length |
+|---|---|---|---|---|---|---|---|---|
+| fused | 0.787 | 0.8241 | 0.4926 | 9 | 1 | 0 | 0 | 8.6 |
+| graph-only | 0.5648 | 0.6019 | 0.4556 | 9 | 1 | 0 | 0 | 6.2 |
+| vector-only | 0.3704 | 0.3704 | 0.6111 | 9 | 1 | 0 | 0 | 3.7 |
+
+- Unscored: in each mode, 1 of the 10 questions has no retrieved items and is not scored. The summary does not name the question. No question was excluded for differing question sets (`exp-e-quality.csv`, questions_excluded empty).
+- Mean list length is `retrieved_items_mean` in `experiments/derived/exp-e-labelled/exp-e-summary.csv`.
+- Labels: one human labelled all 101 pooled retrieved items of the three modes, binary (1 or 0), in `labels/relevance-e-v1.csv`; counts-only check 101 rows, 0 blank, 0 invalid (ruling 16 point 1). Relevance was judged only on these pooled items, so recall is relative to what the three modes retrieved, not to all relevant evidence in the stores.
+- Blinding: the relevance sheet showed items by content, without mode, rank or score (work order 4 A4). Only the summarizer read the keys, after both label files were complete (ruling 16 point 4). The one known limit is on the answers sheet (ruling 12(h)).
+- The values were entered with a display-only labeller kept outside the repository, built with Claude in a web chat on Nov 20; it shows the sheets as written and never suggests a label or score (ruling 16 point 1).
+- Recall at K uses the first min(K, list length) items of each mode's ranked list, the post-budget evidence bundle, so recall at K is capped at the bundle size (ruling 6, m5; `exp-e-summary.md`).
 
 ### 3.3 Limits
 
@@ -166,7 +179,9 @@ Pending (work order 5 part B). Requires the human's relevance labels (ruling 15 
 - Graph-only answered the same 9/10 questions as fused, with 24 fewer retrieved items in total (62 against 86), no embedding call, and about 8,000 fewer input tokens (57,030 against 65,072).
 - Vector-only answered none. This was stated before the run as the expected finding, and it follows from the verifier's design, not from a retrieval failure that the run measured.
 - Mode does not change latency much: p50 values sit within 300 ms of each other, so model calls dominate the question time.
-- Whether the semantic items added by fused retrieval are relevant cannot be judged until the labels exist (3.2).
+- Fused had the highest recall at 5 and 10 (0.787 and 0.8241, against 0.5648 and 0.6019 for graph-only), so on these 9 questions fused's lists held relevant items that graph-only's lists did not. The summary does not show which source supplied them.
+- Vector-only had the highest MRR (0.6111) and the lowest recall (0.3704 at both 5 and 10). Its first relevant item ranked higher on average, but its short lists (mean 3.7) cover few of the relevant items, and the bundle cap bounds its recall.
+- With one run of 10 questions (9 scored per mode) and one labeller, these differences are indicative, not significant.
 
 ## 4. Answer quality
 
@@ -200,7 +215,18 @@ Residual verifier gaps (`docs/agent-runs/phase-11/human-gate.md`): the verifier 
 
 ### 4.2 Human ratings: usefulness and clarity
 
-Pending (work order 5 part B). Requires the human's answer ratings (ruling 15 point 1). `exp-e-summary.md` states "Usefulness and clarity: not labelled yet."
+Source: `experiments/derived/exp-e-labelled/exp-e-summary.md` and `exp-e-quality.csv` (ruling 16 point 2). Scale 1 to 5; one human rated all 30 answers, 10 per mode, in `labels/ratings-e-v1.csv`; counts-only check 30 rows, 0 blank, 0 invalid (ruling 16 point 1).
+
+| Mode | Mean usefulness | Answers rated (usefulness) | Mean clarity | Answers rated (clarity) |
+|---|---|---|---|---|
+| fused | 4.4 | 10 | 3.6 | 10 |
+| graph-only | 4.6 | 10 | 3.6 | 10 |
+| vector-only | 1.9 | 10 | 1.9 | 10 |
+
+- Anchors: `docs/agent-runs/phase-15/evidence/gate/e-rating-anchors.txt`, written before rating (ruling 16 point 1). Its abstention rule: an answer that says it cannot answer gets usefulness 1, and its clarity is scored separately.
+- All 10 vector-only answers abstained (AMBIGUOUS_RESEARCHER 1, NO_VERIFIED_CLAIM 9; section 3.1).
+- Departure (ruling 16 point 3): the rule alone would give vector-only a mean usefulness of 1.0; the measured mean is 1.9, so some abstaining answers were rated above 1. The ratings are kept as entered, because a re-rating after the keys were opened would not be blind.
+- Blinding limit: the answers sheet may show claim statuses and abstention reasons, which can hint at the mode (ruling 12(h), ruling 16 point 4).
 
 ### 4.3 Interpretation
 
@@ -208,6 +234,8 @@ Pending (work order 5 part B). Requires the human's answer ratings (ruling 15 po
 - Conflicting claims went from 3/73 to 0 in both later runs, so the measured contradiction rate in the final live run is 0/99. That rate counts only contradictions the verifier detects.
 - In E, fused removed more claims than graph-only (8 against 2) for the same 14 verified claims. One reading is that semantic context invites claims the verifier cannot bind to graph facts. The run does not test this.
 - The verifier catches numbers, windows, names, titles and hops, not qualitative misreadings (`phase-09/human-gate.md`), and D18 to D20 remain. "Verified" therefore means verified by these rules, not true.
+- In E, the two answering modes were rated alike (usefulness 4.4 and 4.6, clarity 3.6 in both). Graph-only's lower recall did not show as lower usefulness on these questions. One run, 10 answers per mode and one rater cannot show more.
+- Vector-only's low usefulness (1.9) follows from its abstentions under the anchor rule, and its mean is above what that rule alone gives (1.0; ruling 16 point 3). Its clarity (1.9) was scored separately.
 
 ## 5. Performance and elasticity
 
@@ -311,7 +339,30 @@ Measured:
   - month-to-date before credits 7.09 USD at the window 2 plan and 10.09 USD after window 2 cleanup (Phase 14 rulings 38, 48);
   - E Bedrock worst case 2.64 USD by the manifest (ruling 14 point 9).
 
-Settled cost of windows 2 and 3 and of E: Pending (work order 5 part B). Read from Cost Explorer on Nov 21 (ruling 14 point 9; ruling 15 point 1).
+Settled costs (`docs/agent-runs/phase-15/evidence/gate/cost-explorer-20261121.txt`; ruling 16 point 5): read Nov 21, 2026, 17:00 CST; UTC billing days; credits and refunds excluded; lines under 0.01 USD omitted; Nov 21 not yet posted and Nov 20 possibly incomplete (ruling 16 point 5).
+
+- Month to date before credits: 16.84 USD (file: 16.8378173179).
+
+| UTC day and attribution (ruling 16 point 5) | Day amount (USD) | Lines (USD) |
+|---|---|---|
+| Nov 14, local live checks before window 1 | 0.46 | Haiku 0.46 |
+| Nov 16, window 1 | 1.53 | EC2 compute 1.10, EMR 0.18, S3 0.13, EC2-Other 0.08, VPC 0.04 |
+| Nov 17, window 1 | 2.05 | EC2 compute 1.53, EMR 0.42, EC2-Other 0.10 |
+| Nov 17, window 2 | 0.43 | ECS 0.19, DynamoDB 0.15, ELB 0.09 |
+| Nov 17, shared by windows 1 and 2 | 0.33 | S3 0.20, VPC 0.11, Cost Explorer 0.02 |
+| Nov 18, window 2 | 4.20 | ECS 2.14, Neptune 0.67, VPC 0.45, DynamoDB 0.41, ELB 0.41, Haiku 0.04, S3 0.04, Cost Explorer 0.03, Secrets Manager 0.01 |
+| Nov 19, window 3 | 2.98 | Neptune 2.01, DynamoDB 0.56, ELB 0.16, ECS 0.10, VPC 0.07, S3 0.04, Haiku 0.02, Cost Explorer 0.02 |
+| Nov 20, window 3 tail and E | 1.16 | ECS 0.53, Haiku 0.36, VPC 0.11, ELB 0.10, Neptune 0.02, S3 0.02, Cost Explorer 0.02 |
+| Nov 1 to 13 plus lines under 0.01 | about 3.70 | the month total minus the listed lines (13.14) |
+| Total | 16.84 | |
+
+Per window (ruling 16 point 5):
+
+- Window 1 (EMR, Nov 16 to 17 UTC): about 3.58 USD (1.53 + 2.05), against the cluster-timeline estimate of 3.32 USD above.
+- Window 2 (Nov 17 about 20:00 UTC to Nov 18 about 18:20 UTC): about 4.63 USD (0.43 + 4.20), plus part of the shared Nov 17 lines (0.33). Neptune has no line on Nov 17 UTC.
+- Window 3 (Nov 19 about 16:40 UTC to Nov 20 about 04:20 UTC): 2.98 USD on Nov 19, plus part of Nov 20's 1.16 USD.
+- E (Nov 20, 09:37 to 09:47 UTC, ruling 14 point 2): the Haiku line on Nov 20 UTC is 0.36 USD and also covers the window 3 tail, so E's share cannot be separated by day. E's token counts give about 0.28 USD at list price (ruling 16 point 5), against the manifest's worst case of 2.64 USD.
+- The total of 16.84 USD is under the 25 USD limit (D-13). Only the 43 base resources remain (ruling 16 point 5).
 
 ### 5.8 Interpretation
 
@@ -320,6 +371,7 @@ Settled cost of windows 2 and 3 and of E: Pending (work order 5 part B). Read fr
 - **Scale-out and scale-in.** In window 3 the 15 percent setting produced exactly one scale-out and one scale-in. The scale-out came about 5 min after the level start, not the 3 min ruling 2 expected. The scale-in came about 17.6 min after the level end, against about 15 min expected.
 - **Throughput.** Neither the phase averages (33.87 against 39.94 req/s) nor the steady-state rows (37.32 against 40.23 req/s) attribute the throughput difference to the second task (ruling 13(c)). The request rate was already rising before the second task, it kept rising through the two-task minutes, and Neptune stayed near 97 percent CPU throughout. The expected finding of ruling 2, that a second task adds no throughput while Neptune is the bottleneck, is consistent with these data but not proven by one run.
 - **Cache dependence.** Latency depends on a warm Neptune buffer cache (smoke 1, D attempt 1, the window 3 warm-up).
+- **Cost.** The month to date before credits (16.84 USD) stayed under the 25 USD limit. The largest lines in the runtime windows are ECS (2.14 on Nov 18) and Neptune (2.01 on Nov 19, a day that includes the db.r6g.large hours, ruling 10(c)). Window 1's settled cost (about 3.58) is above its cluster-timeline estimate (3.32). E's Bedrock cost (about 0.28 by token counts, inside the 0.36 Haiku line of Nov 20) was far below the manifest's worst case (2.64).
 - **Async recovery.** F shows that retry, DLQ redrive and idempotent replay work as designed. The 928 s recovery time is consistent with three receives at the queue's 300 s visibility timeout (Phase 14 work order 5 states maxReceiveCount 3 and visibility 300 s).
 
 ## 6. Agentic software factory
@@ -424,14 +476,22 @@ Agent output that needed substantial human rewrite:
   - The EMR 100 percent count equals the Phase 4 local full run (110,867 works; `phase-04/human-gate.md`).
   - Hadoop minutes across repeated attempts, at different commits or partition settings: 25 percent 16.7, 16.6, 17.2; 50 percent 27.5, 27.2, 27.6.
   - Local Spark reruns are deterministic (Phase 6 gate).
-- **Regenerating the derived tables.** The derived README states that the output holds no generation time, so a rerun on the same inputs writes the same bytes. The commands are below; the human records the result at the gate.
+- **Regenerating the derived tables.** The derived README states that the output holds no generation time, so a rerun on the same inputs writes the same bytes. The commands are below. `S` is the newest E stamp, `20261120T093705Z/`, so `"$S/raw"` gives `.../20261120T093705Z//raw`, the argument the committed summaries record. The labelled command reads the human's label files and the committed copy of the keys (ruling 16 point 4); the recorded labelled run read the original key files before they were copied there.
 
 ```text
 python3 -I experiments/analysis/derive-tables.py
 python3 -I experiments/analysis/derive-tables.py --self-test
-python3 -I experiments/analysis/summarize-exp-e.py --raw experiments/results/exp-e-retrieval-modes-v1/20261120T093705Z/raw --out experiments/derived/exp-e
+S=$(ls -td experiments/results/exp-e-retrieval-modes-v1/*/ | head -1)
+python3 -I experiments/analysis/summarize-exp-e.py --raw "$S/raw" --out experiments/derived/exp-e
+python3 -I experiments/analysis/summarize-exp-e.py --raw "$S/raw" --relevance labels/relevance-e-v1.csv --ratings labels/ratings-e-v1.csv --keys docs/agent-runs/phase-15/evidence/exp-e-keys --out experiments/derived/exp-e-labelled
 python3 -I experiments/analysis/summarize-exp-e.py --self-test
 ```
+
+- **Recorded regeneration result** (`docs/agent-runs/phase-15/evidence/gate/regenerate-derived.txt`, at 43201d8; ruling 16 point 6):
+  - derive-tables self-test exit 0, every check PASS, including "two builds are byte-identical"; the rebuild into `experiments/derived` exited 0 and changed no committed derived-tables output.
+  - summarize-exp-e self-test exit 0, every check PASS.
+  - The unlabelled E summary rebuilt byte-identically with the `//raw` argument (git status of `experiments/derived` empty). With `/raw`, only the Source line of `exp-e-summary.md` differed.
+  - The labelled summary was generated with the same argument (ruling 16 point 6); its rebuild is not in that file.
 
 - **Clean-checkout build.** Pending the Phase 17 fresh-clone run; not measured here.
 
@@ -460,7 +520,8 @@ Finding: open. The evidence is consistent with this hypothesis: in window 2 the 
 
 - **Small question sets.** E has 10 questions per mode. The live benchmarks have 30 questions. The gold strata have about 39 rows each, with 1 observed false positive.
 - **Single runs.** Every experiment except D is one run, and D completed its levels only once, so variability is not measured. The repeated Hadoop attempts in size scaling ran at different commits or settings.
-- **Single labeller.** The gold labels, and the pending E relevance labels and ratings, come from one human. No inter-rater agreement exists.
+- **Single labeller.** The Phase 5 gold labels, the E relevance labels (101 pooled items) and the E answer ratings (30 answers) each come from one human (ruling 16 point 1). No inter-rater agreement exists.
+- **Abstention-rule departure.** The rating anchors give usefulness 1 to an answer that says it cannot answer. Vector-only's mean usefulness is 1.9, not the 1.0 that rule alone gives, so some abstaining answers were rated above 1. The ratings are kept as entered, because a re-rating after the keys were opened would not be blind (ruling 16 point 3).
 - **Benchmark provenance.** `experiments/benchmark/benchmark-questions-v1.csv` was drafted with Claude in a web chat and reviewed by the human. It was not generated by the runtime prompt under evaluation (`phase-06/human-gate.md`). The same model family (Haiku 4.5) answers the questions.
 - **File-backed vectors.** E searched a local exact index over the exported vectors, not the S3 Vectors service (Phase 14 ruling 31).
 - **Local runtime for E.** No deployed service, network path or store latency is included. Bedrock was live in us-east-2.
@@ -487,16 +548,16 @@ Finding: open. The evidence is consistent with this hypothesis: in window 2 the 
 | 2 | duplicate rate and orphan rate as rates | only rule-violation and loader duplicate counts (0) exist |
 | 2 | sampled provenance audit | no sampled audit recorded; the coauthor-edge trace is a full tool check |
 | 2 | validator run on the EMR outputs | not found in the sources read; the served graph is the local store conversion |
-| 3 | recall at K, MRR | Pending (work order 5 part B) |
+| 3 | recall at K, MRR | measured (section 3.2) over 9 scored questions per mode; capped at the bundle size; one run, one labeller |
 | 3 | precision at K | not reported: binary labels, and the ranked list is the capped bundle |
 | 3 | nDCG | not reported: no graded relevance labels |
 | 3 | OpenSearch comparison | optional, not built (D-06) |
 | 3 | retrieval through the S3 Vectors service | not measured; E used the file-backed export |
-| 4 | human usefulness and clarity ratings | Pending (work order 5 part B) |
+| 4 | human usefulness and clarity ratings | measured (section 4.2) over 10 answers per mode; one rater, no inter-rater agreement |
 | 4 | identifier and numerical accuracy against independent ground truth | only the verifier's rule checks exist |
 | 4 | contradiction rate, edge, path and supporting-publication validity for E | the E summarizer does not report CONFLICTING or the per-check results separately |
 | 5 | p99 for E | the summarizer reports p50, p95 and max |
-| 5 | settled cost of windows 2 and 3 and of E | Pending (work order 5 part B) |
+| 5 | settled cost of windows 2 and 3 and of E | measured per UTC day (section 5.7); E's Bedrock share cannot be separated from the window 3 tail on Nov 20, and Nov 20 may be incomplete |
 | 5 | Spark on EMR at 50 and 100 percent | failed (P14-D8); option B deferred |
 | 5 | scale-out of query-api or the worker; recovery from a task failure | not run; F covered only the poison-message path |
 | 5 | experiment C | deferred (D-10) |

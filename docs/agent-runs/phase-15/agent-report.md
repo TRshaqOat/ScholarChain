@@ -647,3 +647,117 @@ MANUAL ACTION REQUIRED:
 BLOCKED-ON OWNER: none
 BLOCKED-ON EVIDENCE: none
 NEXT GATE: work order 5 part B (session 10), then code review 5 of the whole file (session 11, Ponytail OFF), link check, evidence review.
+
+## Work order 5 part B (documentation-engineer): docs/evaluation.md
+
+The two pending subsections and the cost subsection are now filled from the human's labelled results and the settled costs. No "work order 5 part B" pending mark is left. No command was run or replayed, because the work order forbids Bash.
+
+STATUS: COMPLETE
+OWNER: documentation-engineer
+WORK ORDER: Phase 15+16 work order 5 part B (docs/agent-runs/phase-15/prompt.md lines 292-315), under rulings 6, 12, 14, 15 and 16. Fill sections 3.2, 4.2 and 5.7 of docs/evaluation.md, update the interpretation lines the new numbers affect, the Status line, the Missing data rows, Threats to validity and section 7.1. Remove the pending marks.
+
+FILES CREATED: none
+FILES MODIFIED:
+- /Users/achyutpatel/Developer/Cloud/ScholarChain/docs/evaluation.md (509 lines before, 570 lines after)
+FILES DELETED: none
+
+COMMANDS RUN: none. Only Read and Edit were used. Grep and Glob were not available in this session, so I read the paths the work order names. No Bash, git, aws, terraform, sbt, python, Bedrock or MCP call was made.
+COMMANDS REPLAYED: none, because the work order forbids Bash. Section 7.1 states the regeneration result recorded in docs/agent-runs/phase-15/evidence/gate/regenerate-derived.txt, not a replay of my own.
+TEST RESULTS: none run. No Scala or sbt source changed.
+
+### Changes made, with sources (line numbers are from the final file)
+1. **Status line (line 3).** It now says the document is complete (work order 5, parts A and B), with pointers to 3.2, 4.2 and 5.7. Source: work order item 5.
+2. **Section 3.2 (lines 150-163).** The pending text is replaced with:
+   - a table per mode: recall at 5 and 10, MRR, questions scored (9), without retrieved items (1), incompletely labelled (0), without a relevant item (0), and mean list length (8.6, 6.2, 3.7);
+   - the unscored question per mode, with its reason. The summary does not name the question, and questions_excluded is empty;
+   - a note that labels are binary and from one human: 101 pooled items, 101 rows, 0 blank, 0 invalid;
+   - a note that relevance was judged only on pooled items;
+   - the blinding notes (work order 4 A4, ruling 16 point 4, ruling 12(h));
+   - the display-only labeller built with Claude in a web chat (ruling 16 point 1). The home-directory path is not copied;
+   - the bundle-size cap (ruling 6, m5).
+
+   Sources: experiments/derived/exp-e-labelled/exp-e-summary.md, exp-e-quality.csv, exp-e-summary.csv; ruling 16 points 1, 2, 4.
+3. **Section 3.4 (lines 182-184).** The "cannot be judged until the labels exist" line is removed. Three hedged bullets are added:
+   - fused had the highest recall, and the summary does not show which source supplied the extra relevant items;
+   - vector-only had the highest MRR and the lowest recall, over short lists that the cap bounds;
+   - with one run, 10 questions (9 scored) and one labeller, the differences are indicative only.
+
+   Source: the labelled summary and ruling 16 point 2 reading notes.
+4. **Section 4.2 (lines 218-229).** The pending text is replaced with:
+   - a table of mean usefulness and clarity per mode, with answers rated (10 each);
+   - the anchors file cited, with its abstention rule in one sentence;
+   - all 10 vector-only answers abstained (AMBIGUOUS_RESEARCHER 1, NO_VERIFIED_CLAIM 9);
+   - the ruling 16 point 3 departure: the rule alone gives 1.0, the measured mean is 1.9, and the ratings are kept as entered because a re-rating after the keys were opened would not be blind;
+   - the blinding limit.
+
+   Sources: exp-e-labelled/exp-e-summary.md and exp-e-quality.csv; docs/agent-runs/phase-15/evidence/gate/e-rating-anchors.txt; ruling 16 points 1, 3, 4; ruling 12(h).
+5. **Section 4.3 (lines 237-238).** Two bullets are added:
+   - the two answering modes were rated alike, and graph-only's lower recall did not show as lower usefulness (hedged);
+   - vector-only's usefulness follows the anchor rule, except for the 1.9 versus 1.0 departure, and its clarity was scored separately.
+6. **Section 5.7 (lines 342-365).** The pending line is replaced with:
+   - the read time and the caveats;
+   - the month to date before credits: 16.84 USD (16.8378173179 in the file);
+   - a table by UTC day with every line from the Cost Explorer file. It keeps ruling 16's attribution: the Nov 17 window 1 and window 2 lines, the 0.33 shared Nov 17 lines, and Nov 20 marked as the window 3 tail plus E;
+   - Nov 1-13 plus lines under 0.01 USD: about 3.70 (16.84 minus 13.14);
+   - per-window totals with ruling 16's window times;
+   - E's 0.36 Haiku line, which cannot be separated by day, the about 0.28 USD at list price from token counts (ruling 16), and the 2.64 USD worst case;
+   - the total under the 25 USD limit, with 43 base resources remaining.
+
+   The window 1 figure of 3.32 and the recorded estimates are kept as written. Sources: docs/agent-runs/phase-15/evidence/gate/cost-explorer-20261121.txt; ruling 16 point 5; ruling 14 point 2 (E times). I checked the day sums against the file: 1.53, 2.05, 0.43, 0.33, 4.20, 2.98, 1.16, 13.14 and 3.70 all match ruling 16.
+7. **Section 5.8 (line 374).** One "Cost" bullet is added: under the limit, the largest runtime lines, window 1 settled (3.58) versus its estimate (3.32), and E's Bedrock cost versus its worst case.
+8. **Section 7.1 (lines 479-494).**
+   - The summarize-exp-e command now uses `S=$(ls -td experiments/results/exp-e-retrieval-modes-v1/*/ | head -1)` and `--raw "$S/raw"`.
+   - The labelled command is added: `--relevance labels/relevance-e-v1.csv --ratings labels/ratings-e-v1.csv --keys docs/agent-runs/phase-15/evidence/exp-e-keys --out experiments/derived/exp-e-labelled`.
+   - The recorded regeneration result is stated:
+     - derive-tables: self-test PASS including "two builds are byte-identical", and the rebuild changed no committed derived-tables output;
+     - summarize-exp-e: self-test PASS;
+     - the unlabelled summary is byte-identical with `//raw`, and with `/raw` only the Source line differs;
+     - the labelled rebuild is not in that file.
+
+   Sources: regenerate-derived.txt; ruling 16 points 4 and 6; work order 4 A3 (flag names).
+9. **Threats to validity (lines 523-524).** The single-labeller bullet is reworded: gold labels, 101 E relevance labels and 30 E ratings, each from one human. An abstention-rule departure bullet is added (ruling 16 point 3).
+10. **Missing data (lines 551, 556, 560).** The pending marks of the three filled rows are replaced with "measured (section X)" plus the remaining limit. The precision at K and nDCG rows are kept as "not reported".
+
+### Numbers that differ between ruling 16 and the derived files
+- **Labelled results:** none differ. Every recall, MRR, scored count, unscored count, mean list length, usefulness, clarity and answers-rated value in ruling 16 point 2 equals exp-e-labelled/exp-e-summary.md, exp-e-quality.csv and exp-e-summary.csv.
+- **Self-test count:** ruling 16 point 6 says "summarize-exp-e self-test 17/17 PASS", but regenerate-derived.txt shows 19 summarize-exp-e PASS lines (lines 23-28, 30-33, 35-38, 40-43 and 45), ending "==> OK self-test". The derive-tables count matches: 5 PASS lines against 5/5. The document says "every check PASS" without a count, so it follows the evidence file.
+
+### Remaining "Pending" or "pending" text (read across the whole file; none refers to work order 5 part B)
+- Line 87: "...sum to 845 passed, 0 failed, and 10 pending (all in the 141-test, 20-suite project)." These are test-suite pending tests.
+- Line 214: "The pending tests in check-sh-wo4.txt include "... is not verified (pending)" and "... is not verified (pending)"." These are quoted test names, three occurrences.
+- Line 496: "**Clean-checkout build.** Pending the Phase 17 fresh-clone run; not measured here."
+- Line 568: "| 7 | clean-checkout build success | pending the Phase 17 fresh-clone run |"
+
+### Deviations
+- Grep and Glob were not available, as in session 9. I read only the inputs the work order names, plus my part A report, which the orchestrator asked for.
+- Nothing under labels/, scratch/, secrets/ or any e-labelling path was opened. Label file paths appear only as text.
+
+VALIDATION RESULTS:
+- I re-read the whole file after editing. Measured and Interpretation stay separate in 3, 4 and 5. No text addresses a grader or an evaluator.
+- Link check: internal paths are written as code spans, as in part A. The newly cited input files were all opened. Paths I did not open:
+  - docs/agent-runs/phase-15/evidence/exp-e-keys (named in ruling 16 point 4);
+  - labels/relevance-e-v1.csv and labels/ratings-e-v1.csv (forbidden to open).
+- No external links were added.
+
+ASSUMPTIONS:
+- I assume summarize-exp-e.py accepts the committed key copy (docs/agent-runs/phase-15/evidence/exp-e-keys) as `--keys`. Ruling 16 point 4 names the files as answer-keys.csv and item-keys.csv. I did not read the script, because it is not among the inputs. The flag names come from work order 4 A3.
+- "Recall is relative to the pooled items" is a deduction: only the 101 pooled items have labels (ruling 16 point 1; work order 4 A4).
+- I left these as written because the work order does not name them:
+  - Missing data row 7 "the result of regenerating the derived tables | recorded by the human at the gate". It is still accurate, and 7.1 now gives the result.
+  - The experiment-table and section 3 source lines, which still cite experiments/derived/exp-e/.
+  - The Cost Explorer lag threat.
+
+RISKS:
+- Ruling 16 puts window 3's start at about 16:40 UTC. Ruling 10 records the apply at 11:40 CST, which is 17:40 UTC. 5.7 quotes ruling 16 as written, so code review 5 may flag the difference.
+- The labelled command in 7.1 has not been run with the committed key copy.
+- The 17 versus 19 self-test count needs a human decision on which figure the gate keeps.
+
+MANUAL ACTION REQUIRED:
+- The human decides on the summarize-exp-e self-test count (17 in ruling 16, 19 PASS lines in regenerate-derived.txt).
+- Optional: if the human wants, confirm the labelled command with `--keys docs/agent-runs/phase-15/evidence/exp-e-keys` reproduces experiments/derived/exp-e-labelled byte-identically.
+
+BLOCKED-ON OWNER: none
+BLOCKED-ON EVIDENCE: none
+NEXT GATE: code review 5 of the whole of docs/evaluation.md (session 11, code-reviewer, Ponytail OFF), link check, evidence review.
+
+Not checked: summarize-exp-e.py's `--keys` handling of the committed key copy (not opened); no command replayed.
