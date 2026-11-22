@@ -318,3 +318,39 @@ Replace every "UNVERIFIED" statement about these licenses with the facts below, 
 ## Human ruling 14 (Nov 22, 2026): K01 disposition
 
 The two lines flagged by the course autograder in `docs/agent-runs/phase-10/evidence/code-review-1/change-set.txt` (change-set lines 9549 and 9695) are test fixtures, not credentials. They are line 315 of `modules/services/src/test/scala/scholarchain/services/QueryApiSpec.scala` and line 22 of `modules/services/src/test/scala/scholarchain/services/ServiceFixtures.scala` (the API-key value the service tests use). Both files are listed in the change set under "UNTRACKED FILE" headers and are committed under `src/test/`. Neither value has the shape of an AWS access key or session token. No change. Work order 1 states this in the README together with the other ruling 7 explanations.
+
+## Human ruling 15 (Nov 22, 2026): the TA's answers on redaction and the endpoint
+
+The TA's reply is recorded verbatim in `docs/agent-runs/phase-17/inputs/ta-reply-2026-11-22.md`. This ruling replaces the "TA reply pending" part of ruling 11.
+
+1. **Endpoint.** The deployed application need not keep running. Ruling 8 stands unchanged.
+2. **Removed: private and sensitive information.** Credentials and secrets stay out of the repository. The DEBUG session tokens were redacted (Phase 14 ruling 41); the API key value lived only in Secrets Manager; the two K01 lines are test fixtures (ruling 14). Step S scans the tree for credential shapes (access keys, session tokens, secret-key and password assignments, private keys) and for personal data beyond ruling 4.
+3. **Kept: non-sensitive signatures and temporary IDs,** as the TA asks, so that the work can be traced to its own runs: commit hashes; run, query, trace and evidence IDs; image digests; plan and artifact checksums; and the release, smoke, pipeline and cleanup records with their timestamps.
+4. **Account ID.** The 12-digit AWS account ID stays in the committed evidence records where it already appears (196 files and 3,689 occurrences at `87151a8`, all under `operations/`, `experiments/results/` and `docs/agent-runs/`). AWS's account-management documentation states that account IDs, though to be shared carefully, are not secret, sensitive or confidential information. They are part of the run records of item 3; editing them would change checksummed evidence; and git history keeps them anyway. No history rewrite. New text keeps writing `<account-id>` (ruling 11).
+5. **Identity.** The README keeps the student name and UIC email (ruling 4).
+6. **Labels.** `labels/` stays in the public repository. It holds the human-authored labels: the gold set (names, ORCID iDs, affiliations and DOIs taken from the public bibliographic records the pipeline used) and the experiment E relevance and rating files (IDs and scores only). It contains no private data and is the evidence of the labelling work. Agents still never open `labels/` (ruling 11).
+
+## Human ruling 16 (Nov 22, 2026): outcomes of sessions 1 to 5 and Step F
+
+1. **Work order 1** is accepted. The student email stays in the README (ruling 4). The removal of the "polite-pool User-Agent" wording after the privacy plugin's refusal is accepted.
+2. **Work order 2** is accepted.
+   - Deviation 1 (`labels/README.md` opened for its heading line during the link check; no label file or value read) breaches ruling 11. No rework. Recorded as a residual risk: agents can read `labels/`, and only the instruction prevents it. This goes to the factory-engineer backlog; no change in Phase 17.
+   - The A11 voiceover phrase "happens after grading" stays. It states when the final cleanup happens and addresses no one (ruling 10).
+   - The Phase 14 ruling 24 edit to `course.tfvars` and the ruling 41 session-token redaction are disclosed as manual edits, as section 19.1 of the final report states.
+   - The factory-metrics discrepancy stays stated as open in the final report. The Phase 17 gate adds a note on that column's unit.
+   - The four-way classification of section 19.1 is accepted. It uses the spec's four classes. "Repaired by another agent" means repaired by the owner after another agent's finding (one-writer rule).
+3. **Work order 3** is accepted, pending ratification at the Phase 17 gate. Its four deviations are accepted: the hook that blocks is `guard-dangerous.sh`, not `guard-paths.sh`; each bullet names the category that actually fires; the reading of the `labels/` case; and the "(Phase 17 work order 3)" tags.
+4. **Work order 4** is accepted.
+5. **Work order 5** is accepted, with D3 and D4 as written. D1 and D2 have committed sources outside the work order's input list:
+   - D1: `docs/agent-runs/phase-15/human-gate.md` ("Accepted commit: d406c66…", and check.sh on the committed tree d406c66, exit 0) and `docs/agent-runs/phase-15/commit.txt`.
+   - D2: `operations/cleanup/cleanup-20261120T041658Z-runtime/apply.txt`, line 279: "Apply complete! Resources: 0 added, 0 changed, 89 destroyed."
+
+   deploy-engineer records are append-only, and the manifest's statements are true of the inputs it was given, so the manifest stays as written. This ruling is the correction.
+6. **Step F** (ruling 2) ran on a fresh clone of `87151a8` on Nov 22, 2026. Evidence: `docs/agent-runs/phase-17/evidence/fresh-clone/`.
+   - `sbt clean check`: exit 0; 845 succeeded, 0 failed, 10 pending.
+   - `scripts/check.sh`: exit 0, "==> OK check: every gate passed" (json, constitution, bash-syntax, shellcheck, dataset-validation, terraform-fmt, terraform-validate, sbt-check).
+   - The standalone `terraform init` between them failed on a network error ("no route to host"); its log is `fresh-terraform-init-attempt1.txt`. check.sh's own init succeeded, and the rerun is `fresh-terraform-init.txt`.
+   - Bounded sample, with the README commands as written. Hadoop: exit 0, run `run-e1467fc1552982ae1519a23ba6f6be4e`. Spark PipelineJob: exit 0, run `run-fe913aefae9e677ff451518942c97582`.
+   - After the Hadoop run, a shutdown thread (`Thread-2`) logs a `NoSuchFileException` for a jar under sbt's `target/bg-jobs/`, which sbt deletes when a run ends. The job had already finished, and Spark read its output. Harmless.
+   - Before the clone existed, the sample commands ran once in the working repository by mistake (outputs only under the gitignored `scratch/`). Those logs were overwritten and are not evidence.
+   - Clip B11 is recorded later from the README and these logs.
