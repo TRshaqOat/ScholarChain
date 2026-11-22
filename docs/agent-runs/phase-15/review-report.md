@@ -1108,3 +1108,294 @@ MANUAL ACTION REQUIRED:
 BLOCKED-ON OWNER: none
 BLOCKED-ON EVIDENCE: none
 NEXT GATE: The human accepts code review 4 and rules on C4-m1 to C4-m3, then commits work order 4 and repair-02 (with `git add -f` for the r02 logs). After a passing check.sh, the human runs E through `scripts/run-experiment.sh --manifest experiments/manifests/exp-e-retrieval-modes-v1.json`. Sheets are built only after the condition in check 4 holds.
+
+## Code review 5
+
+### Summary
+
+STATUS: COMPLETE
+OWNER: code-reviewer
+WORK ORDER: Phase 15+16, session 11, code review 5. Review of the whole of `docs/evaluation.md` (570 lines, committed at 3e9d565; HEAD cf09527 adds only ruling 17 to `prompt.md`), checked against rulings 1 to 17, work order 5 parts A and B, and spec Phase 16. Read-only.
+VERDICT: REQUEST_CHANGES
+
+Counts: 0 critical, 1 major, 10 minor.
+
+- **C5-M1 (major).** The committed raw E benchmark summaries record facts the write-up leaves out:
+  - 7 CONFLICTING claims in vector-only;
+  - 9 abstention-check failures in vector-only, and 10/10 abstention-check passes in fused and graph-only;
+  - a B08 misplan in all three modes, plus a B08 path-hops failure in fused and graph-only.
+  
+  The Missing data row at line 558 says the E contradiction rate and the per-check results are unavailable. They are committed. This is a negative result absent from the submission (spec Phase 16 gate).
+- The minors cover:
+  - the window 3 start time that ruling 17 corrects;
+  - the labelled regeneration that ruling 17 records, which the file does not cite;
+  - two count or wording errors (fraction records, gold rows);
+  - the stated reason for not reporting precision at K;
+  - two interpretations stated as settled;
+  - the scope of the abstention-rule departure;
+  - one missing threat;
+  - one stale ruling count;
+  - the EMR-validator wording.
+
+All labelled E numbers (sections 3.2 and 4.2) equal `experiments/derived/exp-e-labelled/`. All costs in 5.7 equal ruling 16 and `cost-explorer-20261121.txt`.
+
+Grep and Glob were available in this session. Nothing under `labels/`, `scratch/`, `secrets/` or any `e-labelling` path was opened or listed.
+
+SCOPE REVIEWED:
+- Read in full:
+  - `docs/evaluation.md`
+  - `docs/agent-runs/phase-15/prompt.md` (rulings 1 to 17, work orders 5 A and B)
+  - the work order 5 A and B sections of `agent-report.md`
+  - `evidence/code-review-5/diff-part-b.txt` and `commit-part-b.txt`
+  - `evidence/gate/{cost-explorer-20261121.txt, regenerate-derived.txt, regenerate-labelled.txt, e-rating-anchors.txt}`
+  - `experiments/derived/exp-e-labelled/*`, `exp-e/exp-e-summary.csv`
+  - `experiments/derived/{size-scaling, exp-d, exp-d-scale, exp-f}/README.md` and `size-scaling.csv`
+  - `docs/agent-runs/phase-05/evidence/eval-er-v1/metrics.json` (and the WORK section of eval-er-v2)
+  - `docs/agent-runs/factory-metrics.md`
+  - the gates of Phases 06 (results), 07, 09, 11 and 14
+  - Phase 14 rulings 22 and 38 to 49
+  - `operations/deployments/window-2/{post-exp-d-cloudwatch.txt, neptune-status.txt}`
+  - the window 3 Neptune status files
+  - the three E `summary-010.json` files
+  - spec Phase 16
+- Read in part: `check-sh-wo4.txt` (totals, hook self-tests, pending tests, CorpusWindowSummarySpec) and `summarize-exp-e.py` (docstring, quality code, self-test).
+
+### Findings (ranked)
+
+**C5-M1 (MAJOR, CONFIRMED). Committed raw E results contain a contradiction count, abstention checks and validity checks that the write-up reports as unavailable. One negative result is absent.**
+
+- Location:
+  - `docs/evaluation.md:558`: Missing data row "contradiction rate, edge, path and supporting-publication validity for E | the E summarizer does not report CONFLICTING or the per-check results separately".
+  - `docs/evaluation.md:206-212`: the E claims table gives "Removed 11" for vector-only with no breakdown.
+  - `docs/evaluation.md:158`: "The summary does not name the question."
+  - `docs/evaluation.md:540-570`: no row for abstention quality, a spec group 4 metric.
+- Evidence. Each mode's BenchmarkCli summary is committed under `experiments/results/exp-e-retrieval-modes-v1/20261120T093705Z/raw/<mode>/s3/reports/rag-benchmark/snapshot=2026-10-03/run=<id>/summary-010.json`:
+  - vector-only (run-9dd2efc0…): `"verification": {"verified": 0, "unsupported": 4, "conflicting": 7}` (lines 116-121). `"abstention": {"pass": 1, "fail": 9}` (lines 67-71), with nine failures "Bxx abstention: expected answer, got abstain (NO_VERIFIED_CLAIM)" (lines 94-103).
+  - fused (run-25a1816e…) and graph-only (run-8823c675…): conflicting 0; abstention 10/10 pass; pair-edges 3 pass, 0 fail; claim-evidence 9 pass, 0 fail; path-hops 1 pass, 1 fail. The failures list holds "B08 plan-operations: needs DIRECT_COAUTHORS/PAIR; plan [SHORTEST_PATH/PAIR]" and "B08 path-hops: … no claim cites the path" (lines 93-96 in both). Vector-only has the same B08 plan-operations failure (line 101).
+  - `raw/<mode>/modes-stdout.txt` (fused:20, graph-only:22, vector-only:22) names the unscored question: "B09 abstained AMBIGUOUS_RESEARCHER; … graph 572 reads, 0 items; semantic 0 hits".
+- Failure input: someone reads group 4 for E. They learn that the contradiction rate and the edge, path and abstention checks for E were not measured. In fact the committed run recorded 7 contradicting vector-only claims (7 of its 11 removals) and a B08 planner misplan in every mode. It also recorded fused and graph-only passing every abstention check.
+- Impact:
+  - A negative result (7 CONFLICTING; a misplan and a path-hops failure in every applicable mode) is missing, contrary to the spec Phase 16 gate "Negative results remain in the submission" and the file's own rule at line 12.
+  - A Missing data statement is wrong as written.
+  - The abstention-quality metric has E evidence that is not reported.
+- Context, not a mitigation: work order 5 named the derived tables as inputs, and sessions 9 and 10 had no Glob. These summaries are BenchmarkCli's own reports, not derived tables, so citing their counts recomputes nothing. Whether they are admissible inputs is a human decision.
+- Expected correction:
+  - Report these counts in 4.1 and 4.3 with their path, or record by ruling why they are excluded.
+  - Correct line 558.
+  - Add abstention quality to Missing data or to 4.1.
+  - Name B09 at line 158.
+- Owner: documentation-engineer. If a ruling on admissible inputs is needed first, that ruling is the human architect's.
+
+**C5-m1 (MINOR, CONFIRMED). The window 3 start in 5.7 contradicts ruling 17.**
+
+- `docs/evaluation.md:363`: "Window 3 (Nov 19 about 16:40 UTC …)".
+- Ruling 17 point 2 corrects this to about 17:30 UTC. The plan `operations/plans/20261119T173346Z-c5428063732a.md` was written at 17:33:46Z, and the apply ran at 17:40Z (ruling 10).
+- Impact: a wrong time stated as a fact. No cost figure or attribution changes, because every window 3 line stays on Nov 19 UTC.
+- My ruling on the ruling 17 question: correct the text to "about 17:30 UTC" and cite ruling 17.
+- Lesser note: window 2 "about 20:00 UTC" (line 362) follows ruling 16, while the Phase 14 gate:40 and ruling 48 give 20:30:59Z. Again the UTC day is the same, so no cost changes.
+- Owner: documentation-engineer.
+
+**C5-m2 (MINOR, CONFIRMED). The labelled regeneration that ruling 17 records is not cited, and two passages are stale.**
+
+- `docs/evaluation.md:494`: "its rebuild is not in that file". Ruling 17 point 3 says this is superseded by `docs/agent-runs/phase-15/evidence/gate/regenerate-labelled.txt`. That file records exit 0 and "IDENTICAL: every file byte-identical to the committed experiments/derived/exp-e-labelled" at cdb9578, using the same `//raw` argument and the committed key copy.
+- `docs/evaluation.md:569`: the Missing data row "the result of regenerating the derived tables | recorded by the human at the gate" is now recorded, in two files.
+- Impact: a verified reproducibility result reads as unverified.
+- Owner: documentation-engineer.
+
+**C5-m3 (MINOR, PLAUSIBLE). The abstention-rule departure is reported for vector-only only, but the anchors apply the rule to all three modes.**
+
+- `docs/evaluation.md:228`, `:238`, `:524`.
+- `e-rating-anchors.txt:8` says the rule applies "consistently across all three modes, including the ambiguous question".
+- B09 abstained (AMBIGUOUS_RESEARCHER) in fused and graph-only too (raw stdout above). The file does not say whether those two answers were rated usefulness 1. The derived files cannot show it, and I did not open the labels.
+- Impact: the departure may also affect the fused and graph-only means (4.4 and 4.6), and the reader is not told that this is unknown.
+- Expected correction: one sentence stating that this is not known from the summaries.
+- Owner: documentation-engineer. The fact itself can only come from the human.
+
+**C5-m4 (MINOR, CONFIRMED). The reason given for not reporting precision at K is incorrect.**
+
+- `docs/evaluation.md:173` ("the labels are binary and there is no graded relevance") and `:552` ("binary labels, and the ranked list is the capped bundle").
+- Binary labels do support precision at K. Graded labels are needed only for nDCG. The actual reason is that the summarizer computes only recall and MRR (work order 4 A3), plus the bundle cap.
+- The wording follows work order 5 part A (`prompt.md:235`), so the documentation-engineer copied a human-supplied reason.
+- Impact: the spec asks for precision at K "when labels support it", and the file says they do not.
+- Owner: documentation-engineer. A ruling may be needed, because the text came from the work order.
+
+**C5-m5 (MINOR, CONFIRMED). Two interpretations claim more than the runs support.**
+
+- `docs/evaluation.md:370`: "Neptune on db.t4g.medium is the bottleneck in both D runs."
+  - This is stated as settled. The file's own line 372 says the related expected finding is "consistent with these data but not proven by one run", and line 528 lists client and network limits as part of the measurement.
+- `docs/evaluation.md:503`: "Reproducing the full Spark pipeline on EMR beyond 25 percent is not possible at this cluster size (P14-D8)."
+  - Only shuffle-partition settings were tried. Option B (executor cores 2) is untested and deferred (Phase 14 rulings 21 and 22). Line 369's "does not complete … with this cluster size" is the supported form.
+- Owner: documentation-engineer.
+
+**C5-m6 (MINOR, CONFIRMED). The fraction-record count is wrong.**
+
+- `docs/evaluation.md:17`: "7 fraction records (failed ones included)".
+- `experiments/derived/size-scaling/size-scaling.csv` has 8 records: rows 2-9, one of them without run.json (20261116T063500Z). Sections 5.2 and 7.1 of the file list all 8.
+- Owner: documentation-engineer.
+
+**C5-m7 (MINOR, CONFIRMED). The gold row counts mix decided and UNSURE rows.**
+
+- `docs/evaluation.md:30` "Researchers (259 rows, 1 UNSURE)" and `:49` "Works (45 rows, 5 UNSURE)".
+- In `eval-er-v1/metrics.json`, `n` counts decided rows only. Researchers: TP+FP+FN+TN = 259, while the confusion rows sum to 260 (MATCH 150, NON_MATCH 109, UNSURE 1). Works: 45, while confusion sums to 50.
+- So researchers have 260 rows (259 decided, 1 UNSURE) and works have 50 (45 decided, 5 UNSURE). That matches line 26 (310 labels, 304 decided, 6 UNSURE). As written, 259 + 45 = 304 cannot include 6 UNSURE rows.
+- Owner: documentation-engineer.
+
+**C5-m8 (MINOR, CONFIRMED). Threats to validity leave out that the sole labeller is the system's architect.**
+
+- `docs/evaluation.md:519-538`. The single-labeller bullet (line 523) covers inter-rater agreement. It does not cover rater independence.
+- The Phase 5 gold labels, the E relevance labels and the E ratings all come from the person who designed the system and reviewed the benchmark questions. With the ruling 12(h) blinding limit, that is a rater-bias threat, separate from having a single rater.
+- Owner: documentation-engineer.
+
+**C5-m9 (MINOR, CONFIRMED). The Phase 15 ruling count is stale.**
+
+- `docs/evaluation.md:442`: "Phase 15 15 so far".
+- Ruling 16 was already committed (cdb9578) before part B (3e9d565), and HEAD has 17.
+- Owner: documentation-engineer.
+
+**C5-m10 (MINOR, CONFIRMED). The EMR-validator wording is still provisional.**
+
+- `docs/evaluation.md:550`: "not found in the sources read".
+- Glob confirms that no validator output for an EMR run is committed (`operations/pipeline-runs/*/*validat*` returns nothing).
+- The EMR Spark runs did write integrity-violation tables (S3 listings in `docs/agent-runs/phase-14/evidence/window-1/p14-s3-run-{eaa0031b…,09582fb1…,04f6cfa7…,968b42b2…}.txt`, files of about 1,469 bytes). Their row counts are not committed. The window 1 chain gate (`p14-chain5.sh:13-25`) does not check them.
+- The conclusion stands. The wording should become definitive.
+- Owner: documentation-engineer.
+
+### Numbers spot-check
+
+| # | Group | Number(s) in docs/evaluation.md | Source checked | Result |
+|---|---|---|---|---|
+| 1 | 1 | researcher overall 90/1/60/108; P 0.989, R 0.600, F1 0.747, coverage 0.703, unresolved 0.297 (l.34) | eval-er-v1/metrics.json:7-17 | match |
+| 2 | 1 | researcher LLM_BAND n 39, FN 31, TN 8 (l.38) | metrics.json:139-150 | match |
+| 3 | 1 | work er-v2 overall 22/0/15/8, R 0.595, coverage 0.822 (l.58) | eval-er-v2/metrics.json:208-219 | match |
+| 4 | 1 | "259 rows, 1 UNSURE"; "45 rows, 5 UNSURE" (l.30, 49) | metrics.json confusion sums 260 and 50 | wording mismatch (C5-m7) |
+| 5 | 1 | 54 of 60 FN UNRESOLVED; thresholds 0.93 / 0.35 (l.68, 26) | phase-05 human-gate.md:34, 41 | match |
+| 6 | 2 | 191+141+122+115+111+70+49+46 = 845, 10 pending in the 20-suite project (l.87) | check-sh-wo4.txt:1386-1827 | match |
+| 7 | 2 | window all 110,257 / 191,318 / 787,726 / 16,091 / 38,034; 74%; 95 self-pairs; 387 nodes (l.102-108) | phase-06 human-gate.md:32-44 | match |
+| 8 | 2 | 3,635,231 elements, 0 violations; 1,590,180 + 574 = 1,590,754; 2,038,078 work IDs (l.114-115) | phase-07 human-gate.md:14, 34 (511,920 + 3,123,311 = 3,635,231) | match |
+| 9 | 2 | window 3 load 34,052,689, duplicates 0, errors 0/0/0 (l.118) | neptune-status-ac8b0c3c….txt:1-2 | match |
+| 10 | 2 | DynamoDB 876,228 (l.118) | ruling 10(b): 9 + 287,780 + 588,439 | match |
+| 11 | 3 | fused row 10/9/1, 86 (8.6), 14,663 / 19,644 / 19,644, 19/19, 65,072 / 8,255, 9 (l.139) | exp-e/exp-e-summary.csv:2 | match |
+| 12 | 3 | vector-only 37 (3.7), 54,989 / 5,889, abstained 10 (1; 9) (l.141) | exp-e-summary.csv:4 | match |
+| 13 | 3 | recall@5 / @10 / MRR: 0.787 / 0.8241 / 0.4926; 0.5648 / 0.6019 / 0.4556; 0.3704 / 0.3704 / 0.6111 (l.154-156) | exp-e-labelled/exp-e-summary.md:23-25; exp-e-quality.csv:2-4 | match |
+| 14 | 3 | scored 9, without items 1, incomplete 0, no relevant 0; mean list 8.6 / 6.2 / 3.7; questions_excluded empty (l.154-159) | exp-e-quality.csv; exp-e-labelled/exp-e-summary.csv | match |
+| 15 | 3 | 101 pooled items, 101 rows, 0 blank, 0 invalid (l.160) | ruling 16 point 1 (labels not opened) | match to ruling |
+| 16 | 4 | Phase 9: 73 claims, 30 / 40 / 3, 43/73; 29 by design, 14 defects; outcomes (l.194, 200) | phase-09 human-gate.md:11, 28 | match |
+| 17 | 4 | Phase 11: 99 claims, 87 / 12 / 0, 12/99; outcomes and checks (l.196, 202) | phase-11 human-gate.md:23-27, 40 | match |
+| 18 | 4 | E removed share 8/22, 2/16, 11/11 (l.210-212) | exp-e-summary.csv; raw summary-010.json unsupported + conflicting 8, 2, 4+7 | match (breakdown omitted, C5-M1) |
+| 19 | 4 | ratings 4.4 / 3.6, 4.6 / 3.6, 1.9 / 1.9, 10 answers each (l.222-224) | exp-e-labelled/exp-e-summary.md:33-35; exp-e-quality.csv | match |
+| 20 | 5 | deef295 rows 27,993 / 17.2 / 1,628 / 13.3 / 36.3 / 24; 55,598 / 27.6 / 2,014 / 18.9 / 52.2 / 24; 110,867 / 53.3 / 2,080 / 36.3 / 95.6 / 48 (l.252-254) | size-scaling.csv:7-9 | match |
+| 21 | 5 | 344.7 cluster min, 3.32 USD; 1.60x, 1.93x (l.336, 263) | sum of the 7 clusterMinutes in size-scaling.csv; Phase 14 ruling 22 (prompt.md:219, 221) | match |
+| 22 | 5 | D c=8 6,439 req, 35.72 req/s, 119.8 / 673.5 / 914.3; neighbors p95 849.2, p99 1,072.7 (l.277, 279) | exp-d/README.md:19, 35 | match |
+| 23 | 5 | ECS CPU 19.8-26.6, Neptune 80.4-93.0 at 00:50-00:52 -06:00 (l.280) | post-exp-d-cloudwatch.txt:22-24, 94-96 | match |
+| 24 | 5 | D-scale 21,962, 36.59, 112.3 / 682.9 / 922.3; intervals 300.6 / 331.5 / 1,058.1; about 31 s registration (l.287, 301-302) | exp-d-scale/README.md:24, 35-38, 73-75 | match |
+| 25 | 5 | steady state 37.32 vs 40.23; Neptune 96.971 and 96.988-97.649; ALB per-minute list (l.308-312) | exp-d-scale/README.md:9, 65-66 | match |
+| 26 | 5 | F 928 s, receives [1,2,3], 8 checks PASS (l.319-322) | exp-f/README.md:11, 17-24 | match |
+| 27 | 5 | day sums 1.53, 2.05, 0.43, 0.33, 4.20, 2.98, 1.16; listed 13.14; remainder about 3.70; MTD 16.84 (16.8378173179) (l.344-357) | cost-explorer-20261121.txt:3-43, every line summed | match |
+| 28 | 5 | window 1 settled 3.58 vs 3.32; E Haiku line 0.36; E about 0.28 (l.361, 364) | cost file:43; ruling 16.5. My check: 177,091 input and 20,849 output tokens at an assumed 1 / 5 USD per million gives about 0.28 | match |
+| 29 | 5 | window 3 start "about 16:40 UTC" (l.363) | ruling 17.2; plan file 17:33:46Z | mismatch (C5-m1) |
+| 30 | 6 | first pass 64/101 and all 15 per-agent ratios (l.387-402) | factory-metrics.md rows 7-139, recounted per agent | match |
+| 31 | 6 | findings 2 / 34 / 148; BLOCKED-ON 10; 5 of 13 phases at most one repair round (l.422-424, 457) | factory-metrics.md; phase gates; rulings 6, 7, 12, 13 | match |
+| 32 | 6 | hook self-tests 304/304, 142/142, 11/11; validator 231/231 (l.438) | check-sh-wo4.txt:202-204, 235 | match |
+| 33 | 6 | Phase 15 rulings "15 so far" (l.442) | prompt.md (17 rulings) | stale (C5-m9) |
+| 34 | 7 | window 2 plan sha256 ba816190…, 89/1/0; window 3 978ce305, 89/0/0 (l.468-469) | Phase 14 ruling 38; operations/plans/20261119T173346Z-c5428063732a-APPROVED.txt:2, 4 | match |
+| 35 | 7 | Hadoop 16.7, 16.6, 17.2; 27.5, 27.2, 27.6 (l.477) | size-scaling.csv:3-8 | match |
+| 36 | 7 | regeneration results (l.490-493) | regenerate-derived.txt:10-16, 23-47, 50-67 | match. No self-test count is stated, which is consistent with ruling 17's 19 |
+| 37 | B | "7 fraction records" (l.17) | size-scaling.csv (8 records) | mismatch (C5-m6) |
+| 38 | Neptune | 4,997,691; 61,752; 34,114,441 (l.513-514) | neptune-status files (34,052,689; 29,054,998; 5,059,443) | arithmetic correct |
+
+### Per-check answers
+
+#### Check 1: numbers
+
+- 38 checks, listed above. 34 match. 4 do not: rows 4, 29, 33 and 37, which are C5-m7, C5-m1, C5-m9 and C5-m6.
+- Sections 3.2 and 4.2: every labelled E number equals `exp-e-labelled/exp-e-summary.md`, `exp-e-summary.csv` and `exp-e-quality.csv`.
+- Section 5.7: every cost equals ruling 16 point 5 and the Cost Explorer file. Ruling 17 changes no cost.
+- Agreement with ruling 17:
+  - Window 3 start: does not agree (line 363 says 16:40; C5-m1).
+  - Self-test count: agrees. Line 492 says "every check PASS" with no count, and the file shows 19.
+  - Labelled regeneration: does not agree. Line 494 is superseded, and `regenerate-labelled.txt` is not cited (C5-m2).
+
+#### Check 2: paths and missed sources
+
+- Every repository path cited exists (checked with Glob). This includes:
+  - the four operations/releases and operations/plans records that part A did not open;
+  - `operations/pipeline-runs/20261117T045335Z-fraction25/`;
+  - `p14-window1-results.tsv`;
+  - `modules/spark/JOBS.md`;
+  - `experiments/benchmark/benchmark-questions-v1.csv`;
+  - the Neptune window 2 and window 3 status files;
+  - `regenerate-derived.txt`, `e-rating-anchors.txt` and `evidence/exp-e-keys/`;
+  - `factory-metrics.md`.
+- The `labels/*.csv` paths were not checked, because the work order forbids opening `labels/`. Commit cdb9578 states that they were committed.
+- Missed sources that change a statement:
+  - the E `summary-010.json` files (C5-M1);
+  - `regenerate-labelled.txt` (C5-m2).
+- Missed sources that do not change a statement:
+  - the window 3 approval record `operations/plans/20261119T173346Z-c5428063732a-APPROVED.txt` and release `operations/releases/release-20261119T233215Z-c5428063732a.json`. They support 7.1's window 3 lines, which cite only ruling 10.
+  - `docs/agent-runs/phase-14/evidence/gate/alarm-history-window2.txt`, which supports "no scale-out in window 2".
+  - the window 3 Neptune progress files, which give no per-file counts and so do not resolve the record-count question.
+  - the EMR integrity-table listings (C5-m10).
+- No validator output for the EMR runs, no sampled provenance audit and no further factory-metrics source exists in the tree.
+
+#### Check 3: facts versus interpretation, hedging, negative results
+
+- Each group has separate Measured and Interpretation parts. The Neptune section uses "Finding: open" with a hedged hypothesis.
+- Two interpretations overclaim (C5-m5).
+- Line 235, "for the same 14 verified claims", means the same count. The raw files show equal counts, not identical claims. I note this but do not count it as a finding.
+- Line 179, "the same 9/10 questions", is confirmed by raw stdout: B09 abstained in both modes.
+- Negative results that are kept:
+  - the EMR OOM runs and the failed attempts;
+  - D attempt 1 and smoke 1;
+  - no scale-out in window 2;
+  - every abstention and removal count;
+  - the late scale-out and scale-in;
+  - the open Neptune count.
+- Negative results that are missing: the E CONFLICTING count and the check failures (C5-M1).
+
+#### Check 4: the spec Phase 16 gate
+
+- Evaluation data versus the prompt under evaluation: met.
+  - The benchmark was Claude-drafted in a web chat and human-reviewed, not generated by the runtime prompt (Phase 6 gate:61; l.525).
+  - Relevance labels and ratings are the human's, entered with a display-only tool.
+  - Removed-claim classification was done by the human.
+- Versioning: met. The files are `benchmark-questions-v1.csv`, `relevance-e-v1.csv` and `ratings-e-v1.csv`.
+- Facts separate from interpretation: met, apart from C5-m5.
+- Negative results present: not fully met (C5-M1).
+- Threats to validity: complete against the work order's list. One threat is missing (C5-m8).
+- Missing data: incomplete.
+  - Line 558 is wrong as written.
+  - Abstention quality has no row.
+  - Line 569 is stale.
+  - Precision at K gives the wrong reason (C5-m4).
+  - The spec asks to regenerate "tables and plots", and the file does not say that no plots exist. This is a minor omission and I have not counted it as a finding.
+
+#### Check 5: audience, secrets, pending marks
+
+- No text addresses a grader or an evaluator (Grep for grader, evaluator, reviewer and marker: none).
+- No 12-digit number, AWS account ID, session token, credential or secret value is in the file. The plan sha256 is a checksum, not a secret. The account ID does appear in Phase 14 evidence such as bucket names, but it was not copied.
+- No "Pending (work order 5 part B)" text remains. The remaining uses of "pending" are test-suite pending tests (l.87, 214) and the Phase 17 clean-checkout build (l.496, 568).
+
+### OWNERSHIP CHECK
+
+- `docs/evaluation.md` → documentation-engineer → author documentation-engineer (3e9d565, 43201d8): yes.
+- `docs/agent-runs/phase-15/agent-report.md` (3e9d565, report assembly) → human-owned, with the orchestrator's report-assembly exception: yes.
+- `docs/agent-runs/phase-15/prompt.md` (cf09527, ruling 17) → human architect: yes.
+- `diff-part-b.txt` shows changes only in the sections work order 5 part B names: Status, 3.2, 3.4, 4.2, 4.3, 5.7, 5.8, 7.1, Threats, Missing data.
+
+### FLOOR AND FENCE CHECK
+
+None. No hook, permission rule, `check`, `markTestRun` or reviewer fence is touched, and no constitutional file is changed.
+
+### EVIDENCE GAPS
+
+- Part B's "no Grep or Glob available" and "no commands run" are statements about the session, not command results, and need no output. Its numeric claims (labelled values; day sums 1.53 to 13.14 and 3.70; 19 PASS lines) were verified above.
+- Not verifiable here: the counts-only checks of the label files (101 and 30 rows, 0 blank, 0 invalid) and the labeller's sha256. Both rest on ruling 16 point 1, because `labels/` is out of bounds.
+- The list-price basis of "about 0.28 USD" is not in committed evidence. My arithmetic assumes Haiku 4.5 at 1 and 5 USD per million tokens.
+- Not checked: whether any fused or graph-only abstention was rated above 1 (C5-m3). This needs the human.
+- Tests: none are applicable. No Scala or sbt source changed, so `sbt check` does not apply. The last recorded check.sh is `check-sh-wo4.txt` at 48e1864 (845 passed, 0 failed, 10 pending).
+- Repair route: ruling 16 point 8 requires an explicit human-exception ruling for any repair after this review. C5-M1 is major, so under the report contract it cannot simply become a residual risk. The human either grants a documentation-only repair, or records C5-M1 as residual by ruling with the 7 CONFLICTING disclosed in the gate.
+
+FILES CREATED: none
+FILES MODIFIED: none
+COMMANDS RUN: none (no Bash tool; Read, Grep and Glob only)
+NEXT GATE: findings routed to documentation-engineer (and the human for C5-M1's input ruling and C5-m3's fact), then re-review if a repair is granted; human gate (ruling 18).
