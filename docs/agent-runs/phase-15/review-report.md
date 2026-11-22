@@ -1399,3 +1399,245 @@ FILES CREATED: none
 FILES MODIFIED: none
 COMMANDS RUN: none (no Bash tool; Read, Grep and Glob only)
 NEXT GATE: findings routed to documentation-engineer (and the human for C5-M1's input ruling and C5-m3's fact), then re-review if a repair is granted; human gate (ruling 18).
+
+## Code review 6
+
+### Summary
+
+STATUS: COMPLETE
+OWNER: code-reviewer
+WORK ORDER: Phase 15+16, session 13, code review 6. This is the short re-review after repair-03, limited by ruling 18 point 5 to findings C5-M1, C5-m1 to C5-m10 and work order item 12, plus a check that nothing else changed. Change set: `docs/agent-runs/phase-15/evidence/code-review-6/diff-repair-03.txt` (git diff 3e9d565 HEAD -- docs/evaluation.md). HEAD is 878c294 and the tree is clean (orchestrator-observed). Read-only.
+VERDICT: APPROVE
+
+Counts: 0 critical, 0 major, 5 minor.
+
+- **All findings fixed.** All 11 code review 5 findings and item 12 are fixed at the lines the repair report names.
+- **E numbers match.** Every new E number in 3.2, 4.1, 4.3 and Missing data equals the three `summary-010.json` files and `modes-stdout.txt`. No count differs from `experiments/derived/exp-e/exp-e-summary.csv`.
+- **Denominator convention.** The contradiction-rate denominator ("model claims" = verified + partially supported + unsupported + conflicting) is the file's existing convention. The Phase 9 gate says "of 73 model claims, 30 VERIFIED, 40 UNSUPPORTED, 3 CONFLICTING", and the Phase 11 gate gives 87/0/12/0 = 99.
+- **Scope held.** The diff changes only the sections the repair-03 work order names.
+- **The five minors are leftovers:**
+  - a Phase 15 factory row that is now stale against the updated ruling count;
+  - an assumed list price stated as fact;
+  - one wording mismatch on the gold row count;
+  - one leftover reason sentence in a Missing data row;
+  - one over-broad wildcard citation.
+- **Route under ruling 18 point 5.** There is no repair-04. All five become residual risks, and no major goes to the Decision line.
+
+Grep and Glob were available in this session. Nothing under `labels/`, `scratch/`, `secrets/` or any `e-labelling` path was opened or listed.
+
+SCOPE REVIEWED:
+- Read in full:
+  - `docs/evaluation.md` (600 lines)
+  - `diff-repair-03.txt`
+  - `docs/agent-runs/phase-15/repair-03.md`
+  - review-report.md "Code review 5" (lines 1112 to 1401)
+  - `docs/agent-runs/phase-15/prompt.md` (rulings 1 to 18, work orders 4 and 5, repair-03 work order)
+  - the three `summary-010.json` files
+  - the three `modes-stdout.txt` files
+  - `experiments/derived/exp-e/exp-e-summary.csv`
+  - `experiments/derived/size-scaling/size-scaling.csv`
+  - `evidence/gate/regenerate-labelled.txt` and `regenerate-derived.txt`
+- Read in part:
+  - `experiments/manifests/exp-e-retrieval-modes-v1.json` (`budgetNote`, `expectedFinding`)
+  - `docs/agent-runs/phase-05/evidence/eval-er-v1/metrics.json` and `eval-er-v2/metrics.json` (n, unsure)
+  - `docs/agent-runs/phase-11/human-gate.md:20-29`
+  - `docs/agent-runs/phase-09/human-gate.md:11`
+  - `docs/agent-runs/phase-06/human-gate.md:4, 61`
+  - `docs/agent-runs/phase-14/prompt.md` (rulings 18 to 22 and 30, by Grep)
+  - `docs/agent-runs/phase-14/evidence/window-1/p14-s3-run-*.txt` (Grep)
+  - `experiments/analysis/summarize-exp-e.py` (Grep)
+- Glob checks:
+  - `p14-s3-run-*.txt`
+  - `*validat*` under `operations/`, `docs/agent-runs/phase-14/` and `experiments/`
+  - image and PDF files under `experiments/`, `reports/`, `docs/` and `load-tests/`
+
+### Findings (ranked)
+
+**C6-m1 (MINOR, CONFIRMED). The Phase 15 factory row is stale against the updated ruling count.**
+
+- Location:
+  - `docs/evaluation.md:446`: "| 15 | 0/0/7, 0/0/5, 0/1/6, 0/0/3 | 2 (ruling 12) | …"
+  - `:448`: "34 major; 148 minor"
+  - `:468`, repaired by C5-m9: "Phase 15 18 (as of repair-03)"
+- Line 468 now claims the file is current through repair-03. The Phase 15 row leaves out code review 5 (0/1/10, ruling 18 point 1) and repair-03 (the third round, ruling 18 point 5). The sums at 448 exclude them.
+- Failure input: a reader compares 446 with 468, or totals Phase 15 repair rounds.
+- Impact: group 6 understates Phase 15 findings (1 major and 10 minors missing) and repair rounds (3, not 2).
+- Mitigating context: line 595 says Phase 15 rows are "added at the gate (ruling 15 point 4)".
+- Owner: documentation-engineer. The factory-metrics rows are the human's at the gate.
+
+**C6-m2 (MINOR, CONFIRMED). An assumed price is stated as the list price.**
+
+- Location: `docs/evaluation.md:390`: "about 0.28 USD at the Haiku 4.5 list price of 1 USD per million input and 5 USD per million output tokens".
+- The sources call this an assumption:
+  - ruling 18 point 4 (`prompt.md:330`): "assumes Haiku 4.5 at 1 USD per million input tokens and 5 USD per million output tokens";
+  - the manifest `budgetNote` (line 36): "the Haiku 4.5 list price assumed".
+- No committed file records the price.
+- The arithmetic holds: 177,091 input and 20,849 output tokens give 0.281 USD.
+- Impact: an unevidenced price reads as verified.
+- Owner: documentation-engineer.
+
+**C6-m3 (MINOR, CONFIRMED). The researcher row count wording conflicts with the C5-m7 fix.**
+
+- Location: `docs/evaluation.md:78`: "only one false positive was observed in 259 researcher rows". Line 30 now says "260 rows: 259 decided, 1 UNSURE".
+- The statement is true of decided rows (`eval-er-v1/metrics.json:7-8`, n 259), but the two lines now use "rows" for different counts.
+- Repair-03 ASSUMPTIONS says this line was deliberately left as written.
+- Impact: reader confusion only. No number is wrong.
+- Owner: documentation-engineer.
+
+**C6-m4 (MINOR, CONFIRMED). A leftover reason sentence in the E validity Missing data row.**
+
+- Location: `docs/evaluation.md:586`. The cell begins "measured (section 4.1)" and still ends "The E summarizer does not report CONFLICTING or the per-check results separately".
+- The sentence is accurate. `summarize-exp-e.py` has no conflict or check terms (Grep), and `exp-e-summary.csv:1` has no conflicting column.
+- As the reason in a "Status and reason" cell that now says "measured", it reads as a contradiction.
+- The row also does not say plainly that supporting-publication validity is not measured. It says only "No check is named for supporting-publication validity".
+- Impact: low. The row could be misread.
+- Owner: documentation-engineer.
+
+**C6-m5 (MINOR, CONFIRMED). The C5-m10 wildcard citation is wider than its claim.**
+
+- Location: `docs/evaluation.md:578` cites "S3 listings `docs/agent-runs/phase-14/evidence/window-1/p14-s3-run-*.txt`" for "integrity-violation tables".
+- Glob matches 7 files. Only 4 list violation tables:
+  - eaa0031b:51-52, `integrity-violations`;
+  - 09582fb1:8-9, `analytics/integrity-violations`;
+  - 04f6cfa7:8-9, `analytics/community-path-violations`;
+  - 968b42b2:22-23, `summary-export-violations`.
+- 0b5cdafa, 691ce01e and c8eceb83 have no violation entries. Two of the four are not named "integrity".
+- The repair report lists this as its own risk.
+- Impact: the reader must search 7 listings. The claim itself holds.
+- Owner: documentation-engineer.
+
+Checked and not counted as findings:
+
+- **`:261`, the unhedged "designed consequence … not a retrieval failure the run measured".** It is supported by:
+  - ruling 6 (`prompt.md:74`);
+  - the manifest `expectedFinding` (line 38: "vector-only bundles hold semantic items only");
+  - the vector-only summary: `evidenceItems` 0 (line 128), and all 9 failures are NO_VERIFIED_CLAIM (lines 94-100, 102-103).
+
+  It repeats `:180`, which code review 5 did not flag, and the work order directs it. The 7 CONFLICTING claims show that the verifier compared claims with graph data. The hedged line at `:259` covers that reading.
+- **`:530`, "settings tried (16 and 40 shuffle partitions)".** It does not say that the 50 percent attempts also spanned commits fa93806 and deef295 (Phase 14 `prompt.md:216`). This is incomplete, not wrong.
+- **`:257`, "final live run is 0/99".** It refers to the 30-question live-benchmark table (`:190`). E does not contradict it.
+
+### Per-finding re-check
+
+| Finding | Status | Where (docs/evaluation.md) | Note |
+|---|---|---|---|
+| C5-M1 | fixed | 4.1 `:214-234` (both tables, named failures, other checks, design line, CSV comparison); 4.3 `:259-261`; 3.2 `:158` (B09); Missing data `:586`, `:587` | Every value matches its source (Numbers check). Wording leftovers in C6-m4. |
+| C5-m1 | fixed | `:388` (20:30 UTC, ruling 18 point 4); `:389` (17:30 UTC, ruling 17 point 2) | |
+| C5-m2 | fixed | `:520` (superseded clause removed); `:521` (regenerate-labelled.txt); `:598` | Matches regenerate-labelled.txt:1-5 |
+| C5-m3 | fixed | `:251`; `:552` | Matches ruling 18 point 3 (`prompt.md:329`) |
+| C5-m4 | fixed | `:173`; `:580` | Matches work order 4 A3 (`prompt.md:142`) |
+| C5-m5 | fixed | `:396`; `:530` | Matches Phase 14 `prompt.md:208, 216, 223, 236` |
+| C5-m6 | fixed | `:17` | size-scaling.csv rows 2-9; row 2 has no run.json |
+| C5-m7 | fixed | `:30`, `:49` | Leftover wording at `:78` (C6-m3) |
+| C5-m8 | fixed | `:551` | Sources hold: `docs/agents.md` (labels/** owned by the human architect); `phase-06/human-gate.md:61` ("reviewed by the human") |
+| C5-m9 | fixed | `:468` | Side effect: stale `:446` (C6-m1) |
+| C5-m10 | fixed | `:578` | Definitive wording verified by Glob. Citation breadth in C6-m5. |
+| Item 12 | fixed | `:390` (price basis); `:599` (no plots) | "assumed" dropped (C6-m2). "No plots" verified by Glob. |
+
+### Numbers check
+
+| # | Number(s) in docs/evaluation.md | Source checked | Result |
+|---|---|---|---|
+| 1 | fused 14/0/8/0 (`:218`) | fused summary-010.json:109-112; modes-stdout:40 | match |
+| 2 | graph-only 14/0/2/0 (`:219`) | graph-only summary:109-112; stdout:42 | match |
+| 3 | vector-only 0/0/4/7 (`:220`) | vector-only summary:117-120; stdout:50 | match |
+| 4 | contradiction 0/22, 0/16, 7/11 (`:218-220`, `:259`, `:586`) | arithmetic; convention in phase-09 gate:11 ("of 73 model claims") and phase-11 gate:24 (87/0/12/0) | match, convention confirmed |
+| 5 | abstention 10/0/0, 10/0/0, 1/9/0 | each summary:67-71; stdout | match |
+| 6 | pair-edges 3/0/7, 3/0/7, 0/0/10 | each summary:47-51 | match |
+| 7 | claim-evidence 9/0/1, 9/0/1, 0/0/10 | each summary:57-61 | match |
+| 8 | path-hops 1/1/8, 1/1/8, 0/0/10 | each summary:77-81 | match |
+| 9 | plan-operations 9/1/0 in every mode | each summary:32-36 | match |
+| 10 | B08 plan-operations string (`:229`) | fused:94, graph-only:94, vector-only:101 | match |
+| 11 | B08 path-hops string (`:230`) | fused:95, graph-only:95 (quoted substring; pair IDs omitted) | match |
+| 12 | 9 vector-only abstention failures, B01-B08 and B10 (`:231`) | vector-only summary:94-100, 102-103 | match |
+| 13 | 7 other checks, 0 failures; none named for supporting publications (`:232`) | each summary:31-92 (12 checks in total) | match |
+| 14 | B09 quote; fused line 20, graph-only and vector-only line 22 (`:158`) | the three modes-stdout.txt files | match |
+| 15 | B09 passed abstention in every mode (`:231`, `:261`) | stdout "checks pass" at those lines; vector-only abstention pass 1 | match |
+| 16 | no count differs from exp-e-summary.csv (`:234`) | csv:2-4 (verified 14/14/0, partial 0/0/0, removed 8/2/11) | match |
+| 17 | Phase 11 "abstention fails B15" (`:587`) | phase-11 human-gate.md:27 | match |
+| 18 | about 177k / 21k tokens, about 0.28 USD (`:390`) | 177,091 / 20,849 from the summaries; 0.281 at 1 and 5 USD per million | match (price basis assumed, C6-m2) |
+| 19 | window 2 start 20:30 UTC; window 3 start 17:30 UTC (`:388-389`) | prompt.md:330, :320 | match |
+| 20 | 8 fraction records, one without run.json (`:17`) | size-scaling.csv:2-9 | match |
+| 21 | researchers 260 (259 + 1); works 50 (45 + 5) (`:30`, `:49`) | v1 and v2 metrics.json:7-8, 209-210; confusion sums 150 + 109 + 1 and 37 + 8 + 5 | match |
+| 22 | Neptune CPU 80.4-93.0 and 97.0-98.7 (`:396`) | `:306`, `:339` (sources verified in code review 5) | match |
+| 23 | Phase 15 rulings 18 (`:468`) | prompt.md:325 (ruling 18 is the last) | match |
+| 24 | labelled rebuild at cdb9578, `//raw`, key copy, exit 0, byte-identical (`:521`) | regenerate-labelled.txt:1-5 | match |
+| 25 | 16 and 40 partitions; option B deferred (`:530`) | Phase 14 prompt.md:208, 216, 223, 236 | match |
+| 26 | no plots (`:599`) | Glob for image and PDF files under experiments, reports, docs and load-tests: none | match |
+| 27 | no EMR validator output (`:578`) | Glob `*validat*`: none; phase-14 Grep finds only test-name lines | match |
+| 28 | `p14-s3-run-*.txt` as integrity-table listings (`:578`) | 7 files, 4 with violation tables | partial (C6-m5) |
+| 29 | Phase 15 factory row (`:446`) against `:468` | ruling 18 points 1 and 5 | stale (C6-m1) |
+
+### Per-check answers
+
+#### Check 1: fixed or not, and the new numbers
+
+- Every code review 5 finding and item 12 is fixed (table above).
+- Every new number in 3.2, 4.1, 4.3 and Missing data equals the summaries and stdout (rows 1 to 17), including:
+  - each check's pass / fail / n/a triple;
+  - the quoted failure strings;
+  - B09's line numbers and text;
+  - the list of seven zero-failure checks;
+  - the absence of a check named for supporting-publication validity.
+- No count differs from exp-e-summary.csv.
+- The "model claims" denominator is the file's convention (row 4). Partially supported is 0 in every live and E run, so including it changes no ratio.
+
+#### Check 2: nothing else changed, and no overclaim
+
+- **Hunks.** The diff hunks fall only in places the work order names:
+  - `:17`, `:30`, `:49`;
+  - 3.2 `:158` and 3.3 `:173`;
+  - 4.1 (22 added lines), 4.2 `:251` and 4.3 `:259-261`;
+  - 5.7 `:388-390` and 5.8 `:396`;
+  - 6.1 `:468`;
+  - 7.1 `:520-521` and 7.2 `:530`;
+  - Threats `:551-552`;
+  - Missing data `:578`, `:580`, `:586-587`, `:598-599`.
+
+  The net addition of 30 lines gives 570 → 600, which agrees with the file.
+- **Fence limit.** Without Bash, I could not confirm that the diff file is exactly `git diff 3e9d565 HEAD`. Every `+` line is present in the working file.
+- **The three new statements the work order asked about:**
+  - `:261`: supported (see "Checked and not counted").
+  - Rater-independence sources: they hold.
+  - "Phase 11 gate abstention fails B15": confirmed at phase-11 human-gate.md:27.
+- **One overclaim:** C6-m2.
+
+#### Check 3: consistency left by the repair
+
+- `:78` against `:30`: C6-m3.
+- `:586` leftover sentence: C6-m4.
+- `:446` against `:468`: C6-m1.
+- No contradiction found in 3.4 (`:180` agrees with `:261`), 4.3 `:257-258`, 5.8, Threats or the Status line (`:3`). The Status line does not mention repair-03, but nothing in it is false.
+- 5.8 `:395` ("does not complete past 25 percent with this cluster size") is the form code review 5 called supported, and it agrees with `:530`.
+
+#### Check 4: audience and secrets
+
+- Grep for grader and evaluator in `docs/evaluation.md`: none. "benchmark's reviewer" (`:551`) names a role, not an audience.
+- No 12-digit number (Grep `\b\d{12}\b`: none), no AKIA or ASIA key form, and no session token. Run IDs are 32-hex.
+
+### OWNERSHIP CHECK
+
+These rest on orchestrator-observed commits; there is no git log in this fence.
+
+- `docs/evaluation.md` → documentation-engineer → author documentation-engineer (dfbb4c5): yes.
+- `docs/agent-runs/phase-15/prompt.md` (8e04d5b, ruling 18 and the repair-03 work order) → human architect: yes.
+- `docs/agent-runs/phase-15/repair-03.md` → human-owned folder, written under the orchestrator's report-assembly exception: yes.
+- `docs/agent-runs/phase-15/evidence/code-review-6/diff-repair-03.txt` (878c294) → human architect: yes.
+
+### FLOOR AND FENCE CHECK
+
+None. No hook, permission rule, `check`, `markTestRun` or reviewer fence is touched, and no constitutional file is changed.
+
+### EVIDENCE GAPS
+
+- **Repair report's comparison claim.** "Every new number was compared with its source" is backed by independent verification (rows 1 to 25 match).
+- **Repair report's reliance on code review 5.** Three items rest on code review 5's Glob: the wildcard, "no EMR validator output" and "no plots". All three were re-verified here by Glob (rows 26 to 28).
+- **Session statements.** "Grep and Glob unavailable" and "commands run: none" describe the session and need no output.
+- **Not verifiable here.** The counts-only ratings check in ruling 18 point 3, because `labels/` is out of bounds.
+- **Not verifiable here.** Whether the diff file equals `git diff 3e9d565 HEAD`. The orchestrator states it.
+- **Tests.** Not applicable. No Scala or sbt source changed, so `sbt check` does not apply. The last recorded check is `check-sh-wo4.txt` at 48e1864 (845 passed, 0 failed, 10 pending).
+
+FILES CREATED: none
+FILES MODIFIED: none
+COMMANDS RUN: none (no Bash tool; Read, Grep and Glob only)
+NEXT GATE: under ruling 18 point 5 there is no repair-04. C6-m1 to C6-m5 (owner documentation-engineer) become residual risks. No major remains, so nothing goes to the Decision line. Next is the human gate for Phase 15+16.

@@ -359,3 +359,16 @@ Changes:
 12. Also: state the list-price basis of E's about 0.28 USD (ruling 18 point 4), and add to Missing data that no plots are produced (the derived tables only).
 
 Report (the orchestrator writes it verbatim to docs/agent-runs/phase-15/repair-03.md): status COMPLETE or BLOCKED-ON; the line count before and after; each finding with the change made and its source; any count that differs between the raw summaries and the derived tables; deviations.
+
+## Ruling 19 (human, Nov 21, 2026): code review 6 outcome; residual risks; gate next
+
+1. Code review 6 (session 13, code-reviewer, Ponytail OFF; review-report.md "Code review 6"): APPROVE, 0 critical, 0 major, 5 minor. C5-M1, C5-m1 to C5-m10 and repair-03 item 12 are all fixed; every new number in sections 3.2, 4.1 and 4.3 equals the three E summary-010.json files and modes-stdout.txt, and none differs from experiments/derived/exp-e/exp-e-summary.csv; the contradiction-rate denominators follow the file's existing model-claims convention; the diff changes only the sections the repair-03 work order names.
+2. Residual risks (no repair-04, ruling 18 point 5), owner documentation-engineer:
+   - C6-m1: docs/evaluation.md group 6 still shows Phase 15 with code reviews 1-4 and 2 repair rounds. The authoritative Phase 15 record is this prompt.md, review-report.md and the factory-metrics rows added at the gate: code reviews 1-6 (0/0/7, 0/0/5, 0/1/6, 0/0/3, 0/1/10, 0/0/5) and 3 repair rounds (repair-01; repair-02 and repair-03 by human exception, rulings 12 and 18).
+   - C6-m2: the "list price" of about 0.28 USD for E is an assumed Haiku 4.5 price (ruling 18 point 4); no committed file records the price.
+   - C6-m3: line 78's "259 researcher rows" means 259 decided rows (line 30: 260 rows, 259 decided, 1 UNSURE).
+   - C6-m4: the E validity Missing data row keeps a leftover reason sentence; supporting-publication validity is not measured for E.
+   - C6-m5: of the seven p14-s3-run-*.txt listings, four list violation tables (eaa0031b, 09582fb1, 04f6cfa7, 968b42b2).
+3. Facts the reviewer could not verify, confirmed by the human: evidence/code-review-6/diff-repair-03.txt was written by the human with git diff 3e9d565 HEAD -- docs/evaluation.md after the repair commit; the ruling 18 point 3 counts come from the human's counts-only check.
+4. Deviation: the orchestrator removed a two-space indent that the hand-back adds to every line before appending the code review 6 report; the text is otherwise unchanged.
+5. Phase 15 totals: 19 rulings; 13 Claude Code sessions; work orders 1-5 and repairs 01-03 COMPLETE; code reviews 1-6. Next: the Phase 15 gate (check.sh on the committed tree, human-gate.md, factory-metrics rows for sessions 1-13, phase_commit 15).
