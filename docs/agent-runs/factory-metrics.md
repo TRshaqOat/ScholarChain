@@ -137,3 +137,21 @@ Running log for the Phase 16 agentic-factory evaluation. One row per agent invoc
 | 2026-11-17 | 14 | experiment-engineer (repair-04) | COMPLETE | y | - | 4 | 0 | ? | review 4 findings 1-9; human exception (ruling 33) |
 | 2026-11-17 | 14 | code-reviewer (review 5) | APPROVE | y | 0/0/2 | 4 | 0 | ? | minors residual (ruling 35) |
 | 2026-11-17 | 14 | deploy-engineer (WO8 smoke) | FAILED | n | - | 0 | 0 | ? | smoke 1 Neptune timeout, cold cache (ruling 44); no agent rerun; human rerun PASS (ruling 45) |
+| ? | 15 | rag-engineer (WO1) | COMPLETE | n | - | 0 | 0 | ? | session 1; m7 fixed in repair-01 C; one read-only git status --porcelain (ruling 5) |
+| ? | 15 | infra-engineer (WO2) | COMPLETE | n | - | 0 | 0 | ? | session 1; CPU target variable for window 3 (ruling 2); m1, m2, m4, m6 fixed in repair-01 A |
+| ? | 15 | experiment-engineer (WO3) | COMPLETE | n | - | 0 | 0 | ? | session 1; m3 fixed in repair-01 B; one aws --version (ruling 5) |
+| ? | 15 | code-reviewer (review 1) | APPROVE | y | 0/0/7 | 0 | 0 | ? | session 2; m5 accepted (ruling 6) |
+| ? | 15 | infra-engineer (repair-01 A) | COMPLETE | y | - | 1 | 0 | ? | session 3; m1, m2, m4, m6 |
+| ? | 15 | experiment-engineer (repair-01 B) | COMPLETE | y | - | 1 | 0 | ? | session 3; m3 |
+| ? | 15 | rag-engineer (repair-01 C) | COMPLETE | y | - | 1 | 0 | ? | session 3; m7 |
+| 2026-11-19 | 15 | code-reviewer (review 2) | APPROVE | y | 0/0/5 | 1 | 0 | ? | session 4; N4 accepted, N1-N3 and N5 residual (ruling 7) |
+| 2026-11-20 | 15 | experiment-engineer (WO4 A) | COMPLETE | n | - | 0 | 0 | ? | session 5 (date of commit 48e1864); E harness, summarizer, sheets, derived tables; one read-only git status (ruling 12 g) |
+| 2026-11-20 | 15 | infra-engineer (WO4 B) | COMPLETE | y | - | 0 | 0 | ? | session 5; CPU target back to 60 (ruling 13 e) |
+| 2026-11-20 | 15 | code-reviewer (review 3) | REQUEST_CHANGES | y | 0/1/6 | 0 | 0 | ? | session 6; E-M1 fused --max; repair-02 by human exception (ruling 12) |
+| 2026-11-20 | 15 | experiment-engineer (repair-02) | COMPLETE | y | - | 2 | 0 | ? | session 7; E-M1, E-m1 to E-m5 |
+| 2026-11-20 | 15 | code-reviewer (review 4) | APPROVE | y | 0/0/3 | 2 | 0 | ? | session 8; C4-m1 to C4-m3 residual (ruling 13) |
+| 2026-11-20 | 15 | documentation-engineer (WO5 part A) | COMPLETE | n | - | 0 | 0 | ? | session 9; docs/evaluation.md 509 lines; Grep and Glob unavailable |
+| 2026-11-21 | 15 | documentation-engineer (WO5 part B) | COMPLETE | n | - | 0 | 0 | guard-paths (orchestrator grep, false positive) | session 10; 509 to 570 lines; not worked around (ruling 17) |
+| 2026-11-21 | 15 | code-reviewer (review 5) | REQUEST_CHANGES | y | 0/1/10 | 0 | 0 | ? | session 11; C5-M1 E check results omitted; repair-03 by human exception (ruling 18) |
+| 2026-11-21 | 15 | documentation-engineer (repair-03) | COMPLETE | y | - | 3 | 0 | ? | session 12; C5-M1, C5-m1 to C5-m10, item 12; 570 to 600 lines |
+| 2026-11-21 | 15 | code-reviewer (review 6) | APPROVE | y | 0/0/5 | 3 | 0 | ? | session 13; C6-m1 to C6-m5 residual (ruling 19) |
