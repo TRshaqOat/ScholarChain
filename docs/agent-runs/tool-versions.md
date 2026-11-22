@@ -53,3 +53,24 @@ sha256 verified against terraform_1.16.6_SHA256SUMS: 85e1bc78ab45bdc5f82a7bac392
 Installed to ~/.local/bin/terraform. `terraform version` reports v1.16.6 on darwin_arm64.
 Newer 1.17.1 deliberately not used (too recent under D-09).
 ```
+
+## Update 2026-11-21 (Phase 17 version record)
+
+```text
+claude CLI: 2.1.329 (Claude Code) at ~/.local/bin/claude (updated from 2.1.178 on 2026-11-19 to run the course autograder)
+VS Code Claude extension: 2.1.314 (darwin-arm64)
+Claude Code model: not pinned in .claude/settings.json or in any agent frontmatter; sessions used the model selected in the client
+Ponytail: v5.3.2, user-scope plugin (optional for replay; code-reviewer, test-engineer, factory-engineer, deploy-engineer and incident-responder are excluded)
+openjdk version "17.0.21" 2026-10-20 (Temurin, aarch64)
+sbt launcher: 1.13.0 (project/build.properties pins sbt.version=1.13.0)
+Scala: 3.3.7 (project/Dependencies.scala; scala-library 2.13.16)
+Terraform v1.16.6 darwin_arm64; provider hashicorp/aws = 6.28.0 (lock file committed)
+aws-cli/2.38.3 Python/3.14.6 Darwin/27.2.0 script-exe/arm64
+node v26.3.0
+Python 3.13.5
+git version 2.54.0 (Apple Git-157)
+jq-1.7.1-apple
+uv 0.13.4 (recorded 2026-11-02, not rechecked)
+Runtime models (Amazon Bedrock, us-east-2): us.anthropic.claude-haiku-4-5-20251001-v1:0, amazon.titan-embed-text-v2:0
+MCP servers (pinned in .mcp.json): aws-api 1.5.6, aws-docs 1.2.2, terraform 1.0.18 (with mcp 1.30.0), github remote endpoint
+```

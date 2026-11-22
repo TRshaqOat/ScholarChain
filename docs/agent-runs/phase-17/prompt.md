@@ -309,3 +309,8 @@ Replace every "UNVERIFIED" statement about these licenses with the facts below, 
 - the file and its line count;
 - each ruling 6 item, found or not recorded;
 - deviations.
+
+## Human ruling 13 (Nov 21, 2026): demo-script inputs and the version record
+
+1. The demo-script source was exported from the Claude Doc as Markdown to `docs/agent-runs/phase-17/inputs/demo-script-source.md`. It was written before Part B was recorded and is partly out of date. `docs/agent-runs/phase-17/inputs/demo-recording-notes.md` (human) records what was actually recorded. Work order 2 reads both; where they differ, the notes win.
+2. `docs/agent-runs/tool-versions.md` has a 2026-11-21 section (human). It is the version record the README cites (work order 1).
