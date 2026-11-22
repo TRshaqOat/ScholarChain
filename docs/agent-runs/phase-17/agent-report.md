@@ -235,3 +235,110 @@ BLOCKED-ON EVIDENCE: none
 NEXT GATE: link check, command replay (Step F fresh-clone logs), evidence review, code-reviewer APPROVE.
 
 I did not check: the 48 HIGH CVEs, the exact Phase 6 manifest contents, or the p15-w3 ruling files. Risk: deviation 1 (labels/README.md opened) needs the human's acknowledgement.
+
+# Work order 3
+
+STATUS: COMPLETE
+OWNER: factory-engineer
+WORK ORDER: Phase 17, work order 3 (factory-engineer): known guard false positives. Source: /Users/achyutpatel/Developer/Cloud/ScholarChain/docs/agent-runs/phase-17/prompt.md, lines 224-243. Rulings 1-14 read; ruling 7 (C03, F07 unchanged) respected. Ponytail OFF.
+
+Summary: I added six residual-risk bullets to docs/agents.md and the validator passed 231/231. Two of the four guard false positives you listed are not tagged `[protected-path-write]` and none come from `guard-paths.sh`, so the bullets name the hook and tags that actually fire (see DEVIATIONS).
+
+FILES CREATED: none
+FILES MODIFIED: /Users/achyutpatel/Developer/Cloud/ScholarChain/docs/agents.md. Six bullets added at the end of "## Residual risks accepted by the human architect", directly after the "Unrecognized protected-path writes" bullet (old line 184). Nothing else changed.
+FILES DELETED: none
+
+CONSTITUTIONAL DIFF:
+I rebuilt this diff from my two Edit calls. I did not run `git diff` because the work order allows only the validator in Bash. The human should confirm it with `git diff -- docs/agents.md`.
+
+```diff
+@@ ## Residual risks accepted by the human architect @@
+ - **Unrecognized protected-path writes.** Risk: Bash writes to protected paths in forms the guard does not recognize, such as `rm -rf spec` or `touch .claude/x`, are not blocked by `guard-dangerous.sh` (see Hook limitations above). Mitigation: no `allow` rule auto-approves them, so they reach the permission prompt, where the human denies them; file-tool writes to the same paths are still blocked by `guard-paths.sh`.
++- **Guard false positive: a write verb in a command that names `labels/` (Phase 17 work order 3).** Risk: `guard-dangerous.sh` (not `guard-paths.sh`, which never sees Bash) blocks a read-only Bash command with `[protected-path-write]` when the command names `labels/` anywhere, even as a path that is only read, and one of its segments looks like a write. The guard removes quotes and splits the command at `;`, `&`, `|`, `(`, `)`, `{`, `}`, backticks, and newlines, including inside quoted and heredoc text. A segment that begins with a write verb (for example `patch`, `install`, `touch`, `ed`, or `cp`) is treated as a command. A wrapper segment (for example `find`, `xargs`, `env`, `python`, or `awk`) is blocked when it contains a write verb anywhere, as in `find labels/ -type f -exec grep -l patch {} +`. The same applies to every other protected path the guard recognizes. Mitigation: the false positive fails closed, so nothing runs and nothing is written; agents read `labels/` only in evaluation code paths (Human-owned artifacts above), so few agent commands name it; and the block message names the hook, the category, and the segment, and tells the agent to stop and report `BLOCKED-ON` instead of rewording the command, and the orchestrator routes that `BLOCKED-ON` result (Topology above).
++- **Guard false positive: a jq read combined with `tee` (Phase 17 work order 3).** Risk: `guard-dangerous.sh` blocks with `[protected-path-write]` a jq command that reads a protected file and pipes its output to `tee`, for example `jq '.permissions' .claude/settings.json | tee /tmp/x.json`. The guard checks whether the command names a protected path anywhere, not whether the write target is protected, and `tee` begins its own segment, so a copy into a temporary directory is blocked like a write to the protected file. The same holds for any reader combined with a write verb in command position. Mitigation: the false positive fails closed; the same write verb aimed at a temporary path passes when the command names no protected path; and the block message tells the agent to stop and report `BLOCKED-ON` instead of rewording the command.
++- **Guard false positive: `jq` combined with `env` (Phase 17 work order 3).** Risk: `guard-dangerous.sh` blocks any command that runs jq and contains the word `env` anywhere, with the category `[secret-jq-env]`, not `[protected-path-write]`; jq field access that names `.env` is blocked as `[secret-env-file]`. Both are described under Hook limitations above. Mitigation: the rule exists because jq's `env` built-in and `$ENV` print the whole process environment, which can hold secrets; the false positive fails closed; and the block message tells the agent to stop and report `BLOCKED-ON` instead of rewording the command.
++- **Guard false positive: `==>` in a grep pattern (Phase 17 work order 3).** Risk: `guard-dangerous.sh` removes quotes before it scans, so in `grep -n '==>' docs/agent-runs/phase-NN/agent-report.md` the `>` of the pattern is read as a redirection into `docs/agent-runs/`, and the read-only search is blocked with the category `[protected-path-redirect]`, not `[protected-path-write]`. Any `>` inside a quoted argument is blocked the same way when the next word (after optional spaces) contains `spec/`, `labels/`, `docs/agent-runs/`, `docs/agents.md`, `CLAUDE.md`, `.mcp.json`, `.claude/`, or `.git/`. Mitigation: the false positive fails closed, and the block message tells the agent to stop and report `BLOCKED-ON` instead of rewording the command.
++- **Client limit: Grep and Glob unavailable to subagents (Phase 17 work order 3).** Risk: in some sessions (Phase 15 sessions 9, 10, and 12) the Claude Code client did not provide the Grep and Glob tools to subagents, although both are in the tool fences above, so an agent could not search the repository for its inputs. Mitigation: work orders name every input by path, so no search is needed to find them. The missing tools remove capability and widen nothing.
++- **Client limit: the `aws-api` MCP server fails to connect (Phase 17 work order 3).** Risk: the `aws-api` server can fail to connect, so the agents granted it (`infra-engineer`, `deploy-engineer`, `experiment-engineer`, `incident-responder`) cannot make read-only AWS inspections through it. Mitigation: live AWS reads are human-run. A server that does not connect exposes no tools, so the failure removes access and widens nothing.
+ 
+ ## MCP servers and trust boundaries
+```
+
+PER-FILE AUTHORITY JUSTIFICATION: docs/agents.md belongs to the `factory-engineer` row of the ratified ownership map. The work order names it as the only file to write. Tools used: Read for the work order, docs/agents.md, both guard hooks and settings.json; Edit for the two edits; Bash for the one validator run. No other tool was used.
+
+WIDENING CHANGES: none. No tool, path, permission, MCP grant, or autonomy changed.
+
+FLOOR-TOUCHING CHANGES: none. This is documentation only: no hook, permission rule, or matcher changed, so the floor is exactly as strict as before. The guard self-tests still pass (guard-dangerous 304/304, guard-paths 142/142, verify-tests-ran 11/11, in the validator output below).
+
+DEVIATIONS:
+1. **Hook named in the work order.** The work order puts the `[protected-path-write]` false positives under `guard-paths.sh`. They come from `.claude/hooks/guard-dangerous.sh`:
+   - The tag is emitted at lines 368 and 371, inside `run_rules`.
+   - `guard-paths.sh` is registered only for `Read|Grep|Glob|Write|Edit|MultiEdit|NotebookEdit` (settings.json line 234). It never sees Bash.
+   - Its block categories are `secret-search`, `secret-path`, `sensitive-home-file`, `outside-repository`, `protected-path`, `agent-runs-*`, `not-owner`, `unknown-subagent`, `orchestrator-inline-write`, `no-path`, `no-project-root` and `guard-*`. There is no `protected-path-write`.
+   - The bullets name `guard-dangerous.sh` and say outright that `guard-paths.sh` never sees Bash.
+2. **Not all four cases emit `[protected-path-write]`.** I worked this out by reading the regexes:
+   - **`labels/` with a write verb:** `[protected-path-write]`. The protected-path regex at line 337 matches `labels/`; then a segment trips the command-position write-verb check or the wrapper check (lines 367-371).
+   - **jq read with `tee`:** `[protected-path-write]`. The command names a protected path, and `tee` begins its own segment.
+   - **jq with `env`:** `[secret-jq-env]` (lines 315-316). This check runs before the protected-path checks. jq field access `.env` gives `[secret-env-file]` (line 307).
+   - **`==>`:** `[protected-path-redirect]` (lines 338-341). Quotes are removed before the scan, so the `>` reads as a redirection.
+
+   Each bullet names the tag that actually fires.
+3. **Reading of the `labels/` case.** "Text under `labels/` that contains a write verb" is ambiguous. I read it as a Bash command that names `labels/` (as a read path or in quoted or heredoc text) and has a segment that looks like a write. I did not open `labels/`, and I did not check the historical incident.
+4. **Lead-ins.** Each new bullet carries "(Phase 17 work order 3)", because the section's intro sentence credits only the phase-01 work orders `repair-03` and `repair-05`. I did not touch the intro sentence, since the work order allows only appending bullets.
+5. **The jq+env case** cross-references Hook limitations instead of repeating its examples. It is still a full Risk/Mitigation bullet, as the work order asks.
+6. **Validation my agent file normally requires was not run separately.** That covers `git status` and `git diff`, separate `jq` and `bash -n` runs, `test -x`, and direct hook probes. The work order allows only one validator run in Bash. The validator itself covers JSON parsing, `bash -n`, executable bits, frontmatter, and every hook self-test. The behaviour each bullet describes comes from reading the regexes, not from running probes (see POST-RATIFICATION PROBES).
+
+AUDIT RESULTS:
+- **One-writer: PASS.** The ownership table and exceptions are unchanged; the edit is limited to the six new lines in the residual-risk section. docs/agents.md stays in the factory-engineer row only.
+- **Collision: PASS.** No agent name, description, or owned path changed. The validator reports "filename matches name" for all 18 agent files.
+- **Orphan: PASS.** The validator shows all 18 required agents exist and are listed in docs/agents.md, every hook referenced in settings exists and is referenced, and every command names existing agents and states its gates. The agents the new bullets name all exist.
+- **Tool-fence: PASS.** No tools changed. The validator shows an explicit tools field for all 18 agents and a read-only code-reviewer (Read, Grep, Glob). The aws-api bullet's agent list matches the MCP table and the validator's frontmatter output: `mcp__aws-api__call_aws` appears for deploy-engineer, experiment-engineer, incident-responder and infra-engineer, and for no other agent.
+
+COMMANDS RUN:
+- Bash, once: `/Users/achyutpatel/Developer/Cloud/ScholarChain/.claude/hooks/validate-agent-files.sh`
+- Two Grep tool calls failed with: "Error: No such tool available: Grep. Grep is not available in this session — search file contents with `grep` via the Bash tool instead." I did not use Bash grep, because the work order forbids it. Everything else was Read (prompt.md, docs/agents.md lines 168-187, guard-dangerous.sh in full, guard-paths.sh lines 1-439, .claude/settings.json) and Edit, twice, on docs/agents.md.
+
+VALIDATION RESULTS (observed):
+- Final line: `validate-agent-files: 231/231 checks passed`. Every line was PASS.
+- Relevant lines:
+  - `PASS  .claude/settings.json parses as JSON`
+  - `PASS  .mcp.json parses as JSON`
+  - `PASS  .claude/hooks/<each>.sh is executable` and `passes bash -n`, for all 5 hooks
+  - `PASS  .claude/hooks/guard-dangerous.sh --self-test passes (guard-dangerous self-test: 304/304 passed)`
+  - `PASS  .claude/hooks/guard-paths.sh --self-test passes (guard-paths self-test: 142/142 passed)`
+  - `PASS  .claude/hooks/verify-tests-ran.sh --self-test passes (verify-tests-ran self-test: 11/11 passed)`
+  - `PASS  reviewer fence: code-reviewer tools are read-only (Read  Grep  Glob)`
+  - `PASS  .claude/settings.local.json does not exist`
+
+TEST RESULTS: not applicable. No Scala or sbt source changed, and sbt was not run (not allowed by the work order).
+
+ASSUMPTIONS:
+- The phrase "agents read `labels/` only in evaluation code paths" relies on the existing Human-owned artifacts row of docs/agents.md.
+- "Work orders name every input by path" relies on Phase 17 ruling 12. I did not check earlier phases' work orders.
+- "Live AWS reads are human-run" is taken from the work order as given.
+
+RISKS:
+- **Grep missing again, and the client steers agents to Bash.** Grep was unavailable in this session too (Phase 17 session 3, factory-engineer), and the client's error text tells the agent to search with Bash `grep` instead. Agents whose Bash is not restricted may follow that advice. I did not add this to the constitution because the work order says "cover exactly"; it could be raised as a separate flagged change.
+- **Auto mode.** A system message in this session said auto mode was active. Where commands are auto-approved, mitigations that rely on the permission prompt hold less well; several older bullets in this section rely on the prompt. The new bullets do not.
+- **Section intro.** The intro sentence still credits only the phase-01 work orders; the new bullets carry their own source in the lead-in.
+- **Unprobed behaviour.** The described guard behaviour has not been probed (see POST-RATIFICATION PROBES).
+
+MANUAL ACTION REQUIRED:
+- Review the complete diff with `git diff -- docs/agents.md`.
+- Record ratification in docs/agent-runs/phase-17/human-gate.md.
+- Commit with an explicit path.
+- Start a fresh Claude Code session.
+
+This change has no authority until all four are done; I have not ratified it.
+
+POST-RATIFICATION PROBES: synthetic payloads only, run from the repository root. They execute nothing they describe, and are valid before ratification too, since the hooks are unchanged.
+1. `printf '%s' '{"tool_name":"Bash","tool_input":{"command":"find labels/ -type f -exec grep -l patch {} +"}}' | .claude/hooks/guard-dangerous.sh; echo "exit=$?"`. Expected: exit=2, `[protected-path-write]`.
+2. `printf '%s' '{"tool_name":"Bash","tool_input":{"command":"jq .permissions .claude/settings.json | tee /tmp/x.json"}}' | .claude/hooks/guard-dangerous.sh; echo "exit=$?"`. Expected: exit=2, `[protected-path-write]`.
+3. `printf '%s' '{"tool_name":"Bash","tool_input":{"command":"jq -r .name x.json | grep env"}}' | .claude/hooks/guard-dangerous.sh; echo "exit=$?"`. Expected: exit=2, `[secret-jq-env]`.
+4. `printf '%s' '{"tool_name":"Bash","tool_input":{"command":"grep -n \"==>\" docs/agent-runs/phase-17/agent-report.md"}}' | .claude/hooks/guard-dangerous.sh; echo "exit=$?"`. Expected: exit=2, `[protected-path-redirect]`.
+5. Control: `printf '%s' '{"tool_name":"Bash","tool_input":{"command":"jq . x.json | tee /tmp/x.json"}}' | .claude/hooks/guard-dangerous.sh; echo "exit=$?"`. Expected: exit=0.
+6. `.claude/hooks/validate-agent-files.sh`. Expected: `231/231 checks passed`.
+
+BLOCKED-ON OWNER: none
+BLOCKED-ON EVIDENCE: none
+NEXT GATE: Human constitutional ratification at the Phase 17 gate, then commit and session restart.
