@@ -223,9 +223,10 @@ datasets:
       - "https://www.crossref.org/documentation/retrieve-metadata/rest-api/tips-for-using-the-crossref-rest-api/ (rows up to 1000, back off on 429)"
       - "https://www.crossref.org/documentation/retrieve-metadata/rest-api/rest-api-filters/ (doi filter)"
       - "https://api.crossref.org/swagger-docs (select, cursors)"
-    license: "No named license. Crossref states that 'almost none of the metadata is subject to copyright' and 'you may use it for any purpose', and that some abstracts may be copyrighted by publishers or authors. A formal license name is UNVERIFIED."
+    license: "No license applies: Crossref states that bibliographic metadata are facts not subject to copyright and may be used and redistributed without restriction; abstracts are publisher or author copyright (excluded from the committed samples)."
     license_evidence:
       - "https://www.crossref.org/documentation/retrieve-metadata/rest-api/, accessed 2026-11-02"
+      - "https://crossref.org/documentation/retrieve-metadata/rest-api/rest-api-metadata-license-information (page last updated 2022-02-01), read 2026-11-21 by the human's assistant (Phase 17 work order 4): metadata retrieved with the REST API or included in Crossref snapshots and public data files may be used and redistributed; basic bibliographic metadata, references included, are facts not subject to copyright, so no license applies and CC0 cannot apply (nothing to waive); abstracts remain publisher or author copyright but are redistributable under the Crossref membership terms."
     access_rules: "No sign-up. Pools per the documentation: public (rate 5, concurrency 1), polite (rate 10, concurrency 3; identify with mailto or a User-Agent), Plus (rate 150; paid key). The docs give no interval. Observed headers on 2026-11-02: singleton polite x-rate-limit-limit 10 per x-rate-limit-interval 1s with x-concurrency-limit 3 (pool polite-single), and list polite 3 per 1s (pool polite-array). Scripts send mailto from SCHOLARCHAIN_CONTACT_EMAIL (required, never stored), make one request at a time, and pause 0.4 s."
     snapshot_date: "2026-11-03 (full run start date, UTC). API retrieval; the snapshot is the UTC date a run starts. Sample retrieved 2026-11-03T00:01Z."
     retrieval_date: "Sample 2026-11-03T00:01Z (UTC). Full run 2026-11-03T03:27:03Z to 04:22:24Z (full/run-info.json retrieved_utc)."
@@ -274,7 +275,7 @@ datasets:
       - "jq -e . scratch/datasets/crossref/full/works.jsonl > /dev/null"
       - "wc -l scratch/datasets/crossref/full/missing-dois.txt"
     samples:
-      - {path: datasets/samples/crossref/works-sample.jsonl, records: 40, bytes: 66299, license_basis: "Crossref reuse statement (facts not subject to copyright); abstracts excluded"}
+      - {path: datasets/samples/crossref/works-sample.jsonl, records: 40, bytes: 66299, license_basis: "No license applies: Crossref bibliographic metadata are facts not subject to copyright and may be used and redistributed (metadata license information page, read 2026-11-21); abstracts excluded"}
 
   orcid:
     name: "ORCID public records (anonymous Public API v3.0)"
@@ -290,9 +291,11 @@ datasets:
       - "https://info.orcid.org/documentation/integration-guide/working-with-bulk-data/ (annual Public Data File, XML)"
       - "https://pub.orcid.org/v3.0/0000-0002-1825-0097/record (ORCID's fictional demonstration record)"
       - "https://github.com/ORCID/orcid-api-tutorial/blob/master/docs/display.md (ORCID-maintained tutorial that uses 0000-0002-1825-0097 as its example iD)"
-    license: "UNVERIFIED for redistribution (provider fact unchanged). Data obtained from the Public APIs is under a 'limited license to use any Registry data marked public' subject to the Terms of Service (non-commercial, no continuous polling, export-control limits), with no stated redistribution grant. Only the annual Public Data File is stated to be CC0 1.0. The escalation is resolved by human ruling decision-1: real ORCID records are never committed. The committed samples are the fictional test record 0000-0002-1825-0097 and synthetic records."
+    license: "Public APIs Terms of Service: limited non-commercial license to use public Registry data, no redistribution grant; real records are not redistributed (decision-1). The ORCID Public Data File is CC0 1.0 but is not used."
     license_evidence:
       - "https://info.orcid.org/public-client-terms-of-service/, accessed 2026-11-02 (sections 2 and 3)"
+      - "https://info.orcid.org/public-client-terms-of-service/ (Public APIs Terms of Service, page last updated 23 October 2024), read 2026-11-21 by the human's assistant (Phase 17 work order 4): data obtained through the Public APIs (anonymous and registered) is under a limited license to use Registry data marked public, subject to non-commercial use, posted rate limits and usage quotas, no continuous polling, and export-control limits; the terms grant no redistribution right."
+      - "https://info.orcid.org/public-data-file-use-policy (Public Data File), read 2026-11-21 by the human's assistant (Phase 17 work order 4): only the annual Public Data File is CC0 1.0; ScholarChain does not use it."
       - "https://info.orcid.org/privacy-policy/, accessed 2026-11-02: 'The Public Data File is released under a CC0 1.0 Public Domain Dedication'"
       - "Fictional test record: https://pub.orcid.org/v3.0/0000-0002-1825-0097/record, retrieved 2026-11-03T00:56:02Z (probe 00:52:47Z), HTTP 200. Its public biography (source null, so asserted by the record holder) reads 'Josiah Carberry is a fictitious person. This account is used as a demonstration account by ORCID, CrossRef and others who wish to demonstrate the interaction of ORCID with other scholarly communication systems without having to use a real-person's account.'"
       - "https://github.com/ORCID/orcid-api-tutorial/blob/master/docs/display.md (repository of the ORCID GitHub organization), accessed 2026-11-03T00:53Z: uses https://orcid.org/0000-0002-1825-0097 as the example iD. The same iD appears in ORCID/orcid-php-demo-app and in ORCID/orcid-angular test specs (gh search code, 2026-11-03)."
@@ -366,5 +369,5 @@ datasets:
       - "bash datasets/scripts/fetch_orcid.sh --full --plan"
       - "jq -e '.selected_total == 23000 and .class_a_ranking.rank == \"works\"' scratch/datasets/orcid/full/selection.json"
     samples:   # real-record review copy stays in scratch: scratch/datasets/orcid/sample/orcid-sample.minimized.jsonl (30 records, 77,554 bytes)
-      - {path: datasets/samples/orcid/orcid-fictional-test-record.jsonl, records: 1, bytes: 935, license_basis: "ORCID's fictional demonstration record, committed under human ruling decision-1 (redistribution of ORCID API data in general is UNVERIFIED)"}
+      - {path: datasets/samples/orcid/orcid-fictional-test-record.jsonl, records: 1, bytes: 935, license_basis: "ORCID's fictional demonstration record, committed under human ruling decision-1 (the Public APIs Terms of Service grant no redistribution right, so real ORCID records are never committed)"}
       - {path: datasets/samples/orcid/synthetic-orcid-records.jsonl, records: 3, bytes: 1801, license_basis: "synthetic, hand-authored for ScholarChain; contains only DOIs from the CC0 DBLP sample"}

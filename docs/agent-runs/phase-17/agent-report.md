@@ -342,3 +342,91 @@ POST-RATIFICATION PROBES: synthetic payloads only, run from the repository root.
 BLOCKED-ON OWNER: none
 BLOCKED-ON EVIDENCE: none
 NEXT GATE: Human constitutional ratification at the Phase 17 gate, then commit and session restart.
+
+# Work order 4
+
+STATUS: COMPLETE
+OWNER: dataset-engineer
+WORK ORDER: Phase 17, work order 4. Crossref and ORCID license facts (V2 DATA-03), from docs/agent-runs/phase-17/prompt.md lines 245-276.
+
+Summary: I updated the license fields for Crossref and ORCID in the manifest, using the work order's license texts word for word. No UNVERIFIED statement about either license is left. I ran the validator once and it ended with `[DONE] validate: all checks passed`.
+
+FILES CREATED: none
+FILES MODIFIED: /Users/achyutpatel/Developer/Cloud/ScholarChain/datasets/dataset-manifest.yaml
+FILES DELETED: none
+
+CHANGED FIELDS (before -> after):
+
+1. crossref.license
+- "No named license. Crossref states that 'almost none of the metadata is subject to copyright' and 'you may use it for any purpose', and that some abstracts may be copyrighted by publishers or authors. A formal license name is UNVERIFIED."
++ "No license applies: Crossref states that bibliographic metadata are facts not subject to copyright and may be used and redistributed without restriction; abstracts are publisher or author copyright (excluded from the committed samples)."   (work order text, verbatim)
+
+2. crossref.license_evidence (the existing 2026-11-02 entry is kept; one entry added)
+  - "https://www.crossref.org/documentation/retrieve-metadata/rest-api/, accessed 2026-11-02"   (unchanged)
++ - "https://crossref.org/documentation/retrieve-metadata/rest-api/rest-api-metadata-license-information (page last updated 2022-02-01), read 2026-11-21 by the human's assistant (Phase 17 work order 4): metadata retrieved with the REST API or included in Crossref snapshots and public data files may be used and redistributed; basic bibliographic metadata, references included, are facts not subject to copyright, so no license applies and CC0 cannot apply (nothing to waive); abstracts remain publisher or author copyright but are redistributable under the Crossref membership terms."
+
+3. crossref.samples[datasets/samples/crossref/works-sample.jsonl].license_basis
+- "Crossref reuse statement (facts not subject to copyright); abstracts excluded"
++ "No license applies: Crossref bibliographic metadata are facts not subject to copyright and may be used and redistributed (metadata license information page, read 2026-11-21); abstracts excluded"
+
+4. orcid.license
+- "UNVERIFIED for redistribution (provider fact unchanged). Data obtained from the Public APIs is under a 'limited license to use any Registry data marked public' subject to the Terms of Service (non-commercial, no continuous polling, export-control limits), with no stated redistribution grant. Only the annual Public Data File is stated to be CC0 1.0. The escalation is resolved by human ruling decision-1: real ORCID records are never committed. The committed samples are the fictional test record 0000-0002-1825-0097 and synthetic records."
++ "Public APIs Terms of Service: limited non-commercial license to use public Registry data, no redistribution grant; real records are not redistributed (decision-1). The ORCID Public Data File is CC0 1.0 but is not used."   (work order text, verbatim)
+
+5. orcid.license_evidence (all existing entries are kept; two entries added after the first one)
+  - "https://info.orcid.org/public-client-terms-of-service/, accessed 2026-11-02 (sections 2 and 3)"   (unchanged)
++ - "https://info.orcid.org/public-client-terms-of-service/ (Public APIs Terms of Service, page last updated 23 October 2024), read 2026-11-21 by the human's assistant (Phase 17 work order 4): data obtained through the Public APIs (anonymous and registered) is under a limited license to use Registry data marked public, subject to non-commercial use, posted rate limits and usage quotas, no continuous polling, and export-control limits; the terms grant no redistribution right."
++ - "https://info.orcid.org/public-data-file-use-policy (Public Data File), read 2026-11-21 by the human's assistant (Phase 17 work order 4): only the annual Public Data File is CC0 1.0; ScholarChain does not use it."
+  (the privacy-policy, fictional test record, GitHub tutorial and Wikipedia entries are unchanged)
+
+6. orcid.samples[datasets/samples/orcid/orcid-fictional-test-record.jsonl].license_basis
+- "ORCID's fictional demonstration record, committed under human ruling decision-1 (redistribution of ORCID API data in general is UNVERIFIED)"
++ "ORCID's fictional demonstration record, committed under human ruling decision-1 (the Public APIs Terms of Service grant no redistribution right, so real ORCID records are never committed)"
+
+Not changed: the license_basis of orcid.samples[datasets/samples/orcid/synthetic-orcid-records.jsonl] ("synthetic, hand-authored for ScholarChain; contains only DOIs from the CC0 DBLP sample"). It has no UNVERIFIED wording and makes no claim about ORCID's license. Every other byte of the file is as before.
+
+DATASETS: no source, snapshot, size, checksum or subset rule changed. Only the license, license_evidence and license_basis fields above changed for crossref and orcid.
+SAMPLES: none regenerated. The manifest sizes still match the files: crossref works-sample.jsonl has 40 records and 66299 bytes; orcid-fictional-test-record.jsonl has 1 record and 935 bytes; synthetic-orcid-records.jsonl has 3 records and 1801 bytes.
+
+UNKNOWNS AND ESCALATIONS: none new. The validator now counts 8 UNVERIFIED markers. That matches the 8 I located before editing in parts of the manifest outside these license fields, after removing the 2 license ones:
+- the header comment on line 3;
+- the general ruling comment on line 18;
+- 2 DBLP access and size notes;
+- 2 OpenAlex access notes;
+- the Crossref incremental-update note;
+- the note on ORCID iDs that returned another iD's record.
+
+COMMANDS RUN:
+- `cd /Users/achyutpatel/Developer/Cloud/ScholarChain && bash datasets/scripts/validate.sh 2>&1 | tail -40; echo "EXIT=${PIPESTATUS[0]}"`, run once. Before editing I also ran one read-only grep on the manifest to find the fields.
+
+TEST RESULTS / VALIDATION RESULTS (from the last 40 lines of output):
+- All visible lines are PASS or INFO, and none says FAIL.
+- Field and sample checks:
+  - "PASS manifest orcid: all 27 required fields present"
+  - the crossref checks for s3_raw_prefix, owning_agent and schema note pass
+  - all 8 manifest sample-size checks pass, including crossref 66299, orcid fictional 935 and synthetic 1801
+  - the JSONL parse checks pass
+  - "crossref sample DOIs subset of dblp sample DOIs: 40/40 linked"
+  - the four "orcid decision 1" checks pass
+  - "PASS datasets/samples/SHA256SUMS verifies"
+- "INFO manifest markers: UNVERIFIED=8 UNKNOWN=3"
+- Last line: "2026-11-22T20:29:51Z [DONE] validate: all checks passed"
+- The exit code was not captured: the shell is zsh, so `${PIPESTATUS[0]}` printed empty ("EXIT="). I did not rerun, because the run was limited to once. Lines before the last 40 were not shown, but the script printed "all checks passed".
+
+ASSUMPTIONS:
+- I quoted no wording from the provider pages. I did not read those pages myself, so the evidence entries restate the work order's facts instead of quoting.
+- I added the 2026-11-21 evidence entries next to the existing 2026-11-02 entries and did not replace those. They are still accurate records of what was accessed.
+- "license_basis text of their committed samples" allows a change; it does not require one for each sample. So I left the synthetic ORCID sample alone.
+
+DEVIATIONS: none in substance. The only ones are the two choices above: the synthetic sample's license_basis is unchanged, and the old evidence entries were kept, not replaced.
+
+RISKS:
+- The evidence for 2026-11-21 is what the human's assistant read. Nobody in this run fetched it again.
+- The ORCID `sources` list still cites the privacy-policy page for the CC0 Public Data File, and the work order now cites public-data-file-use-policy. The `sources` field was outside the allowed fields, so I left it.
+
+MANUAL ACTION REQUIRED: review the manifest and commit with an explicit path, since there is still no .gitignore.
+BLOCKED-ON OWNER: none
+BLOCKED-ON EVIDENCE: none
+NEXT GATE: dataset validation tests and manifest review
+
+Not checked: the exit code of the one validator run (only the final "all checks passed" line), and whether the provider pages have changed since 2026-11-21.
