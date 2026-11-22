@@ -8,7 +8,7 @@ Each phase has a folder `docs/agent-runs/phase-NN/` containing:
 - `test-report.md` — test-engineer results or probe results, when required
 - `repair-NN.md` — each repair loop: findings, owner, fix, rerun evidence
 - `human-gate.md` — what was reviewed, accepted or rejected, manual changes, file provenance, remaining risk, accepted commit
-- `commit.txt` — the accepted commit SHA, recorded in a follow-up commit
+- `commit.txt` — the accepted commit SHA (phases 00 to 14 recorded it in a follow-up commit; from Phase 15 on it is written by hand in the gate commit and names the last reviewed and checked commit)
 
 This directory is human-owned. The orchestrator may assemble agent reports here; no agent may rewrite a human decision.
 
