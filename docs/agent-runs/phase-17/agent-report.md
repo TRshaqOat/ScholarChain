@@ -430,3 +430,72 @@ BLOCKED-ON EVIDENCE: none
 NEXT GATE: dataset validation tests and manifest review
 
 Not checked: the exit code of the one validator run (only the final "all checks passed" line), and whether the provider pages have changed since 2026-11-21.
+
+# Work order 5
+
+STATUS: COMPLETE
+OWNER: deploy-engineer
+WORK ORDER: Phase 17 work order 5, final release manifest (records only, Ponytail OFF). I read `docs/agent-runs/phase-17/prompt.md` lines 1-64 (rulings 1-12) and lines 276-313 (work order 5). That range also covers rulings 7-10 and 12, because rulings 6 and 11 sit inside it.
+
+FILES CREATED:
+- /Users/achyutpatel/Developer/Cloud/ScholarChain/operations/releases/release-manifest-final.md, 146 lines. I counted them from the content I wrote, then checked by reading the file back with the Read tool: the last line is 146. No Bash was used.
+
+FILES MODIFIED: none
+
+APPROVAL REFERENCE: Phase 17 human rulings 6 and 11, and work order 5 in `docs/agent-runs/phase-17/prompt.md`. Nothing was executed, so there was no deployment approval to check.
+
+PRECONDITIONS: not applicable. This work order only writes a record, and it forbids Bash, git, aws and MCP calls, so I did not check for a clean tree, the HEAD SHA, the account or the Region. The git status snapshot at session start showed a clean tree on main at 78d479e.
+
+SCRIPTS EXECUTED: none
+DEPLOYED STATE: historical only, taken from the records. No runtime exists.
+PIPELINE RUN: not applicable
+SMOKE RESULTS: none run. The archived window 3 smoke record (`operations/releases/smoke-20261119T235713Z.json`) is transcribed in the manifest: PASS, 6 of 6 checks.
+ROLLBACK ACTION: none
+
+COMMANDS RUN: Read only, on the 14 listed inputs and the two prompt.md ranges, plus one read-back of the new file. Grep was not available in this session, so I read the gate log in full in pages. Write was used once, for the new file. No Bash, script, aws, git or MCP call.
+
+TEST RESULTS: none run (records-only work order).
+VALIDATION RESULTS: I checked each ruling 6 value against its source record, shown below.
+
+Ruling 6 items:
+1. Release commit: found. `c5428063732af5f7a5279c215dc2a52b89f64f16` (release-20261119T233215Z-c5428063732a.json `commit`). The plan .md and APPROVED.txt give the same HEAD.
+2. Image tag: found. `deef29516bf395ac2b551beb93710b6a48a937a8` (release record `image.tag`). It matches the window 2 record, which confirms the image was reused.
+3. Image digest: found. `sha256:5c751b1e1341fd9dd86101cdc8fffc9b8b9c91284b83ec1757758218588047ea`, the same on query-api, graph-evidence-api and worker, all at task definition `:2` (release record `services[]`). The package record shows the same digest.
+4. Plan: found. sha256 `978ce3059dc6b039e7c1bd9361c896838ea568dea9b68164ae0ff2a02e4b0bb6`, 89 add / 0 change / 0 destroy (`operations/plans/20261119T173346Z-c5428063732a.md` and `-APPROVED.txt`). The release record's `planSha256` matches.
+5. Dataset snapshots: found. DBLP 2026-10-03, OpenAlex 2026-11-03, Crossref 2026-11-03, ORCID 2026-11-03 (`datasets/dataset-manifest.yaml` `snapshot_date`).
+6. Served runs: found. graph and items `run-1d6a86491812ff94887270c1ab885e69`, vectors `run-b28edbd40f932f0342c05d5b6f57b46c`, window summary `run-6fbad498beb0d8f570df67665fb97544` (`course.tfvars`).
+7. Runtime run: found. `run-c9f26a9ecfe83c96526d50d79d99fd67` (release record `runtimeRunIds`). It is recorded for query-api and worker only.
+8. Prompt versions: found. `planner-v2` and `synthesis-v3` (scholarchain.conf). RUNTIME.md section 20 agrees. The synthesis-v2 correction is stated in the manifest.
+9. Verifier version: found. `verifier-v8` (RUNTIME.md section 12, `Verifier.Version`).
+10. Model IDs: partly found. Planner and synthesis are `us.anthropic.claude-haiku-4-5-20251001-v1:0` (scholarchain.conf, RUNTIME.md sections 16 and 20). The embedding model is only a placeholder (`example-embedding-model`) in scholarchain.conf. I recorded `amazon.titan-embed-text-v2:0` from course.tfvars `embedding_model_id`, which matches the ID in RUNTIME.md section 17, and said so in the manifest.
+11. Tests at d406c66: the counts were found, but the commit was not. The log has no single total line. Adding the eight per-project ScalaTest summaries (191+111+115+122+49+46+141+70) gives 845 succeeded, 0 failed, 10 pending, followed by "==> OK check: every gate passed". I looked for a commit hash or HEAD line in check-sh-gate.txt and found none, so the manifest says the log does not record the commit and that ruling 6 attributes the run to `d406c66`.
+12. Artifact checksums: found. The hadoop jar, spark jar, EMR step.sh and Docker context sha256 values are all in the package record and copied into the manifest.
+13. Smoke test: found. PASS, finished 2026-11-19T23:57:37Z, 6 of 6 checks.
+14. Cleanup: partly found. The 43 kept resources are found: record.json and retained.tsv each list the same 43 addresses (build 6, data 7, emr 10, network 16, observability 4). The 89 destroyed is not recorded: I looked for a destroyed or destroy count in record.json and retained.tsv and neither has one. The manifest says so and notes that the window 3 plan created 89 resources.
+
+Deviations:
+- D1: the gate log records no commit, so "Tests at d406c66" cannot be confirmed from that file. The counts do match.
+- D2: no cleanup input records "89 destroyed". I wrote "not recorded".
+- D3: scholarchain.conf has no real embedding model ID, so it came from course.tfvars instead.
+- D4 (not a conflict with ruling 6): the committed course.tfvars has `runtime_enabled = false` and `service_cpu_target_percent = 60`, while window 3 ran with runtime enabled and a graph-evidence-api CPU target of 15 (APPROVED.txt). Its own comment explains this. The served run IDs it holds match ruling 6.
+- Earlier releases are listed with their record paths. Window 1 is `release-20261116T062349Z-d33ce8e8d507.json`, with runtime disabled and no image. Window 2 is `release-20261117T232233Z-506eddf46f23.json`: commit `506eddf…`, task definitions `:1`, the same digest, and the same runtime run ID as window 3.
+
+ASSUMPTIONS:
+- I left the smoke record's `baseUrl` (load-balancer DNS name) out and cited only the field name, because the TA ruling on the endpoint is still pending. It contains no account ID, so this is a choice, not a ruling requirement.
+- The account ID `834519512655` appears in no form in the manifest. ARNs, the bucket name and the ECR URI all use `<account-id>`.
+- I wrote "the human architect" for the approver instead of the name that appears in APPROVED.txt.
+- The scholarchain.conf values are the reference defaults. The environment overrides the deployed tasks actually received are not in these inputs, and the manifest says so.
+
+RISKS:
+- Write can overwrite files, and the append-only rule is not enforced by a hook. This file is new.
+- The package record has `image.scan` null, so there is no image scan evidence.
+- The cleanup record has `evidenceArchive` null.
+- The `*.outputs.json` files and the cleanup inventories are named in the manifest but were not read, so nothing about their contents is claimed.
+
+MANUAL ACTION REQUIRED:
+- Human review of D1 and D2: either point to a record that holds the d406c66 commit and the 89-destroyed count, or accept "not recorded".
+- Human commit of the new file.
+
+BLOCKED-ON OWNER: none
+BLOCKED-ON EVIDENCE: none
+NEXT GATE: human acceptance of the release manifest record (Phase 17), then code-reviewer final review.
