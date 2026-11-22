@@ -1,0 +1,188 @@
+[info] welcome to sbt 1.13.0 (Eclipse Adoptium Java 17.0.21)
+[info] loading settings for project sc-fresh-build from plugins.sbt...
+[info] loading project definition from /private/tmp/sc-fresh/project
+[info] loading settings for project scholarchain from build.sbt...
+[info] set current project to scholarchain (in build file:/private/tmp/sc-fresh/)
+[info] running scholarchain.hadoop.Pipeline --out scratch/hadoop/samples --code-version 87151a833af24cf242f7362c8d43ead6fd7b059e --dblp datasets/samples/dblp/dblp-sample.xml --dblp-dtd datasets/samples/dblp/dblp-2023-06-28.dtd --dblp-snapshot 2026-10-03 --openalex datasets/samples/openalex/works-sample.jsonl --openalex-snapshot 2026-11-03 --crossref datasets/samples/crossref/works-sample.jsonl --crossref-snapshot 2026-11-03 --orcid datasets/samples/orcid --orcid-snapshot 2026-11-03 --reducers 2
+SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+SLF4J: Defaulting to no-operation (NOP) logger implementation
+SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+runId=run-e1467fc1552982ae1519a23ba6f6be4e attempt=1 runDir=scratch/hadoop/samples/snapshot=2026-10-03/run=run-e1467fc1552982ae1519a23ba6f6be4e
+j01-dblp-extract scholarchain.outputs/mentions=163
+j01-dblp-extract scholarchain.outputs/venues=1
+j01-dblp-extract scholarchain.outputs/works=40
+j01-dblp-extract scholarchain/ACCEPTED=40
+j01-dblp-extract scholarchain/CONFLICT=0
+j01-dblp-extract scholarchain/DUPLICATE=0
+j01-dblp-extract scholarchain/EMITTED_PAIR=0
+j01-dblp-extract scholarchain/INPUT=40
+j01-dblp-extract scholarchain/INVALID_ORCID=0
+j01-dblp-extract scholarchain/MISSING_KEY=0
+j01-dblp-extract scholarchain/OVERSIZE_BLOCK=0
+j01-dblp-extract scholarchain/OVERSIZE_CONFLICT=0
+j01-dblp-extract scholarchain/OVERSIZE_TEAM=0
+j01-dblp-extract scholarchain/REJECTED=0
+j01-dblp-extract scholarchain/REPEATED_AUTHOR_NAME=0
+j01-dblp-extract scholarchain/SCHEMA_FAILURE=0
+j02-source-normalize scholarchain.outputs/edges=42
+j02-source-normalize scholarchain.outputs/institutions=137
+j02-source-normalize scholarchain.outputs/mentions=326
+j02-source-normalize scholarchain.outputs/rejects-v1=3
+j02-source-normalize scholarchain.outputs/researcher-profiles=1
+j02-source-normalize scholarchain.outputs/topics=10
+j02-source-normalize scholarchain.outputs/venues=2
+j02-source-normalize scholarchain.outputs/works=80
+j02-source-normalize scholarchain/ACCEPTED=81
+j02-source-normalize scholarchain/CONFLICT=0
+j02-source-normalize scholarchain/DUPLICATE=0
+j02-source-normalize scholarchain/EMITTED_PAIR=0
+j02-source-normalize scholarchain/INPUT=84
+j02-source-normalize scholarchain/MISSING_KEY=0
+j02-source-normalize scholarchain/ORCID_DUPLICATE=0
+j02-source-normalize scholarchain/OVERSIZE_BLOCK=0
+j02-source-normalize scholarchain/OVERSIZE_CONFLICT=0
+j02-source-normalize scholarchain/OVERSIZE_TEAM=0
+j02-source-normalize scholarchain/REJECTED=3
+j02-source-normalize scholarchain/SCHEMA_FAILURE=0
+j03-j04-exact-identifier scholarchain.outputs/matches=536
+j03-j04-exact-identifier scholarchain.outputs/stats=2
+j03-j04-exact-identifier scholarchain/ACCEPTED=609
+j03-j04-exact-identifier scholarchain/CONFLICT=0
+j03-j04-exact-identifier scholarchain/DUPLICATE=0
+j03-j04-exact-identifier scholarchain/EMITTED_PAIR=0
+j03-j04-exact-identifier scholarchain/EXACT_MATCH=536
+j03-j04-exact-identifier scholarchain/INPUT=609
+j03-j04-exact-identifier scholarchain/MISSING_KEY=0
+j03-j04-exact-identifier scholarchain/ORCID_SUFFIX_CONFLICT=0
+j03-j04-exact-identifier scholarchain/OVERSIZE_BLOCK=0
+j03-j04-exact-identifier scholarchain/OVERSIZE_CONFLICT=0
+j03-j04-exact-identifier scholarchain/OVERSIZE_TEAM=0
+j03-j04-exact-identifier scholarchain/REJECTED=0
+j03-j04-exact-identifier scholarchain/SCHEMA_FAILURE=0
+j05-blocking-key-p0 scholarchain.outputs/blocks=202
+j05-blocking-key-p0 scholarchain.outputs/stats=2
+j05-blocking-key-p0 scholarchain/ACCEPTED=120
+j05-blocking-key-p0 scholarchain/BLOCK_KEPT=202
+j05-blocking-key-p0 scholarchain/BLOCK_MEMBER=609
+j05-blocking-key-p0 scholarchain/CONFLICT=0
+j05-blocking-key-p0 scholarchain/DUPLICATE=0
+j05-blocking-key-p0 scholarchain/EMITTED_PAIR=0
+j05-blocking-key-p0 scholarchain/INPUT=120
+j05-blocking-key-p0 scholarchain/MISSING_KEY=0
+j05-blocking-key-p0 scholarchain/OVERSIZE_BLOCK=0
+j05-blocking-key-p0 scholarchain/OVERSIZE_CONFLICT=0
+j05-blocking-key-p0 scholarchain/OVERSIZE_TEAM=0
+j05-blocking-key-p0 scholarchain/REJECTED=0
+j05-blocking-key-p0 scholarchain/SCHEMA_FAILURE=0
+j06-candidate-join scholarchain.outputs/candidates=667
+j06-candidate-join scholarchain.outputs/work-pairs=108
+j06-candidate-join scholarchain/ACCEPTED=202
+j06-candidate-join scholarchain/CONFLICT=0
+j06-candidate-join scholarchain/DUPLICATE=0
+j06-candidate-join scholarchain/EMITTED_PAIR=0
+j06-candidate-join scholarchain/INPUT=202
+j06-candidate-join scholarchain/MATCH_CANDIDATE=667
+j06-candidate-join scholarchain/MISSING_KEY=0
+j06-candidate-join scholarchain/OVERSIZE_BLOCK=0
+j06-candidate-join scholarchain/OVERSIZE_CONFLICT=0
+j06-candidate-join scholarchain/OVERSIZE_TEAM=0
+j06-candidate-join scholarchain/REJECTED=0
+j06-candidate-join scholarchain/SAME_WORK_PAIR_SKIPPED=0
+j06-candidate-join scholarchain/SCHEMA_FAILURE=0
+j06-candidate-join scholarchain/WORK_PAIR=108
+j07-j08-team-pair-expansion scholarchain.outputs/pairs=346
+j07-j08-team-pair-expansion scholarchain.outputs/stats=2
+j07-j08-team-pair-expansion scholarchain.outputs/teams=40
+j07-j08-team-pair-expansion scholarchain/ACCEPTED=40
+j07-j08-team-pair-expansion scholarchain/CONFLICT=0
+j07-j08-team-pair-expansion scholarchain/DUPLICATE=0
+j07-j08-team-pair-expansion scholarchain/EMITTED_PAIR=346
+j07-j08-team-pair-expansion scholarchain/INPUT=40
+j07-j08-team-pair-expansion scholarchain/MISSING_KEY=0
+j07-j08-team-pair-expansion scholarchain/OVERSIZE_BLOCK=0
+j07-j08-team-pair-expansion scholarchain/OVERSIZE_CONFLICT=0
+j07-j08-team-pair-expansion scholarchain/OVERSIZE_TEAM=0
+j07-j08-team-pair-expansion scholarchain/REJECTED=0
+j07-j08-team-pair-expansion scholarchain/SCHEMA_FAILURE=0
+j09-graph-export scholarchain.outputs/author-mentions=489
+j09-graph-export scholarchain.outputs/blocking-candidates=667
+j09-graph-export scholarchain.outputs/coauthor-pair-candidates=346
+j09-graph-export scholarchain.outputs/graph-edges=42
+j09-graph-export scholarchain.outputs/institutions=137
+j09-graph-export scholarchain.outputs/match-candidates=536
+j09-graph-export scholarchain.outputs/match-decisions=1203
+j09-graph-export scholarchain.outputs/publication-teams=40
+j09-graph-export scholarchain.outputs/researcher-profiles=1
+j09-graph-export scholarchain.outputs/topics=10
+j09-graph-export scholarchain.outputs/venues=3
+j09-graph-export scholarchain.outputs/works=120
+j09-graph-export scholarchain/ACCEPTED=3594
+j09-graph-export scholarchain/CONFLICT=0
+j09-graph-export scholarchain/DUPLICATE=0
+j09-graph-export scholarchain/EMITTED_PAIR=0
+j09-graph-export scholarchain/INPUT=3594
+j09-graph-export scholarchain/MISSING_KEY=0
+j09-graph-export scholarchain/OVERSIZE_BLOCK=0
+j09-graph-export scholarchain/OVERSIZE_CONFLICT=0
+j09-graph-export scholarchain/OVERSIZE_TEAM=0
+j09-graph-export scholarchain/REJECTED=0
+j09-graph-export scholarchain/SCHEMA_FAILURE=0
+j10-match-decision scholarchain.decisions/RESEARCHER.DETERMINISTIC.ACCEPTED=1
+j10-match-decision scholarchain.decisions/RESEARCHER.EXACT_ID.ACCEPTED=545
+j10-match-decision scholarchain.decisions/RESEARCHER.EXACT_ID.CONFLICT=10
+j10-match-decision scholarchain.decisions/RESEARCHER.EXACT_ID.REJECTED=19
+j10-match-decision scholarchain.decisions/RESEARCHER.EXACT_ID.UNRESOLVED=148
+j10-match-decision scholarchain.decisions/RESEARCHER.LLM_BAND.UNRESOLVED=13
+j10-match-decision scholarchain.decisions/RESEARCHER.PROBABILISTIC.ACCEPTED=242
+j10-match-decision scholarchain.decisions/RESEARCHER.PROBABILISTIC.REJECTED=36
+j10-match-decision scholarchain.decisions/RESEARCHER.PROBABILISTIC.UNRESOLVED=1
+j10-match-decision scholarchain.decisions/WORK.EXACT_ID.ACCEPTED=188
+j10-match-decision scholarchain.outputs/decisions=1203
+j10-match-decision scholarchain/ACCEPTED=1203
+j10-match-decision scholarchain/CONFLICT=0
+j10-match-decision scholarchain/DEFERRED_WORK_CANDIDATE=108
+j10-match-decision scholarchain/DUPLICATE=0
+j10-match-decision scholarchain/EMITTED_PAIR=0
+j10-match-decision scholarchain/INPUT=1311
+j10-match-decision scholarchain/LLM_ELIGIBLE=13
+j10-match-decision scholarchain/MISSING_KEY=0
+j10-match-decision scholarchain/OVERSIZE_BLOCK=0
+j10-match-decision scholarchain/OVERSIZE_CONFLICT=0
+j10-match-decision scholarchain/OVERSIZE_TEAM=0
+j10-match-decision scholarchain/REJECTED=0
+j10-match-decision scholarchain/SCHEMA_FAILURE=0
+[success] Total time: 43 s, completed Nov 22, 2026, 5:26:36 PM
+Exception in thread "Thread-2" java.lang.RuntimeException: java.nio.file.NoSuchFileException: /private/tmp/sc-fresh/target/bg-jobs/sbt_9399d08/target/3c5c4afc/4bd3415a/hadoop-client-api-3.4.2.jar
+	at org.apache.hadoop.conf.Configuration.loadResource(Configuration.java:3142)
+	at org.apache.hadoop.conf.Configuration.loadResources(Configuration.java:3089)
+	at org.apache.hadoop.conf.Configuration.loadProps(Configuration.java:2967)
+	at org.apache.hadoop.conf.Configuration.getProps(Configuration.java:2949)
+	at org.apache.hadoop.conf.Configuration.get(Configuration.java:1267)
+	at org.apache.hadoop.conf.Configuration.getTimeDuration(Configuration.java:1908)
+	at org.apache.hadoop.conf.Configuration.getTimeDuration(Configuration.java:1885)
+	at org.apache.hadoop.util.ShutdownHookManager.getShutdownTimeout(ShutdownHookManager.java:183)
+	at org.apache.hadoop.util.ShutdownHookManager.shutdownExecutor(ShutdownHookManager.java:145)
+	at org.apache.hadoop.util.ShutdownHookManager.access$300(ShutdownHookManager.java:65)
+	at org.apache.hadoop.util.ShutdownHookManager$1.run(ShutdownHookManager.java:102)
+Caused by: java.nio.file.NoSuchFileException: /private/tmp/sc-fresh/target/bg-jobs/sbt_9399d08/target/3c5c4afc/4bd3415a/hadoop-client-api-3.4.2.jar
+	at java.base/sun.nio.fs.UnixException.translateToIOException(UnixException.java:92)
+	at java.base/sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:106)
+	at java.base/sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:111)
+	at java.base/sun.nio.fs.UnixFileAttributeViews$Basic.readAttributes(UnixFileAttributeViews.java:55)
+	at java.base/sun.nio.fs.UnixFileSystemProvider.readAttributes(UnixFileSystemProvider.java:148)
+	at java.base/java.nio.file.Files.readAttributes(Files.java:1851)
+	at java.base/java.util.zip.ZipFile$Source.get(ZipFile.java:1440)
+	at java.base/java.util.zip.ZipFile$CleanableResource.<init>(ZipFile.java:717)
+	at java.base/java.util.zip.ZipFile.<init>(ZipFile.java:251)
+	at java.base/java.util.zip.ZipFile.<init>(ZipFile.java:180)
+	at java.base/java.util.jar.JarFile.<init>(JarFile.java:346)
+	at java.base/sun.net.www.protocol.jar.URLJarFile.<init>(URLJarFile.java:103)
+	at java.base/sun.net.www.protocol.jar.URLJarFile.getJarFile(URLJarFile.java:72)
+	at java.base/sun.net.www.protocol.jar.JarFileFactory.get(JarFileFactory.java:168)
+	at java.base/sun.net.www.protocol.jar.JarFileFactory.getOrCreate(JarFileFactory.java:91)
+	at java.base/sun.net.www.protocol.jar.JarURLConnection.connect(JarURLConnection.java:117)
+	at java.base/sun.net.www.protocol.jar.JarURLConnection.getInputStream(JarURLConnection.java:160)
+	at org.apache.hadoop.conf.Configuration.parse(Configuration.java:3062)
+	at org.apache.hadoop.conf.Configuration.getStreamReader(Configuration.java:3158)
+	at org.apache.hadoop.conf.Configuration.loadResource(Configuration.java:3116)
+	... 10 more

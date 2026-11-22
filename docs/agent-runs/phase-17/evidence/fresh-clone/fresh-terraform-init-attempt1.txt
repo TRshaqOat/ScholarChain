@@ -1,0 +1,26 @@
+[0m[1mInitializing modules...[0m
+- foundation in ../../modules/foundation
+- dynamodb in ../../modules/dynamodb
+- iam in ../../modules/iam
+- data in ../../modules/data
+- ecs in ../../modules/ecs
+- neptune in ../../modules/neptune
+- emr in ../../modules/emr
+- messaging in ../../modules/messaging
+- network in ../../modules/network
+- vectors in ../../modules/vectors
+- build in ../../modules/build
+- apikey in ../../modules/apikey
+- observability in ../../modules/observability
+
+[0m[1mInitializing provider plugins...[0m
+- Reusing previous version of hashicorp/aws from the dependency lock file
+- Installing hashicorp/aws v6.28.0...
+[31m╷[0m[0m
+[31m│[0m [0m[1m[31mError: [0m[0m[1mFailed to install provider[0m
+[31m│[0m [0m
+[31m│[0m [0m[0mError while installing hashicorp/aws v6.28.0: releases.hashicorp.com: read
+[31m│[0m [0mtcp
+[31m│[0m [0m[<ipv6>]:60978->[<ipv6>]:443:
+[31m│[0m [0mread: no route to host
+[31m╵[0m[0m
