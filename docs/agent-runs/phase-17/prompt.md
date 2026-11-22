@@ -314,3 +314,7 @@ Replace every "UNVERIFIED" statement about these licenses with the facts below, 
 
 1. The demo-script source was exported from the Claude Doc as Markdown to `docs/agent-runs/phase-17/inputs/demo-script-source.md`. It was written before Part B was recorded and is partly out of date. `docs/agent-runs/phase-17/inputs/demo-recording-notes.md` (human) records what was actually recorded. Work order 2 reads both; where they differ, the notes win.
 2. `docs/agent-runs/tool-versions.md` has a 2026-11-21 section (human). It is the version record the README cites (work order 1).
+
+## Human ruling 14 (Nov 22, 2026): K01 disposition
+
+The two lines flagged by the course autograder in `docs/agent-runs/phase-10/evidence/code-review-1/change-set.txt` (change-set lines 9549 and 9695) are test fixtures, not credentials. They are line 315 of `modules/services/src/test/scala/scholarchain/services/QueryApiSpec.scala` and line 22 of `modules/services/src/test/scala/scholarchain/services/ServiceFixtures.scala` (the API-key value the service tests use). Both files are listed in the change set under "UNTRACKED FILE" headers and are committed under `src/test/`. Neither value has the shape of an AWS access key or session token. No change. Work order 1 states this in the README together with the other ruling 7 explanations.
