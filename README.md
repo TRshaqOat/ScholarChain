@@ -238,7 +238,7 @@ Recorded regeneration: byte-identical rebuilds (`docs/agent-runs/phase-15/eviden
 ## Final report and video
 
 - Final report: [`reports/final-report.md`](reports/final-report.md)
-- Demonstration video: link added at submission
+- Demonstration video: https://www.youtube.com/watch?v=2SpvHCDikVI
 
 ## Cleanup
 
@@ -296,7 +296,7 @@ From [`docs/evaluation.md`](docs/evaluation.md) and the phase gates; negative re
 | D16 | Evaluation package | [`docs/evaluation.md`](docs/evaluation.md) |
 | D17 | Documentation package | this README, [`docs/architecture.md`](docs/architecture.md), [`docs/data-lineage.md`](docs/data-lineage.md), [`docs/threat-model.md`](docs/threat-model.md), [`docs/service-limits.md`](docs/service-limits.md), [`docs/runbook.md`](docs/runbook.md), [`docs/evaluation.md`](docs/evaluation.md), [`docs/api-reference.md`](docs/api-reference.md), [`docs/demo-script.md`](docs/demo-script.md) |
 | D18 | Final report | [`reports/final-report.md`](reports/final-report.md) |
-| D19 | Demonstration video | Demonstration video: link added at submission |
+| D19 | Demonstration video | Demonstration video: https://www.youtube.com/watch?v=2SpvHCDikVI |
 | D20 | Cleanup evidence | [`operations/cleanup/`](operations/cleanup/) |
 
 ## Agent system
