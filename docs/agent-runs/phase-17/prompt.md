@@ -354,3 +354,14 @@ The TA's reply is recorded verbatim in `docs/agent-runs/phase-17/inputs/ta-reply
    - After the Hadoop run, a shutdown thread (`Thread-2`) logs a `NoSuchFileException` for a jar under sbt's `target/bg-jobs/`, which sbt deletes when a run ends. The job had already finished, and Spark read its output. Harmless.
    - Before the clone existed, the sample commands ran once in the working repository by mistake (outputs only under the gitignored `scratch/`). Those logs were overwritten and are not evidence.
    - Clip B11 is recorded later from the README and these logs.
+
+## Human ruling 17 (Nov 22, 2026): code review 1 findings and Step S
+
+Code review 1 is APPROVE (0 critical, 0 major, 4 minor; `docs/agent-runs/phase-17/review-report.md`). No repair round and no re-review (ruling 9): the human made the line-level fixes the review specified, disclosed as manual edits in the Phase 17 gate.
+
+1. **m1 (public IPv6 address).** Replaced by `<ipv6>` in `evidence/fresh-clone/fresh-terraform-init-attempt1.txt` and its copy in `evidence/code-review-1/diff.txt`. The three commits after `87151a8` (`10d05de`, `08e351a`, `976d625`) were rewritten with the same replacement, author dates kept, and force-pushed while the repository was private. Hashes cited in code review 1 name those commits before the rewrite. The address in `docs/agent-runs/phase-07/evidence/clock-offset.txt` is Apple's time server, not personal data.
+2. **m2.** `README.md` (environment table and agent catalog) states that `fetch_crossref.sh` requires `SCHOLARCHAIN_CONTACT_EMAIL`.
+3. **m3.** `docs/runbook.md` gives the warm-up's full query string, from `load-tests/exp-d-query-load.py` line 73.
+4. **m4.** `docs/demo-script.md` A8 carries a narration-correction note citing `experiments/derived/exp-f/README.md`. Whether the recorded A8 voiceover is re-recorded is decided at video assembly and recorded in the gate.
+5. **Reviewer's risks.** The TA's name stays in the reply file (course staff acting in that role). The commit author metadata stays (rewriting all history would invalidate every gate hash). `labels/` read access stays a residual risk (ruling 16 item 2). Evidence gaps (no `sbt fmt` or `sbt packageJobs` replay in Step F) are residual risks.
+6. **Step S.** Grader wording: every hit describes; none addresses a reader (ruling 10), including the two agent files that name their audience, kept unchanged. Credential shapes: the one history commit (`d6a8c4a`) and the four files in the tree hold the guard's own detection patterns and their tests. Account ID: 196 files, none in Phase 17 documents (ruling 15 item 4).

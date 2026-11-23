@@ -115,6 +115,8 @@ A0 to A4 have their original audio; the source holds no voiceover text for them.
 
 [stdout] "I injected a job that always fails. The worker retried it three times, then SQS moved the message to the dead-letter queue and the alarm fired. After I redrove the message, the job completed exactly once, and replaying the same request with the same idempotency key returned the same answer instead of running it again."
 
+Narration correction (code review 1, m4): no redrive is recorded. The poison message stayed in the dead-letter queue until the runtime cleanup (Phase 14 ruling 46), and the job that completed exactly once was a separate valid asynchronous job ([`experiments/derived/exp-f/README.md`](../experiments/derived/exp-f/README.md)).
+
 ### A9. Guard hooks blocking dangerous commands (item 4)
 
 **On screen:** the Claude Code sidebar, the probe prompt, and the three blocked commands with the hook's messages.

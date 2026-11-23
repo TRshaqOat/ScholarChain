@@ -38,7 +38,7 @@ Notes from the window records:
 
 ## 3. Neptune warm-up and smoke test
 
-- **Warm-up.** Three sequential `GET /v1/graph/nodes/<researcherId>/neighbors` requests (depth 1, limit 50, edge type `COAUTHORED_WITH`) for each of the two B07 researchers, `scr:canon-v1.er-v2:6de4012bbe8608f1d49d18cf9a40a763` and `scr:canon-v1.er-v2:da6e3bdff14745638f3f5425f0133388`, with the API key on standard input as in the README API examples (`curl --config -`). Parameters: [`docs/api-reference.md`](api-reference.md). Expected: every response 200. In window 2 the high-degree node took 3.40 s cold, then 0.55 to 0.60 s (Phase 14 ruling 47); in window 3 the warm-up returned two 504s, then 200 (Phase 15 ruling 10(d)). The exact curl lines of the warm-ups are not recorded in the repository.
+- **Warm-up.** Three sequential `GET /v1/graph/nodes/<researcherId>/neighbors` requests (query string `direction=both&depth=1&limit=50&edgeTypes=COAUTHORED_WITH`, as in `load-tests/exp-d-query-load.py` line 73) for each of the two B07 researchers, `scr:canon-v1.er-v2:6de4012bbe8608f1d49d18cf9a40a763` and `scr:canon-v1.er-v2:da6e3bdff14745638f3f5425f0133388`, with the API key on standard input as in the README API examples (`curl --config -`). Parameters: [`docs/api-reference.md`](api-reference.md). Expected: every response 200. In window 2 the high-degree node took 3.40 s cold, then 0.55 to 0.60 s (Phase 14 ruling 47); in window 3 the warm-up returned two 504s, then 200 (Phase 15 ruling 10(d)). The exact curl lines of the warm-ups are not recorded in the repository.
 - **Smoke test** (source: [`scripts/README.md`](../scripts/README.md) `smoke-test.sh`):
 
   ```bash
