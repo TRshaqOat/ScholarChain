@@ -155,3 +155,11 @@ Running log for the Phase 16 agentic-factory evaluation. One row per agent invoc
 | 2026-11-21 | 15 | code-reviewer (review 5) | REQUEST_CHANGES | y | 0/1/10 | 0 | 0 | ? | session 11; C5-M1 E check results omitted; repair-03 by human exception (ruling 18) |
 | 2026-11-21 | 15 | documentation-engineer (repair-03) | COMPLETE | y | - | 3 | 0 | ? | session 12; C5-M1, C5-m1 to C5-m10, item 12; 570 to 600 lines |
 | 2026-11-21 | 15 | code-reviewer (review 6) | APPROVE | y | 0/0/5 | 3 | 0 | ? | session 13; C6-m1 to C6-m5 residual (ruling 19) |
+| 2026-11-22 | 17 | documentation-engineer (WO1) | COMPLETE | y | - | 0 | 2 (m2; video line) | none (a privacy plugin refused the first README write) | session 1; README, api-reference, architecture |
+| 2026-11-22 | 17 | documentation-engineer (WO2) | COMPLETE | y | - | 0 | 2 (m3; m4 note) | none | session 2; six documents; labels/README.md opened (ruling 16) |
+| 2026-11-22 | 17 | factory-engineer (WO3) | COMPLETE | y | - | 0 | 0 | none | session 3; six residual-risk bullets; ratified at the gate |
+| 2026-11-22 | 17 | dataset-engineer (WO4) | COMPLETE | y | - | 0 | 0 | none | session 4; Crossref and ORCID license fields |
+| 2026-11-22 | 17 | deploy-engineer (WO5) | COMPLETE | y | - | 0 | 0 | none | session 5; release manifest; D1 and D2 sources in ruling 16 |
+| 2026-11-22 | 17 | code-reviewer (review 1) | APPROVE | y | 0/0/4 | 0 | 0 | guard-paths [secret-search] (Glob brace list, false positive) | session 6; m1 to m4 fixed by the human (ruling 17) |
+
+Note (Phase 17 gate): before Phase 17 the "manual edits" column had no defined unit, so earlier values are not comparable and may differ from the gates, which are authoritative. From Phase 17 it counts the human's edits to that agent's files after its run, with the reason. Cells marked ? were not recorded at the time and stay unknown.
